@@ -933,9 +933,111 @@ class RealDataTrainer:
         print(f"  [OK] Loaded {total_loaded} Stratus Red Team attack techniques")
         return vuln_examples, attack_examples
     
+    def load_owasp_benchmark(self):
+        """Load OWASP Benchmark test cases (Java & Python)"""
+        print("\n[9/10] Loading OWASP Benchmark Test Cases...")
+        
+        benchmark_base = os.path.join(DATASET_BASE, "owasp benchmark")
+        
+        vuln_examples = []
+        attack_examples = []
+        
+        # Map OWASP Benchmark categories to attack types
+        category_mapping = {
+            'cmdi': 'rce',
+            'crypto': 'weak_crypto',
+            'hash': 'weak_crypto',
+            'ldapi': 'ldap_injection',
+            'pathtraver': 'path_traversal',
+            'securecookie': 'session_fixation',
+            'sqli': 'sql_injection',
+            'trustbound': 'auth_bypass',
+            'weakrand': 'weak_crypto',
+            'xpathi': 'xpath_injection',
+            'xss': 'xss',
+            'xpath': 'xpath_injection',
+        }
+        
+        # CWE to severity mapping
+        cwe_severity = {
+            '22': 7.5,   # Path Traversal
+            '78': 9.0,   # OS Command Injection
+            '79': 7.0,   # XSS
+            '89': 9.0,   # SQL Injection
+            '90': 8.5,   # LDAP Injection
+            '327': 7.5,  # Broken Crypto
+            '328': 7.5,  # Weak Hash
+            '330': 6.5,  # Weak Random
+            '501': 6.0,  # Trust Boundary Violation
+            '614': 6.5,  # Secure Cookie
+        }
+        
+        # Load Java benchmark expected results
+        java_csv = os.path.join(benchmark_base, "BenchmarkJava-master", 
+                                "BenchmarkJava-master", "expectedresults-1.2.csv")
+        
+        total_loaded = 0
+        
+        if os.path.exists(java_csv):
+            import csv
+            with open(java_csv, 'r', encoding='utf-8', errors='ignore') as f:
+                reader = csv.reader(f)
+                for row in reader:
+                    if not row or row[0].startswith('#'):
+                        continue
+                    
+                    try:
+                        test_name = row[0]  # e.g., BenchmarkTest00001
+                        category = row[1]   # e.g., pathtraver
+                        is_vuln = row[2].lower() == 'true'
+                        cwe = row[3] if len(row) > 3 else '0'
+                        
+                        # Map category to attack type
+                        attack_type = category_mapping.get(category, 'exploit')
+                        
+                        # Get severity from CWE
+                        severity = cwe_severity.get(cwe, 7.0)
+                        
+                        # Create request string
+                        request_str = f"OWASP Benchmark {test_name}: {category} vulnerability (CWE-{cwe})"
+                        
+                        # Extract features
+                        features = self.feature_extractor.extract_http_features(request_str)
+                        patterns = self.pattern_extractor.match_patterns(request_str)
+                        
+                        # Create vulnerability example
+                        vuln_example = {
+                            'features': features,
+                            'patterns': patterns,
+                            'label': 1 if is_vuln else 0,
+                            'is_vulnerable': 1 if is_vuln else 0,
+                            'severity': severity if is_vuln else 0,
+                            'attack_type': attack_type if is_vuln else 'benign',
+                            'evidence': f"{test_name}: {category} (CWE-{cwe})"
+                        }
+                        
+                        vuln_examples.append(vuln_example)
+                        
+                        if is_vuln:
+                            attack_examples.append({
+                                'features': features,
+                                'attack_type': attack_type
+                            })
+                        
+                        total_loaded += 1
+                        
+                    except Exception as e:
+                        continue
+        
+        print(f"  [OK] Loaded {total_loaded} OWASP Benchmark test cases")
+        print(f"  [OK] Java vulnerabilities: {len([v for v in vuln_examples if v['is_vulnerable']])}")
+        print(f"  [OK] Java safe cases: {len([v for v in vuln_examples if not v['is_vulnerable']])}")
+        
+        return vuln_examples, attack_examples
+    
     def load_unsw_nb15_network_attacks(self):
         """Load UNSW-NB15 network attack dataset"""
-        print("\n[9/9] Loading UNSW-NB15 Network Attack Dataset...")
+        print("\n[10/10] Loading UNSW-NB15 Network Attack Dataset...")
         
         train_path = os.path.join(DATASET_BASE, "UNSW_NB15", "UNSW_NB15_training-set.csv")
         
@@ -1020,7 +1122,7 @@ class RealDataTrainer:
     
     def train_ml_models(self, vuln_examples, attack_examples):
         """Train all ML models"""
-        print("\n[10/11] Training Machine Learning Models...")
+        print("\n[11/12] Training Machine Learning Models...")
         
         # Train vulnerability detector
         print("  Training Vulnerability Detector...")
@@ -1100,7 +1202,7 @@ class RealDataTrainer:
     
     def train_rl_agent(self, vuln_examples):
         """Train RL agent for tool selection"""
-        print("\n[11/11] Training Reinforcement Learning Agent...")
+        print("\n[12/12] Training Reinforcement Learning Agent...")
         
         # Initialize RL agent
         rl_agent = EnhancedRLAgent(
@@ -1193,7 +1295,7 @@ class RealDataTrainer:
             'timestamp': datetime.now().isoformat(),
             'ml_metrics': ml_metrics,
             'rl_metrics': rl_metrics,
-            'datasets_used': ['CSIC', 'SecLists', 'ExploitDB', 'CVE/CWE', 'Security-Patches', 'AWSGoat', 'CloudGoat', 'Stratus-RedTeam', 'UNSW-NB15']
+            'datasets_used': ['CSIC', 'SecLists', 'ExploitDB', 'CVE/CWE', 'Security-Patches', 'AWSGoat', 'CloudGoat', 'Stratus-RedTeam', 'OWASP-Benchmark', 'UNSW-NB15']
         }
         
         os.makedirs('data', exist_ok=True)
@@ -1203,10 +1305,10 @@ class RealDataTrainer:
         print("\n[OK] Training state saved to data/ml_training_state.json")
 
 def main():
-    print("=" * 100)
+    print("=" * 110)
     print("Optimus - Real Dataset Training")
-    print("CSIC + SecLists + ExploitDB + CVE/CWE + Patches + AWSGoat + CloudGoat + Stratus + UNSW-NB15")
-    print("=" * 100)
+    print("CSIC + SecLists + ExploitDB + CVE/CWE + Patches + AWSGoat + CloudGoat + Stratus + OWASP + UNSW-NB15")
+    print("=" * 110)
     
     trainer = RealDataTrainer()
     
@@ -1219,11 +1321,12 @@ def main():
     awsgoat_vuln, awsgoat_attack = trainer.load_awsgoat_scenarios()
     cloudgoat_vuln, cloudgoat_attack = trainer.load_cloudgoat_scenarios()
     stratus_vuln, stratus_attack = trainer.load_stratus_red_team()
+    owasp_vuln, owasp_attack = trainer.load_owasp_benchmark()
     unsw_vuln, unsw_attack = trainer.load_unsw_nb15_network_attacks()
     
     # Combine datasets
-    all_vuln_examples = csic_vuln + seclists_vuln + exploitdb_vuln + cve_vuln + patches_vuln + awsgoat_vuln + cloudgoat_vuln + stratus_vuln + unsw_vuln
-    all_attack_examples = csic_attack + seclists_attack + exploitdb_attack + cve_attack + patches_attack + awsgoat_attack + cloudgoat_attack + stratus_attack + unsw_attack
+    all_vuln_examples = csic_vuln + seclists_vuln + exploitdb_vuln + cve_vuln + patches_vuln + awsgoat_vuln + cloudgoat_vuln + stratus_vuln + owasp_vuln + unsw_vuln
+    all_attack_examples = csic_attack + seclists_attack + exploitdb_attack + cve_attack + patches_attack + awsgoat_attack + cloudgoat_attack + stratus_attack + owasp_attack + unsw_attack
     
     print(f"\nTotal vulnerability examples: {len(all_vuln_examples)}")
     print(f"Total attack examples: {len(all_attack_examples)}")
