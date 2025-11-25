@@ -1,0 +1,39 @@
+{
+  "timestamp": "2025-11-25T13:41:06.431123",
+  "ml_metrics": {
+    "vuln_detector": {
+      "precision": 0.8558951965065502,
+      "recall": 0.7903225806451613,
+      "f1": 0.8218029350104822,
+      "accuracy": 0.9291666666666667,
+      "roc_auc": 0.9787268738140418
+    },
+    "attack_classifier": {
+      "precision": 0.7504063874545802,
+      "recall": 0.678714859437751,
+      "f1": 0.705426113079452,
+      "accuracy": 0.678714859437751
+    },
+    "severity_predictor": {
+      "mae": 0.8774802821296063,
+      "rmse": 1.6945195622994287,
+      "r2": 0.5454408905211965
+    },
+    "tool_recommender": {
+      "precision": 0.05444444444444444,
+      "recall": 0.23333333333333334,
+      "f1": 0.08828828828828829,
+      "accuracy": 0.23333333333333334
+    }
+  },
+  "rl_metrics": {
+    "avg_episode_reward": 0.0,
+    "episodes_trained": 50,
+    "epsilon": 1.0,
+    "memory_size": 0
+  },
+  "datasets_used": [
+    "CSIC",
+    "UNSW-NB15"
+  ]
+}
