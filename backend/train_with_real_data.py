@@ -294,9 +294,155 @@ class RealDataTrainer:
             traceback.print_exc()
             return [], []
     
+    def load_cve_database(self):
+        """Load CVE/CWE database with CVSS scores"""
+        print("\n[4/5] Loading CVE/CWE Vulnerability Database...")
+        
+        cve_path = os.path.join(DATASET_BASE, "CVE", "CVE_CWE_2025.csv")
+        
+        try:
+            df = pd.read_csv(cve_path, low_memory=False, encoding='utf-8', on_bad_lines='skip')
+            print(f"  [OK] Loaded {len(df)} CVE records")
+            
+            vuln_examples = []
+            attack_examples = []
+            
+            # Sample subset for training
+            df_sample = df.sample(n=min(5000, len(df)), random_state=42)
+            
+            # CWE to attack type mapping (Common Weakness Enumeration)
+            cwe_mapping = {
+                'CWE-79': 'xss',  # Cross-site Scripting
+                'CWE-89': 'sql_injection',  # SQL Injection
+                'CWE-78': 'rce',  # OS Command Injection
+                'CWE-94': 'rce',  # Code Injection
+                'CWE-22': 'path_traversal',  # Path Traversal
+                'CWE-352': 'csrf',  # Cross-Site Request Forgery
+                'CWE-434': 'file_upload',  # Unrestricted File Upload
+                'CWE-120': 'buffer_overflow',  # Buffer Overflow
+                'CWE-119': 'buffer_overflow',  # Memory Corruption
+                'CWE-200': 'info_disclosure',  # Information Exposure
+                'CWE-287': 'auth_bypass',  # Improper Authentication
+                'CWE-306': 'auth_bypass',  # Missing Authentication
+                'CWE-862': 'privilege_escalation',  # Missing Authorization
+                'CWE-798': 'hardcoded_credentials',  # Use of Hard-coded Credentials
+                'CWE-502': 'deserialization',  # Deserialization of Untrusted Data
+                'CWE-611': 'xxe',  # XML External Entity
+                'CWE-918': 'ssrf',  # Server-Side Request Forgery
+                'CWE-601': 'open_redirect',  # URL Redirection
+            }
+            
+            for idx, row in df_sample.iterrows():
+                cve_id = str(row.get('CVE-ID', ''))
+                description = str(row.get('DESCRIPTION', ''))
+                cwe_id = str(row.get('CWE-ID', ''))
+                severity_str = str(row.get('SEVERITY', 'MEDIUM')).upper()
+                
+                # Get CVSS scores (prefer V3, then V2)
+                cvss_v3 = row.get('CVSS-V3', None)
+                cvss_v2 = row.get('CVSS-V2', None)
+                cvss_v4 = row.get('CVSS-V4', None)
+                
+                # Skip if no description
+                if not description or description == 'nan' or len(description) < 10:
+                    continue
+                
+                # Parse CVSS score
+                cvss_score = None
+                if pd.notna(cvss_v4):
+                    try:
+                        cvss_score = float(cvss_v4)
+                    except:
+                        pass
+                if cvss_score is None and pd.notna(cvss_v3):
+                    try:
+                        cvss_score = float(cvss_v3)
+                    except:
+                        pass
+                if cvss_score is None and pd.notna(cvss_v2):
+                    try:
+                        cvss_score = float(cvss_v2)
+                    except:
+                        pass
+                
+                # Map severity to score if CVSS not available
+                if cvss_score is None:
+                    severity_scores = {
+                        'CRITICAL': 9.5,
+                        'HIGH': 8.0,
+                        'MEDIUM': 6.0,
+                        'LOW': 3.0,
+                        'NONE': 0.0
+                    }
+                    cvss_score = severity_scores.get(severity_str, 5.0)
+                
+                # Ensure score is in valid range
+                cvss_score = max(0.0, min(cvss_score, 10.0))
+                
+                # Determine attack type from CWE
+                attack_type = cwe_mapping.get(cwe_id, None)
+                
+                # If no CWE mapping, try to infer from description
+                if attack_type is None:
+                    desc_lower = description.lower()
+                    if 'sql injection' in desc_lower or 'sqli' in desc_lower:
+                        attack_type = 'sql_injection'
+                    elif 'cross-site scripting' in desc_lower or 'xss' in desc_lower:
+                        attack_type = 'xss'
+                    elif 'remote code' in desc_lower or 'rce' in desc_lower:
+                        attack_type = 'rce'
+                    elif 'buffer overflow' in desc_lower:
+                        attack_type = 'buffer_overflow'
+                    elif 'csrf' in desc_lower:
+                        attack_type = 'csrf'
+                    elif 'path traversal' in desc_lower or 'directory traversal' in desc_lower:
+                        attack_type = 'path_traversal'
+                    elif 'denial of service' in desc_lower or 'dos' in desc_lower:
+                        attack_type = 'dos'
+                    elif 'authentication' in desc_lower:
+                        attack_type = 'auth_bypass'
+                    elif 'privilege' in desc_lower:
+                        attack_type = 'privilege_escalation'
+                    else:
+                        attack_type = 'exploit'
+                
+                # Create request context from CVE description
+                request_str = f"CVE {cve_id}: {description[:200]}"
+                
+                # Extract features
+                features = self.feature_extractor.extract_http_features(request_str)
+                patterns = self.pattern_extractor.match_patterns(description)
+                
+                vuln_example = {
+                    'features': features,
+                    'patterns': patterns,
+                    'label': 1,  # All CVEs are vulnerabilities
+                    'is_vulnerable': 1,
+                    'severity': cvss_score,
+                    'attack_type': attack_type,
+                    'evidence': f"{cve_id}: {description[:150]}"
+                }
+                
+                vuln_examples.append(vuln_example)
+                attack_examples.append({
+                    'features': features,
+                    'attack_type': attack_type
+                })
+            
+            print(f"  [OK] Processed {len(vuln_examples)} CVE records")
+            print(f"  [OK] Found {len(attack_examples)} vulnerability patterns")
+            
+            return vuln_examples, attack_examples
+            
+        except Exception as e:
+            print(f"  [ERROR] Error loading CVE database: {e}")
+            import traceback
+            traceback.print_exc()
+            return [], []
+    
     def load_unsw_nb15_network_attacks(self):
         """Load UNSW-NB15 network attack dataset"""
-        print("\n[4/4] Loading UNSW-NB15 Network Attack Dataset...")
+        print("\n[5/5] Loading UNSW-NB15 Network Attack Dataset...")
         
         train_path = os.path.join(DATASET_BASE, "UNSW_NB15", "UNSW_NB15_training-set.csv")
         
@@ -381,7 +527,7 @@ class RealDataTrainer:
     
     def train_ml_models(self, vuln_examples, attack_examples):
         """Train all ML models"""
-        print("\n[5/6] Training Machine Learning Models...")
+        print("\n[6/7] Training Machine Learning Models...")
         
         # Train vulnerability detector
         print("  Training Vulnerability Detector...")
@@ -461,7 +607,7 @@ class RealDataTrainer:
     
     def train_rl_agent(self, vuln_examples):
         """Train RL agent for tool selection"""
-        print("\n[6/6] Training Reinforcement Learning Agent...")
+        print("\n[7/7] Training Reinforcement Learning Agent...")
         
         # Initialize RL agent
         rl_agent = EnhancedRLAgent(
@@ -554,7 +700,7 @@ class RealDataTrainer:
             'timestamp': datetime.now().isoformat(),
             'ml_metrics': ml_metrics,
             'rl_metrics': rl_metrics,
-            'datasets_used': ['CSIC', 'SecLists', 'ExploitDB', 'UNSW-NB15']
+            'datasets_used': ['CSIC', 'SecLists', 'ExploitDB', 'CVE/CWE', 'UNSW-NB15']
         }
         
         os.makedirs('data', exist_ok=True)
@@ -566,7 +712,7 @@ class RealDataTrainer:
 def main():
     print("=" * 80)
     print("Optimus - Real Dataset Training")
-    print("CSIC + SecLists + ExploitDB + UNSW-NB15")
+    print("CSIC + SecLists + ExploitDB + CVE/CWE + UNSW-NB15")
     print("=" * 80)
     
     trainer = RealDataTrainer()
@@ -575,11 +721,12 @@ def main():
     csic_vuln, csic_attack = trainer.load_csic_http_attacks()
     seclists_vuln, seclists_attack = trainer.load_seclists_payloads()
     exploitdb_vuln, exploitdb_attack = trainer.load_exploitdb_vulnerabilities()
+    cve_vuln, cve_attack = trainer.load_cve_database()
     unsw_vuln, unsw_attack = trainer.load_unsw_nb15_network_attacks()
     
     # Combine datasets
-    all_vuln_examples = csic_vuln + seclists_vuln + exploitdb_vuln + unsw_vuln
-    all_attack_examples = csic_attack + seclists_attack + exploitdb_attack + unsw_attack
+    all_vuln_examples = csic_vuln + seclists_vuln + exploitdb_vuln + cve_vuln + unsw_vuln
+    all_attack_examples = csic_attack + seclists_attack + exploitdb_attack + cve_attack + unsw_attack
     
     print(f"\nTotal vulnerability examples: {len(all_vuln_examples)}")
     print(f"Total attack examples: {len(all_attack_examples)}")
