@@ -685,9 +685,141 @@ class RealDataTrainer:
         print(f"  [OK] Total AWSGoat scenarios and techniques processed: {total_loaded}")
         return vuln_examples, attack_examples
     
+    def load_cloudgoat_scenarios(self):
+        """Load CloudGoat AWS/Azure cloud security scenarios"""
+        print("\n[7/8] Loading CloudGoat Cloud Security Scenarios...")
+        
+        cloudgoat_base = os.path.join(DATASET_BASE, "cloudgoat-master", "cloudgoat-master", 
+                                      "cloudgoat", "scenarios", "aws")
+        
+        vuln_examples = []
+        attack_examples = []
+        
+        # Define CloudGoat AWS scenarios with their types and severities
+        scenarios = [
+            ('beanstalk_secrets', 'info_disclosure', 7.5),
+            ('cloud_breach_s3', 'info_disclosure', 8.0),
+            ('codebuild_secrets', 'info_disclosure', 8.5),
+            ('detection_evasion', 'reconnaissance', 7.0),  # Map evasion to reconnaissance
+            ('ec2_ssrf', 'ssrf', 8.5),
+            ('ecs_efs_attack', 'container_escape', 9.0),
+            ('ecs_takeover', 'container_escape', 9.5),
+            ('federated_console_takeover', 'auth_bypass', 9.0),
+            ('glue_privesc', 'privilege_escalation', 9.0),
+            ('iam_privesc_by_attachment', 'privilege_escalation', 9.0),
+            ('iam_privesc_by_ec2', 'privilege_escalation', 9.0),
+            ('iam_privesc_by_key_rotation', 'privilege_escalation', 9.0),
+            ('iam_privesc_by_rollback', 'privilege_escalation', 9.0),
+            ('lambda_privesc', 'privilege_escalation', 8.5),
+            ('rce_web_app', 'rce', 9.5),
+            ('rds_snapshot', 'info_disclosure', 7.5),
+            ('secrets_in_the_cloud', 'info_disclosure', 8.0),
+            ('sns_secrets', 'info_disclosure', 7.5),
+            ('sqs_flag_shop', 'idor', 7.0),
+            ('vpc_peering_overexposed', 'info_disclosure', 8.0),  # Map network_misconfiguration to info_disclosure
+            ('vulnerable_cognito', 'auth_bypass', 8.5),
+            ('vulnerable_lambda', 'rce', 9.0),
+        ]
+        
+        total_loaded = 0
+        
+        for scenario_dir, attack_type, severity in scenarios:
+            readme_path = os.path.join(cloudgoat_base, scenario_dir, "README.md")
+            
+            if not os.path.exists(readme_path):
+                print(f"  [SKIP] {scenario_dir} README not found")
+                continue
+            
+            try:
+                with open(readme_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    content = f.read()
+                
+                # Extract key sections
+                scenario_name = scenario_dir.replace('_', ' ').title()
+                summary = ''
+                exploitation_route = ''
+                
+                # Parse markdown content
+                lines = content.split('\n')
+                in_summary = False
+                in_route = False
+                
+                for line in lines:
+                    if '## Summary' in line or '## summary' in line.lower():
+                        in_summary = True
+                        in_route = False
+                        continue
+                    elif '## Exploitation Route' in line or '## Route Walkthrough' in line:
+                        in_summary = False
+                        in_route = True
+                        continue
+                    elif line.startswith('## ') and (in_summary or in_route):
+                        in_summary = False
+                        in_route = False
+                    elif in_summary and line.strip():
+                        summary += line.strip() + ' '
+                    elif in_route and line.strip() and not line.startswith('!['):
+                        exploitation_route += line.strip() + ' '
+                
+                # Create request context from scenario
+                request_str = f"CloudGoat AWS: {scenario_name} - {summary[:200]}"
+                
+                # Extract features
+                features = self.feature_extractor.extract_http_features(request_str)
+                patterns = self.pattern_extractor.match_patterns(content[:1000])
+                
+                # Create vulnerability example
+                vuln_example = {
+                    'features': features,
+                    'patterns': patterns,
+                    'label': 1,  # All scenarios are vulnerabilities
+                    'is_vulnerable': 1,
+                    'severity': severity,
+                    'attack_type': attack_type,
+                    'evidence': f"{scenario_name}: {summary[:150]}"
+                }
+                
+                vuln_examples.append(vuln_example)
+                attack_examples.append({
+                    'features': features,
+                    'attack_type': attack_type
+                })
+                
+                # Create additional example from exploitation route
+                if exploitation_route.strip():
+                    route_request = f"CloudGoat Attack Chain: {exploitation_route[:200]}"
+                    route_features = self.feature_extractor.extract_http_features(route_request)
+                    route_patterns = self.pattern_extractor.match_patterns(exploitation_route)
+                    
+                    vuln_examples.append({
+                        'features': route_features,
+                        'patterns': route_patterns,
+                        'label': 1,
+                        'is_vulnerable': 1,
+                        'severity': severity,
+                        'attack_type': attack_type,
+                        'evidence': exploitation_route[:150]
+                    })
+                    
+                    attack_examples.append({
+                        'features': route_features,
+                        'attack_type': attack_type
+                    })
+                    
+                    total_loaded += 1
+                
+                total_loaded += 1
+                print(f"  [OK] Loaded {scenario_name}")
+                
+            except Exception as e:
+                print(f"  [ERROR] Failed to load {scenario_dir}: {e}")
+        
+        print(f"  [OK] Total CloudGoat scenarios processed: {total_loaded}")
+        return vuln_examples, attack_examples
+    
     def load_unsw_nb15_network_attacks(self):
         """Load UNSW-NB15 network attack dataset"""
-        print("\n[7/7] Loading UNSW-NB15 Network Attack Dataset...")
+        print("\n[8/8] Loading UNSW-NB15 Network Attack Dataset...")
         
         train_path = os.path.join(DATASET_BASE, "UNSW_NB15", "UNSW_NB15_training-set.csv")
         
@@ -772,7 +904,7 @@ class RealDataTrainer:
     
     def train_ml_models(self, vuln_examples, attack_examples):
         """Train all ML models"""
-        print("\n[8/9] Training Machine Learning Models...")
+        print("\n[9/10] Training Machine Learning Models...")
         
         # Train vulnerability detector
         print("  Training Vulnerability Detector...")
@@ -852,7 +984,7 @@ class RealDataTrainer:
     
     def train_rl_agent(self, vuln_examples):
         """Train RL agent for tool selection"""
-        print("\n[9/9] Training Reinforcement Learning Agent...")
+        print("\n[10/10] Training Reinforcement Learning Agent...")
         
         # Initialize RL agent
         rl_agent = EnhancedRLAgent(
@@ -945,7 +1077,7 @@ class RealDataTrainer:
             'timestamp': datetime.now().isoformat(),
             'ml_metrics': ml_metrics,
             'rl_metrics': rl_metrics,
-            'datasets_used': ['CSIC', 'SecLists', 'ExploitDB', 'CVE/CWE', 'Security-Patches', 'AWSGoat', 'UNSW-NB15']
+            'datasets_used': ['CSIC', 'SecLists', 'ExploitDB', 'CVE/CWE', 'Security-Patches', 'AWSGoat', 'CloudGoat', 'UNSW-NB15']
         }
         
         os.makedirs('data', exist_ok=True)
@@ -955,10 +1087,10 @@ class RealDataTrainer:
         print("\n[OK] Training state saved to data/ml_training_state.json")
 
 def main():
-    print("=" * 80)
+    print("=" * 90)
     print("Optimus - Real Dataset Training")
-    print("CSIC + SecLists + ExploitDB + CVE/CWE + Security-Patches + AWSGoat + UNSW-NB15")
-    print("=" * 80)
+    print("CSIC + SecLists + ExploitDB + CVE/CWE + Security-Patches + AWSGoat + CloudGoat + UNSW-NB15")
+    print("=" * 90)
     
     trainer = RealDataTrainer()
     
@@ -969,11 +1101,12 @@ def main():
     cve_vuln, cve_attack = trainer.load_cve_database()
     patches_vuln, patches_attack = trainer.load_security_patches()
     awsgoat_vuln, awsgoat_attack = trainer.load_awsgoat_scenarios()
+    cloudgoat_vuln, cloudgoat_attack = trainer.load_cloudgoat_scenarios()
     unsw_vuln, unsw_attack = trainer.load_unsw_nb15_network_attacks()
     
     # Combine datasets
-    all_vuln_examples = csic_vuln + seclists_vuln + exploitdb_vuln + cve_vuln + patches_vuln + awsgoat_vuln + unsw_vuln
-    all_attack_examples = csic_attack + seclists_attack + exploitdb_attack + cve_attack + patches_attack + awsgoat_attack + unsw_attack
+    all_vuln_examples = csic_vuln + seclists_vuln + exploitdb_vuln + cve_vuln + patches_vuln + awsgoat_vuln + cloudgoat_vuln + unsw_vuln
+    all_attack_examples = csic_attack + seclists_attack + exploitdb_attack + cve_attack + patches_attack + awsgoat_attack + cloudgoat_attack + unsw_attack
     
     print(f"\nTotal vulnerability examples: {len(all_vuln_examples)}")
     print(f"Total attack examples: {len(all_attack_examples)}")
