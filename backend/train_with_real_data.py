@@ -440,9 +440,130 @@ class RealDataTrainer:
             traceback.print_exc()
             return [], []
     
+    def load_security_patches(self):
+        """Load security patches dataset (BigVul) with code changes"""
+        print("\n[5/6] Loading Security Patches Dataset...")
+        
+        patches_path = os.path.join(DATASET_BASE, "security-patches-dataset-main", 
+                                    "security-patches-dataset-main", "data", "bigvul", 
+                                    "all-bigvul-patches.csv")
+        
+        try:
+            df = pd.read_csv(patches_path, low_memory=False, encoding='utf-8', on_bad_lines='skip')
+            print(f"  [OK] Loaded {len(df)} security patch records")
+            
+            vuln_examples = []
+            attack_examples = []
+            
+            # Sample subset for training
+            df_sample = df.sample(n=min(3000, len(df)), random_state=42)
+            
+            for idx, row in df_sample.iterrows():
+                cve_id = str(row.get('cve_id', ''))
+                summary = str(row.get('summary', ''))
+                cwe_id = str(row.get('cwe_id', ''))
+                score = row.get('score', None)
+                vuln_class = str(row.get('vulnerability_classification', ''))
+                commit_msg = str(row.get('commit_message', ''))
+                
+                # Skip if no summary
+                if not summary or summary == 'nan' or len(summary) < 10:
+                    continue
+                
+                # Parse CVSS score
+                try:
+                    cvss_score = float(score) if pd.notna(score) else 6.0
+                    cvss_score = max(0.0, min(cvss_score, 10.0))
+                except:
+                    cvss_score = 6.0
+                
+                # Determine attack type from vulnerability classification and CWE
+                attack_type = 'exploit'
+                vuln_class_lower = vuln_class.lower()
+                summary_lower = summary.lower()
+                
+                # Map from vulnerability classification
+                if 'overflow' in vuln_class_lower or 'overflow' in summary_lower:
+                    attack_type = 'buffer_overflow'
+                elif 'sql' in vuln_class_lower or 'sql injection' in summary_lower:
+                    attack_type = 'sql_injection'
+                elif 'xss' in vuln_class_lower or 'cross-site scripting' in summary_lower:
+                    attack_type = 'xss'
+                elif 'exec code' in vuln_class_lower or 'code execution' in summary_lower or 'rce' in summary_lower:
+                    attack_type = 'rce'
+                elif 'csrf' in vuln_class_lower or 'csrf' in summary_lower:
+                    attack_type = 'csrf'
+                elif 'dos' in vuln_class_lower or 'denial of service' in summary_lower:
+                    attack_type = 'dos'
+                elif 'directory traversal' in vuln_class_lower or 'path traversal' in summary_lower:
+                    attack_type = 'path_traversal'
+                elif 'bypass' in vuln_class_lower or 'authentication' in summary_lower:
+                    attack_type = 'auth_bypass'
+                elif 'info' in vuln_class_lower or 'disclosure' in summary_lower:
+                    attack_type = 'info_disclosure'
+                elif 'mem' in vuln_class_lower or 'memory' in summary_lower:
+                    attack_type = 'buffer_overflow'
+                elif 'file inclusion' in summary_lower:
+                    attack_type = 'path_traversal'
+                elif 'injection' in summary_lower:
+                    if 'sql' in summary_lower:
+                        attack_type = 'sql_injection'
+                    elif 'command' in summary_lower or 'os' in summary_lower:
+                        attack_type = 'rce'
+                    else:
+                        attack_type = 'injection'
+                
+                # Additional CWE mapping
+                if 'CWE-79' in cwe_id:
+                    attack_type = 'xss'
+                elif 'CWE-89' in cwe_id:
+                    attack_type = 'sql_injection'
+                elif 'CWE-78' in cwe_id or 'CWE-94' in cwe_id:
+                    attack_type = 'rce'
+                elif 'CWE-119' in cwe_id or 'CWE-120' in cwe_id or 'CWE-787' in cwe_id:
+                    attack_type = 'buffer_overflow'
+                elif 'CWE-22' in cwe_id:
+                    attack_type = 'path_traversal'
+                elif 'CWE-352' in cwe_id:
+                    attack_type = 'csrf'
+                
+                # Create request context from patch information
+                request_str = f"Patch {cve_id}: {summary[:200]} | {commit_msg[:100]}"
+                
+                # Extract features
+                features = self.feature_extractor.extract_http_features(request_str)
+                patterns = self.pattern_extractor.match_patterns(summary + ' ' + commit_msg)
+                
+                vuln_example = {
+                    'features': features,
+                    'patterns': patterns,
+                    'label': 1,  # All patches fix vulnerabilities
+                    'is_vulnerable': 1,
+                    'severity': cvss_score,
+                    'attack_type': attack_type,
+                    'evidence': f"{cve_id}: {summary[:150]}"
+                }
+                
+                vuln_examples.append(vuln_example)
+                attack_examples.append({
+                    'features': features,
+                    'attack_type': attack_type
+                })
+            
+            print(f"  [OK] Processed {len(vuln_examples)} security patch records")
+            print(f"  [OK] Found {len(attack_examples)} vulnerability fixes")
+            
+            return vuln_examples, attack_examples
+            
+        except Exception as e:
+            print(f"  [ERROR] Error loading security patches: {e}")
+            import traceback
+            traceback.print_exc()
+            return [], []
+    
     def load_unsw_nb15_network_attacks(self):
         """Load UNSW-NB15 network attack dataset"""
-        print("\n[5/5] Loading UNSW-NB15 Network Attack Dataset...")
+        print("\n[6/6] Loading UNSW-NB15 Network Attack Dataset...")
         
         train_path = os.path.join(DATASET_BASE, "UNSW_NB15", "UNSW_NB15_training-set.csv")
         
@@ -527,7 +648,7 @@ class RealDataTrainer:
     
     def train_ml_models(self, vuln_examples, attack_examples):
         """Train all ML models"""
-        print("\n[6/7] Training Machine Learning Models...")
+        print("\n[7/8] Training Machine Learning Models...")
         
         # Train vulnerability detector
         print("  Training Vulnerability Detector...")
@@ -607,7 +728,7 @@ class RealDataTrainer:
     
     def train_rl_agent(self, vuln_examples):
         """Train RL agent for tool selection"""
-        print("\n[7/7] Training Reinforcement Learning Agent...")
+        print("\n[8/8] Training Reinforcement Learning Agent...")
         
         # Initialize RL agent
         rl_agent = EnhancedRLAgent(
@@ -700,7 +821,7 @@ class RealDataTrainer:
             'timestamp': datetime.now().isoformat(),
             'ml_metrics': ml_metrics,
             'rl_metrics': rl_metrics,
-            'datasets_used': ['CSIC', 'SecLists', 'ExploitDB', 'CVE/CWE', 'UNSW-NB15']
+            'datasets_used': ['CSIC', 'SecLists', 'ExploitDB', 'CVE/CWE', 'Security-Patches', 'UNSW-NB15']
         }
         
         os.makedirs('data', exist_ok=True)
@@ -712,7 +833,7 @@ class RealDataTrainer:
 def main():
     print("=" * 80)
     print("Optimus - Real Dataset Training")
-    print("CSIC + SecLists + ExploitDB + CVE/CWE + UNSW-NB15")
+    print("CSIC + SecLists + ExploitDB + CVE/CWE + Security-Patches + UNSW-NB15")
     print("=" * 80)
     
     trainer = RealDataTrainer()
@@ -722,11 +843,12 @@ def main():
     seclists_vuln, seclists_attack = trainer.load_seclists_payloads()
     exploitdb_vuln, exploitdb_attack = trainer.load_exploitdb_vulnerabilities()
     cve_vuln, cve_attack = trainer.load_cve_database()
+    patches_vuln, patches_attack = trainer.load_security_patches()
     unsw_vuln, unsw_attack = trainer.load_unsw_nb15_network_attacks()
     
     # Combine datasets
-    all_vuln_examples = csic_vuln + seclists_vuln + exploitdb_vuln + cve_vuln + unsw_vuln
-    all_attack_examples = csic_attack + seclists_attack + exploitdb_attack + cve_attack + unsw_attack
+    all_vuln_examples = csic_vuln + seclists_vuln + exploitdb_vuln + cve_vuln + patches_vuln + unsw_vuln
+    all_attack_examples = csic_attack + seclists_attack + exploitdb_attack + cve_attack + patches_attack + unsw_attack
     
     print(f"\nTotal vulnerability examples: {len(all_vuln_examples)}")
     print(f"Total attack examples: {len(all_attack_examples)}")
