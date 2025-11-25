@@ -25,6 +25,7 @@ class RealDataTrainer:
         self.pattern_extractor = PatternExtractor()
         self.ml_trainer = SecurityMLTrainer()
         self.rl_state_encoder = RLStateEncoder()
+        self.seclists_base = os.path.join(DATASET_BASE, "SecLists-master")
         
     def load_csic_http_attacks(self):
         """Load CSIC HTTP attack dataset (SQL injection, XSS, etc.)"""
@@ -98,9 +99,90 @@ class RealDataTrainer:
             print(f"  [ERROR] Error loading CSIC: {e}")
             return [], []
     
+    def load_seclists_payloads(self):
+        """Load SecLists attack payloads (XSS, SQLi, LFI, Command Injection)"""
+        print("\n[2/4] Loading SecLists Attack Payloads...")
+        
+        vuln_examples = []
+        attack_examples = []
+        
+        # Define payload files to load
+        payload_files = [
+            ('Fuzzing/XSS/human-friendly/XSS-BruteLogic.txt', 'xss'),
+            ('Fuzzing/XSS/robot-friendly/XSS-Somdev.txt', 'xss'),
+            ('Fuzzing/Databases/SQLi/Generic-SQLi.txt', 'sql_injection'),
+            ('Fuzzing/Databases/SQLi/quick-SQLi.txt', 'sql_injection'),
+            ('Fuzzing/LFI/LFI-Jhaddix.txt', 'path_traversal'),
+            ('Fuzzing/command-injection-commix.txt', 'rce'),
+            ('Discovery/Web-Content/common.txt', 'reconnaissance'),
+            ('Fuzzing/XXE-Fuzzing.txt', 'xxe'),
+            ('Fuzzing/big-list-of-naughty-strings.txt', 'injection')
+        ]
+        
+        total_loaded = 0
+        
+        for file_path, attack_type in payload_files:
+            full_path = os.path.join(self.seclists_base, file_path)
+            
+            if not os.path.exists(full_path):
+                print(f"  [SKIP] {file_path} not found")
+                continue
+            
+            try:
+                with open(full_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    payloads = [line.strip() for line in f if line.strip() and not line.startswith('#')]
+                
+                # Limit samples per file
+                payloads = payloads[:500]
+                
+                for payload in payloads:
+                    # Create HTTP request context
+                    request_str = f"GET /?param={payload} HTTP/1.1"
+                    
+                    # Extract features
+                    features = self.feature_extractor.extract_http_features(request_str)
+                    patterns = self.pattern_extractor.match_patterns(request_str)
+                    
+                    # Determine severity
+                    severity_map = {
+                        'xss': 7.5,
+                        'sql_injection': 9.0,
+                        'rce': 9.8,
+                        'path_traversal': 7.0,
+                        'reconnaissance': 3.0,
+                        'xxe': 8.0
+                    }
+                    severity = severity_map.get(attack_type, 6.0)
+                    
+                    vuln_example = {
+                        'features': features,
+                        'patterns': patterns,
+                        'label': 1,  # All payloads are malicious
+                        'is_vulnerable': 1,
+                        'severity': severity,
+                        'attack_type': attack_type,
+                        'evidence': payload[:200]
+                    }
+                    
+                    vuln_examples.append(vuln_example)
+                    attack_examples.append({
+                        'features': features,
+                        'attack_type': attack_type
+                    })
+                    
+                    total_loaded += 1
+                
+                print(f"  [OK] Loaded {len(payloads)} {attack_type} payloads from {os.path.basename(file_path)}")
+                
+            except Exception as e:
+                print(f"  [ERROR] Failed to load {file_path}: {e}")
+        
+        print(f"  [OK] Total SecLists payloads processed: {total_loaded}")
+        return vuln_examples, attack_examples
+    
     def load_unsw_nb15_network_attacks(self):
         """Load UNSW-NB15 network attack dataset"""
-        print("\n[2/4] Loading UNSW-NB15 Network Attack Dataset...")
+        print("\n[3/4] Loading UNSW-NB15 Network Attack Dataset...")
         
         train_path = os.path.join(DATASET_BASE, "UNSW_NB15", "UNSW_NB15_training-set.csv")
         
@@ -358,7 +440,7 @@ class RealDataTrainer:
             'timestamp': datetime.now().isoformat(),
             'ml_metrics': ml_metrics,
             'rl_metrics': rl_metrics,
-            'datasets_used': ['CSIC', 'UNSW-NB15']
+            'datasets_used': ['CSIC', 'SecLists', 'UNSW-NB15']
         }
         
         os.makedirs('data', exist_ok=True)
@@ -369,18 +451,19 @@ class RealDataTrainer:
 
 def main():
     print("=" * 70)
-    print("Project Optimus - Real Dataset Training")
+    print("Optimus - Real Dataset Training (CSIC + SecLists + UNSW-NB15)")
     print("=" * 70)
     
     trainer = RealDataTrainer()
     
     # Load datasets
     csic_vuln, csic_attack = trainer.load_csic_http_attacks()
+    seclists_vuln, seclists_attack = trainer.load_seclists_payloads()
     unsw_vuln, unsw_attack = trainer.load_unsw_nb15_network_attacks()
     
     # Combine datasets
-    all_vuln_examples = csic_vuln + unsw_vuln
-    all_attack_examples = csic_attack + unsw_attack
+    all_vuln_examples = csic_vuln + seclists_vuln + unsw_vuln
+    all_attack_examples = csic_attack + seclists_attack + unsw_attack
     
     print(f"\nTotal vulnerability examples: {len(all_vuln_examples)}")
     print(f"Total attack examples: {len(all_attack_examples)}")
