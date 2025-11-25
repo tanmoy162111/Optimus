@@ -1,15 +1,18 @@
 @echo off
 echo ============================================================
-echo Starting Project Optimus
+echo Starting Optimus
 echo ============================================================
+
+REM Set VirtualBox path
+set VBOX_PATH=D:\Virtualbox\VBoxManage.exe
 
 REM Start Kali VM if not running
 echo.
 echo [1/3] Checking Kali VM status...
-VBoxManage list runningvms | findstr "Kali" >nul
+"%VBOX_PATH%" list runningvms | findstr "kali" >nul
 if errorlevel 1 (
     echo Kali VM not running. Starting Kali VM...
-    VBoxManage startvm "Kali" --type headless
+    "%VBOX_PATH%" startvm "kali" --type headless
     echo Waiting 30 seconds for Kali VM to boot...
     timeout /t 30 /nobreak >nul
     echo Kali VM started successfully!
@@ -30,7 +33,7 @@ start "Optimus Frontend" cmd /k "cd /d "%~dp0frontend" && npm run dev"
 
 echo.
 echo ============================================================
-echo Project Optimus Started Successfully!
+echo Optimus Started Successfully!
 echo ============================================================
 echo.
 echo Backend:  http://localhost:5000
