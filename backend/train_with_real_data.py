@@ -817,9 +817,125 @@ class RealDataTrainer:
         print(f"  [OK] Total CloudGoat scenarios processed: {total_loaded}")
         return vuln_examples, attack_examples
     
+    def load_stratus_red_team(self):
+        """Load Stratus Red Team cloud attack techniques (MITRE ATT&CK mapped)"""
+        print("\n[8/9] Loading Stratus Red Team Attack Techniques...")
+        
+        stratus_base = os.path.join(DATASET_BASE, "stratus-red-team-main", "stratus-red-team-main", 
+                                    "docs", "attack-techniques", "AWS")
+        
+        vuln_examples = []
+        attack_examples = []
+        
+        # Get all AWS attack technique files
+        import glob
+        attack_files = glob.glob(os.path.join(stratus_base, "*.md"))
+        
+        # Map attack categories to types
+        category_mapping = {
+            'credential-access': 'info_disclosure',
+            'defense-evasion': 'reconnaissance',
+            'discovery': 'reconnaissance',
+            'execution': 'rce',
+            'exfiltration': 'info_disclosure',
+            'impact': 'dos',
+            'initial-access': 'exploit',
+            'persistence': 'backdoor',
+            'privilege-escalation': 'privilege_escalation',
+        }
+        
+        total_loaded = 0
+        
+        for file_path in attack_files:
+            filename = os.path.basename(file_path)
+            
+            # Parse category from filename (e.g., aws.credential-access.ec2-steal-instance-credentials.md)
+            parts = filename.replace('.md', '').split('.')
+            if len(parts) < 3:
+                continue
+            
+            category = parts[1]  # e.g., 'credential-access'
+            technique = parts[2]  # e.g., 'ec2-steal-instance-credentials'
+            
+            attack_type = category_mapping.get(category, 'exploit')
+            
+            try:
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    content = f.read()
+                
+                # Extract title and description
+                lines = content.split('\n')
+                title = ''
+                description = ''
+                mitre_technique = ''
+                
+                in_description = False
+                
+                for i, line in enumerate(lines):
+                    if line.startswith('title:'):
+                        title = line.replace('title:', '').strip()
+                    elif '## Description' in line:
+                        in_description = True
+                        continue
+                    elif line.startswith('##') and in_description:
+                        in_description = False
+                    elif in_description and line.strip():
+                        description += line.strip() + ' '
+                    elif 'T1' in line and '(' in line:  # MITRE technique ID
+                        mitre_technique = line.strip()
+                
+                if not title:
+                    title = technique.replace('-', ' ').title()
+                
+                # Determine severity based on category
+                severity_map = {
+                    'credential-access': 8.5,
+                    'defense-evasion': 7.0,
+                    'discovery': 4.0,
+                    'execution': 9.0,
+                    'exfiltration': 8.5,
+                    'impact': 8.0,
+                    'initial-access': 8.5,
+                    'persistence': 9.0,
+                    'privilege-escalation': 9.5,
+                }
+                severity = severity_map.get(category, 7.0)
+                
+                # Create request context
+                request_str = f"Stratus Red Team: {title} - {description[:200]}"
+                
+                # Extract features
+                features = self.feature_extractor.extract_http_features(request_str)
+                patterns = self.pattern_extractor.match_patterns(content[:1000])
+                
+                # Create vulnerability example
+                vuln_example = {
+                    'features': features,
+                    'patterns': patterns,
+                    'label': 1,  # All techniques are attack methods
+                    'is_vulnerable': 1,
+                    'severity': severity,
+                    'attack_type': attack_type,
+                    'evidence': f"{title}: {description[:150]}"
+                }
+                
+                vuln_examples.append(vuln_example)
+                attack_examples.append({
+                    'features': features,
+                    'attack_type': attack_type
+                })
+                
+                total_loaded += 1
+                
+            except Exception as e:
+                print(f"  [ERROR] Failed to load {filename}: {e}")
+        
+        print(f"  [OK] Loaded {total_loaded} Stratus Red Team attack techniques")
+        return vuln_examples, attack_examples
+    
     def load_unsw_nb15_network_attacks(self):
         """Load UNSW-NB15 network attack dataset"""
-        print("\n[8/8] Loading UNSW-NB15 Network Attack Dataset...")
+        print("\n[9/9] Loading UNSW-NB15 Network Attack Dataset...")
         
         train_path = os.path.join(DATASET_BASE, "UNSW_NB15", "UNSW_NB15_training-set.csv")
         
@@ -904,7 +1020,7 @@ class RealDataTrainer:
     
     def train_ml_models(self, vuln_examples, attack_examples):
         """Train all ML models"""
-        print("\n[9/10] Training Machine Learning Models...")
+        print("\n[10/11] Training Machine Learning Models...")
         
         # Train vulnerability detector
         print("  Training Vulnerability Detector...")
@@ -984,7 +1100,7 @@ class RealDataTrainer:
     
     def train_rl_agent(self, vuln_examples):
         """Train RL agent for tool selection"""
-        print("\n[10/10] Training Reinforcement Learning Agent...")
+        print("\n[11/11] Training Reinforcement Learning Agent...")
         
         # Initialize RL agent
         rl_agent = EnhancedRLAgent(
@@ -1077,7 +1193,7 @@ class RealDataTrainer:
             'timestamp': datetime.now().isoformat(),
             'ml_metrics': ml_metrics,
             'rl_metrics': rl_metrics,
-            'datasets_used': ['CSIC', 'SecLists', 'ExploitDB', 'CVE/CWE', 'Security-Patches', 'AWSGoat', 'CloudGoat', 'UNSW-NB15']
+            'datasets_used': ['CSIC', 'SecLists', 'ExploitDB', 'CVE/CWE', 'Security-Patches', 'AWSGoat', 'CloudGoat', 'Stratus-RedTeam', 'UNSW-NB15']
         }
         
         os.makedirs('data', exist_ok=True)
@@ -1087,10 +1203,10 @@ class RealDataTrainer:
         print("\n[OK] Training state saved to data/ml_training_state.json")
 
 def main():
-    print("=" * 90)
+    print("=" * 100)
     print("Optimus - Real Dataset Training")
-    print("CSIC + SecLists + ExploitDB + CVE/CWE + Security-Patches + AWSGoat + CloudGoat + UNSW-NB15")
-    print("=" * 90)
+    print("CSIC + SecLists + ExploitDB + CVE/CWE + Patches + AWSGoat + CloudGoat + Stratus + UNSW-NB15")
+    print("=" * 100)
     
     trainer = RealDataTrainer()
     
@@ -1102,11 +1218,12 @@ def main():
     patches_vuln, patches_attack = trainer.load_security_patches()
     awsgoat_vuln, awsgoat_attack = trainer.load_awsgoat_scenarios()
     cloudgoat_vuln, cloudgoat_attack = trainer.load_cloudgoat_scenarios()
+    stratus_vuln, stratus_attack = trainer.load_stratus_red_team()
     unsw_vuln, unsw_attack = trainer.load_unsw_nb15_network_attacks()
     
     # Combine datasets
-    all_vuln_examples = csic_vuln + seclists_vuln + exploitdb_vuln + cve_vuln + patches_vuln + awsgoat_vuln + cloudgoat_vuln + unsw_vuln
-    all_attack_examples = csic_attack + seclists_attack + exploitdb_attack + cve_attack + patches_attack + awsgoat_attack + cloudgoat_attack + unsw_attack
+    all_vuln_examples = csic_vuln + seclists_vuln + exploitdb_vuln + cve_vuln + patches_vuln + awsgoat_vuln + cloudgoat_vuln + stratus_vuln + unsw_vuln
+    all_attack_examples = csic_attack + seclists_attack + exploitdb_attack + cve_attack + patches_attack + awsgoat_attack + cloudgoat_attack + stratus_attack + unsw_attack
     
     print(f"\nTotal vulnerability examples: {len(all_vuln_examples)}")
     print(f"Total attack examples: {len(all_attack_examples)}")
