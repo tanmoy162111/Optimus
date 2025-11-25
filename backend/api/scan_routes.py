@@ -1,10 +1,12 @@
 """
 Scan API Routes
 """
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from datetime import datetime
 import uuid
 import logging
+import threading
+from execution.ssh_client import KaliSSHClient
 
 logger = logging.getLogger(__name__)
 
@@ -145,6 +147,106 @@ def get_scan_results(scan_id):
         logger.error(f"Error getting scan results: {e}")
         return jsonify({'error': str(e)}), 500
 
+@scan_bp.route('/execute-tool', methods=['POST'])
+def execute_tool():
+    """Execute a pentesting tool on Kali VM"""
+    try:
+        data = request.json
+        scan_id = data.get('scan_id')
+        tool_name = data.get('tool')
+        target = data.get('target')
+        options = data.get('options', {})
+        
+        if not all([scan_id, tool_name, target]):
+            return jsonify({'error': 'scan_id, tool, and target required'}), 400
+        
+        scan = active_scans.get(scan_id)
+        if not scan:
+            return jsonify({'error': 'Scan not found'}), 404
+        
+        # Execute tool in background
+        def run_tool():
+            from app import socketio
+            
+            def output_callback(line):
+                # Stream output to WebSocket
+                socketio.emit('tool_output', {
+                    'scan_id': scan_id,
+                    'tool': tool_name,
+                    'output': line
+                }, room=scan_id)
+            
+            try:
+                socketio.emit('tool_execution_start', {
+                    'scan_id': scan_id,
+                    'tool': tool_name,
+                    'target': target
+                }, room=scan_id)
+                
+                with KaliSSHClient() as ssh:
+                    result = ssh.execute_tool(
+                        tool_name=tool_name,
+                        target=target,
+                        options=options,
+                        output_callback=output_callback
+                    )
+                    
+                    # Update scan with results
+                    scan['tools_executed'].append(tool_name)
+                    scan['status'] = 'running'
+                    
+                    # Emit completion
+                    socketio.emit('tool_execution_complete', {
+                        'scan_id': scan_id,
+                        'tool': tool_name,
+                        'success': result['success'],
+                        'exit_code': result['exit_code'],
+                        'execution_time': result.get('execution_time', 0)
+                    }, room=scan_id)
+                    
+            except Exception as e:
+                logger.error(f"Error executing tool {tool_name}: {e}")
+                socketio.emit('error', {
+                    'scan_id': scan_id,
+                    'tool': tool_name,
+                    'error': str(e)
+                }, room=scan_id)
+        
+        # Start background execution
+        thread = threading.Thread(target=run_tool)
+        thread.daemon = True
+        thread.start()
+        
+        return jsonify({
+            'status': 'started',
+            'scan_id': scan_id,
+            'tool': tool_name,
+            'target': target
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Error in execute_tool: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@scan_bp.route('/test-connection', methods=['GET'])
+def test_kali_connection():
+    """Test connection to Kali VM"""
+    try:
+        ssh = KaliSSHClient()
+        result = ssh.test_connection()
+        ssh.disconnect()
+        
+        if result.get('connected'):
+            return jsonify(result), 200
+        else:
+            return jsonify(result), 500
+            
+    except Exception as e:
+        logger.error(f"Error testing connection: {e}")
+        return jsonify({
+            'connected': False,
+            'error': str(e)
+        }), 500
 @scan_bp.route('/list', methods=['GET'])
 def list_scans():
     """List all scans (active and historical)"""
