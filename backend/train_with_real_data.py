@@ -180,9 +180,123 @@ class RealDataTrainer:
         print(f"  [OK] Total SecLists payloads processed: {total_loaded}")
         return vuln_examples, attack_examples
     
+    def load_exploitdb_vulnerabilities(self):
+        """Load ExploitDB database of real-world exploits"""
+        print("\n[3/4] Loading ExploitDB Vulnerability Database...")
+        
+        exploitdb_path = os.path.join(DATASET_BASE, "exploitdb-master", "files_exploits.csv")
+        
+        try:
+            df = pd.read_csv(exploitdb_path, low_memory=False, encoding='utf-8', on_bad_lines='skip')
+            print(f"  [OK] Loaded {len(df)} exploit records")
+            
+            vuln_examples = []
+            attack_examples = []
+            
+            # Sample subset for training
+            df_sample = df.sample(n=min(3000, len(df)), random_state=42)
+            
+            # Attack type mapping from exploit types
+            type_mapping = {
+                'webapps': 'webapp_exploit',
+                'remote': 'rce',
+                'local': 'privilege_escalation',
+                'dos': 'dos',
+                'shellcode': 'rce',
+                'exploit': 'exploit'
+            }
+            
+            # Platform severity mapping
+            platform_severity = {
+                'windows': 8.0,
+                'linux': 8.0,
+                'php': 7.5,
+                'multiple': 8.5,
+                'hardware': 9.0,
+                'android': 7.0,
+                'ios': 7.5
+            }
+            
+            for idx, row in df_sample.iterrows():
+                description = str(row.get('description', ''))
+                exploit_type = str(row.get('type', 'exploit')).lower()
+                platform = str(row.get('platform', 'unknown')).lower()
+                codes = str(row.get('codes', ''))
+                
+                # Skip if no description
+                if not description or description == 'nan':
+                    continue
+                
+                # Create request context from description
+                request_str = f"Exploit: {description[:200]}"
+                
+                # Extract features
+                features = self.feature_extractor.extract_http_features(request_str)
+                patterns = self.pattern_extractor.match_patterns(description)
+                
+                # Determine attack type
+                attack_type = type_mapping.get(exploit_type, 'exploit')
+                
+                # Check for specific vulnerability types in description
+                desc_lower = description.lower()
+                if 'sql injection' in desc_lower or 'sqli' in desc_lower:
+                    attack_type = 'sql_injection'
+                elif 'xss' in desc_lower or 'cross-site scripting' in desc_lower:
+                    attack_type = 'xss'
+                elif 'remote code' in desc_lower or 'rce' in desc_lower:
+                    attack_type = 'rce'
+                elif 'buffer overflow' in desc_lower:
+                    attack_type = 'buffer_overflow'
+                elif 'csrf' in desc_lower or 'cross-site request' in desc_lower:
+                    attack_type = 'csrf'
+                elif 'path traversal' in desc_lower or 'directory traversal' in desc_lower:
+                    attack_type = 'path_traversal'
+                
+                # Determine severity
+                base_severity = platform_severity.get(platform, 7.0)
+                
+                # Increase severity if CVE codes present
+                if 'cve' in codes.lower():
+                    base_severity = min(base_severity + 1.0, 10.0)
+                
+                # Adjust by exploit type
+                if exploit_type == 'remote' or exploit_type == 'shellcode':
+                    base_severity = min(base_severity + 0.5, 10.0)
+                elif exploit_type == 'dos':
+                    base_severity = min(base_severity - 1.0, 10.0)
+                
+                severity = max(4.0, min(base_severity, 10.0))
+                
+                vuln_example = {
+                    'features': features,
+                    'patterns': patterns,
+                    'label': 1,  # All exploits are vulnerabilities
+                    'is_vulnerable': 1,
+                    'severity': severity,
+                    'attack_type': attack_type,
+                    'evidence': description[:200]
+                }
+                
+                vuln_examples.append(vuln_example)
+                attack_examples.append({
+                    'features': features,
+                    'attack_type': attack_type
+                })
+            
+            print(f"  [OK] Processed {len(vuln_examples)} exploit records")
+            print(f"  [OK] Found {len(attack_examples)} attack patterns")
+            
+            return vuln_examples, attack_examples
+            
+        except Exception as e:
+            print(f"  [ERROR] Error loading ExploitDB: {e}")
+            import traceback
+            traceback.print_exc()
+            return [], []
+    
     def load_unsw_nb15_network_attacks(self):
         """Load UNSW-NB15 network attack dataset"""
-        print("\n[3/4] Loading UNSW-NB15 Network Attack Dataset...")
+        print("\n[4/4] Loading UNSW-NB15 Network Attack Dataset...")
         
         train_path = os.path.join(DATASET_BASE, "UNSW_NB15", "UNSW_NB15_training-set.csv")
         
@@ -267,7 +381,7 @@ class RealDataTrainer:
     
     def train_ml_models(self, vuln_examples, attack_examples):
         """Train all ML models"""
-        print("\n[3/4] Training Machine Learning Models...")
+        print("\n[5/6] Training Machine Learning Models...")
         
         # Train vulnerability detector
         print("  Training Vulnerability Detector...")
@@ -347,7 +461,7 @@ class RealDataTrainer:
     
     def train_rl_agent(self, vuln_examples):
         """Train RL agent for tool selection"""
-        print("\n[4/4] Training Reinforcement Learning Agent...")
+        print("\n[6/6] Training Reinforcement Learning Agent...")
         
         # Initialize RL agent
         rl_agent = EnhancedRLAgent(
@@ -440,7 +554,7 @@ class RealDataTrainer:
             'timestamp': datetime.now().isoformat(),
             'ml_metrics': ml_metrics,
             'rl_metrics': rl_metrics,
-            'datasets_used': ['CSIC', 'SecLists', 'UNSW-NB15']
+            'datasets_used': ['CSIC', 'SecLists', 'ExploitDB', 'UNSW-NB15']
         }
         
         os.makedirs('data', exist_ok=True)
@@ -450,20 +564,22 @@ class RealDataTrainer:
         print("\n[OK] Training state saved to data/ml_training_state.json")
 
 def main():
-    print("=" * 70)
-    print("Optimus - Real Dataset Training (CSIC + SecLists + UNSW-NB15)")
-    print("=" * 70)
+    print("=" * 80)
+    print("Optimus - Real Dataset Training")
+    print("CSIC + SecLists + ExploitDB + UNSW-NB15")
+    print("=" * 80)
     
     trainer = RealDataTrainer()
     
     # Load datasets
     csic_vuln, csic_attack = trainer.load_csic_http_attacks()
     seclists_vuln, seclists_attack = trainer.load_seclists_payloads()
+    exploitdb_vuln, exploitdb_attack = trainer.load_exploitdb_vulnerabilities()
     unsw_vuln, unsw_attack = trainer.load_unsw_nb15_network_attacks()
     
     # Combine datasets
-    all_vuln_examples = csic_vuln + seclists_vuln + unsw_vuln
-    all_attack_examples = csic_attack + seclists_attack + unsw_attack
+    all_vuln_examples = csic_vuln + seclists_vuln + exploitdb_vuln + unsw_vuln
+    all_attack_examples = csic_attack + seclists_attack + exploitdb_attack + unsw_attack
     
     print(f"\nTotal vulnerability examples: {len(all_vuln_examples)}")
     print(f"Total attack examples: {len(all_attack_examples)}")
