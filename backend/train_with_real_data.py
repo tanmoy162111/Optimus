@@ -561,9 +561,133 @@ class RealDataTrainer:
             traceback.print_exc()
             return [], []
     
+    def load_awsgoat_scenarios(self):
+        """Load AWSGoat cloud security attack scenarios"""
+        print("\n[6/7] Loading AWSGoat Cloud Security Scenarios...")
+        
+        awsgoat_base = os.path.join(DATASET_BASE, "AWSGoat-master", "AWSGoat-master", "attack-manuals")
+        
+        vuln_examples = []
+        attack_examples = []
+        
+        # Define attack scenarios with their types and severities
+        attack_scenarios = [
+            ('module-1/01-Reflected XSS.md', 'xss', 7.0),
+            ('module-1/02-SQL Injection.md', 'sql_injection', 9.0),
+            ('module-1/03-Insecure Direct Object Reference.md', 'idor', 6.5),
+            ('module-1/04-Sensitive Data Exposure.md', 'info_disclosure', 7.5),
+            ('module-1/05-Server Side Request Forgery Part 1.md', 'ssrf', 8.5),
+            ('module-1/06-Server Side Request Forgery Part 2.md', 'ssrf', 8.5),
+            ('module-1/07-IAM Privilege Escalation.md', 'privilege_escalation', 9.0),
+            ('module-2/01-SQL Injection.md', 'sql_injection', 9.0),
+            ('module-2/02-File Upload and Task Metadata.md', 'file_upload', 7.0),
+            ('module-2/03-ECS Breakout and Instance Metadata.md', 'container_escape', 9.5),
+            ('module-2/04-IAM Privilege Escalation.md', 'privilege_escalation', 9.0),
+        ]
+        
+        total_loaded = 0
+        
+        for file_path, attack_type, severity in attack_scenarios:
+            full_path = os.path.join(awsgoat_base, file_path)
+            
+            if not os.path.exists(full_path):
+                print(f"  [SKIP] {file_path} not found")
+                continue
+            
+            try:
+                with open(full_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    content = f.read()
+                
+                # Extract scenario name from filename
+                scenario_name = os.path.basename(file_path).replace('.md', '')
+                
+                # Parse markdown content - look for objective, solutions, and key techniques
+                lines = content.split('\n')
+                objective = ''
+                techniques = []
+                
+                in_objective = False
+                in_code = False
+                
+                for line in lines:
+                    if '# Objective' in line or '# objective' in line.lower():
+                        in_objective = True
+                        continue
+                    elif line.startswith('# ') and in_objective:
+                        in_objective = False
+                    elif in_objective and line.strip():
+                        objective += line.strip() + ' '
+                    
+                    # Extract code blocks as techniques
+                    if line.strip().startswith('```') and not in_code:
+                        in_code = True
+                        current_code = ''
+                    elif line.strip().startswith('```') and in_code:
+                        in_code = False
+                        if current_code.strip():
+                            techniques.append(current_code.strip())
+                    elif in_code:
+                        current_code += line + '\n'
+                
+                # Create request context from scenario
+                request_str = f"AWS Cloud Attack: {scenario_name} - {objective[:200]}"
+                
+                # Extract features
+                features = self.feature_extractor.extract_http_features(request_str)
+                patterns = self.pattern_extractor.match_patterns(content[:1000])
+                
+                # Create vulnerability example
+                vuln_example = {
+                    'features': features,
+                    'patterns': patterns,
+                    'label': 1,  # All scenarios are vulnerabilities
+                    'is_vulnerable': 1,
+                    'severity': severity,
+                    'attack_type': attack_type,
+                    'evidence': f"{scenario_name}: {objective[:150]}"
+                }
+                
+                vuln_examples.append(vuln_example)
+                attack_examples.append({
+                    'features': features,
+                    'attack_type': attack_type
+                })
+                
+                # Create additional examples from techniques (payloads)
+                for technique in techniques[:3]:  # Limit to 3 techniques per scenario
+                    tech_request = f"AWS Attack Technique: {technique[:200]}"
+                    tech_features = self.feature_extractor.extract_http_features(tech_request)
+                    tech_patterns = self.pattern_extractor.match_patterns(technique)
+                    
+                    vuln_examples.append({
+                        'features': tech_features,
+                        'patterns': tech_patterns,
+                        'label': 1,
+                        'is_vulnerable': 1,
+                        'severity': severity,
+                        'attack_type': attack_type,
+                        'evidence': technique[:150]
+                    })
+                    
+                    attack_examples.append({
+                        'features': tech_features,
+                        'attack_type': attack_type
+                    })
+                    
+                    total_loaded += 1
+                
+                total_loaded += 1
+                print(f"  [OK] Loaded {scenario_name} with {len(techniques[:3])} techniques")
+                
+            except Exception as e:
+                print(f"  [ERROR] Failed to load {file_path}: {e}")
+        
+        print(f"  [OK] Total AWSGoat scenarios and techniques processed: {total_loaded}")
+        return vuln_examples, attack_examples
+    
     def load_unsw_nb15_network_attacks(self):
         """Load UNSW-NB15 network attack dataset"""
-        print("\n[6/6] Loading UNSW-NB15 Network Attack Dataset...")
+        print("\n[7/7] Loading UNSW-NB15 Network Attack Dataset...")
         
         train_path = os.path.join(DATASET_BASE, "UNSW_NB15", "UNSW_NB15_training-set.csv")
         
@@ -648,7 +772,7 @@ class RealDataTrainer:
     
     def train_ml_models(self, vuln_examples, attack_examples):
         """Train all ML models"""
-        print("\n[7/8] Training Machine Learning Models...")
+        print("\n[8/9] Training Machine Learning Models...")
         
         # Train vulnerability detector
         print("  Training Vulnerability Detector...")
@@ -728,7 +852,7 @@ class RealDataTrainer:
     
     def train_rl_agent(self, vuln_examples):
         """Train RL agent for tool selection"""
-        print("\n[8/8] Training Reinforcement Learning Agent...")
+        print("\n[9/9] Training Reinforcement Learning Agent...")
         
         # Initialize RL agent
         rl_agent = EnhancedRLAgent(
@@ -821,7 +945,7 @@ class RealDataTrainer:
             'timestamp': datetime.now().isoformat(),
             'ml_metrics': ml_metrics,
             'rl_metrics': rl_metrics,
-            'datasets_used': ['CSIC', 'SecLists', 'ExploitDB', 'CVE/CWE', 'Security-Patches', 'UNSW-NB15']
+            'datasets_used': ['CSIC', 'SecLists', 'ExploitDB', 'CVE/CWE', 'Security-Patches', 'AWSGoat', 'UNSW-NB15']
         }
         
         os.makedirs('data', exist_ok=True)
@@ -833,7 +957,7 @@ class RealDataTrainer:
 def main():
     print("=" * 80)
     print("Optimus - Real Dataset Training")
-    print("CSIC + SecLists + ExploitDB + CVE/CWE + Security-Patches + UNSW-NB15")
+    print("CSIC + SecLists + ExploitDB + CVE/CWE + Security-Patches + AWSGoat + UNSW-NB15")
     print("=" * 80)
     
     trainer = RealDataTrainer()
@@ -844,11 +968,12 @@ def main():
     exploitdb_vuln, exploitdb_attack = trainer.load_exploitdb_vulnerabilities()
     cve_vuln, cve_attack = trainer.load_cve_database()
     patches_vuln, patches_attack = trainer.load_security_patches()
+    awsgoat_vuln, awsgoat_attack = trainer.load_awsgoat_scenarios()
     unsw_vuln, unsw_attack = trainer.load_unsw_nb15_network_attacks()
     
     # Combine datasets
-    all_vuln_examples = csic_vuln + seclists_vuln + exploitdb_vuln + cve_vuln + patches_vuln + unsw_vuln
-    all_attack_examples = csic_attack + seclists_attack + exploitdb_attack + cve_attack + patches_attack + unsw_attack
+    all_vuln_examples = csic_vuln + seclists_vuln + exploitdb_vuln + cve_vuln + patches_vuln + awsgoat_vuln + unsw_vuln
+    all_attack_examples = csic_attack + seclists_attack + exploitdb_attack + cve_attack + patches_attack + awsgoat_attack + unsw_attack
     
     print(f"\nTotal vulnerability examples: {len(all_vuln_examples)}")
     print(f"Total attack examples: {len(all_attack_examples)}")
