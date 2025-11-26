@@ -14,16 +14,27 @@ class PortSwiggerLabParser:
     def __init__(self, dataset_path: str):
         self.dataset_path = dataset_path
         self.vulnerability_patterns = {
-            'command_injection': ['command', 'injection', 'exec', 'shell'],
-            'sql_injection': ['sql', 'database', 'query', 'select', 'union'],
-            'xss': ['xss', 'cross-site', 'script', 'html', 'dom'],
-            'jwt': ['jwt', 'token', 'signature', 'auth'],
+            'command_injection': ['command', 'injection', 'exec', 'shell', 'os command'],
+            'sql_injection': ['sql', 'database', 'query', 'select', 'union', 'sqli'],
+            'xss': ['xss', 'cross-site scripting', 'script', 'html', 'dom', 'reflected', 'stored'],
+            'jwt': ['jwt', 'token', 'signature', 'auth', 'json web token'],
             'xxe': ['xml', 'external', 'entity', 'xxe'],
-            'ssrf': ['ssrf', 'server-side', 'request', 'forge'],
-            'path_traversal': ['path', 'traversal', 'directory', '../'],
-            'deserialization': ['deserialize', 'pickle', 'unserialize'],
-            'csrf': ['csrf', 'cross-site', 'request', 'forge'],
-            'file_upload': ['upload', 'file', 'multipart']
+            'ssrf': ['ssrf', 'server-side request', 'forge'],
+            'path_traversal': ['path', 'traversal', 'directory', '../', 'file path'],
+            'deserialization': ['deserialize', 'pickle', 'unserialize', 'insecure deserialization'],
+            'csrf': ['csrf', 'cross-site request forgery'],
+            'file_upload': ['upload', 'file', 'multipart'],
+            'authentication': ['authentication', 'auth bypass', 'broken auth', 'password'],
+            'access_control': ['access control', 'authorization', 'privilege', 'idor'],
+            'business_logic': ['business logic', 'race condition', 'workflow'],
+            'information_disclosure': ['information disclosure', 'sensitive data', 'error message'],
+            'clickjacking': ['clickjacking', 'ui redress', 'iframe'],
+            'cors': ['cors', 'cross-origin', 'sop'],
+            'websockets': ['websocket', 'ws://'],
+            'web_cache': ['web cache', 'cache poisoning'],
+            'http_request_smuggling': ['request smuggling', 'http smuggling'],
+            'oauth': ['oauth', 'openid'],
+            'prototype_pollution': ['prototype pollution', '__proto__']
         }
     
     def parse_labs(self) -> Dict[str, List[Dict[str, Any]]]:

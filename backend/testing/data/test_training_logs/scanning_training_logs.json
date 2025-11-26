@@ -1,0 +1,35 @@
+[
+  {
+    "context": {
+      "phase": "scanning",
+      "findings": [],
+      "tools_executed": []
+    },
+    "tool": "nmap",
+    "success": true,
+    "vulns_found": 1,
+    "execution_time": 10.5
+  },
+  {
+    "context": {
+      "phase": "scanning",
+      "findings": [],
+      "tools_executed": []
+    },
+    "tool": "nmap",
+    "success": true,
+    "vulns_found": 1,
+    "execution_time": 10.5
+  },
+  {
+    "context": {
+      "phase": "scanning",
+      "findings": [],
+      "tools_executed": []
+    },
+    "tool": "nmap",
+    "success": true,
+    "vulns_found": 1,
+    "execution_time": 10.5
+  }
+]
