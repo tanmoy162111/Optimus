@@ -1573,5 +1573,131 @@
     "success": true,
     "vulns_found": 0,
     "execution_time": 209.09685567428423
+  },
+  {
+    "context": {
+      "target_type": "web",
+      "domain_complexity": 0.3779909725889077,
+      "passive_recon_complete": true,
+      "active_recon_started": false,
+      "subdomains_discovered": 24,
+      "emails_discovered": 4,
+      "technologies_discovered": 1,
+      "employees_discovered": 7,
+      "time_in_phase": 1642,
+      "stealth_required": true,
+      "detection_risk": 0.18057090929048114,
+      "num_tools_executed": 4,
+      "passive_tools_ratio": 0.6625690838509968
+    },
+    "tool": "theHarvester",
+    "success": false,
+    "vulns_found": 0,
+    "execution_time": 164.09978338925137
+  },
+  {
+    "context": {
+      "target_type": "api",
+      "domain_complexity": 0.40632468711741326,
+      "passive_recon_complete": false,
+      "active_recon_started": true,
+      "subdomains_discovered": 49,
+      "emails_discovered": 8,
+      "technologies_discovered": 8,
+      "employees_discovered": 1,
+      "time_in_phase": 404,
+      "stealth_required": false,
+      "detection_risk": 0.4183231877443597,
+      "num_tools_executed": 1,
+      "passive_tools_ratio": 0.44512110785138614
+    },
+    "tool": "theHarvester",
+    "success": true,
+    "vulns_found": 0,
+    "execution_time": 165.6545086426316
+  },
+  {
+    "context": {
+      "target_type": "network",
+      "domain_complexity": 0.6113193555820383,
+      "passive_recon_complete": true,
+      "active_recon_started": false,
+      "subdomains_discovered": 13,
+      "emails_discovered": 13,
+      "technologies_discovered": 13,
+      "employees_discovered": 14,
+      "time_in_phase": 644,
+      "stealth_required": false,
+      "detection_risk": 0.44489347056392925,
+      "num_tools_executed": 0,
+      "passive_tools_ratio": 0.5044166269848209
+    },
+    "tool": "dnsenum",
+    "success": true,
+    "vulns_found": 0,
+    "execution_time": 207.2313146147343
+  },
+  {
+    "context": {
+      "target_type": "api",
+      "domain_complexity": 0.38876772162654283,
+      "passive_recon_complete": true,
+      "active_recon_started": false,
+      "subdomains_discovered": 23,
+      "emails_discovered": 19,
+      "technologies_discovered": 4,
+      "employees_discovered": 25,
+      "time_in_phase": 890,
+      "stealth_required": true,
+      "detection_risk": 0.1543315997050082,
+      "num_tools_executed": 3,
+      "passive_tools_ratio": 0.6738200990504433
+    },
+    "tool": "dnsenum",
+    "success": false,
+    "vulns_found": 0,
+    "execution_time": 267.9824202344961
+  },
+  {
+    "context": {
+      "target_type": "web",
+      "domain_complexity": 0.7949687824772309,
+      "passive_recon_complete": false,
+      "active_recon_started": false,
+      "subdomains_discovered": 35,
+      "emails_discovered": 3,
+      "technologies_discovered": 3,
+      "employees_discovered": 7,
+      "time_in_phase": 839,
+      "stealth_required": true,
+      "detection_risk": 0.18432617490068323,
+      "num_tools_executed": 0,
+      "passive_tools_ratio": 0.7468665467247908
+    },
+    "tool": "arjun",
+    "success": true,
+    "vulns_found": 0,
+    "execution_time": 283.89467580039394
+  },
+  {
+    "context": {
+      "target_type": "api",
+      "domain_complexity": 0.763490962265426,
+      "passive_recon_complete": false,
+      "active_recon_started": true,
+      "subdomains_discovered": 20,
+      "emails_discovered": 5,
+      "technologies_discovered": 10,
+      "employees_discovered": 9,
+      "time_in_phase": 350,
+      "stealth_required": true,
+      "detection_risk": 0.2806685951113205,
+      "num_tools_executed": 1,
+      "passive_tools_ratio": 0.7402701142541137
+    },
+    "tool": "arjun",
+    "success": false,
+    "vulns_found": 0,
+    "execution_time": 189.87668340704815
   }
 ]
