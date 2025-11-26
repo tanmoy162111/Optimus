@@ -8,6 +8,17 @@ import logging
 import threading
 from execution.ssh_client import KaliSSHClient
 
+# Import production data collector
+try:
+    import sys
+    import os
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), 'training'))
+    from production_data_collector import get_collector
+    DATA_COLLECTION_ENABLED = True
+except ImportError as e:
+    DATA_COLLECTION_ENABLED = False
+    print(f"Warning: Production data collection disabled: {e}")
+
 logger = logging.getLogger(__name__)
 
 scan_bp = Blueprint('scan', __name__)
@@ -167,6 +178,18 @@ def execute_tool():
         # Execute tool in background
         def run_tool():
             from app import socketio
+            start_time = datetime.now()
+            
+            # Capture scan state before execution (for data collection)
+            context_snapshot = {
+                'phase': scan.get('phase'),
+                'target_type': 'web',  # Could be extracted from target
+                'findings': scan.get('findings', []),
+                'tools_executed': scan.get('tools_executed', []),
+                'coverage': scan.get('coverage', 0.0),
+                'time_elapsed': scan.get('time_elapsed', 0),
+                'phase_data': scan.get('phase_data', {})
+            }
             
             def output_callback(line):
                 # Stream output to WebSocket
@@ -191,9 +214,30 @@ def execute_tool():
                         output_callback=output_callback
                     )
                     
+                    execution_time = (datetime.now() - start_time).total_seconds()
+                    
                     # Update scan with results
                     scan['tools_executed'].append(tool_name)
                     scan['status'] = 'running'
+                    
+                    # Log to production data collector
+                    if DATA_COLLECTION_ENABLED:
+                        try:
+                            collector = get_collector()
+                            collector.log_tool_execution({
+                                'scan_id': scan_id,
+                                'phase': scan.get('phase'),
+                                'tool': tool_name,
+                                'target': target,
+                                'context': context_snapshot,
+                                'result': result,
+                                'timestamp': start_time.isoformat(),
+                                'success': result.get('success', False),
+                                'vulns_found': 0,  # Would parse from result
+                                'execution_time': execution_time
+                            })
+                        except Exception as e:
+                            logger.warning(f"Failed to log tool execution: {e}")
                     
                     # Emit completion
                     socketio.emit('tool_execution_complete', {
@@ -201,7 +245,7 @@ def execute_tool():
                         'tool': tool_name,
                         'success': result['success'],
                         'exit_code': result['exit_code'],
-                        'execution_time': result.get('execution_time', 0)
+                        'execution_time': execution_time
                     }, room=scan_id)
                     
             except Exception as e:

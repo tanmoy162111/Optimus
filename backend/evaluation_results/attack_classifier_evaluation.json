@@ -1,0 +1,174 @@
+{
+  "model": "attack_classifier",
+  "timestamp": "2025-11-26T05:28:24.382663",
+  "summary": {
+    "macro_f1": 0.02350217960368195,
+    "weighted_f1": 0.05995494633948863,
+    "critical_f1_min": 0.07111111111111111
+  },
+  "detailed_results": {
+    "auth_bypass": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 97.0
+    },
+    "backdoor": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "buffer_overflow": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "container_escape": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "csrf": {
+      "precision": 0.07142857142857142,
+      "recall": 0.009708737864077669,
+      "f1-score": 0.017094017094017096,
+      "support": 103.0
+    },
+    "dos": {
+      "precision": 0.13793103448275862,
+      "recall": 0.1415929203539823,
+      "f1-score": 0.13973799126637554,
+      "support": 113.0
+    },
+    "exploit": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "file_upload": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "fuzzing": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "generic_attack": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "hardcoded_credentials": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "idor": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "info_disclosure": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "injection": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "ldap_injection": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "path_traversal": {
+      "precision": 0.16049382716049382,
+      "recall": 0.12037037037037036,
+      "f1-score": 0.13756613756613756,
+      "support": 108.0
+    },
+    "privilege_escalation": {
+      "precision": 0.1111111111111111,
+      "recall": 0.02197802197802198,
+      "f1-score": 0.03669724770642202,
+      "support": 91.0
+    },
+    "rce": {
+      "precision": 0.125,
+      "recall": 0.05813953488372093,
+      "f1-score": 0.07936507936507936,
+      "support": 86.0
+    },
+    "reconnaissance": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "sql_injection": {
+      "precision": 0.09411764705882353,
+      "recall": 0.08421052631578947,
+      "f1-score": 0.08888888888888889,
+      "support": 95.0
+    },
+    "ssrf": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 97.0
+    },
+    "weak_crypto": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "webapp_exploit": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "xss": {
+      "precision": 0.06349206349206349,
+      "recall": 0.08080808080808081,
+      "f1-score": 0.07111111111111111,
+      "support": 99.0
+    },
+    "xxe": {
+      "precision": 0.16666666666666666,
+      "recall": 0.009009009009009009,
+      "f1-score": 0.017094017094017096,
+      "support": 111.0
+    },
+    "accuracy": 0.054,
+    "macro avg": {
+      "precision": 0.037209636856019544,
+      "recall": 0.021032688063322102,
+      "f1-score": 0.02350217960368195,
+      "support": 1000.0
+    },
+    "weighted avg": {
+      "precision": 0.09486468495444154,
+      "recall": 0.054,
+      "f1-score": 0.05995494633948863,
+      "support": 1000.0
+    }
+  }
+}

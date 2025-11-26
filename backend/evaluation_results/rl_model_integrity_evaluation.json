@@ -1,0 +1,10 @@
+{
+  "test": "rl_model_integrity",
+  "timestamp": "2025-11-26T05:28:40.014022",
+  "results": {
+    "status": "passed",
+    "model_path": "models/rl_agent.weights.h5",
+    "file_size_kb": 79.671875,
+    "loadable": true
+  }
+}

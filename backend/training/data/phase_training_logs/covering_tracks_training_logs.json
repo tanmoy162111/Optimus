@@ -1,0 +1,122 @@
+[
+  {
+    "context": {
+      "log_entries_present": 125,
+      "artifacts_present": 7,
+      "backdoors_installed": 0,
+      "forensic_evidence_score": 7.314381429387744,
+      "logs_cleaned": true,
+      "timestamps_modified": false,
+      "artifacts_removed": true,
+      "time_remaining": 252,
+      "stealth_critical": false,
+      "detection_imminent": true,
+      "os_type": "linux",
+      "admin_access": true
+    },
+    "tool": "wevtutil",
+    "success": false,
+    "vulns_found": 0,
+    "execution_time": 112.62418305347485
+  },
+  {
+    "context": {
+      "log_entries_present": 236,
+      "artifacts_present": 8,
+      "backdoors_installed": 2,
+      "forensic_evidence_score": 5.085845659720331,
+      "logs_cleaned": false,
+      "timestamps_modified": true,
+      "artifacts_removed": true,
+      "time_remaining": 443,
+      "stealth_critical": true,
+      "detection_imminent": true,
+      "os_type": "linux",
+      "admin_access": true
+    },
+    "tool": "wevtutil",
+    "success": true,
+    "vulns_found": 0,
+    "execution_time": 38.265262179415394
+  },
+  {
+    "context": {
+      "log_entries_present": 72,
+      "artifacts_present": 5,
+      "backdoors_installed": 0,
+      "forensic_evidence_score": 4.4914486426730456,
+      "logs_cleaned": true,
+      "timestamps_modified": true,
+      "artifacts_removed": true,
+      "time_remaining": 206,
+      "stealth_critical": true,
+      "detection_imminent": true,
+      "os_type": "linux",
+      "admin_access": true
+    },
+    "tool": "timestomp",
+    "success": true,
+    "vulns_found": 0,
+    "execution_time": 179.19602755981532
+  },
+  {
+    "context": {
+      "log_entries_present": 241,
+      "artifacts_present": 5,
+      "backdoors_installed": 2,
+      "forensic_evidence_score": 5.420760171569362,
+      "logs_cleaned": true,
+      "timestamps_modified": false,
+      "artifacts_removed": true,
+      "time_remaining": 152,
+      "stealth_critical": true,
+      "detection_imminent": true,
+      "os_type": "linux",
+      "admin_access": true
+    },
+    "tool": "timestomp",
+    "success": false,
+    "vulns_found": 0,
+    "execution_time": 109.71921845626379
+  },
+  {
+    "context": {
+      "log_entries_present": 291,
+      "artifacts_present": 2,
+      "backdoors_installed": 2,
+      "forensic_evidence_score": 8.045941790939432,
+      "logs_cleaned": false,
+      "timestamps_modified": true,
+      "artifacts_removed": false,
+      "time_remaining": 371,
+      "stealth_critical": false,
+      "detection_imminent": true,
+      "os_type": "linux",
+      "admin_access": true
+    },
+    "tool": "clear_logs",
+    "success": true,
+    "vulns_found": 0,
+    "execution_time": 158.30226201723076
+  },
+  {
+    "context": {
+      "log_entries_present": 229,
+      "artifacts_present": 7,
+      "backdoors_installed": 0,
+      "forensic_evidence_score": 4.47814320080715,
+      "logs_cleaned": false,
+      "timestamps_modified": true,
+      "artifacts_removed": true,
+      "time_remaining": 332,
+      "stealth_critical": false,
+      "detection_imminent": false,
+      "os_type": "linux",
+      "admin_access": false
+    },
+    "tool": "shred",
+    "success": false,
+    "vulns_found": 0,
+    "execution_time": 69.7819448035556
+  }
+]

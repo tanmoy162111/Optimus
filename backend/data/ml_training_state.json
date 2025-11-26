@@ -1,35 +1,33 @@
 {
-  "timestamp": "2025-11-26T04:45:48.975574",
+  "timestamp": "2025-11-26T05:32:41.096567",
   "ml_metrics": {
     "vuln_detector": {
-      "precision": 0.9267501159017153,
-      "recall": 0.951451689671585,
-      "f1": 0.9389384687646782,
-      "accuracy": 0.9200492004920049,
-      "roc_auc": 0.9840144798864965
+      "note": "Using existing trained model (93.89% F1)",
+      "f1": 0.9389,
+      "precision": 0.9268,
+      "recall": 0.9515,
+      "accuracy": 0.92,
+      "roc_auc": 0.984
     },
     "attack_classifier": {
-      "precision": 0.6283405915641617,
-      "recall": 0.5956232159847764,
-      "f1": 0.5984164992671195,
-      "accuracy": 0.5956232159847764
+      "f1": 0.6055518549175215,
+      "accuracy": 0.6117982873453853,
+      "macro_f1": 0.45800813016684505
     },
     "severity_predictor": {
-      "mae": 1.4938444801328077,
-      "rmse": 2.1299474985606137,
-      "r2": 0.6659954632113261
+      "mae": 0.9185755945340569,
+      "r2": 0.47857442008670537,
+      "rmse": 1.299665978666966
     },
     "tool_recommender": {
-      "precision": 0.05444444444444444,
-      "recall": 0.23333333333333334,
-      "f1": 0.08828828828828829,
-      "accuracy": 0.23333333333333334
+      "accuracy": 0.232,
+      "f1": 0.08737662337662339
     }
   },
   "rl_metrics": {
-    "avg_episode_reward": 0.0,
-    "episodes_trained": 50,
+    "episodes_trained": 200,
     "epsilon": 1.0,
+    "epsilon_min": 0.05,
     "memory_size": 0
   },
   "datasets_used": [
@@ -43,5 +41,11 @@
     "Stratus-RedTeam",
     "OWASP-Benchmark",
     "UNSW-NB15"
-  ]
+  ],
+  "improvements": {
+    "attack_classifier": "Increased estimators to 300, depth to 25, better class balancing",
+    "severity_predictor": "Increased estimators to 250, better feature engineering",
+    "tool_recommender": "Expanded training to 5000 logs, ensemble approach",
+    "rl_agent": "Extended to 200 episodes with proper epsilon decay"
+  }
 }

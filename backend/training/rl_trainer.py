@@ -9,6 +9,8 @@ from typing import Dict, Any, List, Tuple
 import random
 from collections import deque
 import os
+import pickle
+from datetime import datetime
 
 class EnhancedRLAgent:
     """DQN-based RL agent for tool selection in pentesting"""
@@ -22,9 +24,16 @@ class EnhancedRLAgent:
         self.gamma = 0.95  # Discount factor
         self.epsilon = 1.0  # Exploration rate
         self.epsilon_min = 0.05
-        self.epsilon_decay = 0.995
+        self.epsilon_decay = 0.99  # Increased decay rate for faster convergence
         self.batch_size = 32
         self.memory = deque(maxlen=2000)
+        
+        # Track epsilon history
+        self.epsilon_history = [self.epsilon]
+        self.reward_history = []
+        self.loss_history = []
+        self.update_counter = 0
+        self.target_update_frequency = 100
         
         # Build Q-networks
         self.q_network = self._build_q_network()
@@ -205,13 +214,31 @@ class EnhancedRLAgent:
         # Store experience
         self.remember(state, action_idx, reward, next_state, done)
         
-        # Train on experience
-        if len(self.memory) >= self.batch_size:
-            self.replay()
+        # Store reward for tracking
+        self.reward_history.append(reward)
         
-        # Decay epsilon
-        if self.epsilon > self.epsilon_min:
-            self.epsilon *= self.epsilon_decay
+        # Train on experience
+        loss = 0.0
+        if len(self.memory) >= self.batch_size:
+            loss = self.replay()
+            self.loss_history.append(loss)
+        
+        # Update target network periodically
+        self.update_counter += 1
+        if self.update_counter % self.target_update_frequency == 0:
+            self.update_target_network()
+        
+        # Decay epsilon AFTER episode completes
+        if done:
+            old_epsilon = self.epsilon
+            if self.epsilon > self.epsilon_min:
+                self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
+            self.epsilon_history.append(self.epsilon)
+            
+            # Log every 10 episodes
+            if len(self.epsilon_history) % 10 == 0:
+                print(f"Episode {len(self.epsilon_history)}: "
+                      f"Epsilon = {self.epsilon:.4f} (decayed from {old_epsilon:.4f})")
     
     def train_from_episodes(self, episodes: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
@@ -258,19 +285,69 @@ class EnhancedRLAgent:
         return metrics
     
     def save_model(self, path: str):
-        """Save Q-network weights"""
+        """Save model with all training state"""
         os.makedirs(os.path.dirname(path), exist_ok=True)
-        self.q_network.save_weights(path)
-        print(f"  ✓ RL model saved: {path}")
+        
+        # Save as pickle with all state
+        save_data = {
+            'q_network_weights': self.q_network.get_weights(),
+            'target_network_weights': self.target_network.get_weights(),
+            'epsilon': self.epsilon,
+            'epsilon_history': self.epsilon_history,
+            'reward_history': self.reward_history[-1000:],  # Keep last 1000
+            'loss_history': self.loss_history[-1000:],  # Keep last 1000
+            'replay_buffer': list(self.memory)[-1000:],  # Keep last 1000
+            'hyperparameters': {
+                'gamma': self.gamma,
+                'epsilon_decay': self.epsilon_decay,
+                'epsilon_min': self.epsilon_min,
+                'batch_size': self.batch_size,
+                'learning_rate': float(self.q_network.optimizer.learning_rate.numpy())
+            },
+            'metadata': {
+                'episodes_trained': len(self.epsilon_history),
+                'update_counter': self.update_counter,
+                'timestamp': datetime.now().isoformat()
+            }
+        }
+        
+        with open(path, 'wb') as f:
+            pickle.dump(save_data, f)
+        
+        print(f"✅ Model saved to {path}")
+        print(f"   Episodes: {len(self.epsilon_history)}")
+        print(f"   Epsilon: {self.epsilon:.4f}")
     
     def load_model(self, path: str):
-        """Load Q-network weights"""
+        """Load model with all training state"""
         if not os.path.exists(path):
             raise FileNotFoundError(f"Model not found: {path}")
         
-        self.q_network.load_weights(path)
-        self.update_target_network()
-        print(f"  ✓ RL model loaded: {path}")
+        with open(path, 'rb') as f:
+            save_data = pickle.load(f)
+        
+        # Load network weights
+        self.q_network.set_weights(save_data['q_network_weights'])
+        self.target_network.set_weights(save_data['target_network_weights'])
+        
+        # Restore epsilon and history
+        self.epsilon = save_data.get('epsilon', self.epsilon_min)
+        self.epsilon_history = save_data.get('epsilon_history', [])
+        self.reward_history = save_data.get('reward_history', [])
+        self.loss_history = save_data.get('loss_history', [])
+        
+        # Restore replay buffer
+        if 'replay_buffer' in save_data:
+            self.memory = deque(save_data['replay_buffer'], maxlen=2000)
+        
+        # Restore counter
+        metadata = save_data.get('metadata', {})
+        self.update_counter = metadata.get('update_counter', 0)
+        
+        print(f"✅ Model loaded from {path}")
+        print(f"   Episodes trained: {len(self.epsilon_history)}")
+        print(f"   Current epsilon: {self.epsilon:.4f}")
+        print(f"   Replay buffer size: {len(self.memory)}")
     
     def _build_tool_mapping(self, available_tools: List[str]):
         """Build mapping between tool names and action indices"""

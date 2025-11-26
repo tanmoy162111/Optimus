@@ -1,0 +1,9 @@
+{
+  "test": "rl_exploration",
+  "timestamp": "2025-11-26T05:28:39.771262",
+  "results": {
+    "final_epsilon": 1.0,
+    "target_epsilon": 0.1,
+    "status": "needs_training"
+  }
+}
