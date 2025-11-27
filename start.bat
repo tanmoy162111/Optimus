@@ -13,8 +13,8 @@ echo [1/3] Checking Kali VM status...
 if errorlevel 1 (
     echo Kali VM not running. Starting Kali VM...
     "%VBOX_PATH%" startvm "kali" --type headless
-    echo Waiting 30 seconds for Kali VM to boot...
-    timeout /t 30 /nobreak >nul
+    echo Waiting 60 seconds for Kali VM to boot...
+    timeout /t 60 /nobreak >nul
     echo Kali VM started successfully!
 ) else (
     echo Kali VM already running.
@@ -23,7 +23,12 @@ if errorlevel 1 (
 REM Start Backend
 echo.
 echo [2/3] Starting Backend Server (Port 5000)...
-start "Optimus Backend" cmd /k "cd /d "%~dp0backend" && venv\Scripts\python.exe app.py"
+IF EXIST "%~dp0backend\venv\Scripts\python.exe" (
+    start "Optimus Backend" "%~dp0backend\venv\Scripts\python.exe" "%~dp0backend\app.py"
+) ELSE (
+    echo Virtualenv Python not found, using system Python
+    start "Optimus Backend" python "%~dp0backend\app.py"
+)
 timeout /t 3 /nobreak >nul
 
 REM Start Frontend

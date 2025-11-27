@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { Shield, Activity, Target, AlertTriangle, Zap } from 'lucide-react';
+import { io } from 'socket.io-client';
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -10,9 +11,39 @@ export default function Dashboard() {
     systemHealth: 'healthy'
   });
 
+  // Dashboard scan control state
+  const [targetInput, setTargetInput] = useState('');
+  const [scan, setScan] = useState<any | null>(null);
+  const [logs, setLogs] = useState<string[]>([]);
+  const [executing, setExecuting] = useState(false);
+
   useEffect(() => {
     loadDashboardData();
   }, []);
+
+  // Join WebSocket room for live tool output when a scan is active
+  useEffect(() => {
+    if (!scan) return;
+    const s = io(import.meta.env.VITE_API_URL || 'http://localhost:5000');
+    s.emit('join_scan', { scan_id: scan.scan_id });
+    s.on('tool_execution_start', (evt: any) => {
+      setLogs((prev) => [...prev, `▶ ${evt.tool} started on ${evt.target}`]);
+    });
+    s.on('tool_output', (evt: any) => {
+      if (evt.output) setLogs((prev) => [...prev, evt.output]);
+    });
+    s.on('tool_execution_complete', (evt: any) => {
+      setLogs((prev) => [...prev, `✓ ${evt.tool} completed (success=${evt.success}) in ${typeof evt.execution_time === 'number' ? evt.execution_time.toFixed(2) : evt.execution_time}s`]);
+      setExecuting(false);
+    });
+    s.on('error', (evt: any) => {
+      setLogs((prev) => [...prev, `✗ Error: ${evt.error}`]);
+      setExecuting(false);
+    });
+    return () => {
+      s.disconnect();
+    };
+  }, [scan]);
 
   const loadDashboardData = async () => {
     try {
@@ -28,6 +59,36 @@ export default function Dashboard() {
       });
     } catch (error) {
       console.error('Error loading dashboard:', error);
+    }
+  };
+
+  // Start a scan directly from dashboard
+  const startDashboardScan = async () => {
+    if (!targetInput.trim()) {
+      alert('Enter target (use http:// for web targets)');
+      return;
+    }
+    try {
+      const res = await api.scan.start(targetInput.trim());
+      setScan(res.data);
+      setLogs((prev) => [...prev, `Scan started for ${res.data.target}`]);
+    } catch (e: any) {
+      alert(e?.response?.data?.error || 'Failed to start scan');
+    }
+  };
+
+  // Execute a tool against current dashboard scan
+  const executeDashboardTool = async (tool: string) => {
+    if (!scan) {
+      alert('Start a scan first');
+      return;
+    }
+    setExecuting(true);
+    try {
+      await api.scan.executeTool(scan.scan_id, tool, scan.target);
+    } catch (e: any) {
+      setExecuting(false);
+      alert(e?.response?.data?.error || `Failed to execute ${tool}`);
     }
   };
 
@@ -168,47 +229,59 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Key Features Card */}
+          {/* Key Features + Scan Control Card */}
           <div className="relative group">
             <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-lg blur-sm"></div>
             <div className="relative bg-gray-900/90 border border-purple-500/30 rounded-lg p-8 backdrop-blur-sm">
-              <h3 className="text-2xl font-bold mb-6 text-purple-400">Key Features</h3>
-              <div className="grid grid-cols-1 gap-4">
-                <div className="flex items-start gap-3 p-4 bg-purple-500/10 rounded-lg border border-purple-500/20">
-                  <span className="text-purple-400 text-xl">◆</span>
-                  <div>
-                    <strong className="text-purple-300">6 ML Models</strong>
-                    <p className="text-sm text-gray-400 mt-1">
-                      Vuln detection, attack classification, severity prediction
-                    </p>
-                  </div>
+              <h3 className="text-2xl font-bold mb-6 text-purple-400">Quick Scan Control</h3>
+
+              {/* Target input + start */}
+              <div className="space-y-4 mb-6">
+                <label className="block text-sm font-medium text-gray-300">Target</label>
+                <input
+                  type="text"
+                  value={targetInput}
+                  onChange={(e) => setTargetInput(e.target.value)}
+                  placeholder="http://<ip-or-host>"
+                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+                <div className="flex gap-3">
+                  <button
+                    onClick={startDashboardScan}
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded"
+                  >Start Scan</button>
+                  {scan && (
+                    <span className="text-sm text-gray-400">Scan ID: <span className="text-gray-200 font-mono">{scan.scan_id}</span></span>
+                  )}
                 </div>
-                <div className="flex items-start gap-3 p-4 bg-blue-500/10 rounded-lg border border-blue-500/20">
-                  <span className="text-blue-400 text-xl">◆</span>
-                  <div>
-                    <strong className="text-blue-300">DQN-based RL Agent</strong>
-                    <p className="text-sm text-gray-400 mt-1">
-                      Adaptive tool selection and strategy optimization
-                    </p>
-                  </div>
+              </div>
+
+              {/* Tool execution */}
+              <div className="space-y-3">
+                <h4 className="text-lg font-semibold text-purple-300">Execute Tools</h4>
+                <div className="flex flex-wrap gap-2">
+                  {['nmap','nuclei','nikto','sqlmap','commix'].map((t) => (
+                    <button
+                      key={t}
+                      disabled={!scan || executing}
+                      onClick={() => executeDashboardTool(t)}
+                      className={`px-3 py-2 rounded text-white ${!scan ? 'bg-gray-700 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'}`}
+                    >{t}</button>
+                  ))}
                 </div>
-                <div className="flex items-start gap-3 p-4 bg-cyan-500/10 rounded-lg border border-cyan-500/20">
-                  <span className="text-cyan-400 text-xl">◆</span>
-                  <div>
-                    <strong className="text-cyan-300">5 Pentesting Phases</strong>
-                    <p className="text-sm text-gray-400 mt-1">
-                      Recon → Scan → Exploit → Post-Exploit → Cleanup
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 p-4 bg-green-500/10 rounded-lg border border-green-500/20">
-                  <span className="text-green-400 text-xl">◆</span>
-                  <div>
-                    <strong className="text-green-300">Real-time Updates</strong>
-                    <p className="text-sm text-gray-400 mt-1">
-                      WebSocket-based live monitoring
-                    </p>
-                  </div>
+              </div>
+
+              {/* Live output */}
+              <div className="mt-6">
+                <h4 className="text-lg font-semibold text-purple-300 mb-2">Live Output</h4>
+                <div className="h-48 overflow-auto bg-black/60 border border-gray-700 rounded p-3 font-mono text-sm text-gray-200">
+                  {logs.length === 0 ? (
+                    <div className="text-gray-500">No output yet. Start a scan and run a tool.</div>
+                  ) : (
+                    logs.slice(-200).map((line, idx) => (
+                      <div key={idx} className="whitespace-pre-wrap">{line}</div>
+                    ))
+                  )}
                 </div>
               </div>
             </div>

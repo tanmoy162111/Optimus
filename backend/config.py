@@ -16,13 +16,21 @@ class Config:
     KALI_PASSWORD = os.getenv('KALI_PASSWORD', 'kali')
     KALI_KEY_PATH = os.getenv('KALI_KEY_PATH', '')
     
+    # SSH connection tuning
+    KALI_CONNECT_TIMEOUT = int(os.getenv('KALI_CONNECT_TIMEOUT', 30))
+    KALI_CONNECT_RETRIES = int(os.getenv('KALI_CONNECT_RETRIES', 3))
+    KALI_KEEPALIVE_SECONDS = int(os.getenv('KALI_KEEPALIVE_SECONDS', 30))
+    
     # Kali VM Config Dict
     KALI_VM = {
         'host': KALI_HOST,
         'port': KALI_PORT,
         'username': KALI_USER,
         'password': KALI_PASSWORD,
-        'key_path': KALI_KEY_PATH
+        'key_path': KALI_KEY_PATH,
+        'connect_timeout': KALI_CONNECT_TIMEOUT,
+        'connect_retries': KALI_CONNECT_RETRIES,
+        'keepalive_seconds': KALI_KEEPALIVE_SECONDS
     }
     
     # Paths

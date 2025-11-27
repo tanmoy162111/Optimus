@@ -31,33 +31,56 @@ class KaliSSHClient:
         try:
             self.client = paramiko.SSHClient()
             self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            
-            # Try key-based auth first, then password
-            if self.config.get('key_path'):
-                logger.info(f"Connecting to {self.config['host']} with SSH key...")
-                self.client.connect(
-                    hostname=self.config['host'],
-                    port=self.config['port'],
-                    username=self.config['username'],
-                    key_filename=self.config['key_path'],
-                    timeout=10
-                )
-            else:
-                logger.info(f"Connecting to {self.config['host']} with password...")
-                self.client.connect(
-                    hostname=self.config['host'],
-                    port=self.config['port'],
-                    username=self.config['username'],
-                    password=self.config['password'],
-                    timeout=10
-                )
-            
-            self.connected = True
-            logger.info(f"Successfully connected to Kali VM at {self.config['host']}")
-            return True
-            
+
+            retries = int(self.config.get('connect_retries', 3))
+            timeout = int(self.config.get('connect_timeout', 30))
+            last_err = None
+
+            for attempt in range(1, retries + 1):
+                try:
+                    # Try key-based auth first, then password
+                    if self.config.get('key_path'):
+                        logger.info(f"Connecting to {self.config['host']} (attempt {attempt}/{retries}) with SSH key...")
+                        self.client.connect(
+                            hostname=self.config['host'],
+                            port=self.config['port'],
+                            username=self.config['username'],
+                            key_filename=self.config['key_path'],
+                            timeout=timeout,
+                            allow_agent=True,
+                            look_for_keys=True
+                        )
+                    else:
+                        logger.info(f"Connecting to {self.config['host']} (attempt {attempt}/{retries}) with password...")
+                        self.client.connect(
+                            hostname=self.config['host'],
+                            port=self.config['port'],
+                            username=self.config['username'],
+                            password=self.config['password'],
+                            timeout=timeout,
+                            allow_agent=False,
+                            look_for_keys=False
+                        )
+
+                    # Enable server keepalive to maintain session
+                    transport = self.client.get_transport()
+                    if transport:
+                        keepalive = int(self.config.get('keepalive_seconds', 30))
+                        transport.set_keepalive(keepalive)
+
+                    self.connected = True
+                    logger.info(f"Successfully connected to Kali VM at {self.config['host']} (timeout={timeout}s)")
+                    return True
+                except Exception as e:
+                    last_err = e
+                    logger.warning(f"SSH connect attempt {attempt}/{retries} failed: {e}")
+                    time.sleep(2 * attempt)
+
+            logger.error(f"Failed to connect to Kali VM after {retries} attempts: {last_err}")
+            self.connected = False
+            return False
         except Exception as e:
-            logger.error(f"Failed to connect to Kali VM: {e}")
+            logger.error(f"Failed to initialize SSH client: {e}")
             self.connected = False
             return False
     

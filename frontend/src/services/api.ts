@@ -17,7 +17,10 @@ export const api = {
       axios.get(`${API_URL}/api/scan/results/${scanId}`),
     
     list: () => 
-      axios.get(`${API_URL}/api/scan/list`)
+      axios.get(`${API_URL}/api/scan/list`),
+
+    executeTool: (scanId: string, tool: string, target: string, options: Record<string, any> = {}) =>
+      axios.post(`${API_URL}/api/scan/execute-tool`, { scan_id: scanId, tool, target, options })
   },
   
   training: {

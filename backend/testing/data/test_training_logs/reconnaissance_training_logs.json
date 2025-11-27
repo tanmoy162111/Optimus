@@ -31,5 +31,38 @@
     "success": true,
     "vulns_found": 1,
     "execution_time": 10.5
+  },
+  {
+    "context": {
+      "phase": "reconnaissance",
+      "findings": [],
+      "tools_executed": []
+    },
+    "tool": "sublist3r",
+    "success": true,
+    "vulns_found": 1,
+    "execution_time": 10.5
+  },
+  {
+    "context": {
+      "phase": "reconnaissance",
+      "findings": [],
+      "tools_executed": []
+    },
+    "tool": "sublist3r",
+    "success": true,
+    "vulns_found": 1,
+    "execution_time": 10.5
+  },
+  {
+    "context": {
+      "phase": "reconnaissance",
+      "findings": [],
+      "tools_executed": []
+    },
+    "tool": "sublist3r",
+    "success": true,
+    "vulns_found": 1,
+    "execution_time": 10.5
   }
 ]

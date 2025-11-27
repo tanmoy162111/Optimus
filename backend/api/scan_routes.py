@@ -7,6 +7,8 @@ import uuid
 import logging
 import threading
 from execution.ssh_client import KaliSSHClient
+from inference.tool_manager import ToolManager
+from inference.workflow_engine import WorkflowEngine
 
 # Import production data collector
 try:
@@ -26,6 +28,17 @@ scan_bp = Blueprint('scan', __name__)
 # In-memory scan storage (in production, use database)
 active_scans = {}
 scan_history = []
+
+# Workflow engine instance (will be initialized on first request)
+workflow_engine = None
+
+def get_workflow_engine():
+    """Get or create workflow engine instance"""
+    global workflow_engine
+    if workflow_engine is None:
+        from app import socketio
+        workflow_engine = WorkflowEngine(socketio, active_scans)
+    return workflow_engine
 
 @scan_bp.route('/start', methods=['POST'])
 def start_scan():
@@ -59,8 +72,9 @@ def start_scan():
         
         logger.info(f"Created scan {scan_id} for target {target}")
         
-        # In production, this would trigger the workflow engine
-        # For now, just return the scan info
+        # Trigger the workflow engine
+        workflow = get_workflow_engine()
+        workflow.start_scan_async(scan_id, target)
         
         return jsonify({
             'scan_id': scan_id,
@@ -175,82 +189,60 @@ def execute_tool():
         if not scan:
             return jsonify({'error': 'Scan not found'}), 404
         
-        # Execute tool in background
+        # Execute tool in background using new ToolManager
         def run_tool():
             from app import socketio
-            start_time = datetime.now()
-            
-            # Capture scan state before execution (for data collection)
-            context_snapshot = {
-                'phase': scan.get('phase'),
-                'target_type': 'web',  # Could be extracted from target
-                'findings': scan.get('findings', []),
-                'tools_executed': scan.get('tools_executed', []),
-                'coverage': scan.get('coverage', 0.0),
-                'time_elapsed': scan.get('time_elapsed', 0),
-                'phase_data': scan.get('phase_data', {})
-            }
-            
-            def output_callback(line):
-                # Stream output to WebSocket
-                socketio.emit('tool_output', {
-                    'scan_id': scan_id,
-                    'tool': tool_name,
-                    'output': line
-                }, room=scan_id)
             
             try:
-                socketio.emit('tool_execution_start', {
-                    'scan_id': scan_id,
-                    'tool': tool_name,
-                    'target': target
-                }, room=scan_id)
+                # Use new ToolManager with PTY support
+                tool_manager = ToolManager(socketio)
                 
-                with KaliSSHClient() as ssh:
-                    result = ssh.execute_tool(
-                        tool_name=tool_name,
-                        target=target,
-                        options=options,
-                        output_callback=output_callback
-                    )
-                    
-                    execution_time = (datetime.now() - start_time).total_seconds()
-                    
-                    # Update scan with results
-                    scan['tools_executed'].append(tool_name)
-                    scan['status'] = 'running'
-                    
-                    # Log to production data collector
-                    if DATA_COLLECTION_ENABLED:
-                        try:
-                            collector = get_collector()
-                            collector.log_tool_execution({
-                                'scan_id': scan_id,
+                result = tool_manager.execute_tool(
+                    tool_name=tool_name,
+                    target=target,
+                    parameters=options,
+                    scan_id=scan_id,
+                    phase=scan.get('phase', 'scanning')
+                )
+                
+                # Update scan with results
+                scan['tools_executed'].append(tool_name)
+                scan['status'] = 'running'
+                
+                # Add findings to scan
+                if result.get('parsed_results', {}).get('vulnerabilities'):
+                    scan['findings'].extend(result['parsed_results']['vulnerabilities'])
+                
+                # Log to production data collector
+                if DATA_COLLECTION_ENABLED:
+                    try:
+                        collector = get_collector()
+                        collector.log_tool_execution({
+                            'scan_id': scan_id,
+                            'phase': scan.get('phase'),
+                            'tool': tool_name,
+                            'target': target,
+                            'context': {
                                 'phase': scan.get('phase'),
-                                'tool': tool_name,
-                                'target': target,
-                                'context': context_snapshot,
-                                'result': result,
-                                'timestamp': start_time.isoformat(),
-                                'success': result.get('success', False),
-                                'vulns_found': 0,  # Would parse from result
-                                'execution_time': execution_time
-                            })
-                        except Exception as e:
-                            logger.warning(f"Failed to log tool execution: {e}")
-                    
-                    # Emit completion
-                    socketio.emit('tool_execution_complete', {
-                        'scan_id': scan_id,
-                        'tool': tool_name,
-                        'success': result['success'],
-                        'exit_code': result['exit_code'],
-                        'execution_time': execution_time
-                    }, room=scan_id)
+                                'target_type': 'web',
+                                'findings': scan.get('findings', []),
+                                'tools_executed': scan.get('tools_executed', []),
+                            },
+                            'result': result,
+                            'timestamp': result['start_time'],
+                            'success': result.get('success', False),
+                            'vulns_found': len(result.get('parsed_results', {}).get('vulnerabilities', [])),
+                            'execution_time': result['execution_time']
+                        })
+                    except Exception as e:
+                        logger.warning(f"Failed to log tool execution: {e}")
+                
+                # Cleanup
+                tool_manager.cleanup()
                     
             except Exception as e:
                 logger.error(f"Error executing tool {tool_name}: {e}")
-                socketio.emit('error', {
+                socketio.emit('tool_execution_error', {
                     'scan_id': scan_id,
                     'tool': tool_name,
                     'error': str(e)
@@ -328,4 +320,46 @@ def list_scans():
         
     except Exception as e:
         logger.error(f"Error listing scans: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@scan_bp.route('/diagnose', methods=['POST'])
+def diagnose_scan():
+    """Diagnose connectivity between Kali VM and target"""
+    try:
+        data = request.json
+        target = data.get('target')
+        if not target:
+            return jsonify({'error': 'Target required'}), 400
+
+        # Normalize host
+        host = target.replace('http://','').replace('https://','').split('/')[0]
+
+        diag = {
+            'kali_connected': False,
+            'ping_output': '',
+            'curl_head': '',
+            'errors': []
+        }
+
+        # Connect to Kali and run quick checks
+        with KaliSSHClient() as ssh:
+            diag['kali_connected'] = ssh.connected
+
+            if not ssh.connected:
+                diag['errors'].append('SSH connection to Kali failed')
+                return jsonify(diag), 200
+
+            # Ping target (Linux)
+            ping_res = ssh.execute_command(f"ping -c 2 {host}", timeout=10)
+            diag['ping_output'] = (ping_res.get('stdout') or ping_res.get('stderr') or '').strip()
+
+            # HTTP HEAD if target looks web
+            curl_target = target if target.startswith(('http://','https://')) else f"http://{host}"
+            curl_res = ssh.execute_command(f"curl -I --max-time 5 {curl_target}", timeout=10)
+            diag['curl_head'] = (curl_res.get('stdout') or curl_res.get('stderr') or '').strip()
+
+        return jsonify(diag), 200
+
+    except Exception as e:
+        logger.error(f"Error in diagnose_scan: {e}")
         return jsonify({'error': str(e)}), 500

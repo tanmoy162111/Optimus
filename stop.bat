@@ -19,12 +19,16 @@ for /f "tokens=5" %%a in ('netstat -ano ^| findstr :5173 ^| findstr LISTENING') 
     echo Frontend stopped.
 )
 
-REM Optionally stop Kali VM (commented out by default)
-REM Uncomment the lines below if you want to stop Kali VM automatically
-REM echo.
-REM echo [3/3] Stopping Kali VM...
-REM VBoxManage controlvm "Kali" poweroff
-REM echo Kali VM stopped.
+REM Stop Kali VM
+set VBOX_PATH=D:\Virtualbox\VBoxManage.exe
+echo.
+echo [3/3] Stopping Kali VM...
+"%VBOX_PATH%" controlvm "kali" poweroff
+if %errorlevel%==0 (
+    echo Kali VM powered off.
+) else (
+    echo Warning: Failed to power off Kali VM. Please ensure VBoxManage path and VM name are correct.
+)
 
 echo.
 echo ============================================================
