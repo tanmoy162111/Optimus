@@ -8,6 +8,7 @@ echo.
 
 REM Try common VirtualBox installation paths
 set VBOX_PATH=
+if exist "D:\Virtualbox\VBoxManage.exe" set VBOX_PATH=D:\Virtualbox\VBoxManage.exe
 if exist "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" set VBOX_PATH=C:\Program Files\Oracle\VirtualBox\VBoxManage.exe
 if exist "C:\Program Files (x86)\Oracle\VirtualBox\VBoxManage.exe" set VBOX_PATH=C:\Program Files (x86)\Oracle\VirtualBox\VBoxManage.exe
 
@@ -27,9 +28,9 @@ echo ----------------------------------------
 echo ----------------------------------------
 echo.
 echo Copy the VM name (in quotes) and update start.bat
-echo Replace "Kali" with your actual VM name on line 9
+echo Replace "kali" with your actual VM name on line 15
 echo.
-echo Example: If your VM is "kali-linux-2024", change line 9 to:
-echo VBoxManage startvm "kali-linux-2024" --type headless
+echo Example: If your VM is "kali-linux-2025", change line 15 to:
+echo "%VBOX_PATH%" startvm "kali-linux-2025" --type headless
 echo.
 pause

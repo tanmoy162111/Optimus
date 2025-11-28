@@ -35,7 +35,4 @@ echo ============================================================
 echo Project Optimus Stopped Successfully!
 echo ============================================================
 echo.
-echo Note: Kali VM is still running (stop manually if needed)
-echo To stop Kali VM: VBoxManage controlvm "Kali" poweroff
-echo.
 pause

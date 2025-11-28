@@ -1,7 +1,3 @@
-"""
-Workflow Engine - Orchestrates pentesting workflow with phase transitions
-Handles: scan state, tool selection, vulnerability analysis, reporting
-"""
 import uuid
 import threading
 import time
@@ -49,7 +45,7 @@ class WorkflowEngine:
         
     def orchestrate_scan(self, scan_state: Dict):
         """
-        Main scan orchestration loop
+        Main scan orchestration loop with ACTUAL tool execution
         
         Phases:
         1. Reconnaissance
@@ -60,18 +56,19 @@ class WorkflowEngine:
         """
         try:
             scan_id = scan_state['scan_id']
+            target = scan_state['target']
             
             # Emit scan started
             self.socketio.emit('scan_started', {
                 'scan_id': scan_id,
-                'target': scan_state['target'],
+                'target': target,
                 'timestamp': scan_state['start_time']
             })
             
             print(f"\n{'='*60}")
-            print(f"🚀 Scan {scan_id} started for {scan_state['target']}")
+            print(f"🚀 Scan {scan_id} started for {target}")
             print(f"{'='*60}\n")
-            logger.info(f"🚀 Scan {scan_id} started for {scan_state['target']}")
+            logger.info(f"🚀 Scan {scan_id} started for {target}")
             
             # Phase progression
             phases = ['reconnaissance', 'scanning', 'exploitation', 'post_exploitation', 'covering_tracks']
@@ -90,11 +87,12 @@ class WorkflowEngine:
                 # Get recommended tools for this phase
                 tools = self._get_phase_tools(phase)
                 
-                # Execute first tool from phase (for demo)
-                if tools:
-                    tool_name = tools[0]
-                    print(f"🔧 Recommended tool: {tool_name}")
-                    logger.info(f"📍 Phase: {phase} - Recommending tool: {tool_name}")
+                # ✅ CRITICAL FIX: Actually execute tools instead of just recommending
+                tools_to_execute = tools[:2] if phase == 'reconnaissance' else tools[:3]  # Limit tools per phase
+                
+                for tool_name in tools_to_execute:
+                    print(f"🔧 Executing tool: {tool_name}")
+                    logger.info(f"📍 Phase: {phase} - Executing tool: {tool_name}")
                     
                     # Emit tool recommendation
                     self.socketio.emit('tool_recommendation', {
@@ -104,10 +102,19 @@ class WorkflowEngine:
                         'timestamp': datetime.now().isoformat()
                     })
                     
-                    # Wait a bit for tool execution to be triggered manually
-                    time.sleep(2)
+                    # Execute tool synchronously and wait for results
+                    try:
+                        self._execute_tool_sync(scan_state, tool_name, target)
+                        
+                        # Small delay between tools to avoid overwhelming target
+                        time.sleep(3)
+                        
+                    except Exception as e:
+                        logger.error(f"Tool {tool_name} failed: {e}")
+                        print(f"  ⚠️ Tool {tool_name} failed: {e}")
+                        continue
                 
-                # Update coverage
+                # Update coverage after phase completion
                 scan_state['coverage'] = self._calculate_coverage(scan_state, phase)
                 
                 # Emit progress update
@@ -118,6 +125,11 @@ class WorkflowEngine:
                     'findings_count': len(scan_state['findings']),
                     'tools_executed': scan_state['tools_executed']
                 })
+                
+                print(f"  📊 Phase complete - Findings: {len(scan_state['findings'])}, Coverage: {scan_state['coverage']:.1%}")
+            
+            # Cleanup tool manager connection
+            self.cleanup_tool_manager()
             
             # Mark complete
             scan_state['status'] = 'completed'
@@ -129,7 +141,7 @@ class WorkflowEngine:
             print(f"   Tools executed: {len(scan_state['tools_executed'])}")
             print(f"{'='*60}\n")
             
-            # Generate simple report
+            # Generate report
             report = self._generate_report(scan_state)
             
             # Emit completion
@@ -149,6 +161,73 @@ class WorkflowEngine:
                 'scan_id': scan_state['scan_id'],
                 'error': str(e)
             })
+    
+    def _execute_tool_sync(self, scan_state: Dict, tool_name: str, target: str):
+        """
+        Execute tool synchronously and wait for results
+        Reuses ToolManager instance to avoid connection overhead
+        
+        Args:
+            scan_state: Current scan state dictionary
+            tool_name: Name of tool to execute (e.g., 'nmap', 'sqlmap')
+            target: Target URL/IP to scan
+        """
+        try:
+            # Create or reuse ToolManager instance
+            if not hasattr(self, '_tool_manager_instance'):
+                from inference.tool_manager import ToolManager
+                self._tool_manager_instance = ToolManager(self.socketio)
+                print(f"[DEBUG] Created new ToolManager instance")
+            
+            tool_manager = self._tool_manager_instance
+            
+            print(f"  🔨 Running {tool_name} against {target}...")
+            
+            # Execute tool with parameters
+            result = tool_manager.execute_tool(
+                tool_name=tool_name,
+                target=target,
+                parameters={
+                    'timeout': 600,  # 10 minutes per tool (increased from 5)
+                    'aggressive': True
+                },
+                scan_id=scan_state['scan_id'],
+                phase=scan_state['phase']
+            )
+            
+            # Update scan with results
+            if tool_name not in scan_state['tools_executed']:
+                scan_state['tools_executed'].append(tool_name)
+            
+            # Add findings to scan
+            parsed_vulns = result.get('parsed_results', {}).get('vulnerabilities', [])
+            if parsed_vulns:
+                # Deduplicate findings based on type and location
+                existing_findings = {(f.get('type'), f.get('location')) for f in scan_state['findings']}
+                new_findings = [v for v in parsed_vulns
+                               if (v.get('type'), v.get('location')) not in existing_findings]
+                
+                scan_state['findings'].extend(new_findings)
+                print(f"  ✅ Found {len(new_findings)} new vulnerabilities (total: {len(scan_state['findings'])})")
+            else:
+                print(f"  ℹ️  No vulnerabilities found by {tool_name}")
+            
+            # Don't cleanup tool manager - keep connection alive for next tool
+            
+        except Exception as e:
+            logger.error(f"Error executing tool {tool_name}: {e}")
+            print(f"  ❌ Error executing {tool_name}: {e}")
+            # Don't raise - continue with next tool
+    
+    def cleanup_tool_manager(self):
+        """Cleanup ToolManager at end of scan"""
+        if hasattr(self, '_tool_manager_instance'):
+            try:
+                self._tool_manager_instance.cleanup()
+                del self._tool_manager_instance
+                print(f"[DEBUG] ToolManager cleaned up")
+            except Exception as e:
+                logger.error(f"Error cleaning up ToolManager: {e}")
     
     def _handle_phase_transition(self, scan_state: Dict, new_phase: str):
         """Handle phase transition"""

@@ -16,10 +16,11 @@ class Config:
     KALI_PASSWORD = os.getenv('KALI_PASSWORD', 'kali')
     KALI_KEY_PATH = os.getenv('KALI_KEY_PATH', '')
     
-    # SSH connection tuning
-    KALI_CONNECT_TIMEOUT = int(os.getenv('KALI_CONNECT_TIMEOUT', 30))
-    KALI_CONNECT_RETRIES = int(os.getenv('KALI_CONNECT_RETRIES', 3))
+    # SSH connection tuning (WINDOWS OPTIMIZED)
+    KALI_CONNECT_TIMEOUT = int(os.getenv('KALI_CONNECT_TIMEOUT', 60))  # Increased from 30
+    KALI_CONNECT_RETRIES = int(os.getenv('KALI_CONNECT_RETRIES', 5))   # Increased from 3
     KALI_KEEPALIVE_SECONDS = int(os.getenv('KALI_KEEPALIVE_SECONDS', 30))
+    KALI_COMMAND_TIMEOUT = int(os.getenv('KALI_COMMAND_TIMEOUT', 600))  # 10 minutes for long scans
     
     # Kali VM Config Dict
     KALI_VM = {
