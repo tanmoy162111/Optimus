@@ -42,80 +42,38 @@ class ToolManager:
         # If already connected and alive, reuse it
         if self.ssh_client is not None:
             try:
-                transport = self.ssh_client.get_transport()
-                if transport is not None and transport.is_active():
-                    # Test with a simple command
-                    stdin, stdout, stderr = self.ssh_client.exec_command('echo test', timeout=5)
-                    if stdout.read().decode().strip() == 'test':
-                        print(f"✅ Reusing existing SSH connection")
-                        return self.ssh_client
-            except Exception as e:
-                print(f"⚠️ Existing connection dead, reconnecting: {e}")
-                self.cleanup()
+                if self.ssh_client.get_transport().is_active():
+                    print("[DEBUG] Reusing existing SSH connection")
+                    return self.ssh_client
+            except:
+                print("[DEBUG] Existing SSH connection is dead, reconnecting...")
+                self.ssh_client = None
         
-        # Create new connection with retry logic
+        # Create new connection
+        self.ssh_client = paramiko.SSHClient()
+        self.ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        
+        # Retry connection
         for attempt in range(1, self.connection_retries + 1):
             try:
-                print(f"\n[SSH] Connection attempt {attempt}/{self.connection_retries}")
-                print(f"[SSH] Target: {Config.KALI_HOST}:{Config.KALI_PORT}")
-                print(f"[SSH] User: {Config.KALI_USER}")
+                print(f"[DEBUG] SSH connection attempt {attempt}/{self.connection_retries}")
+                self.ssh_client.connect(
+                    hostname=Config.KALI_HOST,
+                    port=Config.KALI_PORT,
+                    username=Config.KALI_USER,
+                    password=Config.KALI_PASSWORD,
+                    key_filename=Config.KALI_KEY_PATH if Config.KALI_KEY_PATH else None,
+                    timeout=self.connection_timeout,
+                    look_for_keys=False,  # Disable to prevent hanging
+                    allow_agent=False,    # Disable to prevent hanging
+                )
                 
-                client = paramiko.SSHClient()
-                client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                # Enable keepalive
+                transport = self.ssh_client.get_transport()
+                transport.set_keepalive(self.keepalive_interval)
                 
-                # Connection parameters with increased timeouts
-                connect_params = {
-                    'hostname': Config.KALI_HOST,
-                    'port': Config.KALI_PORT,
-                    'username': Config.KALI_USER,
-                    'timeout': self.connection_timeout,
-                    'banner_timeout': 60,
-                    'auth_timeout': 60,
-                    'look_for_keys': False,
-                    'allow_agent': False
-                }
-                
-                # Use password or key
-                if Config.KALI_KEY_PATH:
-                    connect_params['key_filename'] = Config.KALI_KEY_PATH
-                    print(f"[SSH] Using SSH key: {Config.KALI_KEY_PATH}")
-                else:
-                    connect_params['password'] = Config.KALI_PASSWORD
-                    print(f"[SSH] Using password authentication")
-                
-                # Attempt connection
-                print(f"[SSH] Connecting...")
-                client.connect(**connect_params)
-                
-                # Configure keepalive to prevent timeouts
-                transport = client.get_transport()
-                if transport:
-                    transport.set_keepalive(self.keepalive_interval)
-                    # Set TCP keepalive options
-                    transport.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
-                    # Windows-specific TCP keepalive
-                    if hasattr(socket, 'SIO_KEEPALIVE_VALS'):
-                        transport.sock.ioctl(
-                            socket.SIO_KEEPALIVE_VALS,
-                            (1, 10000, 3000)  # Enable, 10s idle, 3s interval
-                        )
-                    print(f"[SSH] Keepalive configured: {self.keepalive_interval}s")
-                
-                # Test connection
-                stdin, stdout, stderr = client.exec_command('echo "SSH connection test"', timeout=10)
-                test_output = stdout.read().decode().strip()
-                
-                if "SSH connection test" not in test_output:
-                    raise Exception("SSH connection test failed")
-                
-                print(f"✅ SSH connected successfully to {Config.KALI_HOST}")
-                self.ssh_client = client
-                return client
-                
-            except paramiko.AuthenticationException as e:
-                print(f"❌ SSH authentication failed: {e}")
-                print(f"   Check KALI_USER and KALI_PASSWORD in .env file")
-                raise
+                print("✅ SSH connection established successfully")
+                return self.ssh_client
                 
             except socket.timeout as e:
                 print(f"⚠️ SSH connection timeout (attempt {attempt}/{self.connection_retries})")
@@ -146,31 +104,21 @@ class ToolManager:
         start_time = datetime.now()
         
         # Check API requirements
-        has_reqs, missing = self.check_tool_requirements(tool_name)
-        
-        if not has_reqs:
-            logger.warning(f"[API] Cannot run {tool_name}: missing {missing}")
-            
-            # Try fallback tool
-            fallback = self.get_fallback_tool(tool_name)
-            if fallback:
-                logger.info(f"[API] Using fallback tool: {fallback}")
-                tool_name = fallback
+        has_requirements, missing_keys = self.check_tool_requirements(tool_name)
+        if not has_requirements:
+            logger.warning(f"[ToolManager] {tool_name} missing required API keys: {missing_keys}")
+            # Try fallback tool if available
+            fallback_tool = self.get_fallback_tool(tool_name)
+            if fallback_tool:
+                logger.info(f"[ToolManager] Using fallback tool: {fallback_tool}")
+                tool_name = fallback_tool
             else:
-                # Return graceful failure
                 return {
                     'tool_name': tool_name,
                     'target': target,
                     'phase': phase,
-                    'success': False,
-                    'exit_code': -2,
-                    'stdout': '',
-                    'stderr': f'Tool requires API keys: {missing}. Keys not configured.',
-                    'execution_time': 0,
-                    'start_time': start_time.isoformat(),
-                    'end_time': datetime.now().isoformat(),
-                    'parsed_results': {'vulnerabilities': []},
-                    'error': f'Missing required API keys: {missing}'
+                    'error': f'Missing required API keys: {missing_keys}',
+                    'success': False
                 }
         
         try:
@@ -295,34 +243,13 @@ class ToolManager:
             
             # Verify connection is alive
             transport = self.ssh_client.get_transport()
-            if transport is None or not transport.is_active():
-                print(f"[DEBUG] Transport dead, reconnecting...")
-                self.cleanup()
+            if not transport or not transport.is_active():
+                print(f"[DEBUG] SSH connection dead, reconnecting...")
                 self.connect_ssh()
                 transport = self.ssh_client.get_transport()
             
-            print(f"[DEBUG] SSH transport active: {transport.is_active()}")
-            
-            # Open session with retry
-            channel = None
-            for retry in range(3):
-                try:
-                    channel = transport.open_session()
-                    print(f"[DEBUG] Channel opened successfully")
-                    break
-                except Exception as e:
-                    print(f"[DEBUG] Failed to open channel (attempt {retry+1}/3): {e}")
-                    if retry < 2:
-                        time.sleep(2)
-                        # Try reconnecting
-                        self.cleanup()
-                        self.connect_ssh()
-                        transport = self.ssh_client.get_transport()
-                    else:
-                        raise
-            
-            if channel is None:
-                raise Exception("Failed to open SSH channel after retries")
+            # Open channel with PTY
+            channel = transport.open_session()
             
             # Request PTY (pseudo-terminal) - CRITICAL for interactive commands
             channel.get_pty(term='xterm', width=200, height=50)
@@ -463,6 +390,12 @@ class ToolManager:
             'technologies_detected': parameters.get('technologies_detected', []),
         }
         
+        # Special handling for linpeas - increase timeout
+        if tool_name == 'linpeas':
+            # linpeas can take a long time, so increase timeout
+            parameters['timeout'] = max(parameters.get('timeout', 300), 900)  # Min 15 minutes
+            print(f"[DEBUG] Increased timeout for linpeas to {parameters['timeout']}s")
+        
         # Use Knowledge Base to generate optimal command
         try:
             command = self.tool_kb.build_command(tool_name, target, context)
@@ -472,9 +405,10 @@ class ToolManager:
             # Fallback to simple command
             command = self._fallback_command(tool_name, target)
         
-        # Add timeout wrapper
-        timeout = parameters.get('timeout', 300)
-        command = f"timeout {timeout} {command}"
+        # Add timeout wrapper for non-linpeas tools
+        if tool_name != 'linpeas':  # linpeas handles its own timeout internally
+            timeout = parameters.get('timeout', 300)
+            command = f"timeout {timeout} {command}"
         
         return command
 
@@ -489,6 +423,7 @@ class ToolManager:
             'nuclei': f"nuclei -u {target} -severity critical,high",
             'dalfox': f"dalfox url {target}",
             'commix': f"commix --url='{target}' --batch",
+            'linpeas': f"linpeas.sh",  # linpeas doesn't take target parameter
         }
         return fallback_commands.get(tool_name, f"{tool_name} {target}")
 

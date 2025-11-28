@@ -188,6 +188,20 @@ class ToolKnowledgeBase:
                         'risk': '--risk=3',
                     }
                 }
+            },
+
+            'linpeas': {
+                'base': 'linpeas.sh',
+                'parameters': {
+                    'post_exploitation': {
+                        'options': [''],  # Basic execution
+                    }
+                },
+                'conditions': {
+                    'time_critical': {
+                        'options': '-s',  # Skip some time-consuming checks
+                    }
+                }
             }
         }
 
@@ -254,7 +268,9 @@ class ToolKnowledgeBase:
                 else:
                     chosen = options[len(options)//2]  # Middle ground
 
-                command += f" {chosen}"
+                # Special handling for linpeas - don't add empty options
+                if chosen.strip():  # Only add non-empty options
+                    command += f" {chosen}"
         return command
 
     def _apply_conditions(self, command: str, conditions: Dict, context: Dict) -> str:
