@@ -1,20 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { api } from '../../services/api';
-
-interface Vulnerability {
-  name: string;
-  type: string;
-  severity: number;
-  confidence: number;
-  evidence: string;
-  location: string;
-  tool: string;
-  exploitable: boolean;
-  remediation?: string;
-  ml_classified?: boolean;
-  pattern_matched?: boolean;
-}
+import { Vulnerability } from '../../types/scan.types';
 
 interface ReportData {
   metadata: {
@@ -46,7 +33,6 @@ const ReportDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedVulnerability, setSelectedVulnerability] = useState<Vulnerability | null>(null);
-  const [activeTab, setActiveTab] = useState('overview');
 
   // Fetch report data
   useEffect(() => {
@@ -124,13 +110,6 @@ const ReportDashboard: React.FC = () => {
   if (!reportData) {
     return <div>No report data available</div>;
   }
-
-  const severityColors: Record<string, string> = {
-    Critical: 'bg-red-500 text-white',
-    High: 'bg-orange-500 text-white',
-    Medium: 'bg-yellow-500 text-black',
-    Low: 'bg-green-500 text-white'
-  };
 
   const getSeverityColor = (severity: number) => {
     if (severity >= 9.0) return 'bg-red-500 text-white';

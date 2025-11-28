@@ -47,16 +47,7 @@ class WorkflowEngine:
         logger.info(f"Started workflow for scan {scan_id}")
         
     def orchestrate_scan(self, scan_state: Dict):
-        """
-        Main scan orchestration loop with ACTUAL tool execution
-        
-        Phases:
-        1. Reconnaissance
-        2. Scanning
-        3. Exploitation
-        4. Post-Exploitation
-        5. Covering Tracks
-        """
+        """Main scan orchestration - DELEGATE TO AUTONOMOUS AGENT"""
         try:
             scan_id = scan_state['scan_id']
             target = scan_state['target']
@@ -68,40 +59,32 @@ class WorkflowEngine:
                 'timestamp': scan_state['start_time']
             })
             
-            print(f"\n{'='*60}")
-            print(f"🚀 Scan {scan_id} started for {target}")
-            print(f"{'='*60}\n")
-            logger.info(f"🚀 Scan {scan_id} started for {target}")
+            logger.info(f"🚀 Starting autonomous scan for {target}")
             
-            # Let AI agent drive the scan
+            # IMPORTANT: Let the AutonomousPentestAgent drive everything
             agent = AutonomousPentestAgent()
-            agent_result = agent.conduct_scan(
-                target=target,
-                scan_config={
-                    'max_time': scan_state.get('time_budget', 3600),
-                    'depth': scan_state.get('depth', 'normal'),
-                    'stealth': scan_state.get('stealth', False),
-                    'target_type': self._detect_target_type(target)
-                }
-            )
             
-            # Update scan_state with agent's findings
+            # Configure the agent properly
+            scan_config = {
+                'max_time': scan_state.get('time_budget', 3600),
+                'depth': scan_state.get('depth', 'normal'),
+                'stealth': scan_state.get('stealth', False),
+                'aggressive': scan_state.get('aggressive', True),
+                'target_type': self._detect_target_type(target)
+            }
+            
+            # Run autonomous scan - agent handles EVERYTHING
+            agent_result = agent.conduct_scan(target, scan_config)
+            
+            # Update scan_state with agent's REAL results
             scan_state['findings'] = agent_result['findings']
             scan_state['tools_executed'] = agent_result['tools_executed']
             scan_state['coverage'] = agent_result['coverage']
-            
-            # Cleanup tool manager connection
-            self.cleanup_tool_manager()
-            
-            # Mark complete
             scan_state['status'] = 'completed'
             scan_state['end_time'] = datetime.now().isoformat()
             
-            print(f"\n{'='*60}")
-            print(f"✅ Scan {scan_id} completed!")
-            print(f"   Findings: {len(scan_state['findings'])}")
-            print(f"   Tools executed: {len(scan_state['tools_executed'])}")
-            print(f"{'='*60}\n")
+            logger.info(f"✅ Scan complete: {len(scan_state['findings'])} findings, "
+                       f"{len(scan_state['tools_executed'])} tools used")
             
             # Generate report
             report = self._generate_report(scan_state)
@@ -113,8 +96,6 @@ class WorkflowEngine:
                 'time_elapsed': self._calculate_elapsed_time(scan_state),
                 'report': report
             })
-            
-            logger.info(f"✅ Scan {scan_id} completed")
             
         except Exception as e:
             logger.error(f"Scan orchestration error: {e}")
@@ -140,72 +121,10 @@ class WorkflowEngine:
             # Assume domain name
             return 'domain_target'
     
-    def _execute_tool_sync(self, scan_state: Dict, tool_name: str, target: str):
-        """
-        Execute tool synchronously and wait for results
-        Reuses ToolManager instance to avoid connection overhead
-        
-        Args:
-            scan_state: Current scan state dictionary
-            tool_name: Name of tool to execute (e.g., 'nmap', 'sqlmap')
-            target: Target URL/IP to scan
-        """
-        try:
-            # Create or reuse ToolManager instance
-            if not hasattr(self, '_tool_manager_instance'):
-                from inference.tool_manager import ToolManager
-                self._tool_manager_instance = ToolManager(self.socketio)
-                print(f"[DEBUG] Created new ToolManager instance")
-            
-            tool_manager = self._tool_manager_instance
-            
-            print(f"  🔨 Running {tool_name} against {target}...")
-            
-            # Execute tool with parameters
-            result = tool_manager.execute_tool(
-                tool_name=tool_name,
-                target=target,
-                parameters={
-                    'timeout': 600,  # 10 minutes per tool (increased from 5)
-                    'aggressive': True
-                },
-                scan_id=scan_state['scan_id'],
-                phase=scan_state['phase']
-            )
-            
-            # Update scan with results
-            if tool_name not in scan_state['tools_executed']:
-                scan_state['tools_executed'].append(tool_name)
-            
-            # Add findings to scan
-            parsed_vulns = result.get('parsed_results', {}).get('vulnerabilities', [])
-            if parsed_vulns:
-                # Deduplicate findings based on type and location
-                existing_findings = {(f.get('type'), f.get('location')) for f in scan_state['findings']}
-                new_findings = [v for v in parsed_vulns
-                               if (v.get('type'), v.get('location')) not in existing_findings]
-                
-                scan_state['findings'].extend(new_findings)
-                print(f"  ✅ Found {len(new_findings)} new vulnerabilities (total: {len(scan_state['findings'])})")
-            else:
-                print(f"  ℹ️  No vulnerabilities found by {tool_name}")
-            
-            # Don't cleanup tool manager - keep connection alive for next tool
-            
-        except Exception as e:
-            logger.error(f"Error executing tool {tool_name}: {e}")
-            print(f"  ❌ Error executing {tool_name}: {e}")
-            # Don't raise - continue with next tool
-    
     def cleanup_tool_manager(self):
         """Cleanup ToolManager at end of scan"""
-        if hasattr(self, '_tool_manager_instance'):
-            try:
-                self._tool_manager_instance.cleanup()
-                del self._tool_manager_instance
-                print(f"[DEBUG] ToolManager cleaned up")
-            except Exception as e:
-                logger.error(f"Error cleaning up ToolManager: {e}")
+        # Not needed anymore since agent manages its own tool manager
+        pass
     
     def _handle_phase_transition(self, scan_state: Dict, new_phase: str):
         """Handle phase transition"""

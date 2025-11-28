@@ -53,26 +53,25 @@ class PhaseAwareToolSelector:
             logger.info("Phase-specific models not available, using fallback methods")
         
     def recommend_tools(self, scan_state: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Recommend tools for current scan state with multi-tier selection:
-        1. Phase-specific ML models (if available and high confidence)
-        2. Traditional ML/RL (if available)
-        3. Rule-based fallback
-        
-        Returns: {'tools': [...], 'phase': str, 'ml_confidence': float, 'reasoning': str}
-        """
+        """Enhanced recommendation with better context awareness"""
         phase = scan_state.get('phase', 'reconnaissance')
-        phase_config = self.phase_configs.get(phase, {})
-        
-        # === TIER 1: Try Phase-Specific Models First ===
+        findings = scan_state.get('findings', [])
+        tools_executed = [t['tool'] if isinstance(t, dict) else t 
+                          for t in scan_state.get('tools_executed', [])]
+
+        # Extract what we know about the target
+        scan_state['target_type'] = scan_state.get('target_type', 'web')
+        scan_state['recently_used_tools'] = tools_executed[-3:] if len(tools_executed) > 3 else tools_executed
+
+        # Use phase-specific models first (Tier 1)
         if self.use_phase_specific and self.phase_specific_selector:
             try:
                 ps_result = self.phase_specific_selector.recommend_tools(scan_state)
                 
                 if not ps_result.get('error') and ps_result.get('confidence', 0) >= 0.7:
-                    logger.info(f"Using phase-specific model for {phase}: {ps_result['tools'][:3]} (confidence: {ps_result['confidence']:.1%})")
+                    logger.info(f"Using phase-specific model: {ps_result['tools'][:3]}")
                     
-                    # Apply phase rules to enhance recommendations
+                    # Combine with rule-based enhancements
                     rule_tools = self.apply_phase_rules(scan_state, phase)
                     final_tools = rule_tools + [t for t in ps_result['tools'] if t not in rule_tools]
                     
@@ -80,82 +79,26 @@ class PhaseAwareToolSelector:
                         'tools': final_tools[:5],
                         'phase': phase,
                         'method': 'phase_specific_ml',
-                        'model_type': ps_result.get('model_type', 'unknown'),
                         'ml_confidence': ps_result.get('confidence', 0.0),
-                        'probabilities': ps_result.get('probabilities', []),
-                        'reasoning': f"Phase-specific {phase} model ({ps_result.get('model_type')}): {', '.join(ps_result['tools'][:3])} | Rules: {', '.join(rule_tools) if rule_tools else 'none'}",
-                        'fallback_used': False
+                        'reasoning': f"Phase-specific {phase} model with rule enhancements"
                     }
-                else:
-                    logger.info(f"Phase-specific model confidence too low ({ps_result.get('confidence', 0):.1%}), falling back")
             except Exception as e:
-                logger.warning(f"Phase-specific recommendation failed: {e}")
-        
-        # === TIER 2: Try Traditional ML-based recommendation ===
-        ml_tools_filtered = {}
-        ml_confidence = 0.0
-        
-        if self.tool_recommender_ml:
-            try:
-                features = self.extract_phase_features(scan_state)
-                ml_tools_filtered = self._get_ml_recommendations(features, phase_config)
-                ml_confidence = max(ml_tools_filtered.values()) if ml_tools_filtered else 0.0
-            except Exception as e:
-                logger.warning(f"ML recommendation failed: {e}")
-        
-        # === TIER 3: Fall back to rule-based if ML confidence low ===
-        if self.use_hybrid and ml_confidence < self.ml_confidence_threshold:
-            logger.info(f"ML confidence {ml_confidence:.3f} < {self.ml_confidence_threshold}, using rule-based fallback")
-            
-            # Use rule-based selector
+                logger.warning(f"Phase-specific model failed: {e}")
+
+        # Fall back to rule-based (Tier 3) - ALWAYS RELIABLE
+        if self.use_hybrid:
+            logger.info(f"Using rule-based selector for {phase}")
             rule_tools = self.rule_selector.recommend_tools(scan_state)
             reasoning = self.rule_selector.get_reasoning(scan_state, rule_tools)
             
             return {
-                'tools': rule_tools,
+                'tools': rule_tools[:5],
                 'phase': phase,
-                'method': 'rule_based_fallback',
-                'ml_confidence': ml_confidence,
-                'reasoning': reasoning,
-                'fallback_used': True
+                'method': 'rule_based',
+                'ml_confidence': 0.8,  # High confidence in rules
+                'reasoning': reasoning
             }
-        
-        # 3. Use ML/RL if confidence is good
-        # Get RL selection (if RL agent loaded)
-        rl_tool = None
-        if self.rl_agent and self.rl_state_encoder:
-            try:
-                rl_state_dict = self.rl_state_encoder.encode_state(scan_state)
-                rl_state_vector = self.rl_state_encoder.state_to_vector(rl_state_dict)
-                available = list(ml_tools_filtered.keys()) if ml_tools_filtered else phase_config.get('default_tools', [])
-                rl_tool = self.rl_agent.select_action(rl_state_vector, available, epsilon=0.1)
-            except Exception as e:
-                logger.warning(f"RL selection failed: {e}")
-        
-        # 4. Merge ML and RL recommendations
-        if ml_tools_filtered:
-            recommended = self.merge_ml_rl(ml_tools_filtered, rl_tool)
-        else:
-            # Fall back to default tools for phase
-            recommended = phase_config.get('default_tools', ['nmap'])
-        
-        # 5. Apply phase-based rules (combine with ML/RL)
-        rule_tools = self.apply_phase_rules(scan_state, phase)
-        final_tools = rule_tools + [t for t in recommended if t not in rule_tools]
-        
-        # Limit to top 5 tools
-        final_tools = final_tools[:5]
-        
-        return {
-            'tools': final_tools,
-            'phase': phase,
-            'method': 'ml_rl',
-            'ml_confidence': ml_confidence,
-            'rl_selected': rl_tool,
-            'reasoning': self.generate_reasoning(phase, ml_tools_filtered, rl_tool, rule_tools),
-            'fallback_used': False
-        }
-    
+
     def apply_phase_rules(self, state: Dict[str, Any], phase: str) -> List[str]:
         """
         Apply rule-based tool selection for phase

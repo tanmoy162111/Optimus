@@ -4,6 +4,7 @@ Supports: Nmap, Nikto, SQLMap, Nuclei, and 20+ other tools
 import re
 import json
 import xml.etree.ElementTree as ET
+import uuid
 from typing import List, Dict, Any
 
 class OutputParser:
@@ -35,118 +36,62 @@ class OutputParser:
         return parser(stdout, stderr)
 
     def _parse_nmap(self, stdout: str, stderr: str) -> Dict:
-        """Parse Nmap output (supports both text and XML formats)"""
+        """Enhanced Nmap parsing"""
         vulnerabilities = []
-        hosts = []
         services = []
         
-        try:
-            # Parse text output for open ports
-            print(f"[DEBUG] Parsing Nmap output ({len(stdout)} chars)")
-            
-            for line in stdout.split('\n'):
-                # Match patterns like: 3000/tcp open  http    Node.js Express framework
-                if '/tcp' in line and 'open' in line:
-                    parts = line.split()
-                    if len(parts) >= 3:
-                        port_proto = parts[0]  # e.g., "3000/tcp"
-                        state = parts[1]       # e.g., "open"
-                        service = parts[2] if len(parts) > 2 else 'unknown'
-                        version_info = ' '.join(parts[3:]) if len(parts) > 3 else ''
-                        
-                        port = port_proto.split('/')[0]
-                        
-                        # Create vulnerability entry for open port
-                        vulnerabilities.append({
-                            'type': 'open_port',
-                            'severity': 4.0,  # Medium severity
-                            'confidence': 0.95,
-                            'name': f'Open Port: {port}/{service}',
-                            'location': f'Port {port}',
-                            'evidence': f"{line.strip()} {version_info}".strip(),
-                            'exploitable': False
-                        })
-                        
-                        services.append({
-                            'port': port,
-                            'service': service,
-                            'state': state,
-                            'version': version_info
-                        })
-                        
-                        print(f"[DEBUG] Found open port: {port} ({service})")
-                # Check for vulnerability script results
-            vuln_indicators = ['VULNERABLE', 'CVE-', 'exploit', 'Potential', 'disclosure']
-            vuln_lines = []
-            
-            for line in stdout.split('\n'):
-                if any(indicator in line for indicator in vuln_indicators):
-                    vuln_lines.append(line.strip())
-            
-            # Create vulnerability entries from script results
-            for vuln_line in vuln_lines[:10]:  # Limit to 10 findings
-                # Try to extract CVE if present
-                cve_match = None
-                if 'CVE-' in vuln_line:
-                    import re
-                    cve_match = re.search(r'CVE-\d{4}-\d{4,7}', vuln_line)
-            
-                severity = 7.0 if 'VULNERABLE' in vuln_line else 6.0
-                
+        # Parse open ports MORE AGGRESSIVELY
+        for line in stdout.split('\n'):
+            if '/tcp' in line and 'open' in line:
+                parts = line.split()
+                if len(parts) >= 3:
+                    port = parts[0].split('/')[0]
+                    service = parts[2] if len(parts) > 2 else 'unknown'
+                    version = ' '.join(parts[3:]) if len(parts) > 3 else ''
+                    
+                    # Create vulnerability for EVERY open port
+                    vulnerabilities.append({
+                        'id': str(uuid.uuid4()),
+                        'type': 'open_port',
+                        'severity': 4.0,
+                        'confidence': 0.95,
+                        'name': f'Open Port: {port}/{service}',
+                        'location': f'Port {port}',
+                        'evidence': f"{line.strip()} {version}".strip(),
+                        'exploitable': service in ['http', 'https', 'ssh', 'ftp', 'telnet']
+                    })
+                    
+                    services.append({
+                        'port': port,
+                        'service': service,
+                        'version': version
+                    })
+        
+        # Look for NSE script vulnerabilities
+        vuln_patterns = ['VULNERABLE', 'CVE-', 'exploit', 'Potential']
+        for line in stdout.split('\n'):
+            if any(pattern in line for pattern in vuln_patterns):
                 vulnerabilities.append({
+                    'id': str(uuid.uuid4()),
                     'type': 'service_vulnerability',
-                    'severity': severity,
+                    'severity': 7.0,
                     'confidence': 0.8,
-                    'name': cve_match.group(0) if cve_match else 'Nmap Script Vulnerability',
+                    'name': 'Nmap Script Vulnerability',
                     'location': 'Service scan',
-                    'evidence': vuln_line[:300],
+                    'evidence': line[:300],
                     'exploitable': True
                 })
-                
-                print(f"[DEBUG] Found vulnerability: {vuln_line[:100]}")
-            
-            # Try XML parsing if available (backup method)
-            if '<nmaprun' in stdout:
-                try:
-                    root = ET.fromstring(stdout)
-                    for host in root.findall('.//host'):
-                        for port in host.findall('.//port'):
-                            port_id = port.get('portid')
-                            service_elem = port.find('service')
-                            state_elem = port.find('state')
-                            
-                            if state_elem is not None and state_elem.get('state') == 'open':
-                                service_name = service_elem.get('name', 'unknown') if service_elem is not None else 'unknown'
-                                
-                                # Check if we already have this port
-                                if not any(v.get('location') == f'Port {port_id}' for v in vulnerabilities):
-                                    vulnerabilities.append({
-                                        'type': 'open_port',
-                                        'severity': 4.0,
-                                        'confidence': 0.95,
-                                        'name': f'Open Port: {port_id}/{service_name}',
-                                        'location': f'Port {port_id}',
-                                        'evidence': f'XML: Port {port_id} open, service: {service_name}'
-                                    })
-                except Exception as e:
-                    print(f"[DEBUG] XML parsing failed (non-critical): {e}")
-        except Exception as e:
-            print(f"[ERROR] Nmap parsing error: {e}")
-            import traceback
-            traceback.print_exc()
-        print(f"[DEBUG] Nmap parse complete: {len(vulnerabilities)} vulnerabilities, {len(services)} services")
+        
         return {
             'vulnerabilities': vulnerabilities,
-            'hosts': hosts,
             'services': services,
+            'hosts': [],
             'raw_output': stdout
         }
 
     def _parse_sqlmap(self, stdout: str, stderr: str) -> Dict:
         """Parse SQLMap output for SQL injection findings"""
         vulnerabilities = []
-        
-        print(f"[DEBUG] Parsing SQLMap output ({len(stdout)} chars)")
         
         # SQL injection detection patterns
         injection_indicators = [
@@ -193,6 +138,7 @@ class OutputParser:
                 # Create vulnerability when we have enough info
                 if current_param and current_type and (current_title or current_payload):
                     vulnerabilities.append({
+                        'id': str(uuid.uuid4()),
                         'type': 'sql_injection',
                         'severity': 9.0,  # Critical
                         'confidence': 0.95,
@@ -201,8 +147,6 @@ class OutputParser:
                         'evidence': f"Type: {current_type}, Payload: {current_payload[:100] if current_payload else 'N/A'}",
                         'exploitable': True
                     })
-                    
-                    print(f"[DEBUG] Found SQL injection in parameter: {current_param}")
                     
                     # Reset for next finding
                     current_param = None
@@ -220,6 +164,7 @@ class OutputParser:
                         break
                 
                 vulnerabilities.append({
+                    'id': str(uuid.uuid4()),
                     'type': 'sql_injection',
                     'severity': 9.0,
                     'confidence': 0.9,
@@ -228,12 +173,11 @@ class OutputParser:
                     'evidence': db_match if db_match else 'SQLMap confirmed SQL injection vulnerability',
                     'exploitable': True
                 })
-                
-                print(f"[DEBUG] Generic SQL injection entry created")
         
         # Check for database enumeration results
         if 'available databases' in stdout.lower() or 'database:' in stdout.lower():
             vulnerabilities.append({
+                'id': str(uuid.uuid4()),
                 'type': 'info_disclosure',
                 'severity': 7.5,
                 'confidence': 0.95,
@@ -242,10 +186,6 @@ class OutputParser:
                 'evidence': 'SQLMap successfully enumerated database information',
                 'exploitable': True
             })
-            
-            print(f"[DEBUG] Database disclosure detected")
-        
-        print(f"[DEBUG] SQLMap parse complete: {len(vulnerabilities)} vulnerabilities")
         
         return {
             'vulnerabilities': vulnerabilities,
@@ -261,6 +201,7 @@ class OutputParser:
                 try:
                     finding = json.loads(line)
                     vulnerabilities.append({
+                        'id': str(uuid.uuid4()),
                         'type': finding.get('template-id', 'unknown'),
                         'severity': self._nuclei_severity_to_cvss(finding.get('info', {}).get('severity', 'info')),
                         'confidence': 0.9,
@@ -286,6 +227,7 @@ class OutputParser:
         for match in re.finditer(finding_pattern, stdout):
             location, description = match.groups()
             vulnerabilities.append({
+                'id': str(uuid.uuid4()),
                 'type': 'web_vulnerability',
                 'severity': 5.0,
                 'confidence': 0.8,
@@ -340,6 +282,7 @@ class OutputParser:
         xss_pattern = r'POC: (.+)'
         for match in re.finditer(xss_pattern, stdout):
             vulnerabilities.append({
+                'id': str(uuid.uuid4()),
                 'type': 'xss',
                 'severity': 7.0,
                 'confidence': 0.9,
@@ -360,6 +303,7 @@ class OutputParser:
         
         if 'command injection' in stdout.lower() or 'vulnerable' in stdout.lower():
             vulnerabilities.append({
+                'id': str(uuid.uuid4()),
                 'type': 'command_injection',
                 'severity': 9.0,
                 'confidence': 0.95,

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { useScanStore } from '../store/scanStore';
 import { Vulnerability } from '../types/scan.types';
-import { Play, Square, Loader2, FileText, AlertCircle, CheckCircle, Clock, ChevronDown, ChevronRight } from 'lucide-react';
+import { Play, Square, Loader2, FileText, CheckCircle, ChevronDown, ChevronRight } from 'lucide-react';
 import { useWebSocket } from '../hooks/useWebSocket';
 
 export default function ScanPage() {
