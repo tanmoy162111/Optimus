@@ -1,118 +1,43 @@
-"""
-Autonomous Penetration Testing Agent
-Makes intelligent decisions about tool selection and scan progression
-"""
-
+"""Fully Autonomous Pentest Agent - INTELLIGENT, Adaptive, Self-Learning"""
 import uuid
 import logging
-import time
-from typing import Dict, Any, List
 from datetime import datetime
-from inference.dynamic_tool_database import DynamicToolDatabase
+from typing import Dict, List, Any
 
-# Import required modules
-from inference.tool_manager import ToolManager
 from inference.tool_selector import PhaseAwareToolSelector
-from inference.phase_controller import PhaseTransitionController
+from inference.phase_controller import PhaseController
+from inference.tool_manager import ToolManager
+from knowledge.vulnerability_kb import VulnerabilityKnowledgeBase
+from inference.dynamic_tool_database import DynamicToolDatabase
 
 logger = logging.getLogger(__name__)
 
-
-class KnowledgeBase:
-    """Enhanced knowledge base with learning capabilities"""
+class AutonomousPentestAgent:
+    """Main autonomous pentesting orchestration engine"""
     
     def __init__(self):
-        self.findings = []
-        self.targets = []
-        self.tools_used = []
-        self.tool_effectiveness = {}
-        self.attack_surface = {
-            'technologies': [],
-            'services': [],
-            'ports': [],
-            'subdomains': [],
-            'vulnerabilities': []
-        }
-        
-    def add_finding(self, finding: Dict):
-        """Add finding and update attack surface"""
-        self.findings.append(finding)
-        
-        vuln_type = finding.get('type')
-        if vuln_type and vuln_type not in self.attack_surface['vulnerabilities']:
-            self.attack_surface['vulnerabilities'].append(vuln_type)
-            
-    def record_tool_result(self, tool: str, success: bool, vulns_found: int):
-        """Record tool effectiveness for learning"""
-        if tool not in self.tool_effectiveness:
-            self.tool_effectiveness[tool] = {
-                'uses': 0,
-                'successes': 0,
-                'total_vulns': 0,
-                'success_rate': 0.0
-            }
-            
-        self.tool_effectiveness[tool]['uses'] += 1
-        if success:
-            self.tool_effectiveness[tool]['successes'] += 1
-        self.tool_effectiveness[tool]['total_vulns'] += vulns_found
-        
-        # Calculate success rate
-        uses = self.tool_effectiveness[tool]['uses']
-        successes = self.tool_effectiveness[tool]['successes']
-        self.tool_effectiveness[tool]['success_rate'] = successes / uses if uses > 0 else 0.0
-
-
-class AutonomousPentestAgent:
-    """
-    AI agent that autonomously conducts penetration tests
-    """
-
-    def __init__(self):
-        self.tool_db = DynamicToolDatabase()
-        self.knowledge_base = KnowledgeBase()
-        
-        # ADD: Load ML/RL models
         self.tool_selector = PhaseAwareToolSelector()
-        self.phase_controller = PhaseTransitionController()
-        
-        # ADD: Load trained models
-        self._load_ml_models()
-
-    def _load_ml_models(self):
-        """Load trained ML/RL models from disk"""
-        import joblib
-        import os
-        
-        try:
-            # Load vulnerability detector
-            if os.path.exists('models/vuln_detector.pkl'):
-                self.vuln_detector = joblib.load('models/vuln_detector.pkl')
-                logger.info("✓ Loaded vulnerability detector")
-
-            # Load attack classifier
-            if os.path.exists('models/attack_classifier.pkl'):
-                self.attack_classifier = joblib.load('models/attack_classifier.pkl')
-                logger.info("✓ Loaded attack classifier")
-
-            # Load RL agent
-            if os.path.exists('models/rl_agent.weights.h5'):
-                from training.rl_trainer import EnhancedRLAgent
-                self.rl_agent = EnhancedRLAgent(state_dim=23, num_actions=20)
-                self.rl_agent.load_model('models/rl_agent.weights.h5')
-                logger.info("✓ Loaded RL agent")
-                
-        except Exception as e:
-            logger.warning(f"Could not load some models: {e}")
-
-    def conduct_scan(self, target: str, scan_config: Dict) -> Dict[str, Any]:
+        self.phase_controller = PhaseController()
+        self.tool_manager = ToolManager(None)  # Will be set during execution
+        self.knowledge_base = VulnerabilityKnowledgeBase()
+        self.tool_db = DynamicToolDatabase()
+        logger.info("🤖 Autonomous Pentest Agent initialized")
+    
+    def run_autonomous_scan(self, target: str, scan_config: Dict = None) -> Dict[str, Any]:
         """Main autonomous scanning loop - FULLY INTELLIGENT - FIXED"""
+        if scan_config is None:
+            scan_config = {}
+            
         scan_state = self._initialize_scan_state(target, scan_config)
         
         max_iterations = 50
         iteration = 0
         stalled_iterations = 0  # NEW: Track stalled progress
         last_findings_count = 0
+        
+        # NEW: Track tool execution attempts to prevent infinite loops
+        tool_execution_attempts = {}
+        max_tool_attempts = 5  # Prevent any tool from being attempted more than 5 times
         
         while not self._is_scan_complete(scan_state) and iteration < max_iterations:
             iteration += 1
@@ -150,6 +75,16 @@ class AutonomousPentestAgent:
             # 2. Execute recommended tool
             if recommended_tools:
                 tool_to_execute = recommended_tools[0]
+                
+                # NEW: Prevent infinite tool execution attempts
+                tool_execution_attempts[tool_to_execute] = tool_execution_attempts.get(tool_to_execute, 0) + 1
+                if tool_execution_attempts[tool_to_execute] > max_tool_attempts:
+                    logger.warning(f"Tool {tool_to_execute} attempted {max_tool_attempts} times, skipping")
+                    # Force phase transition to avoid infinite loop
+                    next_phase = self.phase_controller.get_next_phase(scan_state['phase'], scan_state)
+                    scan_state['phase'] = next_phase
+                    continue
+                
                 result = self._execute_tool_real(
                     tool_to_execute, 
                     target,
@@ -190,7 +125,8 @@ class AutonomousPentestAgent:
             'config': scan_config,
             'technologies_detected': [],
             'recently_used_tools': [],
-            'phase_data': {}
+            'phase_data': {},
+            'blacklisted_tools': []  # Track tools that should not be used
         }
 
     def _is_scan_complete(self, scan_state: Dict) -> bool:
@@ -343,40 +279,40 @@ class AutonomousPentestAgent:
                 
         return gaps
 
-    def _assess_risk_ml(self, scan_state: Dict) -> str:
-        """Assess risk using ML severity predictor"""
+    def _assess_risk_ml(self, scan_state: Dict) -> float:
+        """Assess overall risk level"""
         findings = scan_state['findings']
         
         if not findings:
-            return 'low'
+            return 0.1
             
-        # Calculate average severity
-        severities = [f.get('severity', 0) for f in findings]
-        avg_severity = sum(severities) / len(severities)
+        # Weighted risk assessment
+        total_risk = 0.0
+        total_weight = 0.0
         
-        # Count critical findings
-        critical_count = sum(1 for s in severities if s >= 9.0)
-        high_count = sum(1 for s in severities if 7.0 <= s < 9.0)
-        
-        # Risk assessment
-        if critical_count > 0 or avg_severity >= 8.5:
-            return 'critical'
-        elif high_count >= 3 or avg_severity >= 7.0:
-            return 'high'
-        elif avg_severity >= 4.0:
-            return 'medium'
+        for finding in findings:
+            severity = finding.get('severity', 0)
+            exploitable = finding.get('exploitable', False)
+            
+            # Higher weight for exploitable findings
+            weight = 2.0 if exploitable else 1.0
+            total_risk += severity * weight
+            total_weight += weight
+            
+        if total_weight > 0:
+            avg_risk = total_risk / total_weight
+            normalized_risk = min(avg_risk / 10.0, 1.0)  # Normalize to 0-1
+            return normalized_risk
         else:
-            return 'low'
+            return 0.1
 
-    def _execute_tool_real(self, tool_name: str, target: str,
+    def _execute_tool_real(self, tool_name: str, target: str, 
                           scan_state: Dict) -> Dict[str, Any]:
-        """Execute REAL tool via ToolManager - NO SIMULATION"""
-        from app import socketio
-        
+        """Execute tool with real Kali VM connection"""
         try:
-            tool_manager = ToolManager(socketio)
-            
-            logger.info(f"🔨 Executing REAL tool: {tool_name} against {target}")
+            # Initialize tool manager with proper socketio
+            from flask_socketio import SocketIO
+            tool_manager = ToolManager(SocketIO())
             
             result = tool_manager.execute_tool(
                 tool_name=tool_name,

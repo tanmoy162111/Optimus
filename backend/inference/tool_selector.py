@@ -56,7 +56,7 @@ class PhaseAwareToolSelector:
         self.tool_execution_history = {}  # Track tool effectiveness
 
     def recommend_tools(self, scan_state: Dict[str, Any]) -> Dict[str, Any]:
-        """Enhanced recommendation with execution history"""
+        """Enhanced recommendation with execution history and anti-repetition"""
         phase = scan_state.get('phase', 'reconnaissance')
         findings = scan_state.get('findings', [])
         tools_executed = [t['tool'] if isinstance(t, dict) else t 
@@ -66,7 +66,28 @@ class PhaseAwareToolSelector:
         scan_state['target_type'] = scan_state.get('target_type', 'web')
         scan_state['recently_used_tools'] = tools_executed[-3:] if len(tools_executed) > 3 else tools_executed
 
-        # NEW: Check if last tool was ineffective
+        # NEW: Enhanced tool repetition prevention
+        # Count how many times each tool has been executed
+        tool_counts = {}
+        for tool in tools_executed:
+            tool_counts[tool] = tool_counts.get(tool, 0) + 1
+        
+        # Identify tools that have been executed too many times
+        problematic_tools = []
+        for tool, count in tool_counts.items():
+            # If a tool has been executed 3+ times, consider it problematic
+            if count >= 3:
+                problematic_tools.append(tool)
+                print(f"[ToolSelector] Tool {tool} executed {count} times, marking as problematic")
+        
+        # Update blacklisted tools in scan state
+        blacklisted = scan_state.get('blacklisted_tools', [])
+        for tool in problematic_tools:
+            if tool not in blacklisted:
+                blacklisted.append(tool)
+        scan_state['blacklisted_tools'] = blacklisted
+
+        # NEW: Check if last tool was ineffective (no findings)
         if len(tools_executed) > 0:
             last_tool = tools_executed[-1]
             
@@ -75,11 +96,26 @@ class PhaseAwareToolSelector:
             tool_usage_count = recent_tools.count(last_tool)
             
             # If tool used 3+ times recently with no findings, blacklist it temporarily
-            if tool_usage_count >= 3 and len(findings) == 0:
-                print(f"[ToolSelector] Blacklisting {last_tool} - used {tool_usage_count} times with no results")
-                scan_state['blacklisted_tools'] = scan_state.get('blacklisted_tools', [])
-                if last_tool not in scan_state['blacklisted_tools']:
-                    scan_state['blacklisted_tools'].append(last_tool)
+            if tool_usage_count >= 3:
+                # Check if there were findings from this tool
+                last_tool_findings = 0
+                for execution in reversed(scan_state.get('tools_executed', [])):
+                    if isinstance(execution, dict) and execution.get('tool') == last_tool:
+                        # We don't have detailed findings per execution, so we'll assume
+                        # if no overall findings, this tool likely didn't find anything
+                        if len(findings) == 0:
+                            last_tool_findings = 0
+                            break
+                        else:
+                            # If there are findings, we assume this tool contributed
+                            last_tool_findings = 1
+                            break
+                
+                if last_tool_findings == 0:
+                    print(f"[ToolSelector] Blacklisting {last_tool} - used {tool_usage_count} times with no results")
+                    if last_tool not in blacklisted:
+                        blacklisted.append(last_tool)
+                        scan_state['blacklisted_tools'] = blacklisted
         
         # Get blacklisted tools
         blacklisted = scan_state.get('blacklisted_tools', [])
@@ -97,7 +133,20 @@ class PhaseAwareToolSelector:
                     # Filter out blacklisted tools
                     rule_tools = [t for t in rule_tools if t not in blacklisted]
                     
-                    final_tools = rule_tools + [t for t in ps_result['tools'] if t not in rule_tools]
+                    final_tools = rule_tools + [t for t in ps_result['tools'] if t not in rule_tools and t not in blacklisted]
+                    
+                    # Ensure we don't recommend already executed tools
+                    final_tools = [t for t in final_tools if t not in tools_executed]
+                    
+                    if not final_tools:
+                        print(f"[ToolSelector] No effective tools left in {phase}, forcing transition")
+                        return {
+                            'tools': [],  # Empty list signals phase transition needed
+                            'phase': phase,
+                            'method': 'exhausted',
+                            'ml_confidence': 0.0,
+                            'reasoning': 'All tools exhausted, need phase transition'
+                        }
                     
                     return {
                         'tools': final_tools[:5],
@@ -115,11 +164,14 @@ class PhaseAwareToolSelector:
             rule_tools = self.rule_selector.recommend_tools(scan_state)
             reasoning = self.rule_selector.get_reasoning(scan_state, rule_tools)
             
-            # Filter out blacklisted tools
-            rule_tools = [t for t in rule_tools if t not in blacklisted]
+            # Filter out blacklisted tools AND already executed tools
+            filtered_tools = []
+            for tool in rule_tools:
+                if tool not in blacklisted and tool not in tools_executed:
+                    filtered_tools.append(tool)
             
             # If no rule tools left, force phase transition
-            if not rule_tools:
+            if not filtered_tools:
                 print(f"[ToolSelector] No effective tools left in {phase}, forcing transition")
                 return {
                     'tools': [],  # Empty list signals phase transition needed
@@ -130,11 +182,11 @@ class PhaseAwareToolSelector:
                 }
             
             return {
-                'tools': rule_tools[:5],
+                'tools': filtered_tools[:5],
                 'phase': phase,
                 'method': 'rule_based',
                 'ml_confidence': 0.8,  # High confidence in rules
-                'reasoning': f'Recommended tools excluding {len(blacklisted)} ineffective tools'
+                'reasoning': f'Recommended tools excluding {len(blacklisted)} blacklisted and {len(tools_executed)} already executed tools'
             }
 
     def apply_phase_rules(self, state: Dict[str, Any], phase: str) -> List[str]:
