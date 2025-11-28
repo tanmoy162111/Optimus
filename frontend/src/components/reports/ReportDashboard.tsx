@@ -1,25 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useWebSocket } from '../../hooks/useWebSocket';
+import { api } from '../../services/api';
 
 interface Vulnerability {
-  id: string;
-  title: string;
-  severity: string;
-  cvss_score: number;
-  description: string;
-  reproduction_steps: string[];
-  technical_details: {
-    location?: string;
-    parameter?: string;
-    method?: string;
-    payload?: string;
-  };
-  remediation: {
-    immediate: string;
-    long_term: string;
-    code_example: string;
-  };
+  name: string;
+  type: string;
+  severity: number;
+  confidence: number;
+  evidence: string;
+  location: string;
+  tool: string;
+  exploitable: boolean;
+  remediation?: string;
+  ml_classified?: boolean;
+  pattern_matched?: boolean;
 }
 
 interface ReportData {
@@ -59,88 +53,46 @@ const ReportDashboard: React.FC = () => {
     const fetchReport = async () => {
       try {
         setLoading(true);
-        // In a real implementation, this would call the backend API
-        // const response = await fetch(`/api/report/generate/${scanId}`);
-        // const data = await response.json();
+        // Fetch the scan results from the backend
+        const response = await api.scan.getResults(scanId || '');
+        console.log('Scan results:', response.data);
         
-        // Mock data for demonstration
-        const mockData: ReportData = {
+        // Transform the scan data into report format
+        const scanData = response.data;
+        
+        // Count vulnerabilities by severity
+        const criticalCount = scanData.findings?.filter((f: Vulnerability) => f.severity >= 9.0).length || 0;
+        const highCount = scanData.findings?.filter((f: Vulnerability) => f.severity >= 7.0 && f.severity < 9.0).length || 0;
+        const mediumCount = scanData.findings?.filter((f: Vulnerability) => f.severity >= 4.0 && f.severity < 7.0).length || 0;
+        const lowCount = scanData.findings?.filter((f: Vulnerability) => f.severity < 4.0).length || 0;
+        
+        const reportData: ReportData = {
           metadata: {
-            report_id: 'mock-report-id',
+            report_id: `report-${scanId}`,
             scan_id: scanId || '',
-            target: 'http://example.com',
-            generated_at: new Date().toISOString(),
-            tools_used: ['nmap', 'nikto', 'sqlmap'],
-            duration_seconds: 300,
-            coverage_percentage: 75
+            target: scanData.target,
+            generated_at: scanData.end_time || new Date().toISOString(),
+            tools_used: scanData.tools_executed || [],
+            duration_seconds: scanData.time_elapsed || 0,
+            coverage_percentage: scanData.coverage || 0
           },
           executive_summary: {
-            risk_level: 'High',
-            total_findings: 12,
-            critical_vulnerabilities: 1,
-            high_vulnerabilities: 3,
-            medium_vulnerabilities: 5,
-            low_vulnerabilities: 3,
-            summary_text: 'Security scan identified 12 vulnerabilities, including 1 critical and 3 high severity issues.'
+            risk_level: criticalCount > 0 ? 'Critical' : highCount > 0 ? 'High' : mediumCount > 0 ? 'Medium' : 'Low',
+            total_findings: scanData.findings?.length || 0,
+            critical_vulnerabilities: criticalCount,
+            high_vulnerabilities: highCount,
+            medium_vulnerabilities: mediumCount,
+            low_vulnerabilities: lowCount,
+            summary_text: `Security scan of ${scanData.target} identified ${scanData.findings?.length || 0} vulnerabilities, including ${criticalCount} critical and ${highCount} high severity issues.`
           },
-          vulnerabilities: [
-            {
-              id: 'vuln-1',
-              title: 'SQL Injection',
-              severity: 'Critical',
-              cvss_score: 9.8,
-              description: 'The application is vulnerable to SQL injection attacks.',
-              reproduction_steps: [
-                'Navigate to the vulnerable endpoint',
-                'Identify the vulnerable parameter',
-                'Submit the SQL injection payload',
-                'Observe the SQL error in the response'
-              ],
-              technical_details: {
-                location: 'http://example.com/login',
-                parameter: 'username',
-                method: 'POST',
-                payload: "' OR '1'='1"
-              },
-              remediation: {
-                immediate: 'Implement parameterized queries',
-                long_term: 'Use ORM frameworks and input validation',
-                code_example: 'cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))'
-              }
-            },
-            {
-              id: 'vuln-2',
-              title: 'Cross-Site Scripting (XSS)',
-              severity: 'High',
-              cvss_score: 7.2,
-              description: 'The application does not properly sanitize user input.',
-              reproduction_steps: [
-                'Open the target URL',
-                'Locate the input field',
-                'Input the XSS payload',
-                'Submit the form',
-                'Observe JavaScript execution'
-              ],
-              technical_details: {
-                location: 'http://example.com/search',
-                parameter: 'q',
-                method: 'GET',
-                payload: '<script>alert("XSS")</script>'
-              },
-              remediation: {
-                immediate: 'Implement proper input sanitization',
-                long_term: 'Use Content Security Policy (CSP)',
-                code_example: 'from html import escape\nsafe_output = escape(user_input)'
-              }
-            }
-          ],
+          vulnerabilities: scanData.findings || [],
           attack_chain: [],
           recommendations: []
         };
         
-        setReportData(mockData);
-      } catch (err) {
-        setError('Failed to load report data');
+        setReportData(reportData);
+      } catch (err: any) {
+        setError('Failed to load report data: ' + (err.response?.data?.error || err.message));
         console.error(err);
       } finally {
         setLoading(false);
@@ -178,6 +130,13 @@ const ReportDashboard: React.FC = () => {
     High: 'bg-orange-500 text-white',
     Medium: 'bg-yellow-500 text-black',
     Low: 'bg-green-500 text-white'
+  };
+
+  const getSeverityColor = (severity: number) => {
+    if (severity >= 9.0) return 'bg-red-500 text-white';
+    if (severity >= 7.0) return 'bg-orange-500 text-white';
+    if (severity >= 4.0) return 'bg-yellow-500 text-black';
+    return 'bg-green-500 text-white';
   };
 
   return (
@@ -240,20 +199,20 @@ const ReportDashboard: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {reportData.vulnerabilities.map((vuln) => (
+              {reportData.vulnerabilities.map((vuln, index) => (
                 <tr 
-                  key={vuln.id} 
+                  key={index} 
                   className="border-b hover:bg-gray-50 cursor-pointer"
                   onClick={() => setSelectedVulnerability(vuln)}
                 >
-                  <td className="py-2 px-4">{vuln.title}</td>
+                  <td className="py-2 px-4">{vuln.name}</td>
                   <td className="py-2 px-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${severityColors[vuln.severity]}`}>
-                      {vuln.severity}
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getSeverityColor(vuln.severity)}`}>
+                      {vuln.severity.toFixed(1)}
                     </span>
                   </td>
-                  <td className="py-2 px-4">{vuln.cvss_score}</td>
-                  <td className="py-2 px-4">{vuln.technical_details.location || 'N/A'}</td>
+                  <td className="py-2 px-4">{vuln.severity.toFixed(1)}</td>
+                  <td className="py-2 px-4">{vuln.location || 'N/A'}</td>
                 </tr>
               ))}
             </tbody>
@@ -267,7 +226,7 @@ const ReportDashboard: React.FC = () => {
           <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-screen overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-start mb-4">
-                <h3 className="text-2xl font-bold">{selectedVulnerability.title}</h3>
+                <h3 className="text-2xl font-bold">{selectedVulnerability.name}</h3>
                 <button 
                   onClick={() => setSelectedVulnerability(null)}
                   className="text-gray-500 hover:text-gray-700"
@@ -279,42 +238,28 @@ const ReportDashboard: React.FC = () => {
               </div>
               
               <div className="mb-4">
-                <span className={`px-3 py-1 rounded-full text-sm font-semibold ${severityColors[selectedVulnerability.severity]}`}>
-                  {selectedVulnerability.severity} (CVSS: {selectedVulnerability.cvss_score})
+                <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getSeverityColor(selectedVulnerability.severity)}`}>
+                  Severity: {selectedVulnerability.severity.toFixed(1)}
                 </span>
               </div>
               
               <div className="mb-6">
                 <h4 className="text-lg font-semibold mb-2">Description</h4>
-                <p className="text-gray-700">{selectedVulnerability.description}</p>
-              </div>
-              
-              <div className="mb-6">
-                <h4 className="text-lg font-semibold mb-2">Reproduction Steps</h4>
-                <ol className="list-decimal list-inside space-y-2">
-                  {selectedVulnerability.reproduction_steps.map((step, index) => (
-                    <li key={index} className="text-gray-700">{step}</li>
-                  ))}
-                </ol>
+                <p className="text-gray-700">{selectedVulnerability.name}</p>
               </div>
               
               <div className="mb-6">
                 <h4 className="text-lg font-semibold mb-2">Technical Details</h4>
                 <div className="bg-gray-100 p-4 rounded">
-                  <p><strong>Location:</strong> {selectedVulnerability.technical_details.location || 'N/A'}</p>
-                  <p><strong>Parameter:</strong> {selectedVulnerability.technical_details.parameter || 'N/A'}</p>
-                  <p><strong>Method:</strong> {selectedVulnerability.technical_details.method || 'N/A'}</p>
-                  <p><strong>Payload:</strong> <code className="bg-gray-200 px-1 rounded">{selectedVulnerability.technical_details.payload || 'N/A'}</code></p>
+                  <p><strong>Location:</strong> {selectedVulnerability.location || 'N/A'}</p>
+                  <p><strong>Tool:</strong> {selectedVulnerability.tool || 'N/A'}</p>
+                  <p><strong>Evidence:</strong> <code className="bg-gray-200 px-1 rounded">{selectedVulnerability.evidence || 'N/A'}</code></p>
                 </div>
               </div>
               
               <div className="mb-6">
                 <h4 className="text-lg font-semibold mb-2">Remediation</h4>
-                <p className="mb-2"><strong>Immediate:</strong> {selectedVulnerability.remediation.immediate}</p>
-                <p className="mb-2"><strong>Long-term:</strong> {selectedVulnerability.remediation.long_term}</p>
-                <div className="bg-gray-100 p-4 rounded">
-                  <pre className="whitespace-pre-wrap">{selectedVulnerability.remediation.code_example}</pre>
-                </div>
+                <p className="text-gray-700">{selectedVulnerability.remediation || 'No specific remediation provided'}</p>
               </div>
             </div>
           </div>

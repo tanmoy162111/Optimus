@@ -1,8 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom'
-import { Shield, Home, Activity, Brain, BarChart3, FileText } from 'lucide-react'
+import { Shield, Home, Activity, Brain, BarChart3 } from 'lucide-react'
 import Dashboard from './pages/Dashboard'
 import ScanPage from './pages/ScanPage'
-import ReportDashboard from './components/reports/ReportDashboard'
 
 function Navigation() {
   const location = useLocation()
@@ -60,7 +59,7 @@ function App() {
             <Route path="/scan" element={<ScanPage />} />
             <Route path="/models" element={<div className="p-6"><h1 className="text-3xl font-bold text-cyan-400">AI Models</h1><p className="text-gray-400 mt-2">Model management coming soon...</p></div>} />
             <Route path="/metrics" element={<div className="p-6"><h1 className="text-3xl font-bold text-cyan-400">Metrics</h1><p className="text-gray-400 mt-2">Performance metrics coming soon...</p></div>} />
-            <Route path="/report/:scanId" element={<ReportDashboard />} />
+            <Route path="/report/:scanId" element={<div className="p-6"><h1 className="text-3xl font-bold text-cyan-400">Report Dashboard</h1><p className="text-gray-400 mt-2">Report dashboard coming soon...</p></div>} />
           </Routes>
         </main>
       </div>
