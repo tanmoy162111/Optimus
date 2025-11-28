@@ -6,6 +6,9 @@ from typing import Dict, Any, Optional, List
 from dataclasses import asdict
 import logging
 
+# Import the autonomous agent
+from inference.autonomous_agent import AutonomousPentestAgent
+
 logger = logging.getLogger(__name__)
 
 class WorkflowEngine:
@@ -70,63 +73,22 @@ class WorkflowEngine:
             print(f"{'='*60}\n")
             logger.info(f"🚀 Scan {scan_id} started for {target}")
             
-            # Phase progression
-            phases = ['reconnaissance', 'scanning', 'exploitation', 'post_exploitation', 'covering_tracks']
+            # Let AI agent drive the scan
+            agent = AutonomousPentestAgent()
+            agent_result = agent.conduct_scan(
+                target=target,
+                scan_config={
+                    'max_time': scan_state.get('time_budget', 3600),
+                    'depth': scan_state.get('depth', 'normal'),
+                    'stealth': scan_state.get('stealth', False),
+                    'target_type': self._detect_target_type(target)
+                }
+            )
             
-            for phase in phases:
-                if scan_state['status'] == 'stopped':
-                    break
-                    
-                # Update phase
-                scan_state['phase'] = phase
-                self._handle_phase_transition(scan_state, phase)
-                
-                print(f"\n📍 Phase: {phase.upper()}")
-                print(f"{'-'*60}")
-                
-                # Get recommended tools for this phase
-                tools = self._get_phase_tools(phase)
-                
-                # ✅ CRITICAL FIX: Actually execute tools instead of just recommending
-                tools_to_execute = tools[:2] if phase == 'reconnaissance' else tools[:3]  # Limit tools per phase
-                
-                for tool_name in tools_to_execute:
-                    print(f"🔧 Executing tool: {tool_name}")
-                    logger.info(f"📍 Phase: {phase} - Executing tool: {tool_name}")
-                    
-                    # Emit tool recommendation
-                    self.socketio.emit('tool_recommendation', {
-                        'scan_id': scan_id,
-                        'phase': phase,
-                        'tool': tool_name,
-                        'timestamp': datetime.now().isoformat()
-                    })
-                    
-                    # Execute tool synchronously and wait for results
-                    try:
-                        self._execute_tool_sync(scan_state, tool_name, target)
-                        
-                        # Small delay between tools to avoid overwhelming target
-                        time.sleep(3)
-                        
-                    except Exception as e:
-                        logger.error(f"Tool {tool_name} failed: {e}")
-                        print(f"  ⚠️ Tool {tool_name} failed: {e}")
-                        continue
-                
-                # Update coverage after phase completion
-                scan_state['coverage'] = self._calculate_coverage(scan_state, phase)
-                
-                # Emit progress update
-                self.socketio.emit('scan_update', {
-                    'scan_id': scan_id,
-                    'phase': phase,
-                    'coverage': scan_state['coverage'],
-                    'findings_count': len(scan_state['findings']),
-                    'tools_executed': scan_state['tools_executed']
-                })
-                
-                print(f"  📊 Phase complete - Findings: {len(scan_state['findings'])}, Coverage: {scan_state['coverage']:.1%}")
+            # Update scan_state with agent's findings
+            scan_state['findings'] = agent_result['findings']
+            scan_state['tools_executed'] = agent_result['tools_executed']
+            scan_state['coverage'] = agent_result['coverage']
             
             # Cleanup tool manager connection
             self.cleanup_tool_manager()
@@ -161,6 +123,22 @@ class WorkflowEngine:
                 'scan_id': scan_state['scan_id'],
                 'error': str(e)
             })
+    
+    def _detect_target_type(self, target: str) -> str:
+        """
+        Detect target type based on target string
+        """
+        if target.startswith('http://') or target.startswith('https://'):
+            return 'http_service'
+        elif ':' in target and target.replace(':', '').replace('.', '').isdigit():
+            # IP:port format
+            return 'network_service'
+        elif target.replace('.', '').isdigit():
+            # IP address
+            return 'ip_address'
+        else:
+            # Assume domain name
+            return 'domain_target'
     
     def _execute_tool_sync(self, scan_state: Dict, tool_name: str, target: str):
         """

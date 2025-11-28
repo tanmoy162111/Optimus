@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Optimus Security Scan Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+        .logo {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            font-size: 1.5em;
+            margin-bottom: 40px;
+        }
+        .details {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px;
+        }
+        .detail-item {
+            margin: 10px 0;
+            font-size: 1.2em;
+        }
+        .confidential {
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">🛡️</div>
+    <div class="title">Optimus Security Scan Report</div>
+    <div class="subtitle">Comprehensive Vulnerability Assessment</div>
+    
+    <div class="details">
+        <div class="detail-item"><strong>Target:</strong> {{ target }}</div>
+        <div class="detail-item"><strong>Scan ID:</strong> {{ scan_id }}</div>
+        <div class="detail-item"><strong>Generated:</strong> {{ generated_at }}</div>
+        <div class="detail-item"><strong>Findings:</strong> {{ total_findings }} vulnerabilities detected</div>
+    </div>
+    
+    <div class="confidential">CONFIDENTIAL - For authorized personnel only</div>
+</body>
+</html>

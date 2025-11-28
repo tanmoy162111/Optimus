@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Optimus Security Scan Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .toc {
+            background: white;
+            padding: 30px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .summary-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        .stat-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            min-width: 150px;
+        }
+        .stat-box.critical { border-top: 5px solid #dc3545; }
+        .stat-box.high { border-top: 5px solid #fd7e14; }
+        .stat-box.medium { border-top: 5px solid #ffc107; }
+        .stat-box.low { border-top: 5px solid #28a745; }
+        .stat-box.total { border-top: 5px solid #17a2b8; }
+        .risk-level {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 20px 0;
+            font-size: 1.2em;
+        }
+        .risk-critical { background-color: #dc3545; color: white; }
+        .risk-high { background-color: #fd7e14; color: white; }
+        .risk-medium { background-color: #ffc107; color: black; }
+        .risk-low { background-color: #28a745; color: white; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .severity-critical { color: #dc3545; font-weight: bold; }
+        .severity-high { color: #fd7e14; font-weight: bold; }
+        .severity-medium { color: #ffc107; font-weight: bold; }
+        .severity-low { color: #28a745; font-weight: bold; }
+        .page-break {
+            page-break-before: always;
+        }
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Optimus Security Scan Report</h1>
+        <p><strong>Target:</strong> {{ metadata.target }}</p>
+        <p><strong>Scan ID:</strong> {{ metadata.scan_id }}</p>
+        <p><strong>Generated:</strong> {{ metadata.generated_at }}</p>
+    </div>
+    
+    <div class="content">
+        <div class="toc">
+            <h2>Table of Contents</h2>
+            <ol>
+                <li><a href="#executive-summary">Executive Summary</a></li>
+                <li><a href="#scan-details">Scan Details</a></li>
+                <li><a href="#vulnerabilities">Vulnerabilities</a>
+                    <ol>
+                        {% for vuln in vulnerabilities %}
+                        <li><a href="#vuln-{{ vuln.id }}">{{ vuln.title }}</a></li>
+                        {% endfor %}
+                    </ol>
+                </li>
+                <li><a href="#recommendations">Recommendations</a></li>
+            </ol>
+        </div>
+        
+        <div class="section" id="executive-summary">
+            <h2>Executive Summary</h2>
+            <p>{{ executive_summary.summary_text }}</p>
+            
+            <div class="risk-level risk-{{ executive_summary.risk_level.lower() }}">
+                Overall Risk Level: {{ executive_summary.risk_level }}
+            </div>
+            
+            <div class="summary-stats">
+                <div class="stat-box critical">
+                    <h3>{{ executive_summary.critical_vulnerabilities }}</h3>
+                    <p>Critical</p>
+                </div>
+                <div class="stat-box high">
+                    <h3>{{ executive_summary.high_vulnerabilities }}</h3>
+                    <p>High</p>
+                </div>
+                <div class="stat-box medium">
+                    <h3>{{ executive_summary.medium_vulnerabilities }}</h3>
+                    <p>Medium</p>
+                </div>
+                <div class="stat-box low">
+                    <h3>{{ executive_summary.low_vulnerabilities }}</h3>
+                    <p>Low</p>
+                </div>
+                <div class="stat-box total">
+                    <h3>{{ executive_summary.total_findings }}</h3>
+                    <p>Total</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section" id="scan-details">
+            <h2>Scan Details</h2>
+            <table>
+                <tr>
+                    <th>Scan ID</th>
+                    <td>{{ metadata.scan_id }}</td>
+                </tr>
+                <tr>
+                    <th>Target</th>
+                    <td>{{ metadata.target }}</td>
+                </tr>
+                <tr>
+                    <th>Duration</th>
+                    <td>{{ metadata.duration_seconds }} seconds</td>
+                </tr>
+                <tr>
+                    <th>Coverage</th>
+                    <td>{{ (metadata.coverage_percentage * 100) | int }}%</td>
+                </tr>
+                <tr>
+                    <th>Tools Used</th>
+                    <td>{{ metadata.tools_used | join(', ') }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="section" id="vulnerabilities">
+            <h2>Vulnerabilities</h2>
+            {% for vuln in vulnerabilities %}
+            <div class="page-break"></div>
+            <div class="section" id="vuln-{{ vuln.id }}">
+                <h3>
+                    <span class="severity-badge severity-{{ vuln.severity.lower() }}">{{ vuln.severity }}</span>
+                    {{ vuln.title }}
+                </h3>
+                <p><strong>CVSS Score:</strong> {{ vuln.cvss_score }}</p>
+                <p><strong>Location:</strong> {{ vuln.technical_details.location or 'N/A' }}</p>
+                <p>{{ vuln.description }}</p>
+                
+                <h4>Reproduction Steps</h4>
+                <ol>
+                    {% for step in vuln.reproduction_steps %}
+                    <li>{{ step }}</li>
+                    {% endfor %}
+                </ol>
+                
+                <h4>Remediation</h4>
+                <p><strong>Immediate:</strong> {{ vuln.remediation.immediate }}</p>
+                <p><strong>Long-term:</strong> {{ vuln.remediation.long_term }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="section" id="recommendations">
+            <h2>Recommendations</h2>
+            <div style="background: #e9ecef; border-left: 4px solid #17a2b8; padding: 15px; margin: 15px 0; border-radius: 0 4px 4px 0;">
+                <p><strong>Immediate Actions:</strong></p>
+                <ul>
+                    <li>Address all Critical and High severity vulnerabilities immediately</li>
+                    <li>Review and implement the remediation guidance provided for each finding</li>
+                    <li>Conduct a follow-up scan after remediation to verify fixes</li>
+                </ul>
+            </div>
+            
+            <div style="background: #e9ecef; border-left: 4px solid #17a2b8; padding: 15px; margin: 15px 0; border-radius: 0 4px 4px 0;">
+                <p><strong>Long-term Improvements:</strong></p>
+                <ul>
+                    <li>Implement a comprehensive security testing program with regular scans</li>
+                    <li>Provide security training for development teams</li>
+                    <li>Establish secure coding standards and practices</li>
+                    <li>Implement automated security testing in CI/CD pipelines</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

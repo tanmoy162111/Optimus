@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { useScanStore } from '../store/scanStore';
 import { Play, Square, Loader2, FileText, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import { useWebSocket } from '../hooks/useWebSocket';
+
 export default function ScanPage() {
   const [target, setTarget] = useState('');
   const [loading, setLoading] = useState(false);
@@ -175,6 +177,14 @@ export default function ScanPage() {
           <div className="flex items-center gap-3 mb-6">
             <FileText className="w-6 h-6 text-cyan-400" />
             <h2 className="text-2xl font-semibold text-cyan-400">Scan Report</h2>
+            <Link 
+              to={`/report/${currentScan.scan_id}`}
+              className="ml-auto flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 
+                       text-white text-sm font-semibold rounded-lg transition-colors"
+            >
+              <FileText className="w-4 h-4" />
+              View Detailed Report
+            </Link>
           </div>
 
           {/* Summary Stats */}
