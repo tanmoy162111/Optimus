@@ -1,11 +1,9 @@
 #!/bin/bash
 # Start Kali VM Script
-
 echo "============================================================"
 echo "Starting Kali VM"
 echo "============================================================"
-
-VBOX_PATH="D:/Virtualbox/VBoxManage.exe"
+VBOX_PATH="/d/Virtualbox/VBoxManage.exe"
 
 # Check if Kali VM is already running
 if "$VBOX_PATH" list runningvms | grep -q "kali"; then
@@ -14,8 +12,7 @@ if "$VBOX_PATH" list runningvms | grep -q "kali"; then
 fi
 
 echo "Starting Kali VM in headless mode..."
-"$VBOX_PATH" startvm "kali" --type headless
-
+"$VBOX_PATH" startvm "kali" --type headless &
 if [ $? -eq 0 ]; then
     echo "Kali VM started successfully!"
     echo "Waiting 60 seconds for Kali VM to boot and SSH service to start..."

@@ -31,6 +31,6 @@ echo Copy the VM name (in quotes) and update start.bat
 echo Replace "kali" with your actual VM name on line 15
 echo.
 echo Example: If your VM is "kali-linux-2025", change line 15 to:
-echo "%VBOX_PATH%" startvm "kali-linux-2025" --type headless
+echo start /B "%%VBOX_PATH%%" startvm "kali-linux-2025" --type headless
 echo.
 pause

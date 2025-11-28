@@ -12,9 +12,10 @@ echo [1/3] Checking Kali VM status...
 "%VBOX_PATH%" list runningvms | findstr "kali" >nul
 if errorlevel 1 (
     echo Kali VM not running. Starting Kali VM...
-    "%VBOX_PATH%" startvm "kali" --type headless
-    echo Waiting 60 seconds for Kali VM to boot and SSH service to start...
-    timeout /t 60 /nobreak >nul
+    start /B "%VBOX_PATH%" startvm "kali" --type headless
+    echo Waiting for Kali VM to boot and SSH service to start...
+    REM Use ping instead of timeout to avoid input redirection errors
+    ping -n 61 127.0.0.1 > nul
     echo Kali VM started successfully!
 ) else (
     echo Kali VM already running.
@@ -29,6 +30,10 @@ IF EXIST "%~dp0backend\venv\Scripts\python.exe" (
     echo Virtualenv Python not found, using system Python
     start "Optimus Backend" /D "%~dp0backend" python "app.py"
 )
+
+REM Wait for backend to start
+echo Waiting for backend to initialize...
+ping -n 6 127.0.0.1 > nul
 
 REM Start Frontend
 echo.
