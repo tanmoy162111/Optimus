@@ -21,6 +21,14 @@ for /f "tokens=5" %%a in ('netstat -ano ^| findstr :5173 ^| findstr LISTENING') 
 
 REM Stop Kali VM
 set VBOX_PATH=D:\Virtualbox\VBoxManage.exe
+
+REM Check if VirtualBox exists at the specified path
+if not exist "%VBOX_PATH%" (
+    echo Warning: VirtualBox not found at %VBOX_PATH%
+    echo Please check your VirtualBox installation path.
+    goto :continue
+)
+
 echo.
 echo [3/3] Stopping Kali VM...
 "%VBOX_PATH%" controlvm "kali" poweroff
@@ -30,6 +38,7 @@ if %errorlevel%==0 (
     echo Warning: Failed to power off Kali VM. Please ensure VBoxManage path and VM name are correct.
 )
 
+:continue
 echo.
 echo ============================================================
 echo Project Optimus Stopped Successfully!

@@ -7,9 +7,17 @@ import threading
 import time
 import re
 import socket
+import os
+import logging
 from datetime import datetime
-from typing import Dict, Any, Optional, Callable
+from typing import Dict, Any, Optional, Callable, List
 from config import Config
+
+# Add import for the new tool knowledge base
+from inference.tool_knowledge_base import ToolKnowledgeBase
+
+logger = logging.getLogger(__name__)
+
 
 class ToolManager:
     def __init__(self, socketio):
@@ -20,6 +28,9 @@ class ToolManager:
         self.connection_retries = 5
         self.connection_timeout = 60  # Increased from 30
         self.keepalive_interval = 30
+        # Initialize the tool knowledge base
+        self.tool_kb = ToolKnowledgeBase()
+        logger.info("[ToolManager] Initialized with dynamic command generation")
     
     def connect_ssh(self) -> paramiko.SSHClient:
         """
@@ -134,6 +145,34 @@ class ToolManager:
         """
         start_time = datetime.now()
         
+        # Check API requirements
+        has_reqs, missing = self.check_tool_requirements(tool_name)
+        
+        if not has_reqs:
+            logger.warning(f"[API] Cannot run {tool_name}: missing {missing}")
+            
+            # Try fallback tool
+            fallback = self.get_fallback_tool(tool_name)
+            if fallback:
+                logger.info(f"[API] Using fallback tool: {fallback}")
+                tool_name = fallback
+            else:
+                # Return graceful failure
+                return {
+                    'tool_name': tool_name,
+                    'target': target,
+                    'phase': phase,
+                    'success': False,
+                    'exit_code': -2,
+                    'stdout': '',
+                    'stderr': f'Tool requires API keys: {missing}. Keys not configured.',
+                    'execution_time': 0,
+                    'start_time': start_time.isoformat(),
+                    'end_time': datetime.now().isoformat(),
+                    'parsed_results': {'vulnerabilities': []},
+                    'error': f'Missing required API keys: {missing}'
+                }
+        
         try:
             # Ensure SSH connection with retry logic
             max_connection_retries = 3
@@ -197,6 +236,17 @@ class ToolManager:
                 'success': exit_code == 0,
                 'parsed_results': parsed_results
             }
+            
+            # Learn from execution
+            if result.get('success'):
+                findings_count = len(result.get('parsed_results', {}).get('vulnerabilities', []))
+                execution_time_val = result.get('execution_time', 0)
+                self.tool_kb.learn_from_execution(
+                    tool_name, 
+                    command, 
+                    findings_count, 
+                    execution_time_val
+                )
             
             # Notify completion
             self.socketio.emit('tool_execution_complete', {
@@ -390,7 +440,7 @@ class ToolManager:
     
     def build_command(self, tool_name: str, target: str,
                   parameters: Dict[str, Any]) -> str:
-        """Build tool-specific commands - VERIFIED"""
+        """Build tool-specific commands using Knowledge Base - DYNAMIC"""
         
         # Normalize target URL
         if not target.startswith(('http://', 'https://')):
@@ -401,34 +451,46 @@ class ToolManager:
         hostname_match = re.search(r'(?:https?://)?([^:/]+)', target)
         hostname = hostname_match.group(1) if hostname_match else target
         
-        # Tool command templates
-        commands = {
-            # RECONNAISSANCE
-            'sublist3r': f"sublist3r -d {hostname} -n",  # -n for no banner
-            'theHarvester': f"theHarvester -d {hostname} -b all -f /tmp/harvester_{hostname}",
-            'dnsenum': f"dnsenum --enum {hostname}",
-            'fierce': f"fierce --domain {hostname}",
-            'whatweb': f"whatweb {target} -a 3 --color=never --log-brief=/tmp/whatweb_output.txt",
-            
-            # SCANNING
-            'nmap': f"nmap -sV -sC -p 1-1000 -T4 {hostname} -oN /tmp/nmap_output.txt",
-            'masscan': f"masscan {hostname} -p1-65535 --rate=1000",
-            'nuclei': f"nuclei -u {target} -severity critical,high,medium -silent",
-            'nikto': f"nikto -h {target} -Tuning 123456789 -output /tmp/nikto_output.txt",
-            
-            # EXPLOITATION
-            'sqlmap': f"sqlmap -u '{target}' --batch --level=2 --risk=2 --threads=3 --random-agent",
-            'dalfox': f"dalfox url {target} --silence",
-            'commix': f"commix --url='{target}' --batch --level=2 --risk=2",
+        # Build context for command generation
+        context = {
+            'phase': parameters.get('phase', 'reconnaissance'),
+            'target_type': parameters.get('target_type', 'web'),
+            'findings': parameters.get('findings', []),
+            'tools_executed': parameters.get('tools_executed', []),
+            'time_remaining': parameters.get('time_remaining', 1.0),
+            'waf_detected': parameters.get('waf_detected', False),
+            'stealth_required': parameters.get('stealth_required', False),
+            'technologies_detected': parameters.get('technologies_detected', []),
         }
         
-        base_command = commands.get(tool_name, f"echo 'Tool {tool_name} not configured'")
+        # Use Knowledge Base to generate optimal command
+        try:
+            command = self.tool_kb.build_command(tool_name, target, context)
+            logger.info(f"[ToolManager] Dynamic command: {command[:150]}")
+        except Exception as e:
+            logger.error(f"[ToolManager] KB command generation failed: {e}, using fallback")
+            # Fallback to simple command
+            command = self._fallback_command(tool_name, target)
         
         # Add timeout wrapper
         timeout = parameters.get('timeout', 300)
-        command = f"timeout {timeout} {base_command}"
+        command = f"timeout {timeout} {command}"
         
         return command
+
+    def _fallback_command(self, tool_name: str, target: str) -> str:
+        """Fallback commands if Knowledge Base fails"""
+        fallback_commands = {
+            'nmap': f"nmap -sV -T4 {target}",
+            'nikto': f"nikto -h {target}",
+            'sqlmap': f"sqlmap -u '{target}' --batch",
+            'sublist3r': f"sublist3r -d {target} -n",
+            'whatweb': f"whatweb {target}",
+            'nuclei': f"nuclei -u {target} -severity critical,high",
+            'dalfox': f"dalfox url {target}",
+            'commix': f"commix --url='{target}' --batch",
+        }
+        return fallback_commands.get(tool_name, f"{tool_name} {target}")
 
     def _build_sqlmap_for_juiceshop(self, target: str, parameters: Dict[str, Any]) -> str:
         """
@@ -501,6 +563,71 @@ class ToolManager:
             base += f" --risk={params['risk']}"
         
         return base
+
+    def check_tool_requirements(self, tool_name: str) -> tuple[bool, List[str]]:
+        """
+        Check if tool has all required API keys
+
+        Returns:
+            (has_requirements, missing_keys)
+        """
+        import os
+        
+        # Tools that require API keys
+        api_requirements = {
+            'theHarvester': {
+                'optional': ['SHODAN_API_KEY', 'CENSYS_API_KEY', 'HUNTER_API_KEY'],
+                'required': []  # Can work without APIs, just limited
+            },
+            'subfinder': {
+                'optional': ['CHAOS_KEY', 'SHODAN_API_KEY'],
+                'required': []
+            },
+            'nuclei': {
+                'optional': ['GITHUB_TOKEN'],  # For template updates
+                'required': []
+            },
+            'shodan': {
+                'required': ['SHODAN_API_KEY'],
+                'optional': []
+            },
+            'netlas': {
+                'required': ['NETLAS_API_KEY'],
+                'optional': []
+            },
+            'onyphe': {
+                'required': ['ONYPHE_API_KEY'],
+                'optional': []
+            },
+        }
+        
+        if tool_name not in api_requirements:
+            # Tool doesn't need API keys
+            return True, []
+        
+        reqs = api_requirements[tool_name]
+        missing_required = [k for k in reqs.get('required', []) if not os.getenv(k)]
+        
+        if missing_required:
+            logger.warning(f"[API] {tool_name} missing REQUIRED keys: {missing_required}")
+            return False, missing_required
+        
+        missing_optional = [k for k in reqs.get('optional', []) if not os.getenv(k)]
+        if missing_optional:
+            logger.info(f"[API] {tool_name} missing optional keys: {missing_optional} (tool will work with reduced functionality)")
+        
+        return True, []
+
+    def get_fallback_tool(self, tool_name: str) -> Optional[str]:
+        """Get alternative tool when primary tool is unavailable"""
+        fallbacks = {
+            'shodan': 'nmap',
+            'netlas': 'nmap',
+            'onyphe': 'nmap',
+            'theHarvester': 'sublist3r',
+            'censys': 'nmap',
+        }
+        return fallbacks.get(tool_name)
 
     def cleanup(self):
         """Close SSH connection"""

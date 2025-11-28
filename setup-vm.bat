@@ -16,6 +16,11 @@ if "%VBOX_PATH%"=="" (
     echo ERROR: VirtualBox not found in standard locations.
     echo Please install VirtualBox or add VBoxManage to PATH.
     echo.
+    echo Common installation paths:
+    echo   D:\Virtualbox\
+    echo   C:\Program Files\Oracle\VirtualBox\
+    echo   C:\Program Files (x86)\Oracle\VirtualBox\
+    echo.
     pause
     exit /b 1
 )
@@ -27,10 +32,15 @@ echo ----------------------------------------
 "%VBOX_PATH%" list vms
 echo ----------------------------------------
 echo.
-echo Copy the VM name (in quotes) and update start.bat
-echo Replace "kali" with your actual VM name on line 15
+echo Instructions:
+echo 1. Note the name of your Kali VM (in quotes)
+echo 2. Edit start.bat and replace "kali" with your actual VM name
 echo.
-echo Example: If your VM is "kali-linux-2025", change line 15 to:
+echo Example: If your VM is named "kali-linux-2025", change line 15 in start.bat to:
 echo start /B "%%VBOX_PATH%%" startvm "kali-linux-2025" --type headless
+echo.
+echo Also make sure your VM has SSH enabled and port forwarding configured:
+echo   Host IP: 127.0.0.1, Host Port: 2222
+echo   Guest IP: (leave blank), Guest Port: 22
 echo.
 pause

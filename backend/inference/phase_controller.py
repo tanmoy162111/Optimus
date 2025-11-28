@@ -28,6 +28,7 @@ class PhaseTransitionController:
         tools_executed = [t['tool'] if isinstance(t, dict) else t 
                           for t in current_state.get('tools_executed', [])]
         
+        # Check for repeated tool usage
         if len(tools_executed) >= 5:
             recent_tools = tools_executed[-5:]
             most_common = max(set(recent_tools), key=recent_tools.count)
@@ -45,6 +46,10 @@ class PhaseTransitionController:
             print(f"[PhaseController] FORCING TRANSITION - No findings after {len(tools_executed)} tools")
             next_phase = self.get_next_phase(phase, current_state)
             return next_phase
+        
+        # NEW: Track iterations in same phase for stall detection
+        # This would require storing phase start time in the state
+        # For now, we'll use the length of tools executed as a proxy
         
         # Original transition criteria
         transition_criteria = {
