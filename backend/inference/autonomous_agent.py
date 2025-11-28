@@ -106,28 +106,48 @@ class AutonomousPentestAgent:
             logger.warning(f"Could not load some models: {e}")
 
     def conduct_scan(self, target: str, scan_config: Dict) -> Dict[str, Any]:
-        """Main autonomous scanning loop - FULLY INTELLIGENT"""
+        """Main autonomous scanning loop - FULLY INTELLIGENT - FIXED"""
         scan_state = self._initialize_scan_state(target, scan_config)
         
-        max_iterations = 50  # Safety limit
+        max_iterations = 50
         iteration = 0
+        stalled_iterations = 0  # NEW: Track stalled progress
+        last_findings_count = 0
         
         while not self._is_scan_complete(scan_state) and iteration < max_iterations:
             iteration += 1
             logger.info(f"=== Iteration {iteration} | Phase: {scan_state['phase']} ===")
             
-            # 1. Analyze current situation using ML models
-            situation_analysis = self._analyze_situation_ml(scan_state)
+            # NEW: Check if stalled (no progress in 3 iterations)
+            current_findings_count = len(scan_state['findings'])
+            if current_findings_count == last_findings_count:
+                stalled_iterations += 1
+            else:
+                stalled_iterations = 0  # Reset on progress
+                
+            last_findings_count = current_findings_count
             
-            # 2. Use PhaseAwareToolSelector for intelligent tool recommendation
+            # NEW: If stalled for 5 iterations, force phase change
+            if stalled_iterations >= 5:
+                logger.warning(f"Scan stalled for {stalled_iterations} iterations, forcing phase transition")
+                next_phase = self.phase_controller.get_next_phase(scan_state['phase'], scan_state)
+                scan_state['phase'] = next_phase
+                stalled_iterations = 0  # Reset after transition
+            
+            # 1. Tool recommendation
             tool_recommendation = self.tool_selector.recommend_tools(scan_state)
             recommended_tools = tool_recommendation['tools']
             
-            logger.info(f"Recommended tools: {recommended_tools[:3]}")
-            logger.info(f"Method: {tool_recommendation.get('method')}")
-            logger.info(f"Reasoning: {tool_recommendation.get('reasoning')}")
+            # NEW: Check if tool selector signals exhaustion
+            if not recommended_tools or tool_recommendation.get('method') == 'exhausted':
+                logger.info("Tool selector exhausted, transitioning phase")
+                next_phase = self.phase_controller.get_next_phase(scan_state['phase'], scan_state)
+                scan_state['phase'] = next_phase
+                continue
             
-            # 3. Execute recommended tool via REAL SSH execution
+            logger.info(f"Recommended tools: {recommended_tools[:3]}")
+            
+            # 2. Execute recommended tool
             if recommended_tools:
                 tool_to_execute = recommended_tools[0]
                 result = self._execute_tool_real(
@@ -136,20 +156,21 @@ class AutonomousPentestAgent:
                     scan_state
                 )
                 
-                # 4. Update scan state with REAL results
+                # 3. Update scan state with results
                 self._update_scan_state_real(scan_state, result)
                 
-                # 5. Learn from execution
+                # 4. Learn from execution
                 self._learn_from_execution(tool_to_execute, result, scan_state)
             
-            # 6. Check for phase transition using PhaseController
+            # 5. Check for phase transition
             next_phase = self.phase_controller.should_transition(scan_state)
             if next_phase != scan_state['phase']:
                 logger.info(f"📍 Phase transition: {scan_state['phase']} → {next_phase}")
                 scan_state['phase'] = next_phase
+                stalled_iterations = 0  # Reset on phase change
             
             # Safety: prevent infinite loops
-            time.sleep(1)
+            time.sleep(0.5)
             
         scan_state['status'] = 'completed'
         return self._generate_final_report(scan_state)
@@ -207,17 +228,18 @@ class AutonomousPentestAgent:
         return analysis
 
     def _calculate_coverage_real(self, scan_state: Dict) -> float:
-        """Calculate REAL coverage based on tools executed and findings"""
+        """Calculate REAL coverage based on findings AND tool diversity - FIXED"""
         phase = scan_state['phase']
         tools_executed = [t['tool'] if isinstance(t, dict) else t 
                           for t in scan_state.get('tools_executed', [])]
+        findings = scan_state.get('findings', [])
         
         # Phase-specific tool requirements
         phase_requirements = {
             'reconnaissance': ['sublist3r', 'whatweb', 'dnsenum'],
             'scanning': ['nmap', 'nikto', 'nuclei'],
-            'exploitation': ['sqlmap', 'dalfox', 'commix'],
-            'post_exploitation': ['linpeas', 'mimikatz'],
+            'exploitation': ['sqlmap', 'dalfox'],
+            'post_exploitation': ['linpeas'],
             'covering_tracks': ['clear_logs']
         }
         
@@ -225,14 +247,38 @@ class AutonomousPentestAgent:
         if not required_tools:
             return 0.5
             
-        # Calculate percentage of required tools executed
-        executed_count = sum(1 for tool in required_tools if tool in tools_executed)
-        phase_coverage = executed_count / len(required_tools)
+        # Calculate unique tools executed (not total count)
+        unique_tools_executed = list(set(tools_executed))
+        executed_count = sum(1 for tool in required_tools if tool in unique_tools_executed)
         
-        # Adjust based on findings
-        findings_boost = min(len(scan_state['findings']) * 0.1, 0.3)
+        # Base coverage on unique tool diversity
+        tool_coverage = executed_count / len(required_tools)
         
-        total_coverage = min(phase_coverage + findings_boost, 1.0)
+        # NEW: Penalize if tools ran multiple times without findings
+        total_executions = len(tools_executed)
+        unique_executions = len(unique_tools_executed)
+        
+        if total_executions > unique_executions * 2:
+            # Too many duplicate executions
+            repetition_penalty = 0.5
+        else:
+            repetition_penalty = 1.0
+            
+        # NEW: Boost based on actual findings
+        findings_boost = min(len(findings) * 0.05, 0.3)  # Max 30% boost
+        
+        # NEW: Penalize if no findings despite many tools
+        if len(findings) == 0 and unique_executions >= 3:
+            no_findings_penalty = 0.3
+        else:
+            no_findings_penalty = 0.0
+            
+        total_coverage = (tool_coverage * repetition_penalty) + findings_boost - no_findings_penalty
+        total_coverage = max(0.0, min(total_coverage, 1.0))
+        
+        print(f"[Coverage] Phase: {phase}, Unique tools: {unique_executions}, "
+              f"Findings: {len(findings)}, Coverage: {total_coverage:.2f}")
+        
         return total_coverage
 
     def _map_attack_surface_real(self, scan_state: Dict) -> List[str]:

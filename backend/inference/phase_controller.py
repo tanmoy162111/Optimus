@@ -21,13 +21,32 @@ class PhaseTransitionController:
         self.transition_history = []
         
     def should_transition(self, current_state: Dict[str, Any]) -> str:
-        """
-        Determine if phase transition should occur
-        Returns: Next phase name or current phase if no transition
-        """
+        """Determine if phase transition should occur - ENHANCED"""
         phase = current_state.get('phase', 'reconnaissance')
         
-        # Check completion criteria for current phase
+        # NEW: Check if stuck (same tool repeated too many times)
+        tools_executed = [t['tool'] if isinstance(t, dict) else t 
+                          for t in current_state.get('tools_executed', [])]
+        
+        if len(tools_executed) >= 5:
+            recent_tools = tools_executed[-5:]
+            most_common = max(set(recent_tools), key=recent_tools.count)
+            repetition_count = recent_tools.count(most_common)
+            
+            # If same tool repeated 4+ times in last 5 executions, force transition
+            if repetition_count >= 4:
+                print(f"[PhaseController] FORCING TRANSITION - {most_common} repeated {repetition_count} times")
+                next_phase = self.get_next_phase(phase, current_state)
+                return next_phase
+        
+        # NEW: Check if no progress (0 findings after 10+ tools)
+        findings = current_state.get('findings', [])
+        if len(findings) == 0 and len(tools_executed) >= 10:
+            print(f"[PhaseController] FORCING TRANSITION - No findings after {len(tools_executed)} tools")
+            next_phase = self.get_next_phase(phase, current_state)
+            return next_phase
+        
+        # Original transition criteria
         transition_criteria = {
             'reconnaissance': self._check_recon_complete(current_state),
             'scanning': self._check_scanning_complete(current_state),
@@ -40,7 +59,7 @@ class PhaseTransitionController:
             next_phase = self.get_next_phase(phase, current_state)
             ml_confidence = self.verify_transition_with_ml(current_state, next_phase)
             
-            if ml_confidence > 0.7:
+            if ml_confidence > 0.5:  # Lowered from 0.7
                 self.log_transition(phase, next_phase, current_state)
                 return next_phase
         
@@ -125,19 +144,35 @@ class PhaseTransitionController:
                    f"findings: {transition['findings']})")
     
     def _check_recon_complete(self, state: Dict[str, Any]) -> bool:
-        """Check if reconnaissance phase is complete"""
+        """Check if reconnaissance phase is complete - RELAXED"""
         phase_data = state.get('phase_data', {})
+        tools_executed = [t['tool'] if isinstance(t, dict) else t 
+                          for t in state.get('tools_executed', [])]
+        findings = state.get('findings', [])
         
-        # Criteria: Found sufficient subdomains and technologies
+        # Get actual subdomain and technology counts
         subdomains = phase_data.get('subdomains', 0)
         technologies = phase_data.get('technologies', 0)
         coverage = state.get('coverage', 0.0)
         
-        return (
-            subdomains >= 5 and
-            technologies >= 3 and
-            coverage >= 0.6
+        # RELAXED: Transition if:
+        # 1. Found 3+ subdomains OR 2+ technologies, OR
+        # 2. Coverage >= 0.5 (tried multiple tools), OR
+        # 3. Executed 3+ unique recon tools
+        
+        unique_recon_tools = len(set([t for t in tools_executed if t in ['sublist3r', 'whatweb', 'dnsenum', 'fierce']]))
+        
+        criteria_met = (
+            (subdomains >= 3 or technologies >= 2) or
+            coverage >= 0.5 or
+            unique_recon_tools >= 3 or
+            len(findings) >= 5  # Found enough reconnaissance data
         )
+        
+        if criteria_met:
+            print(f"[PhaseController] Recon complete: subdomains={subdomains}, "
+                  f"tech={technologies}, coverage={coverage:.2f}, unique_tools={unique_recon_tools}")
+        return criteria_met
     
     def _check_scanning_complete(self, state: Dict[str, Any]) -> bool:
         """Check if scanning phase is complete"""

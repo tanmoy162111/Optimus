@@ -242,19 +242,54 @@ class OutputParser:
         }
 
     def _parse_sublist3r(self, stdout: str, stderr: str) -> Dict:
-        """Parse Sublist3r subdomain enumeration"""
+        """Parse Sublist3r subdomain enumeration - ENHANCED"""
+        vulnerabilities = []
         subdomains = []
         
-        # Extract subdomains
-        domain_pattern = r'([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}'
-        for match in re.finditer(domain_pattern, stdout):
-            subdomain = match.group(0)
-            if subdomain not in subdomains:
-                subdomains.append(subdomain)
+        # Extract subdomains from output
+        # Sublist3r typically outputs one subdomain per line
+        lines = stdout.split('\n')
+        
+        for line in lines:
+            line = line.strip()
+            
+            # Skip empty lines and headers
+            if not line or line.startswith('[') or line.startswith('Total'):
+                continue
+            
+            # Extract domain patterns
+            # Look for valid domain format: subdomain.domain.tld
+            domain_pattern = r'([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}'
+            matches = re.findall(domain_pattern, line)
+            
+            for match in matches:
+                if match not in subdomains:
+                    subdomains.append(match)
+                    
+                    # Create a vulnerability entry for each subdomain found
+                    # This counts as reconnaissance findings
+                    vulnerabilities.append({
+                        'id': str(uuid.uuid4()),
+                        'type': 'subdomain_discovered',
+                        'severity': 2.0,  # Low severity - informational
+                        'confidence': 0.95,
+                        'name': f'Subdomain: {match}',
+                        'location': match,
+                        'evidence': f'Subdomain enumeration found: {match}',
+                        'exploitable': False
+                    })
+        
+        # Check for "No subdomains found" messages
+        if 'no subdomains' in stdout.lower() or len(subdomains) == 0:
+            # Tool ran but found nothing - still a valid result
+            print(f"[Parser] sublist3r found 0 subdomains")
+        else:
+            print(f"[Parser] sublist3r found {len(subdomains)} subdomains")
         
         return {
-            'vulnerabilities': [],
+            'vulnerabilities': vulnerabilities,
             'subdomains': subdomains,
+            'subdomain_count': len(subdomains),
             'raw_output': stdout
         }
 

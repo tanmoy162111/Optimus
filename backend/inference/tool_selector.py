@@ -52,8 +52,11 @@ class PhaseAwareToolSelector:
         else:
             logger.info("Phase-specific models not available, using fallback methods")
         
+        # Add tool execution history tracking
+        self.tool_execution_history = {}  # Track tool effectiveness
+
     def recommend_tools(self, scan_state: Dict[str, Any]) -> Dict[str, Any]:
-        """Enhanced recommendation with better context awareness"""
+        """Enhanced recommendation with execution history"""
         phase = scan_state.get('phase', 'reconnaissance')
         findings = scan_state.get('findings', [])
         tools_executed = [t['tool'] if isinstance(t, dict) else t 
@@ -62,6 +65,24 @@ class PhaseAwareToolSelector:
         # Extract what we know about the target
         scan_state['target_type'] = scan_state.get('target_type', 'web')
         scan_state['recently_used_tools'] = tools_executed[-3:] if len(tools_executed) > 3 else tools_executed
+
+        # NEW: Check if last tool was ineffective
+        if len(tools_executed) > 0:
+            last_tool = tools_executed[-1]
+            
+            # Count how many times this tool was used recently
+            recent_tools = tools_executed[-5:] if len(tools_executed) >= 5 else tools_executed
+            tool_usage_count = recent_tools.count(last_tool)
+            
+            # If tool used 3+ times recently with no findings, blacklist it temporarily
+            if tool_usage_count >= 3 and len(findings) == 0:
+                print(f"[ToolSelector] Blacklisting {last_tool} - used {tool_usage_count} times with no results")
+                scan_state['blacklisted_tools'] = scan_state.get('blacklisted_tools', [])
+                if last_tool not in scan_state['blacklisted_tools']:
+                    scan_state['blacklisted_tools'].append(last_tool)
+        
+        # Get blacklisted tools
+        blacklisted = scan_state.get('blacklisted_tools', [])
 
         # Use phase-specific models first (Tier 1)
         if self.use_phase_specific and self.phase_specific_selector:
@@ -73,6 +94,9 @@ class PhaseAwareToolSelector:
                     
                     # Combine with rule-based enhancements
                     rule_tools = self.apply_phase_rules(scan_state, phase)
+                    # Filter out blacklisted tools
+                    rule_tools = [t for t in rule_tools if t not in blacklisted]
+                    
                     final_tools = rule_tools + [t for t in ps_result['tools'] if t not in rule_tools]
                     
                     return {
@@ -91,60 +115,75 @@ class PhaseAwareToolSelector:
             rule_tools = self.rule_selector.recommend_tools(scan_state)
             reasoning = self.rule_selector.get_reasoning(scan_state, rule_tools)
             
+            # Filter out blacklisted tools
+            rule_tools = [t for t in rule_tools if t not in blacklisted]
+            
+            # If no rule tools left, force phase transition
+            if not rule_tools:
+                print(f"[ToolSelector] No effective tools left in {phase}, forcing transition")
+                return {
+                    'tools': [],  # Empty list signals phase transition needed
+                    'phase': phase,
+                    'method': 'exhausted',
+                    'ml_confidence': 0.0,
+                    'reasoning': 'All tools exhausted, need phase transition'
+                }
+            
             return {
                 'tools': rule_tools[:5],
                 'phase': phase,
                 'method': 'rule_based',
                 'ml_confidence': 0.8,  # High confidence in rules
-                'reasoning': reasoning
+                'reasoning': f'Recommended tools excluding {len(blacklisted)} ineffective tools'
             }
 
     def apply_phase_rules(self, state: Dict[str, Any], phase: str) -> List[str]:
-        """
-        Apply rule-based tool selection for phase
-        Returns: List of tools to execute
-        """
+        """Apply rule-based tool selection for phase - ENHANCED"""
         rule_tools = []
+        tools_executed = [t['tool'] if isinstance(t, dict) else t 
+                          for t in state.get('tools_executed', [])]
         
         if phase == 'reconnaissance':
-            # Always start with subdomain enumeration
-            if len(state.get('tools_executed', [])) == 0:
+            # Start with subdomain enumeration
+            if 'sublist3r' not in tools_executed:
                 rule_tools.append('sublist3r')
             
-            # If no technologies detected, use whatweb
-            if state.get('phase_data', {}).get('technologies', 0) == 0:
-                rule_tools.append('whatweb')
-        
+            # If sublist3r already ran, try other recon tools
+            if 'sublist3r' in tools_executed:
+                if 'whatweb' not in tools_executed:
+                    rule_tools.append('whatweb')
+                if 'dnsenum' not in tools_executed:
+                    rule_tools.append('dnsenum')
+            
+            # If all recon tools tried, force nmap to start scanning
+            if all(t in tools_executed for t in ['sublist3r', 'whatweb', 'dnsenum']):
+                rule_tools.append('nmap')  # This will trigger phase transition
+                
         elif phase == 'scanning':
             # Always start with nmap for port scanning
-            if 'nmap' not in state.get('tools_executed', []):
+            if 'nmap' not in tools_executed:
                 rule_tools.append('nmap')
-            
-            # If web app detected, use web vuln scanners
-            if state.get('target_type') == 'web_app':
-                if 'nikto' not in state.get('tools_executed', []):
+            else:
+                # After nmap, do web vulnerability scanning
+                if 'nikto' not in tools_executed:
                     rule_tools.append('nikto')
-        
+                if 'nuclei' not in tools_executed:
+                    rule_tools.append('nuclei')
+                    
         elif phase == 'exploitation':
-            # If SQL injection detected, use sqlmap
-            sql_detected = any(v.get('type') == 'sql_injection' for v in state.get('findings', []))
-            if sql_detected and 'sqlmap' not in state.get('tools_executed', []):
-                rule_tools.append('sqlmap')
+            # Check what vulnerabilities were found
+            findings = state.get('findings', [])
+            vuln_types = [f.get('type') for f in findings]
             
-            # If XSS detected, use specific XSS tools
-            xss_detected = any(v.get('type') == 'xss' for v in state.get('findings', []))
-            if xss_detected:
+            if 'sql_injection' in vuln_types and 'sqlmap' not in tools_executed:
+                rule_tools.append('sqlmap')
+            elif 'xss' in vuln_types and 'dalfox' not in tools_executed:
                 rule_tools.append('dalfox')
-        
-        elif phase == 'post_exploitation':
-            # If access gained, escalate privileges
-            if state.get('phase_data', {}).get('access_gained'):
-                rule_tools.append('linpeas')
-        
-        elif phase == 'covering_tracks':
-            # Clean up logs
-            rule_tools.append('clear_logs')
-        
+            else:
+                # No specific vulnerabilities, try generic exploitation
+                if 'sqlmap' not in tools_executed:
+                    rule_tools.append('sqlmap')
+                    
         return rule_tools
     
     def extract_phase_features(self, scan_state: Dict[str, Any]) -> List[float]:

