@@ -1,3 +1,56 @@
+"""Parse tool outputs into structured vulnerability data
+Supports: Nmap, Nikto, SQLMap, Nuclei, and 20+ other tools
+"""
+import re
+import json
+import xml.etree.ElementTree as ET
+import uuid
+from typing import List, Dict, Any
+
+class OutputParser:
+    def parse_tool_output(self, tool_name: str, stdout: str,
+                          stderr: str) -> Dict[str, Any]:
+        """
+        Parse tool output based on tool type
+
+        Returns:
+            {
+                'vulnerabilities': [...],
+                'hosts': [...],
+                'services': [...],
+                'raw_output': str,
+                'parse_error': str (optional)
+            }
+        """
+        try:
+            # Route to appropriate parser
+            if tool_name == 'nmap':
+                return self._parse_nmap(stdout, stderr)
+            elif tool_name == 'sqlmap':
+                return self._parse_sqlmap(stdout, stderr)
+            elif tool_name == 'nuclei':
+                return self._parse_nuclei(stdout, stderr)
+            elif tool_name == 'sublist3r':
+                return self._parse_sublist3r(stdout, stderr)
+            elif tool_name == 'whatweb':
+                return self._parse_whatweb(stdout, stderr)
+            elif tool_name == 'dalfox':
+                return self._parse_dalfox(stdout, stderr)
+            elif tool_name == 'commix':
+                return self._parse_commix(stdout, stderr)
+            else:
+                # Generic parser for unhandled tools
+                return self._parse_generic(stdout, stderr)
+        except Exception as e:
+            print(f"[Parser] Error parsing {tool_name}: {e}")
+            return {
+                'vulnerabilities': [],
+                'hosts': [],
+                'services': [],
+                'raw_output': stdout,
+                'parse_error': str(e)
+            }
+
     def _parse_nmap(self, stdout: str, stderr: str) -> Dict:
         """Enhanced Nmap parsing with error handling"""
         try:
@@ -214,6 +267,17 @@
                 'parse_error': str(e)
             }
 
+    def _nuclei_severity_to_cvss(self, severity: str) -> float:
+        """Convert Nuclei severity to CVSS score"""
+        mapping = {
+            'critical': 9.5,
+            'high': 8.0,
+            'medium': 6.0,
+            'low': 3.0,
+            'info': 1.0
+        }
+        return mapping.get(severity.lower(), 5.0)
+
     def _parse_sublist3r(self, stdout: str, stderr: str) -> Dict:
         """Parse Sublist3r subdomain enumeration with error handling"""
         try:
@@ -367,5 +431,52 @@
             return {
                 'vulnerabilities': [],
                 'raw_output': stdout,
+                'parse_error': str(e)
+            }
+
+    def _parse_generic(self, stdout: str, stderr: str) -> Dict:
+        """Generic parser for unhandled tools"""
+        try:
+            # Look for common vulnerability indicators
+            vuln_indicators = [
+                'vulnerab', 'exploit', 'cve-', 'risk', 'severity',
+                'critical', 'high', 'medium', 'low'
+            ]
+            
+            vulnerabilities = []
+            evidence_lines = []
+            
+            # Scan output for vulnerability indicators
+            for line in (stdout + '\n' + stderr).split('\n'):
+                line_lower = line.lower()
+                if any(indicator in line_lower for indicator in vuln_indicators):
+                    evidence_lines.append(line.strip())
+            
+            # Create vulnerability entries if we found indicators
+            if evidence_lines:
+                vulnerabilities.append({
+                    'id': str(uuid.uuid4()),
+                    'type': 'generic_finding',
+                    'severity': 5.0,  # Medium
+                    'confidence': 0.7,
+                    'name': 'Tool Output Analysis',
+                    'location': 'Generic parsing',
+                    'evidence': '\n'.join(evidence_lines[:10]),  # First 10 lines
+                    'exploitable': True
+                })
+            
+            return {
+                'vulnerabilities': vulnerabilities,
+                'hosts': [],
+                'services': [],
+                'raw_output': stdout + '\n' + stderr
+            }
+        except Exception as e:
+            print(f"[Parser] Generic parsing error: {e}")
+            return {
+                'vulnerabilities': [],
+                'hosts': [],
+                'services': [],
+                'raw_output': stdout + '\n' + stderr,
                 'parse_error': str(e)
             }

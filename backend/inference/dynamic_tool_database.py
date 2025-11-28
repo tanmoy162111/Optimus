@@ -7,6 +7,8 @@ class DynamicToolDatabase:
 
     def __init__(self):
         self.tools = self._initialize_tool_database()
+        # Initialize tool success tracking
+        self.tool_success_stats = {}
 
     def _initialize_tool_database(self) -> Dict[str, Dict[str, Any]]:
         """
@@ -291,3 +293,50 @@ class DynamicToolDatabase:
         if tool_info and tool_info.get('requires_api', False):
             return tool_info.get('api_keys', [])
         return None
+
+    def record_tool_success(self, tool_name: str, success: bool):
+        """
+        Record tool execution success/failure for learning purposes
+        
+        Args:
+            tool_name: Name of the tool executed
+            success: Whether the tool successfully found vulnerabilities
+        """
+        if tool_name not in self.tool_success_stats:
+            self.tool_success_stats[tool_name] = {
+                'executions': 0,
+                'successes': 0,
+                'success_rate': 0.0
+            }
+        
+        stats = self.tool_success_stats[tool_name]
+        stats['executions'] += 1
+        if success:
+            stats['successes'] += 1
+        
+        # Update success rate
+        if stats['executions'] > 0:
+            stats['success_rate'] = stats['successes'] / stats['executions']
+
+    def get_tool_success_rate(self, tool_name: str) -> float:
+        """
+        Get the success rate of a tool
+        
+        Args:
+            tool_name: Name of the tool
+            
+        Returns:
+            Success rate as a float between 0.0 and 1.0
+        """
+        if tool_name in self.tool_success_stats:
+            return self.tool_success_stats[tool_name]['success_rate']
+        return 0.0
+
+    def get_all_tool_stats(self) -> Dict[str, Dict[str, Any]]:
+        """
+        Get statistics for all tools
+        
+        Returns:
+            Dictionary of tool statistics
+        """
+        return self.tool_success_stats
