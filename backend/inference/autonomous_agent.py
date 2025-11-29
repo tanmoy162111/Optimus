@@ -313,6 +313,12 @@ class AutonomousPentestAgent:
                                        for t in tools_executed[-5:]]  # Last 5 tools
         }
         
+        print(f"[DEBUG] Analysis - Total findings: {len(findings)}")
+        print(f"[DEBUG] Analysis - Unique tools executed: {len(unique_tools)}")
+        print(f"[DEBUG] Analysis - Finding types: {finding_types}")
+        print(f"[DEBUG] Analysis - Average severity: {avg_severity}")
+        print(f"[DEBUG] Analysis - Technologies detected: {technologies}")
+        
         return analysis
 
     def _make_autonomous_decision(self, scan_state: Dict, analysis: Dict) -> Dict[str, Any]:
