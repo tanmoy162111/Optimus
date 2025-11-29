@@ -1,0 +1,7 @@
+{
+  "error": "'NoneType' object has no attribute 'get'",
+  "target": "https://landscape.canonical.com",
+  "tools_executed": [],
+  "findings": [],
+  "coverage": 0
+}

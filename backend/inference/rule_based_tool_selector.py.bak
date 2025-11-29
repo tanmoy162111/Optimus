@@ -132,18 +132,6 @@ class RuleBasedToolSelector:
         tools_executed = context.get('tools_executed', [])
         technologies = context.get('technologies_detected', [])
         target_type = context.get('target_type', 'web')
-        learning_mode = context.get('config', {}).get('learning_mode', False)
-        
-        # Ensure tools_executed contains only tool names, not dictionaries
-        tools_executed_names = []
-        for item in tools_executed:
-            if isinstance(item, dict):
-                tool_name = item.get('tool', '')
-                if tool_name:
-                    tools_executed_names.append(tool_name)
-            else:
-                tools_executed_names.append(item)
-        tools_executed = tools_executed_names
         
         recommended = []
         
@@ -163,34 +151,6 @@ class RuleBasedToolSelector:
         elif phase == 'covering_tracks':
             recommended = self._recommend_covering_tracks(context, tools_executed)
         
-        # In learning mode, add variety to gather more data
-        if learning_mode:
-            # Get all available tools not yet executed
-            from inference.dynamic_tool_database import DynamicToolDatabase
-            tool_db = DynamicToolDatabase()
-            all_tools = list(tool_db.tools.keys())
-            
-            # Add some tools we haven't tried yet
-            untried_tools = [tool for tool in all_tools if tool not in tools_executed and tool not in recommended]
-            # Prioritize tools based on category relevance to current phase
-            phase_categories = {
-                'reconnaissance': ['subdomain_enum', 'web_profiler', 'email_enum'],
-                'scanning': ['network_scanner', 'web_scanner', 'vulnerability_scanner'],
-                'exploitation': ['sql_exploitation', 'xss_scanner', 'command_injection'],
-                'post_exploitation': ['privilege_escalation', 'credential_recovery'],
-                'covering_tracks': ['log_cleanup', 'file_deletion']
-            }
-            
-            relevant_categories = phase_categories.get(phase, [])
-            category_tools = []
-            for tool in untried_tools:
-                tool_info = tool_db.get_tool_info(tool)
-                if tool_info and tool_info.get('category') in relevant_categories:
-                    category_tools.append(tool)
-            
-            # Mix in some category-relevant tools for learning
-            recommended = category_tools[:2] + recommended
-        
         # Remove already-executed tools
         recommended = [tool for tool in recommended if tool not in tools_executed]
         
@@ -198,30 +158,13 @@ class RuleBasedToolSelector:
         # Count tool executions
         tool_execution_counts = {}
         for tool in tools_executed:
-            # Handle case where tool might be a dictionary
-            if isinstance(tool, dict):
-                tool_name = tool.get('tool', '')
-                if tool_name:
-                    tool_execution_counts[tool_name] = tool_execution_counts.get(tool_name, 0) + 1
-            else:
-                tool_execution_counts[tool] = tool_execution_counts.get(tool, 0) + 1
+            tool_execution_counts[tool] = tool_execution_counts.get(tool, 0) + 1
         
         # Filter out tools that have been executed 3+ times
-        filtered_recommended = []
-        for tool in recommended:
-            # Handle case where tool might be a dictionary
-            tool_name = tool
-            if isinstance(tool, dict):
-                tool_name = tool.get('tool', '')
-            
-            # Check if tool has been executed less than 3 times
-            execution_count = tool_execution_counts.get(tool_name, 0)
-            if execution_count < 3:
-                filtered_recommended.append(tool)
-        recommended = filtered_recommended
+        recommended = [tool for tool in recommended if tool_execution_counts.get(tool, 0) < 3]
         
-        # Limit to top 5
-        return recommended[:5]
+        # Limit to top 3
+        return recommended[:3]
     
     def _recommend_reconnaissance(self, context: Dict, tools_executed: List[str]) -> List[str]:
         """Reconnaissance phase logic"""
@@ -402,3 +345,46 @@ class RuleBasedToolSelector:
             reasons.append("All appropriate tools for this phase have been executed")
         
         return "; ".join(reasons)
+
+
+# Integration with existing tool selector
+class HybridToolSelector:
+    """
+    Combines ML-based and rule-based tool selection
+    Falls back to rules when ML confidence is low
+    """
+    
+    def __init__(self, ml_selector, confidence_threshold=0.5):
+        self.ml_selector = ml_selector
+        self.rule_selector = RuleBasedToolSelector()
+        self.confidence_threshold = confidence_threshold
+    
+    def recommend_tools(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Hybrid recommendation: ML first, rules as fallback
+        """
+        # Try ML first
+        ml_result = self.ml_selector.recommend_tools(context)
+        ml_confidence = ml_result.get('ml_confidence', 0.0)
+        
+        # Use rules if ML confidence low
+        if ml_confidence < self.confidence_threshold:
+            rule_tools = self.rule_selector.recommend_tools(context)
+            reasoning = self.rule_selector.get_reasoning(context, rule_tools)
+            
+            logger.info(f"Using rule-based selection (ML confidence {ml_confidence:.3f} < {self.confidence_threshold})")
+            
+            return {
+                'tools': rule_tools,
+                'method': 'rule_based',
+                'ml_confidence': ml_confidence,
+                'reasoning': reasoning,
+                'fallback_used': True
+            }
+        
+        # Use ML recommendations
+        logger.info(f"Using ML-based selection (confidence {ml_confidence:.3f})")
+        return {
+            **ml_result,
+            'fallback_used': False
+        }

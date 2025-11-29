@@ -64,7 +64,7 @@ def test_juice_shop_scan():
             'Found vulnerabilities': len(result['findings']) > 0,
             'Found SQL injection': len(sql_findings) > 0,
             'Coverage > 60%': result['coverage'] > 0.6,
-            'No tool repeated 3+ times': max([result['tools_executed'].count(t) for t in set(result['tools_executed'])]) < 3,
+            'No tool repeated 3+ times': max([result['tools_executed'].count(t) for t in set([item['tool'] if isinstance(item, dict) else item for item in result['tools_executed']])]) < 3,
         }
         
         for check, passed in checks.items():

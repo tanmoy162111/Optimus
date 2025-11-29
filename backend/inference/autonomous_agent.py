@@ -237,7 +237,7 @@ class AutonomousPentestAgent:
             return 0.5
             
         # Calculate unique tools executed (not total count)
-        unique_tools_executed = list(set(tools_executed))
+        unique_tools_executed = list(set([t['tool'] if isinstance(t, dict) else t for t in tools_executed]))
         executed_count = sum(1 for tool in required_tools if tool in unique_tools_executed)
         
         # Base coverage on unique tool diversity

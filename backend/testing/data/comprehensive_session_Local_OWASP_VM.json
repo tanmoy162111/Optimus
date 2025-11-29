@@ -1,0 +1,173 @@
+{
+  "scan_id": "4cd3fb95-64f0-4bd2-9a43-6dcb85210b63",
+  "target": "http://192.168.131.128",
+  "target_profile": {
+    "target": "http://192.168.131.128",
+    "type": "web",
+    "technologies": [
+      "http_server",
+      "web_framework"
+    ],
+    "risk_level": "medium",
+    "scan_strategy": "web_application"
+  },
+  "findings": [
+    {
+      "id": "6c861692-392c-48f9-ab63-625a7b59e06b",
+      "type": "open_port",
+      "severity": 4.0,
+      "confidence": 0.95,
+      "name": "Open Port: 80/http",
+      "location": "Port 80",
+      "evidence": "80/tcp  open  http     Apache httpd 2.2.14 ((Ubuntu) mod_mono/2.4.3 PHP/5.3.2-1ubuntu4.30 with Suhosin-Patch proxy_html/3.0.1 mod_python/3.3.1 Python/2.6.5 mod_ssl/2.2.14 OpenSSL...) Apache httpd 2.2.14 ((Ubuntu) mod_mono/2.4.3 PHP/5.3.2-1ubuntu4.30 with Suhosin-Patch proxy_html/3.0.1 mod_python/3.3.1 Python/2.6.5 mod_ssl/2.2.14 OpenSSL...)",
+      "exploitable": true
+    },
+    {
+      "id": "2c7058ff-653a-46b7-953a-be3a6549a098",
+      "type": "open_port",
+      "severity": 4.0,
+      "confidence": 0.95,
+      "name": "Open Port: 443/ssl/http",
+      "location": "Port 443",
+      "evidence": "443/tcp open  ssl/http Apache httpd 2.2.14 ((Ubuntu) mod_mono/2.4.3 PHP/5.3.2-1ubuntu4.30 with Suhosin-Patch proxy_html/3.0.1 mod_python/3.3.1 Python/2.6.5 mod_ssl/2.2.14 OpenSSL...) Apache httpd 2.2.14 ((Ubuntu) mod_mono/2.4.3 PHP/5.3.2-1ubuntu4.30 with Suhosin-Patch proxy_html/3.0.1 mod_python/3.3.1 Python/2.6.5 mod_ssl/2.2.14 OpenSSL...)",
+      "exploitable": false
+    }
+  ],
+  "tools_executed": [
+    {
+      "tool": "nmap",
+      "timestamp": "2025-11-29T17:54:08.059232",
+      "success": true,
+      "exit_code": 0
+    },
+    {
+      "tool": "nmap",
+      "timestamp": "2025-11-29T17:54:08.059237",
+      "success": true,
+      "exit_code": 0
+    },
+    {
+      "tool": "nikto",
+      "timestamp": "2025-11-29T17:55:19.977266",
+      "success": false,
+      "exit_code": 1
+    },
+    {
+      "tool": "nikto",
+      "timestamp": "2025-11-29T17:55:19.977274",
+      "success": false,
+      "exit_code": 1
+    },
+    {
+      "tool": "whatweb",
+      "timestamp": "2025-11-29T17:55:26.226908",
+      "success": true,
+      "exit_code": 0
+    },
+    {
+      "tool": "whatweb",
+      "timestamp": "2025-11-29T17:55:26.226919",
+      "success": true,
+      "exit_code": 0
+    },
+    {
+      "tool": "masscan",
+      "timestamp": "2025-11-29T17:55:26.855472",
+      "success": false,
+      "exit_code": 1
+    },
+    {
+      "tool": "masscan",
+      "timestamp": "2025-11-29T17:55:26.855481",
+      "success": false,
+      "exit_code": 1
+    },
+    {
+      "tool": "sqlmap",
+      "timestamp": "2025-11-29T17:55:28.592355",
+      "success": true,
+      "exit_code": 0
+    },
+    {
+      "tool": "sqlmap",
+      "timestamp": "2025-11-29T17:55:28.592362",
+      "success": true,
+      "exit_code": 0
+    },
+    {
+      "tool": "gobuster",
+      "timestamp": "2025-11-29T17:55:29.220387",
+      "success": false,
+      "exit_code": 1
+    },
+    {
+      "tool": "gobuster",
+      "timestamp": "2025-11-29T17:55:29.220395",
+      "success": false,
+      "exit_code": 1
+    },
+    {
+      "tool": "ffuf",
+      "timestamp": "2025-11-29T17:55:29.852888",
+      "success": false,
+      "exit_code": 1
+    },
+    {
+      "tool": "ffuf",
+      "timestamp": "2025-11-29T17:55:29.852895",
+      "success": false,
+      "exit_code": 1
+    },
+    {
+      "tool": "nuclei",
+      "timestamp": "2025-11-29T17:55:30.482700",
+      "success": false,
+      "exit_code": 127
+    },
+    {
+      "tool": "nuclei",
+      "timestamp": "2025-11-29T17:55:30.482714",
+      "success": false,
+      "exit_code": 127
+    },
+    {
+      "tool": "clear_logs",
+      "timestamp": "2025-11-29T17:55:31.112777",
+      "success": false,
+      "exit_code": 127
+    },
+    {
+      "tool": "clear_logs",
+      "timestamp": "2025-11-29T17:55:31.112784",
+      "success": false,
+      "exit_code": 127
+    },
+    {
+      "tool": "timestomp",
+      "timestamp": "2025-11-29T17:55:31.744203",
+      "success": false,
+      "exit_code": 127
+    },
+    {
+      "tool": "timestomp",
+      "timestamp": "2025-11-29T17:55:31.744207",
+      "success": false,
+      "exit_code": 127
+    },
+    {
+      "tool": "shred",
+      "timestamp": "2025-11-29T17:55:32.376588",
+      "success": false,
+      "exit_code": 1
+    },
+    {
+      "tool": "shred",
+      "timestamp": "2025-11-29T17:55:32.376594",
+      "success": false,
+      "exit_code": 1
+    }
+  ],
+  "coverage": 0.6,
+  "duration": 104.880601,
+  "strategy_changes": 0
+}

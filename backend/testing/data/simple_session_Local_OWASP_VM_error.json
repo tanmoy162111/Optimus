@@ -1,0 +1,7 @@
+{
+  "error": "'NoneType' object has no attribute 'get'",
+  "target": "http://192.168.131.128",
+  "tools_executed": [],
+  "findings": [],
+  "coverage": 0
+}

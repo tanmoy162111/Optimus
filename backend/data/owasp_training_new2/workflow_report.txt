@@ -1,0 +1,16 @@
+OWASP VM TRAINING WORKFLOW REPORT
+==================================================
+
+Workflow ID: owasp_workflow_20251129_112734
+Duration: 0.0 seconds
+Steps Completed: 2/4
+
+TRAINING RESULTS:
+  Targets Processed: 2
+  Total Vulnerabilities Found: 10
+
+ANALYSIS RESULTS:
+  Patterns Extracted: 0
+
+MODEL RETRAINING:
+  Status: failed

@@ -1,0 +1,173 @@
+{
+  "scan_id": "b8806f31-0780-4683-a401-390c7567aa0b",
+  "target": "https://landscape.canonical.com",
+  "target_profile": {
+    "target": "https://landscape.canonical.com",
+    "type": "web",
+    "technologies": [
+      "http_server",
+      "web_framework"
+    ],
+    "risk_level": "medium",
+    "scan_strategy": "web_application"
+  },
+  "findings": [
+    {
+      "id": "b61d6539-71dd-4be7-9586-c8e48b4ef655",
+      "type": "open_port",
+      "severity": 4.0,
+      "confidence": 0.95,
+      "name": "Open Port: 80/http-proxy",
+      "location": "Port 80",
+      "evidence": "80/tcp  open  http-proxy     HAProxy http proxy HAProxy http proxy",
+      "exploitable": false
+    },
+    {
+      "id": "834ea687-6582-4106-888f-347634a368e8",
+      "type": "open_port",
+      "severity": 4.0,
+      "confidence": 0.95,
+      "name": "Open Port: 443/ssl/http-proxy",
+      "location": "Port 443",
+      "evidence": "443/tcp open  ssl/http-proxy HAProxy http proxy HAProxy http proxy",
+      "exploitable": false
+    }
+  ],
+  "tools_executed": [
+    {
+      "tool": "nmap",
+      "timestamp": "2025-11-29T17:40:15.228102",
+      "success": true,
+      "exit_code": 0
+    },
+    {
+      "tool": "nmap",
+      "timestamp": "2025-11-29T17:40:15.228109",
+      "success": true,
+      "exit_code": 0
+    },
+    {
+      "tool": "nikto",
+      "timestamp": "2025-11-29T17:53:11.958771",
+      "success": false,
+      "exit_code": -1
+    },
+    {
+      "tool": "nikto",
+      "timestamp": "2025-11-29T17:53:11.958795",
+      "success": false,
+      "exit_code": -1
+    },
+    {
+      "tool": "whatweb",
+      "timestamp": "2025-11-29T17:53:33.566674",
+      "success": true,
+      "exit_code": 0
+    },
+    {
+      "tool": "whatweb",
+      "timestamp": "2025-11-29T17:53:33.566688",
+      "success": true,
+      "exit_code": 0
+    },
+    {
+      "tool": "masscan",
+      "timestamp": "2025-11-29T17:53:34.198699",
+      "success": false,
+      "exit_code": 1
+    },
+    {
+      "tool": "masscan",
+      "timestamp": "2025-11-29T17:53:34.198709",
+      "success": false,
+      "exit_code": 1
+    },
+    {
+      "tool": "sqlmap",
+      "timestamp": "2025-11-29T17:53:43.659966",
+      "success": true,
+      "exit_code": 0
+    },
+    {
+      "tool": "sqlmap",
+      "timestamp": "2025-11-29T17:53:43.659974",
+      "success": true,
+      "exit_code": 0
+    },
+    {
+      "tool": "gobuster",
+      "timestamp": "2025-11-29T17:53:44.287922",
+      "success": false,
+      "exit_code": 1
+    },
+    {
+      "tool": "gobuster",
+      "timestamp": "2025-11-29T17:53:44.287929",
+      "success": false,
+      "exit_code": 1
+    },
+    {
+      "tool": "ffuf",
+      "timestamp": "2025-11-29T17:53:44.919149",
+      "success": false,
+      "exit_code": 1
+    },
+    {
+      "tool": "ffuf",
+      "timestamp": "2025-11-29T17:53:44.919158",
+      "success": false,
+      "exit_code": 1
+    },
+    {
+      "tool": "nuclei",
+      "timestamp": "2025-11-29T17:53:45.547366",
+      "success": false,
+      "exit_code": 127
+    },
+    {
+      "tool": "nuclei",
+      "timestamp": "2025-11-29T17:53:45.547379",
+      "success": false,
+      "exit_code": 127
+    },
+    {
+      "tool": "clear_logs",
+      "timestamp": "2025-11-29T17:53:46.198388",
+      "success": false,
+      "exit_code": 127
+    },
+    {
+      "tool": "clear_logs",
+      "timestamp": "2025-11-29T17:53:46.198397",
+      "success": false,
+      "exit_code": 127
+    },
+    {
+      "tool": "timestomp",
+      "timestamp": "2025-11-29T17:53:46.831265",
+      "success": false,
+      "exit_code": 127
+    },
+    {
+      "tool": "timestomp",
+      "timestamp": "2025-11-29T17:53:46.831276",
+      "success": false,
+      "exit_code": 127
+    },
+    {
+      "tool": "shred",
+      "timestamp": "2025-11-29T17:53:47.463042",
+      "success": false,
+      "exit_code": 1
+    },
+    {
+      "tool": "shred",
+      "timestamp": "2025-11-29T17:53:47.463052",
+      "success": false,
+      "exit_code": 1
+    }
+  ],
+  "coverage": 0.6,
+  "duration": 850.458303,
+  "strategy_changes": 0
+}

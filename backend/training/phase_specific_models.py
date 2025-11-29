@@ -469,7 +469,16 @@ class PhaseSpecificToolSelector:
         tool_probas = sorted(zip(tools, probas), key=lambda x: x[1], reverse=True)
         
         # Filter out already-executed tools
-        tools_executed = set(context.get('tools_executed', []))
+        tools_executed_raw = context.get('tools_executed', [])
+        tools_executed_names = []
+        for item in tools_executed_raw:
+            if isinstance(item, dict):
+                tool_name = item.get('tool', '')
+                if tool_name:
+                    tools_executed_names.append(tool_name)
+            else:
+                tools_executed_names.append(item)
+        tools_executed = set(tools_executed_names)
         available_tools = [(tool, prob) for tool, prob in tool_probas
                           if tool not in tools_executed]
         

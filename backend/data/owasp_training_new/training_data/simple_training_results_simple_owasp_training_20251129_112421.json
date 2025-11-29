@@ -1,0 +1,1096 @@
+{
+  "session_id": "simple_owasp_training_20251129_112421",
+  "targets": [
+    "https://landscape.canonical.com",
+    "192.168.131.128"
+  ],
+  "start_time": "2025-11-29T11:24:21.099764",
+  "target_results": {
+    "https://landscape.canonical.com": {
+      "target": "https://landscape.canonical.com",
+      "scan_id": "simple_20251129_112421",
+      "start_time": "2025-11-29T11:24:21.100061",
+      "tool_results": {
+        "nmap": {
+          "tool_name": "nmap",
+          "target": "https://landscape.canonical.com",
+          "phase": "comprehensive_analysis",
+          "command": "nmap landscape.canonical.com -sV -T2 -p 80,443 --max-retries 3",
+          "exit_code": 0,
+          "stdout": "Starting Nmap 7.95 ( https://nmap.org ) at 2025-11-29 00:24 EST\r\nNmap scan report for landscape.canonical.com (185.125.189.30)\r\nHost is up (0.19s latency).\r\nOther addresses for landscape.canonical.com (not scanned): 185.125.189.31\r\n\r\nPORT    STATE SERVICE        VERSION\r\n80/tcp  open  http-proxy     HAProxy http proxy\r\n443/tcp open  ssl/http-proxy HAProxy http proxy\r\n\r\nService detection performed. Please report any incorrect results at https://nmap.org/submit/ .\r\nNmap done: 1 IP address (1 host up) scanned in 33.90 seconds\r\n",
+          "stderr": "",
+          "execution_time": 34.116951,
+          "start_time": "2025-11-29T11:24:21.100159",
+          "end_time": "2025-11-29T11:24:55.217110",
+          "success": true,
+          "parsed_results": {
+            "vulnerabilities": [
+              {
+                "id": "47ff0a2d-1adf-4e75-bd40-31a03d0bdb9b",
+                "type": "open_port",
+                "severity": 4.0,
+                "confidence": 0.95,
+                "name": "Open Port: 80/http-proxy",
+                "location": "Port 80",
+                "evidence": "80/tcp  open  http-proxy     HAProxy http proxy HAProxy http proxy",
+                "exploitable": false,
+                "tool": "nmap",
+                "target": "https://landscape.canonical.com"
+              },
+              {
+                "id": "66a699e4-7741-4e2e-a19a-8d400c7c9e83",
+                "type": "open_port",
+                "severity": 4.0,
+                "confidence": 0.95,
+                "name": "Open Port: 443/ssl/http-proxy",
+                "location": "Port 443",
+                "evidence": "443/tcp open  ssl/http-proxy HAProxy http proxy HAProxy http proxy",
+                "exploitable": false,
+                "tool": "nmap",
+                "target": "https://landscape.canonical.com"
+              }
+            ],
+            "services": [
+              {
+                "port": "80",
+                "service": "http-proxy",
+                "version": "HAProxy http proxy"
+              },
+              {
+                "port": "443",
+                "service": "ssl/http-proxy",
+                "version": "HAProxy http proxy"
+              }
+            ],
+            "hosts": [],
+            "raw_output": "Starting Nmap 7.95 ( https://nmap.org ) at 2025-11-29 00:24 EST\r\nNmap scan report for landscape.canonical.com (185.125.189.30)\r\nHost is up (0.19s latency).\r\nOther addresses for landscape.canonical.com (not scanned): 185.125.189.31\r\n\r\nPORT    STATE SERVICE        VERSION\r\n80/tcp  open  http-proxy     HAProxy http proxy\r\n443/tcp open  ssl/http-proxy HAProxy http proxy\r\n\r\nService detection performed. Please report any incorrect results at https://nmap.org/submit/ .\r\nNmap done: 1 IP address (1 host up) scanned in 33.90 seconds\r\n"
+          }
+        },
+        "nikto": {
+          "tool_name": "nikto",
+          "target": "https://landscape.canonical.com",
+          "phase": "comprehensive_analysis",
+          "command": "nikto -h landscape.canonical.com 1 -nossl",
+          "exit_code": -1,
+          "stdout": "- Nikto v2.5.0\r\n---------------------------------------------------------------------------\r\n+ Target IP:          185.125.189.30\r\n+ Target Hostname:    landscape.canonical.com\r\n+ Target Port:        80\r\n+ Start Time:         2025-11-29 00:24:56 (GMT-5)\r\n---------------------------------------------------------------------------\r\n+ Server: No banner retrieved\r\n+ /: The anti-clickjacking X-Frame-Options header is not present. See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options\r\n+ /: The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type. See: https://www.netsparker.com/web-vulnerability-scanner/vulnerabilities/missing-content-type-header/\r\n+ Root page / redirects to: https://landscape.canonical.com/\r\n+ No CGI Directories found (use '-C all' to force check all possible dirs)\r\n",
+          "stderr": "",
+          "execution_time": 776.032689,
+          "start_time": "2025-11-29T11:24:55.253877",
+          "end_time": "2025-11-29T11:37:51.286566",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [
+              {
+                "id": "01c73c3c-97d7-4fbb-85e0-cb8ccfdab89c",
+                "type": "generic_finding",
+                "severity": 5.0,
+                "confidence": 0.7,
+                "name": "Tool Output Analysis",
+                "location": "Generic parsing",
+                "evidence": "+ /: The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type. See: https://www.netsparker.com/web-vulnerability-scanner/vulnerabilities/missing-content-type-header/",
+                "exploitable": true,
+                "tool": "nikto",
+                "target": "https://landscape.canonical.com"
+              }
+            ],
+            "hosts": [],
+            "services": [],
+            "raw_output": "- Nikto v2.5.0\r\n---------------------------------------------------------------------------\r\n+ Target IP:          185.125.189.30\r\n+ Target Hostname:    landscape.canonical.com\r\n+ Target Port:        80\r\n+ Start Time:         2025-11-29 00:24:56 (GMT-5)\r\n---------------------------------------------------------------------------\r\n+ Server: No banner retrieved\r\n+ /: The anti-clickjacking X-Frame-Options header is not present. See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options\r\n+ /: The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type. See: https://www.netsparker.com/web-vulnerability-scanner/vulnerabilities/missing-content-type-header/\r\n+ Root page / redirects to: https://landscape.canonical.com/\r\n+ No CGI Directories found (use '-C all' to force check all possible dirs)\r\n\n"
+          }
+        },
+        "nuclei": {
+          "tool_name": "nuclei",
+          "target": "https://landscape.canonical.com",
+          "phase": "comprehensive_analysis",
+          "command": "nuclei -u https://landscape.canonical.com",
+          "exit_code": 127,
+          "stdout": "zsh:1: command not found: nuclei\r\n",
+          "stderr": "",
+          "execution_time": 0.141859,
+          "start_time": "2025-11-29T11:37:51.346508",
+          "end_time": "2025-11-29T11:37:51.488367",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "raw_output": "zsh:1: command not found: nuclei\r\n"
+          }
+        },
+        "sqlmap": {
+          "tool_name": "sqlmap",
+          "target": "https://landscape.canonical.com",
+          "phase": "comprehensive_analysis",
+          "command": "sqlmap -u \"https://landscape.canonical.com\" --batch 1 1 --forms",
+          "exit_code": 1,
+          "stdout": "\u001b[01;33m        ___\r\n       __H__\r\n ___ ___[\u001b[01;41m(\u001b[01;49m]_____ ___ ___  \u001b[01;37m{\u001b[01;90m1.9.4#stable\u001b[01;37m}\u001b[01;33m\r\n|_ -| . [\u001b[01;41m,\u001b[01;49m]     | .'| . |\r\n|___|_  [\u001b[01;41m,\u001b[01;49m]_|_|_|__,|  _|\r\n      |_|V...       |_|   \u001b[0m\u001b[4;37mhttps://sqlmap.org\u001b[0m\r\n\r\n[!] legal disclaimer: Usage of sqlmap for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program\r\n\r\n[*] starting @ 00:37:52 /2025-11-29/\r\n\r\n\r[\u001b[36m00:37:52\u001b[0m]\u001b[1m [\u001b[32;1mINFO\u001b[0m]\u001b[1m testing connection to the target URL\u001b[0m\r\n\u001b[1m\rgot a 303 redirect to 'https://landscape.canonical.com/new_dashboard/login?redirect-to=%2F&external'. Do you want to follow? [Y/n] Y\r\n\u001b[0m\u001b[1m\ryou have not declared cookie(s), while server wants to set its own ('landscape_session=yEer6oaLsIL...w5o9.hY8Qo'). Do you want to use those [Y/n] Y\r\n\u001b[0m\r[\u001b[36m00:37:54\u001b[0m] [\u001b[32mINFO\u001b[0m] searching for forms\r\n\r[\u001b[36m00:37:56\u001b[0m] [\u001b[41;37mCRITICAL\u001b[0m] there were no forms found at the given target URL\r\n\r[\u001b[36m00:37:56\u001b[0m] [\u001b[33mWARNING\u001b[0m] your sqlmap version is outdated\r\n\r\n[*] ending @ 00:37:56 /2025-11-29/\r\n\r\n",
+          "stderr": "",
+          "execution_time": 5.151201,
+          "start_time": "2025-11-29T11:37:51.488797",
+          "end_time": "2025-11-29T11:37:56.639998",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "raw_output": "\u001b[01;33m        ___\r\n       __H__\r\n ___ ___[\u001b[01;41m(\u001b[01;49m]_____ ___ ___  \u001b[01;37m{\u001b[01;90m1.9.4#stable\u001b[01;37m}\u001b[01;33m\r\n|_ -| . [\u001b[01;41m,\u001b[01;49m]     | .'| . |\r\n|___|_  [\u001b[01;41m,\u001b[01;49m]_|_|_|__,|  _|\r\n      |_|V...       |_|   \u001b[0m\u001b[4;37mhttps://sqlmap.org\u001b[0m\r\n\r\n[!] legal disclaimer: Usage of sqlmap for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program\r\n\r\n[*] starting @ 00:37:52 /2025-11-29/\r\n\r\n\r[\u001b[36m00:37:52\u001b[0m]\u001b[1m [\u001b[32;1mINFO\u001b[0m]\u001b[1m testing connection to the target URL\u001b[0m\r\n\u001b[1m\rgot a 303 redirect to 'https://landscape.canonical.com/new_dashboard/login?redirect-to=%2F&external'. Do you want to follow? [Y/n] Y\r\n\u001b[0m\u001b[1m\ryou have not declared cookie(s), while server wants to set its own ('landscape_session=yEer6oaLsIL...w5o9.hY8Qo'). Do you want to use those [Y/n] Y\r\n\u001b[0m\r[\u001b[36m00:37:54\u001b[0m] [\u001b[32mINFO\u001b[0m] searching for forms\r\n\r[\u001b[36m00:37:56\u001b[0m] [\u001b[41;37mCRITICAL\u001b[0m] there were no forms found at the given target URL\r\n\r[\u001b[36m00:37:56\u001b[0m] [\u001b[33mWARNING\u001b[0m] your sqlmap version is outdated\r\n\r\n[*] ending @ 00:37:56 /2025-11-29/\r\n\r\n"
+          }
+        },
+        "gobuster": {
+          "tool_name": "gobuster",
+          "target": "https://landscape.canonical.com",
+          "phase": "comprehensive_analysis",
+          "command": "gobuster dir -u https://landscape.canonical.com",
+          "exit_code": 1,
+          "stdout": "Error: required flag(s) \"wordlist\" not set\r\n",
+          "stderr": "",
+          "execution_time": 0.126843,
+          "start_time": "2025-11-29T11:37:56.640972",
+          "end_time": "2025-11-29T11:37:56.767815",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "hosts": [],
+            "services": [],
+            "raw_output": "Error: required flag(s) \"wordlist\" not set\r\n\n"
+          }
+        },
+        "ffuf": {
+          "tool_name": "ffuf",
+          "target": "https://landscape.canonical.com",
+          "phase": "comprehensive_analysis",
+          "command": "ffuf -u https://landscape.canonical.com/FUZZ",
+          "exit_code": 1,
+          "stdout": "Encountered error(s): 1 errors occurred.\r\n\t* Either -w or --input-cmd flag is required\r\n\r\nFuzz Faster U Fool - v2.1.0-dev\r\n\r\nHTTP OPTIONS:\r\n  -H                  Header `\"Name: Value\"`, separated by colon. Multiple -H flags are accepted.\r\n  -X                  HTTP method to use\r\n  -b                  Cookie data `\"NAME1=VALUE1; NAME2=VALUE2\"` for copy as curl functionality.\r\n  -cc                 Client cert for authentication. Client key needs to be defined as well for this to work\r\n  -ck                 Client key for authentication. Client certificate needs to be defined as well for this to work\r\n  -d                  POST data\r\n  -http2              Use HTTP2 protocol (default: false)\r\n  -ignore-body        Do not fetch the response content. (default: false)\r\n  -r                  Follow redirects (default: false)\r\n  -raw                Do not encode URI (default: false)\r\n  -recursion          Scan recursively. Only FUZZ keyword is supported, and URL (-u) has to end in it. (default: false)\r\n  -recursion-depth    Maximum recursion depth. (default: 0)\r\n  -recursion-strategy Recursion strategy: \"default\" for a redirect based, and \"greedy\" to recurse on all matches (default: default)\r\n  -replay-proxy       Replay matched requests using this proxy.\r\n  -sni                Target TLS SNI, does not support FUZZ keyword\r\n  -timeout            HTTP request timeout in seconds. (default: 10)\r\n  -u                  Target URL\r\n  -x                  Proxy URL (SOCKS5 or HTTP). For example: http://127.0.0.1:8080 or socks5://127.0.0.1:8080\r\n\r\nGENERAL OPTIONS:\r\n  -V                  Show version information. (default: false)\r\n  -ac                 Automatically calibrate filtering options (default: false)\r\n  -acc                Custom auto-calibration string. Can be used multiple times. Implies -ac\r\n  -ach                Per host autocalibration (default: false)\r\n  -ack                Autocalibration keyword (default: FUZZ)\r\n  -acs                Custom auto-calibration strategies. Can be used multiple times. Implies -ac\r\n  -c                  Colorize output. (default: false)\r\n  -config             Load configuration from a file\r\n  -json               JSON output, printing newline-delimited JSON records (default: false)\r\n  -maxtime            Maximum running time in seconds for entire process. (default: 0)\r\n  -maxtime-job        Maximum running time in seconds per job. (default: 0)\r\n  -noninteractive     Disable the interactive console functionality (default: false)\r\n  -p                  Seconds of `delay` between requests, or a range of random delay. For example \"0.1\" or \"0.1-2.0\"\r\n  -rate               Rate of requests per second (default: 0)\r\n  -s                  Do not print additional information (silent mode) (default: false)\r\n  -sa                 Stop on all error cases. Implies -sf and -se. (default: false)\r\n  -scraperfile        Custom scraper file path\r\n  -scrapers           Active scraper groups (default: all)\r\n  -se                 Stop on spurious errors (default: false)\r\n  -search             Search for a FFUFHASH payload from ffuf history\r\n  -sf                 Stop when > 95% of responses return 403 Forbidden (default: false)\r\n  -t                  Number of concurrent threads. (default: 40)\r\n  -v                  Verbose output, printing full URL and redirect location (if any) with the results. (default: false)\r\n\r\nMATCHER OPTIONS:\r\n  -mc                 Match HTTP status codes, or \"all\" for everything. (default: 200-299,301,302,307,401,403,405,500)\r\n  -ml                 Match amount of lines in response\r\n  -mmode              Matcher set operator. Either of: and, or (default: or)\r\n  -mr                 Match regexp\r\n  -ms                 Match HTTP response size\r\n  -mt                 Match how many milliseconds to the first response byte, either greater or less than. EG: >100 or <100\r\n  -mw                 Match amount of words in response\r\n\r\nFILTER OPTIONS:\r\n  -fc                 Filter HTTP status codes from response. Comma separated list of codes and ranges\r\n  -fl                 Filter by amount of lines in response. Comma separated list of line counts and ranges\r\n  -fmode              Filter set operator. Either of: and, or (default: or)\r\n  -fr                 Filter regexp\r\n  -fs                 Filter HTTP response size. Comma separated list of sizes and ranges\r\n  -ft                 Filter by number of milliseconds to the first response byte, either greater or less than. EG: >100 or <100\r\n  -fw                 Filter by amount of words in response. Comma separated list of word counts and ranges\r\n\r\nINPUT OPTIONS:\r\n  -D                  DirSearch wordlist compatibility mode. Used in conjunction with -e flag. (default: false)\r\n  -e                  Comma separated list of extensions. Extends FUZZ keyword.\r\n  -enc                Encoders for keywords, eg. 'FUZZ:urlencode b64encode'\r\n  -ic                 Ignore wordlist comments (default: false)\r\n  -input-cmd          Command producing the input. --input-num is required when using this input method. Overrides -w.\r\n  -input-num          Number of inputs to test. Used in conjunction with --input-cmd. (default: 100)\r\n  -input-shell        Shell to be used for running command\r\n  -mode               Multi-wordlist operation mode. Available modes: clusterbomb, pitchfork, sniper (default: clusterbomb)\r\n  -request            File containing the raw http request\r\n  -request-proto      Protocol to use along with raw request (default: https)\r\n  -w                  Wordlist file path and (optional) keyword separated by colon. eg. '/path/to/wordlist:KEYWORD'\r\n\r\nOUTPUT OPTIONS:\r\n  -debug-log          Write all of the internal logging to the specified file.\r\n  -o                  Write output to file\r\n  -od                 Directory path to store matched results to.\r\n  -of                 Output file format. Available formats: json, ejson, html, md, csv, ecsv (or, 'all' for all formats) (default: json)\r\n  -or                 Don't create the output file if we don't have results (default: false)\r\n\r\nEXAMPLE USAGE:\r\n  Fuzz file paths from wordlist.txt, match all responses but filter out those with content-size 42.\r\n  Colored, verbose output.\r\n    ffuf -w wordlist.txt -u https://example.org/FUZZ -mc all -fs 42 -c -v\r\n\r\n  Fuzz Host-header, match HTTP 200 responses.\r\n    ffuf -w hosts.txt -u https://example.org/ -H \"Host: FUZZ\" -mc 200\r\n\r\n  Fuzz POST JSON data. Match all responses not containing text \"error\".\r\n    ffuf -w entries.txt -u https://example.org/ -X POST -H \"Content-Type: application/json\" \\\r\n      -d '{\"name\": \"FUZZ\", \"anotherkey\": \"anothervalue\"}' -fr \"error\"\r\n\r\n  Fuzz multiple locations. Match only responses reflecting the value of \"VAL\" keyword. Colored.\r\n    ffuf -w params.txt:PARAM -w values.txt:VAL -u https://example.org/?PARAM=VAL -mr \"VAL\" -c\r\n\r\n  More information and examples: https://github.com/ffuf/ffuf\r\n\r\nEncountered error(s): 1 errors occurred.\r\n\t* Either -w or --input-cmd flag is required\r\n\r\n",
+          "stderr": "",
+          "execution_time": 0.127567,
+          "start_time": "2025-11-29T11:37:56.768626",
+          "end_time": "2025-11-29T11:37:56.896193",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [
+              {
+                "id": "88ce66ae-6aae-44b4-b456-8281a1cb6e3b",
+                "type": "generic_finding",
+                "severity": 5.0,
+                "confidence": 0.7,
+                "name": "Tool Output Analysis",
+                "location": "Generic parsing",
+                "evidence": "-r                  Follow redirects (default: false)",
+                "exploitable": true,
+                "tool": "ffuf",
+                "target": "https://landscape.canonical.com"
+              }
+            ],
+            "hosts": [],
+            "services": [],
+            "raw_output": "Encountered error(s): 1 errors occurred.\r\n\t* Either -w or --input-cmd flag is required\r\n\r\nFuzz Faster U Fool - v2.1.0-dev\r\n\r\nHTTP OPTIONS:\r\n  -H                  Header `\"Name: Value\"`, separated by colon. Multiple -H flags are accepted.\r\n  -X                  HTTP method to use\r\n  -b                  Cookie data `\"NAME1=VALUE1; NAME2=VALUE2\"` for copy as curl functionality.\r\n  -cc                 Client cert for authentication. Client key needs to be defined as well for this to work\r\n  -ck                 Client key for authentication. Client certificate needs to be defined as well for this to work\r\n  -d                  POST data\r\n  -http2              Use HTTP2 protocol (default: false)\r\n  -ignore-body        Do not fetch the response content. (default: false)\r\n  -r                  Follow redirects (default: false)\r\n  -raw                Do not encode URI (default: false)\r\n  -recursion          Scan recursively. Only FUZZ keyword is supported, and URL (-u) has to end in it. (default: false)\r\n  -recursion-depth    Maximum recursion depth. (default: 0)\r\n  -recursion-strategy Recursion strategy: \"default\" for a redirect based, and \"greedy\" to recurse on all matches (default: default)\r\n  -replay-proxy       Replay matched requests using this proxy.\r\n  -sni                Target TLS SNI, does not support FUZZ keyword\r\n  -timeout            HTTP request timeout in seconds. (default: 10)\r\n  -u                  Target URL\r\n  -x                  Proxy URL (SOCKS5 or HTTP). For example: http://127.0.0.1:8080 or socks5://127.0.0.1:8080\r\n\r\nGENERAL OPTIONS:\r\n  -V                  Show version information. (default: false)\r\n  -ac                 Automatically calibrate filtering options (default: false)\r\n  -acc                Custom auto-calibration string. Can be used multiple times. Implies -ac\r\n  -ach                Per host autocalibration (default: false)\r\n  -ack                Autocalibration keyword (default: FUZZ)\r\n  -acs                Custom auto-calibration strategies. Can be used multiple times. Implies -ac\r\n  -c                  Colorize output. (default: false)\r\n  -config             Load configuration from a file\r\n  -json               JSON output, printing newline-delimited JSON records (default: false)\r\n  -maxtime            Maximum running time in seconds for entire process. (default: 0)\r\n  -maxtime-job        Maximum running time in seconds per job. (default: 0)\r\n  -noninteractive     Disable the interactive console functionality (default: false)\r\n  -p                  Seconds of `delay` between requests, or a range of random delay. For example \"0.1\" or \"0.1-2.0\"\r\n  -rate               Rate of requests per second (default: 0)\r\n  -s                  Do not print additional information (silent mode) (default: false)\r\n  -sa                 Stop on all error cases. Implies -sf and -se. (default: false)\r\n  -scraperfile        Custom scraper file path\r\n  -scrapers           Active scraper groups (default: all)\r\n  -se                 Stop on spurious errors (default: false)\r\n  -search             Search for a FFUFHASH payload from ffuf history\r\n  -sf                 Stop when > 95% of responses return 403 Forbidden (default: false)\r\n  -t                  Number of concurrent threads. (default: 40)\r\n  -v                  Verbose output, printing full URL and redirect location (if any) with the results. (default: false)\r\n\r\nMATCHER OPTIONS:\r\n  -mc                 Match HTTP status codes, or \"all\" for everything. (default: 200-299,301,302,307,401,403,405,500)\r\n  -ml                 Match amount of lines in response\r\n  -mmode              Matcher set operator. Either of: and, or (default: or)\r\n  -mr                 Match regexp\r\n  -ms                 Match HTTP response size\r\n  -mt                 Match how many milliseconds to the first response byte, either greater or less than. EG: >100 or <100\r\n  -mw                 Match amount of words in response\r\n\r\nFILTER OPTIONS:\r\n  -fc                 Filter HTTP status codes from response. Comma separated list of codes and ranges\r\n  -fl                 Filter by amount of lines in response. Comma separated list of line counts and ranges\r\n  -fmode              Filter set operator. Either of: and, or (default: or)\r\n  -fr                 Filter regexp\r\n  -fs                 Filter HTTP response size. Comma separated list of sizes and ranges\r\n  -ft                 Filter by number of milliseconds to the first response byte, either greater or less than. EG: >100 or <100\r\n  -fw                 Filter by amount of words in response. Comma separated list of word counts and ranges\r\n\r\nINPUT OPTIONS:\r\n  -D                  DirSearch wordlist compatibility mode. Used in conjunction with -e flag. (default: false)\r\n  -e                  Comma separated list of extensions. Extends FUZZ keyword.\r\n  -enc                Encoders for keywords, eg. 'FUZZ:urlencode b64encode'\r\n  -ic                 Ignore wordlist comments (default: false)\r\n  -input-cmd          Command producing the input. --input-num is required when using this input method. Overrides -w.\r\n  -input-num          Number of inputs to test. Used in conjunction with --input-cmd. (default: 100)\r\n  -input-shell        Shell to be used for running command\r\n  -mode               Multi-wordlist operation mode. Available modes: clusterbomb, pitchfork, sniper (default: clusterbomb)\r\n  -request            File containing the raw http request\r\n  -request-proto      Protocol to use along with raw request (default: https)\r\n  -w                  Wordlist file path and (optional) keyword separated by colon. eg. '/path/to/wordlist:KEYWORD'\r\n\r\nOUTPUT OPTIONS:\r\n  -debug-log          Write all of the internal logging to the specified file.\r\n  -o                  Write output to file\r\n  -od                 Directory path to store matched results to.\r\n  -of                 Output file format. Available formats: json, ejson, html, md, csv, ecsv (or, 'all' for all formats) (default: json)\r\n  -or                 Don't create the output file if we don't have results (default: false)\r\n\r\nEXAMPLE USAGE:\r\n  Fuzz file paths from wordlist.txt, match all responses but filter out those with content-size 42.\r\n  Colored, verbose output.\r\n    ffuf -w wordlist.txt -u https://example.org/FUZZ -mc all -fs 42 -c -v\r\n\r\n  Fuzz Host-header, match HTTP 200 responses.\r\n    ffuf -w hosts.txt -u https://example.org/ -H \"Host: FUZZ\" -mc 200\r\n\r\n  Fuzz POST JSON data. Match all responses not containing text \"error\".\r\n    ffuf -w entries.txt -u https://example.org/ -X POST -H \"Content-Type: application/json\" \\\r\n      -d '{\"name\": \"FUZZ\", \"anotherkey\": \"anothervalue\"}' -fr \"error\"\r\n\r\n  Fuzz multiple locations. Match only responses reflecting the value of \"VAL\" keyword. Colored.\r\n    ffuf -w params.txt:PARAM -w values.txt:VAL -u https://example.org/?PARAM=VAL -mr \"VAL\" -c\r\n\r\n  More information and examples: https://github.com/ffuf/ffuf\r\n\r\nEncountered error(s): 1 errors occurred.\r\n\t* Either -w or --input-cmd flag is required\r\n\r\n\n"
+          }
+        },
+        "hydra": {
+          "tool_name": "hydra",
+          "target": "https://landscape.canonical.com",
+          "phase": "comprehensive_analysis",
+          "command": "hydra https://landscape.canonical.com",
+          "exit_code": 255,
+          "stdout": "Hydra v9.5 (c) 2023 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).\r\n\r\nHydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2025-11-29 00:37:56\r\n[ERROR] There is no service \"https\", most likely you mean one of the many web modules, e.g. http-get or http-form-post. Read it up!\r\n",
+          "stderr": "",
+          "execution_time": 0.124084,
+          "start_time": "2025-11-29T11:37:56.897721",
+          "end_time": "2025-11-29T11:37:57.021805",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "hosts": [],
+            "services": [],
+            "raw_output": "Hydra v9.5 (c) 2023 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).\r\n\r\nHydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2025-11-29 00:37:56\r\n[ERROR] There is no service \"https\", most likely you mean one of the many web modules, e.g. http-get or http-form-post. Read it up!\r\n\n"
+          }
+        },
+        "dalfox": {
+          "tool_name": "dalfox",
+          "target": "https://landscape.canonical.com",
+          "phase": "comprehensive_analysis",
+          "command": "dalfox url https://landscape.canonical.com",
+          "exit_code": 127,
+          "stdout": "zsh:1: command not found: dalfox\r\n",
+          "stderr": "",
+          "execution_time": 0.123974,
+          "start_time": "2025-11-29T11:37:57.022380",
+          "end_time": "2025-11-29T11:37:57.146354",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "raw_output": "zsh:1: command not found: dalfox\r\n"
+          }
+        },
+        "commix": {
+          "tool_name": "commix",
+          "target": "https://landscape.canonical.com",
+          "phase": "comprehensive_analysis",
+          "command": "commix --url=\"https://landscape.canonical.com\" --batch",
+          "exit_code": 0,
+          "stdout": "                                      __\r\n   ___   ___     ___ ___     ___ ___ /\\_\\   __  _\r\n /`___\\ / __`\\ /' __` __`\\ /' __` __`\\/\\ \\ /\\ \\/'\\  \u001b[1m\u001b[4m\u001b[37mv4.0-stable\u001b[0m\r\n/\\ \\__//\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\ \\ \\\\/>  </\r\n\\ \\____\\ \\____/\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\/\\_/\\_\\ \u001b[90m\u001b[4mhttps://commixproject.com\u001b[0m\r\n \\/____/\\/___/  \\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\//\\/_/ (\u001b[91m@commixproject\u001b[0m)\r\n\r\n+--\r\n\u001b[1mAutomated All-in-One OS Command Injection Exploitation Tool\u001b[0m\r\nCopyright \u00a9 2014-2024 Anastasios Stasinopoulos\u001b[0m (\u001b[91m@ancst\u001b[0m)\r\n+--\r\n\r\n(\u001b[1m\u001b[31m!\u001b[0m) Legal disclaimer: Usage of commix for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program.\r\n\u001b[0m\r\n[\u001b[94m00:37:57\u001b[0m] [\u001b[32m\u001b[1minfo\u001b[0m] \u001b[1mTesting connection to the target URL. \u001b[0m\r\n\u001b[1mGot a 302 redirect to 'https://landscape.canonical.com/new_dashboard/login/?redirect-to=%2F&external'. Do you want to follow? [Y/n] > Y\u001b[0m\r\n[\u001b[94m00:38:07\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Following redirection to 'https://landscape.canonical.com/new_dashboard/login/?redirect-to=%2F&external'. \u001b[0m\r\n[\u001b[94m00:38:07\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Checking if the target is protected by some kind of WAF/IPS.\u001b[0m\r\n[\u001b[94m00:38:09\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Performing identification (passive) tests to the target URL.\u001b[0m\r\n[\u001b[94m00:38:09\u001b[0m] [\u001b[93mwarning\u001b[0m] Failed to identify server's underlying operating system.\u001b[0m\r\n\u001b[1mDo you recognise the server's underlying operating system? [(N)o/(u)nix-like/(w)indows/(q)uit] > N\u001b[0m\r\n[\u001b[94m00:38:10\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Setting GET parameter 'redirect-to' for tests.\u001b[0m\r\n[\u001b[94m00:38:10\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Performing heuristic (basic) tests to the GET parameter 'redirect-to'.\u001b[0m\r\n[\u001b[94m00:38:55\u001b[0m] [\u001b[1m\u001b[33mwarning\u001b[0m] \u001b[1mHeuristic (basic) tests shows that GET parameter 'redirect-to' might not be injectable.\u001b[0m\r\n\r[\u001b[94m00:38:57\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (11.1%)\u001b[0m\r[\u001b[94m00:38:59\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:01\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (33.3%)\u001b[0m\r[\u001b[94m00:39:03\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:39:04\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (55.6%)\u001b[0m\r[\u001b[94m00:39:08\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (66.7%)\u001b[0m\r[\u001b[94m00:39:10\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:39:12\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:39:14\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique.\u001b[31m          \u001b[0m\u001b[0m \r\n\r[\u001b[94m00:39:16\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (8.3%)\u001b[0m\r[\u001b[94m00:39:18\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (16.7%)\u001b[0m\r[\u001b[94m00:39:20\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (25.0%)\u001b[0m\r[\u001b[94m00:39:22\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (33.3%)\u001b[0m\r[\u001b[94m00:39:24\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (41.7%)\u001b[0m\r[\u001b[94m00:39:25\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (50.0%)\u001b[0m\r[\u001b[94m00:39:27\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (58.3%)\u001b[0m\r[\u001b[94m00:39:29\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (66.7%)\u001b[0m\r[\u001b[94m00:39:31\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (75.0%)\u001b[0m\r[\u001b[94m00:39:33\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (83.3%)\u001b[0m\r[\u001b[94m00:39:35\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (91.7%)\u001b[0m\r[\u001b[94m00:39:37\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique.\u001b[31m          \u001b[0m\u001b[0m \r\n[\u001b[94m00:39:37\u001b[0m] [\u001b[93mwarning\u001b[0m] It is very important to not stress the network connection during usage of time-based payloads to prevent potential disruptions.\u001b[0m\r\n\r[\u001b[94m00:39:39\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:39\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:41\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:41\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:44\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:44\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:46\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:46\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:48\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:48\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r\u001b[1mUnexpected time delays that may lead to false-positive results, have been identified. How do you want to proceed? [(C)ontinue/(s)kip] > C\u001b[0m\r\n\r[\u001b[94m00:39:50\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:52\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Checking if the injection point on GET parameter 'redirect-to' is a false positive.\r\n\u001b[0m\r[\u001b[94m00:39:52\u001b[0m] [\u001b[93mwarning\u001b[0m] Time-based comparison requires reset of statistical model, please wait...\u001b[0m... \r\n[\u001b[94m00:39:55\u001b[0m] [\u001b[1m\u001b[33mwarning\u001b[0m] \u001b[1mFalse positive or unexploitable injection point has been detected.\u001b[0m\r\n\r[\u001b[94m00:39:57\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:39:59\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (77.8%)\u001b[0m\r\u001b[1mUnexpected time delays that may lead to false-positive results, have been identified. How do you want to proceed? [(C)ontinue/(s)kip] > C\u001b[0m\r\n\r[\u001b[94m00:40:01\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:40:04\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Checking if the injection point on GET parameter 'redirect-to' is a false positive.\r\n\u001b[0m\r[\u001b[94m00:40:04\u001b[0m] [\u001b[93mwarning\u001b[0m] Time-based comparison requires reset of statistical model, please wait...\u001b[0m... \r\n[\u001b[94m00:40:08\u001b[0m] [\u001b[1m\u001b[33mwarning\u001b[0m] \u001b[1mFalse positive or unexploitable injection point has been detected.\u001b[0m\r\n\r[\u001b[94m00:40:10\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:40:12\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:40:15\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:40:17\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:40:19\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:40:21\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:40:23\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:40:25\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:40:27\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:40:27\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique.\u001b[31m          \u001b[0m\u001b[0m \r\n\u001b[1mEnter what you want to use for writable directory (e.g. '/var/www/landscape.canonical.com/public_html/') > /var/www/landscape.canonical.com/public_html/\u001b[0m\r\n[\u001b[94m00:40:27\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Trying to create a file in directory '/var/www/landscape.canonical.com/public_html/' for command execution output. \u001b[0m\r\n\u001b[1mDo you want to use URL 'https://landscape.canonical.com/UUSKOJ.txt' for command execution output? [Y/n] > Y\u001b[0m\r\n\r[\u001b[94m00:40:33\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (11.1%)\u001b[0m\r[\u001b[94m00:40:38\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:40:44\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (33.3%)\u001b[0m\r[\u001b[94m00:40:49\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:40:55\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (55.6%)\u001b[0m\r[\u001b[94m00:41:00\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (66.7%)\u001b[0m\r[\u001b[94m00:41:05\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (77.8%)\u001b[0m\r\u001b[1mIt seems that you don't have permissions to read and/or write files in directory '/var/www/landscape.canonical.com/public_html/'.\r\nDo you want to use the temporary directory ('/tmp/')? [Y/n] > Y\u001b[0m\r\n[\u001b[94m00:41:11\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Trying to create a file in directory '/tmp/' for command execution output. \u001b[0m\r\n[\u001b[94m00:41:11\u001b[0m] [\u001b[93mwarning\u001b[0m] It is very important to not stress the network connection during usage of time-based payloads to prevent potential disruptions.\u001b[0m\r\n\r[\u001b[94m00:41:12\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:12\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:14\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:14\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:16\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:16\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:18\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:18\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:20\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:20\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:22\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:22\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Checking if the injection point on GET parameter 'redirect-to' is a false positive.\r\n\u001b[0m\r[\u001b[94m00:41:22\u001b[0m] [\u001b[93mwarning\u001b[0m] Time-based comparison requires larger statistical model, please wait...\u001b[0m...\r[\u001b[94m00:41:34\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:34\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:36\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:36\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:38\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:38\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:40\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:40\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:41\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:41\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r\u001b[1mUnexpected time delays that may lead to false-positive results, have been identified. How do you want to proceed? [(C)ontinue/(s)kip] > C\u001b[0m\r\n\r[\u001b[94m00:41:48\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:50\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Checking if the injection point on GET parameter 'redirect-to' is a false positive.\r\n\u001b[0m\r[\u001b[94m00:41:50\u001b[0m] [\u001b[93mwarning\u001b[0m] Time-based comparison requires reset of statistical model, please wait...\u001b[0m... \r\n[\u001b[94m00:41:54\u001b[0m] [\u001b[1m\u001b[33mwarning\u001b[0m] \u001b[1mFalse positive or unexploitable injection point has been detected.\u001b[0m\r\n\r\u001b[1mUnexpected time delays that may lead to false-positive results, have been identified. How do you want to proceed? [(C)ontinue/(s)kip] > C\u001b[0m\r\n\r[\u001b[94m00:41:57\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:42:00\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Checking if the injection point on GET parameter 'redirect-to' is a false positive.\r\n\u001b[0m\r[\u001b[94m00:42:00\u001b[0m] [\u001b[93mwarning\u001b[0m] Time-based comparison requires reset of statistical model, please wait...\u001b[0m... \r\n[\u001b[94m00:42:04\u001b[0m] [\u001b[1m\u001b[33mwarning\u001b[0m] \u001b[1mFalse positive or unexploitable injection point has been detected.\u001b[0m\r\n\r[\u001b[94m00:42:04\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique.\u001b[31m          \u001b[0m\u001b[0m \r\n\r[\u001b[94m00:42:09\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique.\u001b[31m          \u001b[0m\u001b[0m \r\n[\u001b[94m00:42:09\u001b[0m] [\u001b[1m\u001b[33mwarning\u001b[0m] \u001b[1mThe tested GET parameter 'redirect-to' does not seem to be injectable.\u001b[0m\r\n[\u001b[94m00:42:10\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Setting GET parameter 'redirect-to' for tests.\u001b[0m\r\n[\u001b[94m00:42:10\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Performing heuristic (basic) tests to the GET parameter 'redirect-to'.\u001b[0m\r\n[\u001b[94m00:42:57\u001b[0m] [\u001b[1m\u001b[33mwarning\u001b[0m] \u001b[1mHeuristic (basic) tests shows that GET parameter 'redirect-to' might not be injectable.\u001b[0m\r\n\r[\u001b[94m00:42:59\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (11.1%)\u001b[0m\r[\u001b[94m00:43:01\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:43:03\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (33.3%)\u001b[0m\r[\u001b[94m00:43:06\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:08\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (55.6%)\u001b[0m\r[\u001b[94m00:43:10\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (66.7%)\u001b[0m\r[\u001b[94m00:43:12\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:43:14\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:43:16\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique.\u001b[31m          \u001b[0m\u001b[0m \r\n\r[\u001b[94m00:43:18\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (6.7%)\u001b[0m\r[\u001b[94m00:43:20\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (13.3%)\u001b[0m\r[\u001b[94m00:43:22\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (20.0%)\u001b[0m\r[\u001b[94m00:43:24\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (26.7%)\u001b[0m\r[\u001b[94m00:43:25\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (33.3%)\u001b[0m\r[\u001b[94m00:43:27\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (40.0%)\u001b[0m\r[\u001b[94m00:43:29\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (46.7%)\u001b[0m\r[\u001b[94m00:43:31\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (53.3%)\u001b[0m\r[\u001b[94m00:43:33\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (60.0%)\u001b[0m\r[\u001b[94m00:43:35\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (66.7%)\u001b[0m\r[\u001b[94m00:43:37\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (73.3%)\u001b[0m\r[\u001b[94m00:43:40\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (80.0%)\u001b[0m\r[\u001b[94m00:43:43\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (86.7%)\u001b[0m\r[\u001b[94m00:43:44\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (93.3%)\u001b[0m\r[\u001b[94m00:43:46\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique.\u001b[31m          \u001b[0m\u001b[0m \r\n[\u001b[94m00:43:46\u001b[0m] [\u001b[93mwarning\u001b[0m] It is very important to not stress the network connection during usage of time-based payloads to prevent potential disruptions.\u001b[0m\r\n\r[\u001b[94m00:43:48\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:48\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:50\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:50\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:52\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:52\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:54\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:54\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:56\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:56\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r\u001b[1mUnexpected time delays that may lead to false-positive results, have been identified. How do you want to proceed? [(C)ontinue/(s)kip] > C\u001b[0m\r\n\r[\u001b[94m00:43:58\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:44:00\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Checking if the injection point on GET parameter 'redirect-to' is a false positive.\r\n\u001b[0m\r[\u001b[94m00:44:00\u001b[0m] [\u001b[93mwarning\u001b[0m] Time-based comparison requires reset of statistical model, please wait...\u001b[0m... \r\n[\u001b[94m00:44:04\u001b[0m] [\u001b[1m\u001b[33mwarning\u001b[0m] \u001b[1mFalse positive or unexploitable injection point has been detected.\u001b[0m\r\n\r[\u001b[94m00:44:06\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (77.8%)\u001b[0m\r\u001b[1mUnexpected time delays that may lead to false-positive results, have been identified. How do you want to proceed? [(C)ontinue/(s)kip] > C\u001b[0m\r\n\r[\u001b[94m00:44:08\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:44:11\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Checking if the injection point on GET parameter 'redirect-to' is a false positive.\r\n\u001b[0m\r[\u001b[94m00:44:11\u001b[0m] [\u001b[93mwarning\u001b[0m] Time-based comparison requires reset of statistical model, please wait...\u001b[0m... \r\n[\u001b[94m00:44:16\u001b[0m] [\u001b[1m\u001b[33mwarning\u001b[0m] \u001b[1mFalse positive or unexploitable injection point has been detected.\u001b[0m\r\n\r[\u001b[94m00:44:16\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique.\u001b[31m          \u001b[0m\u001b[0m \r\n\r[\u001b[94m00:44:22\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (11.1%)\u001b[0m\r[\u001b[94m00:44:27\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:44:33\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (33.3%)\u001b[0m\r[\u001b[94m00:44:43\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:44:50\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (55.6%)\u001b[0m\r[\u001b[94m00:44:55\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (66.7%)\u001b[0m\r[\u001b[94m00:45:00\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (77.8%)\u001b[0m\r\u001b[1mIt seems that you don't have permissions to read and/or write files in directory '/var/www/landscape.canonical.com/public_html/\\/'.\r\nDo you want to use the temporary directory ('%temp%\\')? [Y/n] > Y\u001b[0m\r\n[\u001b[94m00:45:05\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Trying to create a file in directory '%temp%\\' for command execution output. \u001b[0m\r\n[\u001b[94m00:45:05\u001b[0m] [\u001b[93mwarning\u001b[0m] It is very important to not stress the network connection during usage of time-based payloads to prevent potential disruptions.\u001b[0m\r\n\r[\u001b[94m00:45:07\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:45:07\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:45:09\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:45:09\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:45:12\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:45:12\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (44.4%)\u001b[0m[\u001b[94m00:45:37\u001b[0m] [\u001b[41mcritical\u001b[0m] Unable to connect to the target URL (Reason: Connection refused). \u001b[0m\r\n",
+          "stderr": "",
+          "execution_time": 469.504892,
+          "start_time": "2025-11-29T11:37:57.149623",
+          "end_time": "2025-11-29T11:45:46.654515",
+          "success": true,
+          "parsed_results": {
+            "vulnerabilities": [
+              {
+                "id": "2310d573-a249-42e4-92d6-acb0ef4e76e3",
+                "type": "command_injection",
+                "severity": 9.0,
+                "confidence": 0.95,
+                "name": "Command Injection",
+                "location": "Detected by Commix",
+                "evidence": "                                      __\r\n   ___   ___     ___ ___     ___ ___ /\\_\\   __  _\r\n /`___\\ / __`\\ /' __` __`\\ /' __` __`\\/\\ \\ /\\ \\/'\\  \u001b[1m\u001b[4m\u001b[37mv4.0-stable\u001b[0m\r\n/\\ \\__//\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\ \\ \\\\/>  </\r\n\\ \\____\\ \\____/\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\/\\_/\\_\\ \u001b[90m\u001b[4mhttps://commixproject.com\u001b[0m\r\n \\/____/\\/___/  \\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\//\\/_/ (\u001b[91m@commixproject\u001b[0m)\r\n\r\n+--\r\n\u001b[1mAutomated All-in-One OS Command Injection Exploitation Tool\u001b[0m\r\nCopyright \u00a9 2014-2024 Anas",
+                "exploitable": true,
+                "tool": "commix",
+                "target": "https://landscape.canonical.com"
+              }
+            ],
+            "raw_output": "                                      __\r\n   ___   ___     ___ ___     ___ ___ /\\_\\   __  _\r\n /`___\\ / __`\\ /' __` __`\\ /' __` __`\\/\\ \\ /\\ \\/'\\  \u001b[1m\u001b[4m\u001b[37mv4.0-stable\u001b[0m\r\n/\\ \\__//\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\ \\ \\\\/>  </\r\n\\ \\____\\ \\____/\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\/\\_/\\_\\ \u001b[90m\u001b[4mhttps://commixproject.com\u001b[0m\r\n \\/____/\\/___/  \\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\//\\/_/ (\u001b[91m@commixproject\u001b[0m)\r\n\r\n+--\r\n\u001b[1mAutomated All-in-One OS Command Injection Exploitation Tool\u001b[0m\r\nCopyright \u00a9 2014-2024 Anastasios Stasinopoulos\u001b[0m (\u001b[91m@ancst\u001b[0m)\r\n+--\r\n\r\n(\u001b[1m\u001b[31m!\u001b[0m) Legal disclaimer: Usage of commix for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program.\r\n\u001b[0m\r\n[\u001b[94m00:37:57\u001b[0m] [\u001b[32m\u001b[1minfo\u001b[0m] \u001b[1mTesting connection to the target URL. \u001b[0m\r\n\u001b[1mGot a 302 redirect to 'https://landscape.canonical.com/new_dashboard/login/?redirect-to=%2F&external'. Do you want to follow? [Y/n] > Y\u001b[0m\r\n[\u001b[94m00:38:07\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Following redirection to 'https://landscape.canonical.com/new_dashboard/login/?redirect-to=%2F&external'. \u001b[0m\r\n[\u001b[94m00:38:07\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Checking if the target is protected by some kind of WAF/IPS.\u001b[0m\r\n[\u001b[94m00:38:09\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Performing identification (passive) tests to the target URL.\u001b[0m\r\n[\u001b[94m00:38:09\u001b[0m] [\u001b[93mwarning\u001b[0m] Failed to identify server's underlying operating system.\u001b[0m\r\n\u001b[1mDo you recognise the server's underlying operating system? [(N)o/(u)nix-like/(w)indows/(q)uit] > N\u001b[0m\r\n[\u001b[94m00:38:10\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Setting GET parameter 'redirect-to' for tests.\u001b[0m\r\n[\u001b[94m00:38:10\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Performing heuristic (basic) tests to the GET parameter 'redirect-to'.\u001b[0m\r\n[\u001b[94m00:38:55\u001b[0m] [\u001b[1m\u001b[33mwarning\u001b[0m] \u001b[1mHeuristic (basic) tests shows that GET parameter 'redirect-to' might not be injectable.\u001b[0m\r\n\r[\u001b[94m00:38:57\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (11.1%)\u001b[0m\r[\u001b[94m00:38:59\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:01\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (33.3%)\u001b[0m\r[\u001b[94m00:39:03\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:39:04\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (55.6%)\u001b[0m\r[\u001b[94m00:39:08\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (66.7%)\u001b[0m\r[\u001b[94m00:39:10\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:39:12\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:39:14\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique.\u001b[31m          \u001b[0m\u001b[0m \r\n\r[\u001b[94m00:39:16\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (8.3%)\u001b[0m\r[\u001b[94m00:39:18\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (16.7%)\u001b[0m\r[\u001b[94m00:39:20\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (25.0%)\u001b[0m\r[\u001b[94m00:39:22\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (33.3%)\u001b[0m\r[\u001b[94m00:39:24\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (41.7%)\u001b[0m\r[\u001b[94m00:39:25\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (50.0%)\u001b[0m\r[\u001b[94m00:39:27\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (58.3%)\u001b[0m\r[\u001b[94m00:39:29\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (66.7%)\u001b[0m\r[\u001b[94m00:39:31\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (75.0%)\u001b[0m\r[\u001b[94m00:39:33\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (83.3%)\u001b[0m\r[\u001b[94m00:39:35\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (91.7%)\u001b[0m\r[\u001b[94m00:39:37\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique.\u001b[31m          \u001b[0m\u001b[0m \r\n[\u001b[94m00:39:37\u001b[0m] [\u001b[93mwarning\u001b[0m] It is very important to not stress the network connection during usage of time-based payloads to prevent potential disruptions.\u001b[0m\r\n\r[\u001b[94m00:39:39\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:39\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:41\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:41\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:44\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:44\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:46\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:46\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:48\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:48\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r\u001b[1mUnexpected time delays that may lead to false-positive results, have been identified. How do you want to proceed? [(C)ontinue/(s)kip] > C\u001b[0m\r\n\r[\u001b[94m00:39:50\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:39:52\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Checking if the injection point on GET parameter 'redirect-to' is a false positive.\r\n\u001b[0m\r[\u001b[94m00:39:52\u001b[0m] [\u001b[93mwarning\u001b[0m] Time-based comparison requires reset of statistical model, please wait...\u001b[0m... \r\n[\u001b[94m00:39:55\u001b[0m] [\u001b[1m\u001b[33mwarning\u001b[0m] \u001b[1mFalse positive or unexploitable injection point has been detected.\u001b[0m\r\n\r[\u001b[94m00:39:57\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:39:59\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (77.8%)\u001b[0m\r\u001b[1mUnexpected time delays that may lead to false-positive results, have been identified. How do you want to proceed? [(C)ontinue/(s)kip] > C\u001b[0m\r\n\r[\u001b[94m00:40:01\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:40:04\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Checking if the injection point on GET parameter 'redirect-to' is a false positive.\r\n\u001b[0m\r[\u001b[94m00:40:04\u001b[0m] [\u001b[93mwarning\u001b[0m] Time-based comparison requires reset of statistical model, please wait...\u001b[0m... \r\n[\u001b[94m00:40:08\u001b[0m] [\u001b[1m\u001b[33mwarning\u001b[0m] \u001b[1mFalse positive or unexploitable injection point has been detected.\u001b[0m\r\n\r[\u001b[94m00:40:10\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:40:12\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:40:15\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:40:17\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:40:19\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:40:21\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:40:23\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:40:25\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:40:27\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:40:27\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique.\u001b[31m          \u001b[0m\u001b[0m \r\n\u001b[1mEnter what you want to use for writable directory (e.g. '/var/www/landscape.canonical.com/public_html/') > /var/www/landscape.canonical.com/public_html/\u001b[0m\r\n[\u001b[94m00:40:27\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Trying to create a file in directory '/var/www/landscape.canonical.com/public_html/' for command execution output. \u001b[0m\r\n\u001b[1mDo you want to use URL 'https://landscape.canonical.com/UUSKOJ.txt' for command execution output? [Y/n] > Y\u001b[0m\r\n\r[\u001b[94m00:40:33\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (11.1%)\u001b[0m\r[\u001b[94m00:40:38\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:40:44\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (33.3%)\u001b[0m\r[\u001b[94m00:40:49\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:40:55\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (55.6%)\u001b[0m\r[\u001b[94m00:41:00\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (66.7%)\u001b[0m\r[\u001b[94m00:41:05\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (77.8%)\u001b[0m\r\u001b[1mIt seems that you don't have permissions to read and/or write files in directory '/var/www/landscape.canonical.com/public_html/'.\r\nDo you want to use the temporary directory ('/tmp/')? [Y/n] > Y\u001b[0m\r\n[\u001b[94m00:41:11\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Trying to create a file in directory '/tmp/' for command execution output. \u001b[0m\r\n[\u001b[94m00:41:11\u001b[0m] [\u001b[93mwarning\u001b[0m] It is very important to not stress the network connection during usage of time-based payloads to prevent potential disruptions.\u001b[0m\r\n\r[\u001b[94m00:41:12\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:12\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:14\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:14\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:16\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:16\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:18\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:18\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:20\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:20\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:22\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:41:22\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Checking if the injection point on GET parameter 'redirect-to' is a false positive.\r\n\u001b[0m\r[\u001b[94m00:41:22\u001b[0m] [\u001b[93mwarning\u001b[0m] Time-based comparison requires larger statistical model, please wait...\u001b[0m...\r[\u001b[94m00:41:34\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:34\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:36\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:36\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:38\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:38\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:40\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:40\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:41\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:41\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r\u001b[1mUnexpected time delays that may lead to false-positive results, have been identified. How do you want to proceed? [(C)ontinue/(s)kip] > C\u001b[0m\r\n\r[\u001b[94m00:41:48\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:41:50\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Checking if the injection point on GET parameter 'redirect-to' is a false positive.\r\n\u001b[0m\r[\u001b[94m00:41:50\u001b[0m] [\u001b[93mwarning\u001b[0m] Time-based comparison requires reset of statistical model, please wait...\u001b[0m... \r\n[\u001b[94m00:41:54\u001b[0m] [\u001b[1m\u001b[33mwarning\u001b[0m] \u001b[1mFalse positive or unexploitable injection point has been detected.\u001b[0m\r\n\r\u001b[1mUnexpected time delays that may lead to false-positive results, have been identified. How do you want to proceed? [(C)ontinue/(s)kip] > C\u001b[0m\r\n\r[\u001b[94m00:41:57\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:42:00\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Checking if the injection point on GET parameter 'redirect-to' is a false positive.\r\n\u001b[0m\r[\u001b[94m00:42:00\u001b[0m] [\u001b[93mwarning\u001b[0m] Time-based comparison requires reset of statistical model, please wait...\u001b[0m... \r\n[\u001b[94m00:42:04\u001b[0m] [\u001b[1m\u001b[33mwarning\u001b[0m] \u001b[1mFalse positive or unexploitable injection point has been detected.\u001b[0m\r\n\r[\u001b[94m00:42:04\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique.\u001b[31m          \u001b[0m\u001b[0m \r\n\r[\u001b[94m00:42:09\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique.\u001b[31m          \u001b[0m\u001b[0m \r\n[\u001b[94m00:42:09\u001b[0m] [\u001b[1m\u001b[33mwarning\u001b[0m] \u001b[1mThe tested GET parameter 'redirect-to' does not seem to be injectable.\u001b[0m\r\n[\u001b[94m00:42:10\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Setting GET parameter 'redirect-to' for tests.\u001b[0m\r\n[\u001b[94m00:42:10\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Performing heuristic (basic) tests to the GET parameter 'redirect-to'.\u001b[0m\r\n[\u001b[94m00:42:57\u001b[0m] [\u001b[1m\u001b[33mwarning\u001b[0m] \u001b[1mHeuristic (basic) tests shows that GET parameter 'redirect-to' might not be injectable.\u001b[0m\r\n\r[\u001b[94m00:42:59\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (11.1%)\u001b[0m\r[\u001b[94m00:43:01\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:43:03\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (33.3%)\u001b[0m\r[\u001b[94m00:43:06\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:08\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (55.6%)\u001b[0m\r[\u001b[94m00:43:10\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (66.7%)\u001b[0m\r[\u001b[94m00:43:12\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:43:14\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique... (88.9%)\u001b[0m\r[\u001b[94m00:43:16\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) classic command injection technique.\u001b[31m          \u001b[0m\u001b[0m \r\n\r[\u001b[94m00:43:18\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (6.7%)\u001b[0m\r[\u001b[94m00:43:20\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (13.3%)\u001b[0m\r[\u001b[94m00:43:22\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (20.0%)\u001b[0m\r[\u001b[94m00:43:24\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (26.7%)\u001b[0m\r[\u001b[94m00:43:25\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (33.3%)\u001b[0m\r[\u001b[94m00:43:27\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (40.0%)\u001b[0m\r[\u001b[94m00:43:29\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (46.7%)\u001b[0m\r[\u001b[94m00:43:31\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (53.3%)\u001b[0m\r[\u001b[94m00:43:33\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (60.0%)\u001b[0m\r[\u001b[94m00:43:35\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (66.7%)\u001b[0m\r[\u001b[94m00:43:37\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (73.3%)\u001b[0m\r[\u001b[94m00:43:40\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (80.0%)\u001b[0m\r[\u001b[94m00:43:43\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (86.7%)\u001b[0m\r[\u001b[94m00:43:44\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique... (93.3%)\u001b[0m\r[\u001b[94m00:43:46\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (results-based) dynamic code evaluation technique.\u001b[31m          \u001b[0m\u001b[0m \r\n[\u001b[94m00:43:46\u001b[0m] [\u001b[93mwarning\u001b[0m] It is very important to not stress the network connection during usage of time-based payloads to prevent potential disruptions.\u001b[0m\r\n\r[\u001b[94m00:43:48\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:48\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:50\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:50\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:52\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:52\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:54\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:54\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:56\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:43:56\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r\u001b[1mUnexpected time delays that may lead to false-positive results, have been identified. How do you want to proceed? [(C)ontinue/(s)kip] > C\u001b[0m\r\n\r[\u001b[94m00:43:58\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:44:00\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Checking if the injection point on GET parameter 'redirect-to' is a false positive.\r\n\u001b[0m\r[\u001b[94m00:44:00\u001b[0m] [\u001b[93mwarning\u001b[0m] Time-based comparison requires reset of statistical model, please wait...\u001b[0m... \r\n[\u001b[94m00:44:04\u001b[0m] [\u001b[1m\u001b[33mwarning\u001b[0m] \u001b[1mFalse positive or unexploitable injection point has been detected.\u001b[0m\r\n\r[\u001b[94m00:44:06\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (77.8%)\u001b[0m\r\u001b[1mUnexpected time delays that may lead to false-positive results, have been identified. How do you want to proceed? [(C)ontinue/(s)kip] > C\u001b[0m\r\n\r[\u001b[94m00:44:08\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique... (77.8%)\u001b[0m\r[\u001b[94m00:44:11\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Checking if the injection point on GET parameter 'redirect-to' is a false positive.\r\n\u001b[0m\r[\u001b[94m00:44:11\u001b[0m] [\u001b[93mwarning\u001b[0m] Time-based comparison requires reset of statistical model, please wait...\u001b[0m... \r\n[\u001b[94m00:44:16\u001b[0m] [\u001b[1m\u001b[33mwarning\u001b[0m] \u001b[1mFalse positive or unexploitable injection point has been detected.\u001b[0m\r\n\r[\u001b[94m00:44:16\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (blind) time-based command injection technique.\u001b[31m          \u001b[0m\u001b[0m \r\n\r[\u001b[94m00:44:22\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (11.1%)\u001b[0m\r[\u001b[94m00:44:27\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (22.2%)\u001b[0m\r[\u001b[94m00:44:33\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (33.3%)\u001b[0m\r[\u001b[94m00:44:43\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:44:50\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (55.6%)\u001b[0m\r[\u001b[94m00:44:55\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (66.7%)\u001b[0m\r[\u001b[94m00:45:00\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) file-based command injection technique... (77.8%)\u001b[0m\r\u001b[1mIt seems that you don't have permissions to read and/or write files in directory '/var/www/landscape.canonical.com/public_html/\\/'.\r\nDo you want to use the temporary directory ('%temp%\\')? [Y/n] > Y\u001b[0m\r\n[\u001b[94m00:45:05\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Trying to create a file in directory '%temp%\\' for command execution output. \u001b[0m\r\n[\u001b[94m00:45:05\u001b[0m] [\u001b[93mwarning\u001b[0m] It is very important to not stress the network connection during usage of time-based payloads to prevent potential disruptions.\u001b[0m\r\n\r[\u001b[94m00:45:07\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:45:07\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:45:09\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:45:09\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:45:12\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (44.4%)\u001b[0m\r[\u001b[94m00:45:12\u001b[0m] \u001b[0m[\u001b[32minfo\u001b[0m] Testing the (semi-blind) tempfile-based injection technique... (44.4%)\u001b[0m[\u001b[94m00:45:37\u001b[0m] [\u001b[41mcritical\u001b[0m] Unable to connect to the target URL (Reason: Connection refused). \u001b[0m\r\n"
+          }
+        },
+        "wpscan": {
+          "tool_name": "wpscan",
+          "target": "https://landscape.canonical.com",
+          "phase": "comprehensive_analysis",
+          "command": "wpscan --url https://landscape.canonical.com",
+          "exit_code": 4,
+          "stdout": "_______________________________________________________________\r\n         __          _______   _____\r\n         \\ \\        / /  __ \\ / ____|\r\n          \\ \\  /\\  / /| |__) | (___   ___  __ _ _ __ \u00ae\r\n           \\ \\/  \\/ / |  ___/ \\___ \\ / __|/ _` | '_ \\\r\n            \\  /\\  /  | |     ____) | (__| (_| | | | |\r\n             \\/  \\/   |_|    |_____/ \\___|\\__,_|_| |_|\r\n\r\n         WordPress Security Scanner by the WPScan Team\r\n                         Version 3.8.28\r\n       Sponsored by Automattic - https://automattic.com/\r\n       @_WPScan_, @ethicalhack3r, @erwan_lr, @firefart\r\n_______________________________________________________________\r\n\r\n\r\nScan Aborted: The remote website is up, but does not seem to be running WordPress.\r\n",
+          "stderr": "",
+          "execution_time": 3.645599,
+          "start_time": "2025-11-29T11:45:46.658161",
+          "end_time": "2025-11-29T11:45:50.303760",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "hosts": [],
+            "services": [],
+            "raw_output": "_______________________________________________________________\r\n         __          _______   _____\r\n         \\ \\        / /  __ \\ / ____|\r\n          \\ \\  /\\  / /| |__) | (___   ___  __ _ _ __ \u00ae\r\n           \\ \\/  \\/ / |  ___/ \\___ \\ / __|/ _` | '_ \\\r\n            \\  /\\  /  | |     ____) | (__| (_| | | | |\r\n             \\/  \\/   |_|    |_____/ \\___|\\__,_|_| |_|\r\n\r\n         WordPress Security Scanner by the WPScan Team\r\n                         Version 3.8.28\r\n       Sponsored by Automattic - https://automattic.com/\r\n       @_WPScan_, @ethicalhack3r, @erwan_lr, @firefart\r\n_______________________________________________________________\r\n\r\n\r\nScan Aborted: The remote website is up, but does not seem to be running WordPress.\r\n\n"
+          }
+        },
+        "sslscan": {
+          "tool_name": "sslscan",
+          "target": "https://landscape.canonical.com",
+          "phase": "comprehensive_analysis",
+          "command": "sslscan landscape.canonical.com",
+          "exit_code": 1,
+          "stdout": "Version: \u001b[32m2.1.5\u001b[0m\r\nOpenSSL 3.5.0 8 Apr 2025\r\n\u001b[0m\r\n\u001b[32mConnected to 185.125.189.31\u001b[0m\r\n\r\nTesting SSL server \u001b[32mlandscape.canonical.com\u001b[0m on port \u001b[32m443\u001b[0m using SNI name \u001b[32mlandscape.canonical.com\u001b[0m\r\n\r\n  \u001b[1;34mSSL/TLS Protocols:\u001b[0m\r\n\u001b[31mERROR: Could not open a connection to host landscape.canonical.com (185.125.189.31) on port 443 (connect: Connection refused).\u001b[0m\r\nSSLv2     \u001b[32mdisabled\u001b[0m\r\n\u001b[31mERROR: Could not open a connection to host landscape.canonical.com (185.125.189.31) on port 443 (connect: Connection refused).\u001b[0m\r\nSSLv3     \u001b[32mdisabled\u001b[0m\r\n\u001b[31mERROR: Could not open a connection to host landscape.canonical.com (185.125.189.31) on port 443 (connect: Connection refused).\u001b[0m\r\nTLSv1.0   \u001b[32mdisabled\u001b[0m\r\n\u001b[31mERROR: Could not open a connection to host landscape.canonical.com (185.125.189.31) on port 443 (connect: Connection refused).\u001b[0m\r\nTLSv1.1   \u001b[32mdisabled\u001b[0m\r\n\u001b[31mERROR: Could not open a connection to host landscape.canonical.com (185.125.189.31) on port 443 (connect: Connection refused).\u001b[0m\r\nTLSv1.2   disabled\r\n\u001b[31mERROR: Could not open a connection to host landscape.canonical.com (185.125.189.31) on port 443 (connect: Connection refused).\u001b[0m\r\nTLSv1.3   \u001b[33mdisabled\u001b[0m\r\n\r\n  \u001b[1;34mTLS Fallback SCSV:\u001b[0m\r\n\u001b[31mERROR: Could not open a connection to host landscape.canonical.com (185.125.189.31) on port 443 (connect: Connection refused).\u001b[0m\r\n\u001b[31mERROR: Could not connect.\u001b[0m\r\n",
+          "stderr": "",
+          "execution_time": 21.377274,
+          "start_time": "2025-11-29T11:45:50.304514",
+          "end_time": "2025-11-29T11:46:11.681788",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "hosts": [],
+            "services": [],
+            "raw_output": "Version: \u001b[32m2.1.5\u001b[0m\r\nOpenSSL 3.5.0 8 Apr 2025\r\n\u001b[0m\r\n\u001b[32mConnected to 185.125.189.31\u001b[0m\r\n\r\nTesting SSL server \u001b[32mlandscape.canonical.com\u001b[0m on port \u001b[32m443\u001b[0m using SNI name \u001b[32mlandscape.canonical.com\u001b[0m\r\n\r\n  \u001b[1;34mSSL/TLS Protocols:\u001b[0m\r\n\u001b[31mERROR: Could not open a connection to host landscape.canonical.com (185.125.189.31) on port 443 (connect: Connection refused).\u001b[0m\r\nSSLv2     \u001b[32mdisabled\u001b[0m\r\n\u001b[31mERROR: Could not open a connection to host landscape.canonical.com (185.125.189.31) on port 443 (connect: Connection refused).\u001b[0m\r\nSSLv3     \u001b[32mdisabled\u001b[0m\r\n\u001b[31mERROR: Could not open a connection to host landscape.canonical.com (185.125.189.31) on port 443 (connect: Connection refused).\u001b[0m\r\nTLSv1.0   \u001b[32mdisabled\u001b[0m\r\n\u001b[31mERROR: Could not open a connection to host landscape.canonical.com (185.125.189.31) on port 443 (connect: Connection refused).\u001b[0m\r\nTLSv1.1   \u001b[32mdisabled\u001b[0m\r\n\u001b[31mERROR: Could not open a connection to host landscape.canonical.com (185.125.189.31) on port 443 (connect: Connection refused).\u001b[0m\r\nTLSv1.2   disabled\r\n\u001b[31mERROR: Could not open a connection to host landscape.canonical.com (185.125.189.31) on port 443 (connect: Connection refused).\u001b[0m\r\nTLSv1.3   \u001b[33mdisabled\u001b[0m\r\n\r\n  \u001b[1;34mTLS Fallback SCSV:\u001b[0m\r\n\u001b[31mERROR: Could not open a connection to host landscape.canonical.com (185.125.189.31) on port 443 (connect: Connection refused).\u001b[0m\r\n\u001b[31mERROR: Could not connect.\u001b[0m\r\n\n"
+          }
+        },
+        "enum4linux": {
+          "tool_name": "enum4linux",
+          "target": "https://landscape.canonical.com",
+          "phase": "comprehensive_analysis",
+          "command": "enum4linux landscape.canonical.com -a",
+          "exit_code": 1,
+          "stdout": "Starting enum4linux v0.9.1 ( http://labs.portcullis.co.uk/application/enum4linux/ ) on Sat Nov 29 00:46:11 2025\r\n\r\n\u001b[34m =========================================( \u001b[0m\u001b[32mTarget Information\u001b[0m\u001b[34m )=========================================\r\n\r\n\u001b[0mTarget ........... landscape.canonical.com\r\nRID Range ........ 500-550,1000-1050\r\nUsername ......... ''\r\nPassword ......... ''\r\nKnown Usernames .. administrator, guest, krbtgt, domain admins, root, bin, none\r\n\r\n\r\n\u001b[34m ======================( \u001b[0m\u001b[32mEnumerating Workgroup/Domain on landscape.canonical.com\u001b[0m\u001b[34m )======================\r\n\r\n\u001b[0m\u001b[33m\r\n[E] \u001b[0m\u001b[31mCan't find workgroup/domain\r\n\r\n\u001b[0m\r\n\r\n\u001b[34m ==========================( \u001b[0m\u001b[32mNbtstat Information for landscape.canonical.com\u001b[0m\u001b[34m )==========================\r\n\r\n\u001b[0mLooking up status of 0.0.0.0\r\nNo reply from 0.0.0.0\r\n\r\n\u001b[34m ==============================( \u001b[0m\u001b[32mSession Check on landscape.canonical.com\u001b[0m\u001b[34m )==============================\r\n\r\n\u001b[0m\u001b[33m\r\n[E] \u001b[0m\u001b[31mServer doesn't allow session using username '', password ''.  Aborting remainder of tests.\r\n\r\n\u001b[0m",
+          "stderr": "",
+          "execution_time": 55.936983,
+          "start_time": "2025-11-29T11:46:11.687900",
+          "end_time": "2025-11-29T11:47:07.624883",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [
+              {
+                "id": "6b57f4be-ec47-437a-8c36-8b5189a6ac2f",
+                "type": "generic_finding",
+                "severity": 5.0,
+                "confidence": 0.7,
+                "name": "Tool Output Analysis",
+                "location": "Generic parsing",
+                "evidence": "[E] \u001b[0m\u001b[31mServer doesn't allow session using username '', password ''.  Aborting remainder of tests.",
+                "exploitable": true,
+                "tool": "enum4linux",
+                "target": "https://landscape.canonical.com"
+              }
+            ],
+            "hosts": [],
+            "services": [],
+            "raw_output": "Starting enum4linux v0.9.1 ( http://labs.portcullis.co.uk/application/enum4linux/ ) on Sat Nov 29 00:46:11 2025\r\n\r\n\u001b[34m =========================================( \u001b[0m\u001b[32mTarget Information\u001b[0m\u001b[34m )=========================================\r\n\r\n\u001b[0mTarget ........... landscape.canonical.com\r\nRID Range ........ 500-550,1000-1050\r\nUsername ......... ''\r\nPassword ......... ''\r\nKnown Usernames .. administrator, guest, krbtgt, domain admins, root, bin, none\r\n\r\n\r\n\u001b[34m ======================( \u001b[0m\u001b[32mEnumerating Workgroup/Domain on landscape.canonical.com\u001b[0m\u001b[34m )======================\r\n\r\n\u001b[0m\u001b[33m\r\n[E] \u001b[0m\u001b[31mCan't find workgroup/domain\r\n\r\n\u001b[0m\r\n\r\n\u001b[34m ==========================( \u001b[0m\u001b[32mNbtstat Information for landscape.canonical.com\u001b[0m\u001b[34m )==========================\r\n\r\n\u001b[0mLooking up status of 0.0.0.0\r\nNo reply from 0.0.0.0\r\n\r\n\u001b[34m ==============================( \u001b[0m\u001b[32mSession Check on landscape.canonical.com\u001b[0m\u001b[34m )==============================\r\n\r\n\u001b[0m\u001b[33m\r\n[E] \u001b[0m\u001b[31mServer doesn't allow session using username '', password ''.  Aborting remainder of tests.\r\n\r\n\u001b[0m\n"
+          }
+        },
+        "whatweb": {
+          "tool_name": "whatweb",
+          "target": "https://landscape.canonical.com",
+          "phase": "comprehensive_analysis",
+          "command": "whatweb https://landscape.canonical.com -a 1",
+          "exit_code": 0,
+          "stdout": "\u001b[1m\u001b[34mhttps://landscape.canonical.com\u001b[0m [303 See Other] \u001b[1mCookies\u001b[0m[\u001b[0m\u001b[22mlandscape_session\u001b[0m], \u001b[1mDreambox\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mHTTPServer\u001b[0m[\u001b[1m\u001b[36mTwistedWeb/22.1.0\u001b[0m], \u001b[1mHttpOnly\u001b[0m[\u001b[0m\u001b[22mlandscape_session\u001b[0m], \u001b[1mIP\u001b[0m[\u001b[0m\u001b[22m185.125.189.31\u001b[0m], \u001b[1mRedirectLocation\u001b[0m[\u001b[0m\u001b[22m/new_dashboard/login?redirect-to=%2F&external\u001b[0m], \u001b[1mStrict-Transport-Security\u001b[0m[\u001b[0m\u001b[22mmax-age=2592000\u001b[0m], \u001b[1mTwistedWeb\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mUncommonHeaders\u001b[0m[\u001b[0m\u001b[22mcontent-security-policy,x-content-type-options,x-vcs-revision,x-request-id\u001b[0m], \u001b[1mX-Frame-Options\u001b[0m[\u001b[0m\u001b[22mSAMEORIGIN\u001b[0m], \u001b[1mX-Powered-By\u001b[0m[\u001b[0m\u001b[22mZope (www.zope.org), Python (www.python.org)\u001b[0m], \u001b[1mX-XSS-Protection\u001b[0m[\u001b[0m\u001b[22m1; mode=block\u001b[0m]\r\n\u001b[1m\u001b[34mhttps://landscape.canonical.com/new_dashboard/login?redirect-to=%2F&external\u001b[0m [302 Found] \u001b[1mDreambox\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mHTTPServer\u001b[0m[\u001b[1m\u001b[36mTwistedWeb/22.1.0\u001b[0m], \u001b[1mIP\u001b[0m[\u001b[0m\u001b[22m185.125.189.31\u001b[0m], \u001b[1mMeta-Refresh-Redirect\u001b[0m[\u001b[0m\u001b[22m/new_dashboard/login/?redirect-to=%252F&external\u001b[0m], \u001b[1mRedirectLocation\u001b[0m[\u001b[0m\u001b[22m/new_dashboard/login/?redirect-to=%252F&external\u001b[0m], \u001b[1mTwistedWeb\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mUncommonHeaders\u001b[0m[\u001b[0m\u001b[22mcontent-security-policy,referrer-policy\u001b[0m]\r\n\u001b[1m\u001b[34mhttps://landscape.canonical.com/new_dashboard/login/?redirect-to=%252F&external\u001b[0m [200 OK] \u001b[1mDreambox\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mHTML5\u001b[0m, \u001b[1mHTTPServer\u001b[0m[\u001b[1m\u001b[36mTwistedWeb/22.1.0\u001b[0m], \u001b[1mIP\u001b[0m[\u001b[0m\u001b[22m185.125.189.31\u001b[0m], \u001b[1mScript\u001b[0m[\u001b[0m\u001b[22mmodule\u001b[0m], \u001b[1mTitle\u001b[0m[\u001b[1m\u001b[33mLandscape\u001b[0m], \u001b[1mTwistedWeb\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mUncommonHeaders\u001b[0m[\u001b[0m\u001b[22mcontent-security-policy,referrer-policy\u001b[0m]\r\n",
+          "stderr": "",
+          "execution_time": 17.731125,
+          "start_time": "2025-11-29T11:47:07.625559",
+          "end_time": "2025-11-29T11:47:25.356684",
+          "success": true,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "technologies": [
+              "1m\u001b[34mhttps://landscape.canonical.com\u001b[0m [303 See Other",
+              "1mCookies\u001b[0m[\u001b[0m\u001b[22mlandscape_session\u001b[0m",
+              "1mDreambox\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m",
+              "1mHTTPServer\u001b[0m[\u001b[1m\u001b[36mTwistedWeb/22.1.0\u001b[0m",
+              "1mHttpOnly\u001b[0m[\u001b[0m\u001b[22mlandscape_session\u001b[0m",
+              "1mIP\u001b[0m[\u001b[0m\u001b[22m185.125.189.31\u001b[0m",
+              "1mRedirectLocation\u001b[0m[\u001b[0m\u001b[22m/new_dashboard/login?redirect-to=%2F&external\u001b[0m",
+              "1mStrict-Transport-Security\u001b[0m[\u001b[0m\u001b[22mmax-age=2592000\u001b[0m",
+              "1mTwistedWeb\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m",
+              "1mUncommonHeaders\u001b[0m[\u001b[0m\u001b[22mcontent-security-policy,x-content-type-options,x-vcs-revision,x-request-id\u001b[0m",
+              "1mX-Frame-Options\u001b[0m[\u001b[0m\u001b[22mSAMEORIGIN\u001b[0m",
+              "1mX-Powered-By\u001b[0m[\u001b[0m\u001b[22mZope (www.zope.org), Python (www.python.org)\u001b[0m",
+              "1mX-XSS-Protection\u001b[0m[\u001b[0m\u001b[22m1; mode=block\u001b[0m",
+              "1m\u001b[34mhttps://landscape.canonical.com/new_dashboard/login?redirect-to=%2F&external\u001b[0m [302 Found",
+              "1mMeta-Refresh-Redirect\u001b[0m[\u001b[0m\u001b[22m/new_dashboard/login/?redirect-to=%252F&external\u001b[0m",
+              "1mRedirectLocation\u001b[0m[\u001b[0m\u001b[22m/new_dashboard/login/?redirect-to=%252F&external\u001b[0m",
+              "1mUncommonHeaders\u001b[0m[\u001b[0m\u001b[22mcontent-security-policy,referrer-policy\u001b[0m",
+              "1m\u001b[34mhttps://landscape.canonical.com/new_dashboard/login/?redirect-to=%252F&external\u001b[0m [200 OK",
+              "1mHTML5\u001b[0m, \u001b[1mHTTPServer\u001b[0m[\u001b[1m\u001b[36mTwistedWeb/22.1.0\u001b[0m",
+              "1mScript\u001b[0m[\u001b[0m\u001b[22mmodule\u001b[0m",
+              "1mTitle\u001b[0m[\u001b[1m\u001b[33mLandscape\u001b[0m"
+            ],
+            "raw_output": "\u001b[1m\u001b[34mhttps://landscape.canonical.com\u001b[0m [303 See Other] \u001b[1mCookies\u001b[0m[\u001b[0m\u001b[22mlandscape_session\u001b[0m], \u001b[1mDreambox\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mHTTPServer\u001b[0m[\u001b[1m\u001b[36mTwistedWeb/22.1.0\u001b[0m], \u001b[1mHttpOnly\u001b[0m[\u001b[0m\u001b[22mlandscape_session\u001b[0m], \u001b[1mIP\u001b[0m[\u001b[0m\u001b[22m185.125.189.31\u001b[0m], \u001b[1mRedirectLocation\u001b[0m[\u001b[0m\u001b[22m/new_dashboard/login?redirect-to=%2F&external\u001b[0m], \u001b[1mStrict-Transport-Security\u001b[0m[\u001b[0m\u001b[22mmax-age=2592000\u001b[0m], \u001b[1mTwistedWeb\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mUncommonHeaders\u001b[0m[\u001b[0m\u001b[22mcontent-security-policy,x-content-type-options,x-vcs-revision,x-request-id\u001b[0m], \u001b[1mX-Frame-Options\u001b[0m[\u001b[0m\u001b[22mSAMEORIGIN\u001b[0m], \u001b[1mX-Powered-By\u001b[0m[\u001b[0m\u001b[22mZope (www.zope.org), Python (www.python.org)\u001b[0m], \u001b[1mX-XSS-Protection\u001b[0m[\u001b[0m\u001b[22m1; mode=block\u001b[0m]\r\n\u001b[1m\u001b[34mhttps://landscape.canonical.com/new_dashboard/login?redirect-to=%2F&external\u001b[0m [302 Found] \u001b[1mDreambox\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mHTTPServer\u001b[0m[\u001b[1m\u001b[36mTwistedWeb/22.1.0\u001b[0m], \u001b[1mIP\u001b[0m[\u001b[0m\u001b[22m185.125.189.31\u001b[0m], \u001b[1mMeta-Refresh-Redirect\u001b[0m[\u001b[0m\u001b[22m/new_dashboard/login/?redirect-to=%252F&external\u001b[0m], \u001b[1mRedirectLocation\u001b[0m[\u001b[0m\u001b[22m/new_dashboard/login/?redirect-to=%252F&external\u001b[0m], \u001b[1mTwistedWeb\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mUncommonHeaders\u001b[0m[\u001b[0m\u001b[22mcontent-security-policy,referrer-policy\u001b[0m]\r\n\u001b[1m\u001b[34mhttps://landscape.canonical.com/new_dashboard/login/?redirect-to=%252F&external\u001b[0m [200 OK] \u001b[1mDreambox\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mHTML5\u001b[0m, \u001b[1mHTTPServer\u001b[0m[\u001b[1m\u001b[36mTwistedWeb/22.1.0\u001b[0m], \u001b[1mIP\u001b[0m[\u001b[0m\u001b[22m185.125.189.31\u001b[0m], \u001b[1mScript\u001b[0m[\u001b[0m\u001b[22mmodule\u001b[0m], \u001b[1mTitle\u001b[0m[\u001b[1m\u001b[33mLandscape\u001b[0m], \u001b[1mTwistedWeb\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mUncommonHeaders\u001b[0m[\u001b[0m\u001b[22mcontent-security-policy,referrer-policy\u001b[0m]\r\n"
+          }
+        },
+        "dnsenum": {
+          "tool_name": "dnsenum",
+          "target": "https://landscape.canonical.com",
+          "phase": "comprehensive_analysis",
+          "command": "dnsenum landscape.canonical.com --enum",
+          "exit_code": 255,
+          "stdout": "dnsenum VERSION:1.3.1\r\n\u001b[1;34m\r\n-----   landscape.canonical.com   -----\r\n\u001b[0m\u001b[1;31m\r\n\r\nHost's addresses:\r\n__________________\r\n\r\n\u001b[0mlandscape.canonical.com.                 0        IN    A        185.125.189.31\r\n\u001b[1;31m\r\n\r\nName Servers:\r\n______________\r\n\r\n landscape.canonical.com NS record query failed: NOERROR\r\n\u001b[0m",
+          "stderr": "",
+          "execution_time": 1.12994,
+          "start_time": "2025-11-29T11:47:25.370560",
+          "end_time": "2025-11-29T11:47:26.500500",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "hosts": [],
+            "services": [],
+            "raw_output": "dnsenum VERSION:1.3.1\r\n\u001b[1;34m\r\n-----   landscape.canonical.com   -----\r\n\u001b[0m\u001b[1;31m\r\n\r\nHost's addresses:\r\n__________________\r\n\r\n\u001b[0mlandscape.canonical.com.                 0        IN    A        185.125.189.31\r\n\u001b[1;31m\r\n\r\nName Servers:\r\n______________\r\n\r\n landscape.canonical.com NS record query failed: NOERROR\r\n\u001b[0m\n"
+          }
+        },
+        "amass": {
+          "tool_name": "amass",
+          "target": "https://landscape.canonical.com",
+          "phase": "comprehensive_analysis",
+          "command": "amass enum -d landscape.canonical.com -passive",
+          "exit_code": 0,
+          "stdout": "\u001b[91mNo assets were discovered\r\n\u001b[0m\r\n\u001b[92mThe enumeration has finished\u001b[0m\r\n",
+          "stderr": "",
+          "execution_time": 158.943391,
+          "start_time": "2025-11-29T11:47:26.501050",
+          "end_time": "2025-11-29T11:50:05.444441",
+          "success": true,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "hosts": [],
+            "services": [],
+            "raw_output": "\u001b[91mNo assets were discovered\r\n\u001b[0m\r\n\u001b[92mThe enumeration has finished\u001b[0m\r\n\n"
+          }
+        }
+      },
+      "vulnerabilities_found": [
+        {
+          "id": "47ff0a2d-1adf-4e75-bd40-31a03d0bdb9b",
+          "type": "open_port",
+          "severity": 4.0,
+          "confidence": 0.95,
+          "name": "Open Port: 80/http-proxy",
+          "location": "Port 80",
+          "evidence": "80/tcp  open  http-proxy     HAProxy http proxy HAProxy http proxy",
+          "exploitable": false,
+          "tool": "nmap",
+          "target": "https://landscape.canonical.com"
+        },
+        {
+          "id": "66a699e4-7741-4e2e-a19a-8d400c7c9e83",
+          "type": "open_port",
+          "severity": 4.0,
+          "confidence": 0.95,
+          "name": "Open Port: 443/ssl/http-proxy",
+          "location": "Port 443",
+          "evidence": "443/tcp open  ssl/http-proxy HAProxy http proxy HAProxy http proxy",
+          "exploitable": false,
+          "tool": "nmap",
+          "target": "https://landscape.canonical.com"
+        },
+        {
+          "id": "01c73c3c-97d7-4fbb-85e0-cb8ccfdab89c",
+          "type": "generic_finding",
+          "severity": 5.0,
+          "confidence": 0.7,
+          "name": "Tool Output Analysis",
+          "location": "Generic parsing",
+          "evidence": "+ /: The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type. See: https://www.netsparker.com/web-vulnerability-scanner/vulnerabilities/missing-content-type-header/",
+          "exploitable": true,
+          "tool": "nikto",
+          "target": "https://landscape.canonical.com"
+        },
+        {
+          "id": "88ce66ae-6aae-44b4-b456-8281a1cb6e3b",
+          "type": "generic_finding",
+          "severity": 5.0,
+          "confidence": 0.7,
+          "name": "Tool Output Analysis",
+          "location": "Generic parsing",
+          "evidence": "-r                  Follow redirects (default: false)",
+          "exploitable": true,
+          "tool": "ffuf",
+          "target": "https://landscape.canonical.com"
+        },
+        {
+          "id": "2310d573-a249-42e4-92d6-acb0ef4e76e3",
+          "type": "command_injection",
+          "severity": 9.0,
+          "confidence": 0.95,
+          "name": "Command Injection",
+          "location": "Detected by Commix",
+          "evidence": "                                      __\r\n   ___   ___     ___ ___     ___ ___ /\\_\\   __  _\r\n /`___\\ / __`\\ /' __` __`\\ /' __` __`\\/\\ \\ /\\ \\/'\\  \u001b[1m\u001b[4m\u001b[37mv4.0-stable\u001b[0m\r\n/\\ \\__//\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\ \\ \\\\/>  </\r\n\\ \\____\\ \\____/\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\/\\_/\\_\\ \u001b[90m\u001b[4mhttps://commixproject.com\u001b[0m\r\n \\/____/\\/___/  \\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\//\\/_/ (\u001b[91m@commixproject\u001b[0m)\r\n\r\n+--\r\n\u001b[1mAutomated All-in-One OS Command Injection Exploitation Tool\u001b[0m\r\nCopyright \u00a9 2014-2024 Anas",
+          "exploitable": true,
+          "tool": "commix",
+          "target": "https://landscape.canonical.com"
+        },
+        {
+          "id": "6b57f4be-ec47-437a-8c36-8b5189a6ac2f",
+          "type": "generic_finding",
+          "severity": 5.0,
+          "confidence": 0.7,
+          "name": "Tool Output Analysis",
+          "location": "Generic parsing",
+          "evidence": "[E] \u001b[0m\u001b[31mServer doesn't allow session using username '', password ''.  Aborting remainder of tests.",
+          "exploitable": true,
+          "tool": "enum4linux",
+          "target": "https://landscape.canonical.com"
+        }
+      ],
+      "patterns_identified": [
+        {
+          "type": "tool_effectiveness",
+          "description": "Effectiveness scores for each tool",
+          "data": {
+            "nmap": {
+              "vulns_found": 2,
+              "success": true,
+              "execution_time": 34.116951,
+              "effectiveness_score": 0.058621885642711744
+            },
+            "nikto": {
+              "vulns_found": 1,
+              "success": false,
+              "execution_time": 776.032689,
+              "effectiveness_score": 0
+            },
+            "nuclei": {
+              "vulns_found": 0,
+              "success": false,
+              "execution_time": 0.141859,
+              "effectiveness_score": 0
+            },
+            "sqlmap": {
+              "vulns_found": 0,
+              "success": false,
+              "execution_time": 5.151201,
+              "effectiveness_score": 0
+            },
+            "gobuster": {
+              "vulns_found": 0,
+              "success": false,
+              "execution_time": 0.126843,
+              "effectiveness_score": 0
+            },
+            "ffuf": {
+              "vulns_found": 1,
+              "success": false,
+              "execution_time": 0.127567,
+              "effectiveness_score": 0
+            },
+            "hydra": {
+              "vulns_found": 0,
+              "success": false,
+              "execution_time": 0.124084,
+              "effectiveness_score": 0
+            },
+            "dalfox": {
+              "vulns_found": 0,
+              "success": false,
+              "execution_time": 0.123974,
+              "effectiveness_score": 0
+            },
+            "commix": {
+              "vulns_found": 1,
+              "success": true,
+              "execution_time": 469.504892,
+              "effectiveness_score": 0.0021299032598791324
+            },
+            "wpscan": {
+              "vulns_found": 0,
+              "success": false,
+              "execution_time": 3.645599,
+              "effectiveness_score": 0
+            },
+            "sslscan": {
+              "vulns_found": 0,
+              "success": false,
+              "execution_time": 21.377274,
+              "effectiveness_score": 0
+            },
+            "enum4linux": {
+              "vulns_found": 1,
+              "success": false,
+              "execution_time": 55.936983,
+              "effectiveness_score": 0
+            },
+            "whatweb": {
+              "vulns_found": 0,
+              "success": true,
+              "execution_time": 17.731125,
+              "effectiveness_score": 0.0
+            },
+            "dnsenum": {
+              "vulns_found": 0,
+              "success": false,
+              "execution_time": 1.12994,
+              "effectiveness_score": 0
+            },
+            "amass": {
+              "vulns_found": 0,
+              "success": true,
+              "execution_time": 158.943391,
+              "effectiveness_score": 0.0
+            }
+          }
+        },
+        {
+          "type": "common_vulnerabilities",
+          "description": "Common vulnerability types found",
+          "data": {
+            "open_port": 2,
+            "generic_finding": 3
+          }
+        },
+        {
+          "type": "severity_distribution",
+          "description": "Distribution of vulnerabilities by severity",
+          "data": {
+            "4": 2,
+            "5": 3,
+            "9": 1
+          }
+        },
+        {
+          "type": "tool_synergy",
+          "description": "Tool combinations that find related vulnerabilities",
+          "data": {
+            "ffuf+nikto": 1,
+            "enum4linux+nikto": 1,
+            "enum4linux+ffuf": 1
+          }
+        }
+      ],
+      "end_time": "2025-11-29T11:50:05.449007"
+    },
+    "192.168.131.128": {
+      "target": "192.168.131.128",
+      "scan_id": "simple_20251129_115005",
+      "start_time": "2025-11-29T11:50:05.451620",
+      "tool_results": {
+        "nmap": {
+          "tool_name": "nmap",
+          "target": "192.168.131.128",
+          "phase": "comprehensive_analysis",
+          "command": "nmap 192.168.131.128 -sV -T2 -p 80,443 --max-retries 3",
+          "exit_code": 0,
+          "stdout": "Starting Nmap 7.95 ( https://nmap.org ) at 2025-11-29 00:50 EST\r\nNmap scan report for 192.168.131.128\r\nHost is up (0.00082s latency).\r\n\r\nPORT    STATE    SERVICE VERSION\r\n80/tcp  filtered http\r\n443/tcp filtered https\r\n\r\nService detection performed. Please report any incorrect results at https://nmap.org/submit/ .\r\nNmap done: 1 IP address (1 host up) scanned in 8.89 seconds\r\n",
+          "stderr": "",
+          "execution_time": 9.061428,
+          "start_time": "2025-11-29T11:50:05.451886",
+          "end_time": "2025-11-29T11:50:14.513314",
+          "success": true,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "services": [],
+            "hosts": [],
+            "raw_output": "Starting Nmap 7.95 ( https://nmap.org ) at 2025-11-29 00:50 EST\r\nNmap scan report for 192.168.131.128\r\nHost is up (0.00082s latency).\r\n\r\nPORT    STATE    SERVICE VERSION\r\n80/tcp  filtered http\r\n443/tcp filtered https\r\n\r\nService detection performed. Please report any incorrect results at https://nmap.org/submit/ .\r\nNmap done: 1 IP address (1 host up) scanned in 8.89 seconds\r\n"
+          }
+        },
+        "nikto": {
+          "tool_name": "nikto",
+          "target": "192.168.131.128",
+          "phase": "comprehensive_analysis",
+          "command": "nikto -h 192.168.131.128 1 -nossl",
+          "exit_code": 0,
+          "stdout": "- Nikto v2.5.0\r\n---------------------------------------------------------------------------\r\n---------------------------------------------------------------------------\r\n+ 0 host(s) tested\r\n",
+          "stderr": "",
+          "execution_time": 20.710093,
+          "start_time": "2025-11-29T11:50:14.515553",
+          "end_time": "2025-11-29T11:50:35.225646",
+          "success": true,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "hosts": [],
+            "services": [],
+            "raw_output": "- Nikto v2.5.0\r\n---------------------------------------------------------------------------\r\n---------------------------------------------------------------------------\r\n+ 0 host(s) tested\r\n\n"
+          }
+        },
+        "nuclei": {
+          "tool_name": "nuclei",
+          "target": "192.168.131.128",
+          "phase": "comprehensive_analysis",
+          "command": "nuclei -u http://192.168.131.128",
+          "exit_code": 127,
+          "stdout": "zsh:1: command not found: nuclei\r\n",
+          "stderr": "",
+          "execution_time": 0.12506,
+          "start_time": "2025-11-29T11:50:35.226458",
+          "end_time": "2025-11-29T11:50:35.351518",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "raw_output": "zsh:1: command not found: nuclei\r\n"
+          }
+        },
+        "sqlmap": {
+          "tool_name": "sqlmap",
+          "target": "192.168.131.128",
+          "phase": "comprehensive_analysis",
+          "command": "sqlmap -u \"http://192.168.131.128\" --batch 1 1 --forms",
+          "exit_code": 1,
+          "stdout": "\u001b[01;33m        ___\r\n       __H__\r\n ___ ___[\u001b[01;41m.\u001b[01;49m]_____ ___ ___  \u001b[01;37m{\u001b[01;90m1.9.4#stable\u001b[01;37m}\u001b[01;33m\r\n|_ -| . [\u001b[01;41m'\u001b[01;49m]     | .'| . |\r\n|___|_  [\u001b[01;41m.\u001b[01;49m]_|_|_|__,|  _|\r\n      |_|V...       |_|   \u001b[0m\u001b[4;37mhttps://sqlmap.org\u001b[0m\r\n\r\n[!] legal disclaimer: Usage of sqlmap for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program\r\n\r\n[*] starting @ 00:50:35 /2025-11-29/\r\n\r\n\r[\u001b[36m00:50:35\u001b[0m]\u001b[1m [\u001b[32;1mINFO\u001b[0m]\u001b[1m testing connection to the target URL\u001b[0m\r\n\r[\u001b[36m00:50:56\u001b[0m] [\u001b[41;37mCRITICAL\u001b[0m] unable to connect to the target URL ('\u001b[37mConnection refused\u001b[0m'). sqlmap is going to retry the request(s)\r\n\r[\u001b[36m00:50:56\u001b[0m] [\u001b[33mWARNING\u001b[0m] if the problem persists please check that the provided target URL is reachable. In case that it is, you can try to rerun with switch '\u001b[37m--random-agent\u001b[0m' and/or proxy switches ('\u001b[37m--proxy\u001b[0m', '\u001b[37m--proxy-file\u001b[0m'...)\r\n\r[\u001b[36m00:52:00\u001b[0m] [\u001b[41;37mCRITICAL\u001b[0m] unable to connect to the target URL ('\u001b[37mConnection refused\u001b[0m')\r\n\r[\u001b[36m00:52:00\u001b[0m] [\u001b[33mWARNING\u001b[0m] your sqlmap version is outdated\r\n\r\n[*] ending @ 00:52:00 /2025-11-29/\r\n\r\n",
+          "stderr": "",
+          "execution_time": 84.798689,
+          "start_time": "2025-11-29T11:50:35.352904",
+          "end_time": "2025-11-29T11:52:00.151593",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "raw_output": "\u001b[01;33m        ___\r\n       __H__\r\n ___ ___[\u001b[01;41m.\u001b[01;49m]_____ ___ ___  \u001b[01;37m{\u001b[01;90m1.9.4#stable\u001b[01;37m}\u001b[01;33m\r\n|_ -| . [\u001b[01;41m'\u001b[01;49m]     | .'| . |\r\n|___|_  [\u001b[01;41m.\u001b[01;49m]_|_|_|__,|  _|\r\n      |_|V...       |_|   \u001b[0m\u001b[4;37mhttps://sqlmap.org\u001b[0m\r\n\r\n[!] legal disclaimer: Usage of sqlmap for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program\r\n\r\n[*] starting @ 00:50:35 /2025-11-29/\r\n\r\n\r[\u001b[36m00:50:35\u001b[0m]\u001b[1m [\u001b[32;1mINFO\u001b[0m]\u001b[1m testing connection to the target URL\u001b[0m\r\n\r[\u001b[36m00:50:56\u001b[0m] [\u001b[41;37mCRITICAL\u001b[0m] unable to connect to the target URL ('\u001b[37mConnection refused\u001b[0m'). sqlmap is going to retry the request(s)\r\n\r[\u001b[36m00:50:56\u001b[0m] [\u001b[33mWARNING\u001b[0m] if the problem persists please check that the provided target URL is reachable. In case that it is, you can try to rerun with switch '\u001b[37m--random-agent\u001b[0m' and/or proxy switches ('\u001b[37m--proxy\u001b[0m', '\u001b[37m--proxy-file\u001b[0m'...)\r\n\r[\u001b[36m00:52:00\u001b[0m] [\u001b[41;37mCRITICAL\u001b[0m] unable to connect to the target URL ('\u001b[37mConnection refused\u001b[0m')\r\n\r[\u001b[36m00:52:00\u001b[0m] [\u001b[33mWARNING\u001b[0m] your sqlmap version is outdated\r\n\r\n[*] ending @ 00:52:00 /2025-11-29/\r\n\r\n"
+          }
+        },
+        "gobuster": {
+          "tool_name": "gobuster",
+          "target": "192.168.131.128",
+          "phase": "comprehensive_analysis",
+          "command": "gobuster dir -u http://192.168.131.128",
+          "exit_code": 1,
+          "stdout": "Error: required flag(s) \"wordlist\" not set\r\n",
+          "stderr": "",
+          "execution_time": 0.139809,
+          "start_time": "2025-11-29T11:52:00.153192",
+          "end_time": "2025-11-29T11:52:00.293001",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "hosts": [],
+            "services": [],
+            "raw_output": "Error: required flag(s) \"wordlist\" not set\r\n\n"
+          }
+        },
+        "ffuf": {
+          "tool_name": "ffuf",
+          "target": "192.168.131.128",
+          "phase": "comprehensive_analysis",
+          "command": "ffuf -u http://192.168.131.128/FUZZ",
+          "exit_code": 1,
+          "stdout": "Encountered error(s): 1 errors occurred.\r\n\t* Either -w or --input-cmd flag is required\r\n\r\nFuzz Faster U Fool - v2.1.0-dev\r\n\r\nHTTP OPTIONS:\r\n  -H                  Header `\"Name: Value\"`, separated by colon. Multiple -H flags are accepted.\r\n  -X                  HTTP method to use\r\n  -b                  Cookie data `\"NAME1=VALUE1; NAME2=VALUE2\"` for copy as curl functionality.\r\n  -cc                 Client cert for authentication. Client key needs to be defined as well for this to work\r\n  -ck                 Client key for authentication. Client certificate needs to be defined as well for this to work\r\n  -d                  POST data\r\n  -http2              Use HTTP2 protocol (default: false)\r\n  -ignore-body        Do not fetch the response content. (default: false)\r\n  -r                  Follow redirects (default: false)\r\n  -raw                Do not encode URI (default: false)\r\n  -recursion          Scan recursively. Only FUZZ keyword is supported, and URL (-u) has to end in it. (default: false)\r\n  -recursion-depth    Maximum recursion depth. (default: 0)\r\n  -recursion-strategy Recursion strategy: \"default\" for a redirect based, and \"greedy\" to recurse on all matches (default: default)\r\n  -replay-proxy       Replay matched requests using this proxy.\r\n  -sni                Target TLS SNI, does not support FUZZ keyword\r\n  -timeout            HTTP request timeout in seconds. (default: 10)\r\n  -u                  Target URL\r\n  -x                  Proxy URL (SOCKS5 or HTTP). For example: http://127.0.0.1:8080 or socks5://127.0.0.1:8080\r\n\r\nGENERAL OPTIONS:\r\n  -V                  Show version information. (default: false)\r\n  -ac                 Automatically calibrate filtering options (default: false)\r\n  -acc                Custom auto-calibration string. Can be used multiple times. Implies -ac\r\n  -ach                Per host autocalibration (default: false)\r\n  -ack                Autocalibration keyword (default: FUZZ)\r\n  -acs                Custom auto-calibration strategies. Can be used multiple times. Implies -ac\r\n  -c                  Colorize output. (default: false)\r\n  -config             Load configuration from a file\r\n  -json               JSON output, printing newline-delimited JSON records (default: false)\r\n  -maxtime            Maximum running time in seconds for entire process. (default: 0)\r\n  -maxtime-job        Maximum running time in seconds per job. (default: 0)\r\n  -noninteractive     Disable the interactive console functionality (default: false)\r\n  -p                  Seconds of `delay` between requests, or a range of random delay. For example \"0.1\" or \"0.1-2.0\"\r\n  -rate               Rate of requests per second (default: 0)\r\n  -s                  Do not print additional information (silent mode) (default: false)\r\n  -sa                 Stop on all error cases. Implies -sf and -se. (default: false)\r\n  -scraperfile        Custom scraper file path\r\n  -scrapers           Active scraper groups (default: all)\r\n  -se                 Stop on spurious errors (default: false)\r\n  -search             Search for a FFUFHASH payload from ffuf history\r\n  -sf                 Stop when > 95% of responses return 403 Forbidden (default: false)\r\n  -t                  Number of concurrent threads. (default: 40)\r\n  -v                  Verbose output, printing full URL and redirect location (if any) with the results. (default: false)\r\n\r\nMATCHER OPTIONS:\r\n  -mc                 Match HTTP status codes, or \"all\" for everything. (default: 200-299,301,302,307,401,403,405,500)\r\n  -ml                 Match amount of lines in response\r\n  -mmode              Matcher set operator. Either of: and, or (default: or)\r\n  -mr                 Match regexp\r\n  -ms                 Match HTTP response size\r\n  -mt                 Match how many milliseconds to the first response byte, either greater or less than. EG: >100 or <100\r\n  -mw                 Match amount of words in response\r\n\r\nFILTER OPTIONS:\r\n  -fc                 Filter HTTP status codes from response. Comma separated list of codes and ranges\r\n  -fl                 Filter by amount of lines in response. Comma separated list of line counts and ranges\r\n  -fmode              Filter set operator. Either of: and, or (default: or)\r\n  -fr                 Filter regexp\r\n  -fs                 Filter HTTP response size. Comma separated list of sizes and ranges\r\n  -ft                 Filter by number of milliseconds to the first response byte, either greater or less than. EG: >100 or <100\r\n  -fw                 Filter by amount of words in response. Comma separated list of word counts and ranges\r\n\r\nINPUT OPTIONS:\r\n  -D                  DirSearch wordlist compatibility mode. Used in conjunction with -e flag. (default: false)\r\n  -e                  Comma separated list of extensions. Extends FUZZ keyword.\r\n  -enc                Encoders for keywords, eg. 'FUZZ:urlencode b64encode'\r\n  -ic                 Ignore wordlist comments (default: false)\r\n  -input-cmd          Command producing the input. --input-num is required when using this input method. Overrides -w.\r\n  -input-num          Number of inputs to test. Used in conjunction with --input-cmd. (default: 100)\r\n  -input-shell        Shell to be used for running command\r\n  -mode               Multi-wordlist operation mode. Available modes: clusterbomb, pitchfork, sniper (default: clusterbomb)\r\n  -request            File containing the raw http request\r\n  -request-proto      Protocol to use along with raw request (default: https)\r\n  -w                  Wordlist file path and (optional) keyword separated by colon. eg. '/path/to/wordlist:KEYWORD'\r\n\r\nOUTPUT OPTIONS:\r\n  -debug-log          Write all of the internal logging to the specified file.\r\n  -o                  Write output to file\r\n  -od                 Directory path to store matched results to.\r\n  -of                 Output file format. Available formats: json, ejson, html, md, csv, ecsv (or, 'all' for all formats) (default: json)\r\n  -or                 Don't create the output file if we don't have results (default: false)\r\n\r\nEXAMPLE USAGE:\r\n  Fuzz file paths from wordlist.txt, match all responses but filter out those with content-size 42.\r\n  Colored, verbose output.\r\n    ffuf -w wordlist.txt -u https://example.org/FUZZ -mc all -fs 42 -c -v\r\n\r\n  Fuzz Host-header, match HTTP 200 responses.\r\n    ffuf -w hosts.txt -u https://example.org/ -H \"Host: FUZZ\" -mc 200\r\n\r\n  Fuzz POST JSON data. Match all responses not containing text \"error\".\r\n    ffuf -w entries.txt -u https://example.org/ -X POST -H \"Content-Type: application/json\" \\\r\n      -d '{\"name\": \"FUZZ\", \"anotherkey\": \"anothervalue\"}' -fr \"error\"\r\n\r\n  Fuzz multiple locations. Match only responses reflecting the value of \"VAL\" keyword. Colored.\r\n    ffuf -w params.txt:PARAM -w values.txt:VAL -u https://example.org/?PARAM=VAL -mr \"VAL\" -c\r\n\r\n  More information and examples: https://github.com/ffuf/ffuf\r\n\r\nEncountered error(s): 1 errors occurred.\r\n\t* Either -w or --input-cmd flag is required\r\n\r\n",
+          "stderr": "",
+          "execution_time": 0.127661,
+          "start_time": "2025-11-29T11:52:00.293493",
+          "end_time": "2025-11-29T11:52:00.421154",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [
+              {
+                "id": "b4c8da34-8c78-42f6-9868-139433637e2f",
+                "type": "generic_finding",
+                "severity": 5.0,
+                "confidence": 0.7,
+                "name": "Tool Output Analysis",
+                "location": "Generic parsing",
+                "evidence": "-r                  Follow redirects (default: false)",
+                "exploitable": true,
+                "tool": "ffuf",
+                "target": "192.168.131.128"
+              }
+            ],
+            "hosts": [],
+            "services": [],
+            "raw_output": "Encountered error(s): 1 errors occurred.\r\n\t* Either -w or --input-cmd flag is required\r\n\r\nFuzz Faster U Fool - v2.1.0-dev\r\n\r\nHTTP OPTIONS:\r\n  -H                  Header `\"Name: Value\"`, separated by colon. Multiple -H flags are accepted.\r\n  -X                  HTTP method to use\r\n  -b                  Cookie data `\"NAME1=VALUE1; NAME2=VALUE2\"` for copy as curl functionality.\r\n  -cc                 Client cert for authentication. Client key needs to be defined as well for this to work\r\n  -ck                 Client key for authentication. Client certificate needs to be defined as well for this to work\r\n  -d                  POST data\r\n  -http2              Use HTTP2 protocol (default: false)\r\n  -ignore-body        Do not fetch the response content. (default: false)\r\n  -r                  Follow redirects (default: false)\r\n  -raw                Do not encode URI (default: false)\r\n  -recursion          Scan recursively. Only FUZZ keyword is supported, and URL (-u) has to end in it. (default: false)\r\n  -recursion-depth    Maximum recursion depth. (default: 0)\r\n  -recursion-strategy Recursion strategy: \"default\" for a redirect based, and \"greedy\" to recurse on all matches (default: default)\r\n  -replay-proxy       Replay matched requests using this proxy.\r\n  -sni                Target TLS SNI, does not support FUZZ keyword\r\n  -timeout            HTTP request timeout in seconds. (default: 10)\r\n  -u                  Target URL\r\n  -x                  Proxy URL (SOCKS5 or HTTP). For example: http://127.0.0.1:8080 or socks5://127.0.0.1:8080\r\n\r\nGENERAL OPTIONS:\r\n  -V                  Show version information. (default: false)\r\n  -ac                 Automatically calibrate filtering options (default: false)\r\n  -acc                Custom auto-calibration string. Can be used multiple times. Implies -ac\r\n  -ach                Per host autocalibration (default: false)\r\n  -ack                Autocalibration keyword (default: FUZZ)\r\n  -acs                Custom auto-calibration strategies. Can be used multiple times. Implies -ac\r\n  -c                  Colorize output. (default: false)\r\n  -config             Load configuration from a file\r\n  -json               JSON output, printing newline-delimited JSON records (default: false)\r\n  -maxtime            Maximum running time in seconds for entire process. (default: 0)\r\n  -maxtime-job        Maximum running time in seconds per job. (default: 0)\r\n  -noninteractive     Disable the interactive console functionality (default: false)\r\n  -p                  Seconds of `delay` between requests, or a range of random delay. For example \"0.1\" or \"0.1-2.0\"\r\n  -rate               Rate of requests per second (default: 0)\r\n  -s                  Do not print additional information (silent mode) (default: false)\r\n  -sa                 Stop on all error cases. Implies -sf and -se. (default: false)\r\n  -scraperfile        Custom scraper file path\r\n  -scrapers           Active scraper groups (default: all)\r\n  -se                 Stop on spurious errors (default: false)\r\n  -search             Search for a FFUFHASH payload from ffuf history\r\n  -sf                 Stop when > 95% of responses return 403 Forbidden (default: false)\r\n  -t                  Number of concurrent threads. (default: 40)\r\n  -v                  Verbose output, printing full URL and redirect location (if any) with the results. (default: false)\r\n\r\nMATCHER OPTIONS:\r\n  -mc                 Match HTTP status codes, or \"all\" for everything. (default: 200-299,301,302,307,401,403,405,500)\r\n  -ml                 Match amount of lines in response\r\n  -mmode              Matcher set operator. Either of: and, or (default: or)\r\n  -mr                 Match regexp\r\n  -ms                 Match HTTP response size\r\n  -mt                 Match how many milliseconds to the first response byte, either greater or less than. EG: >100 or <100\r\n  -mw                 Match amount of words in response\r\n\r\nFILTER OPTIONS:\r\n  -fc                 Filter HTTP status codes from response. Comma separated list of codes and ranges\r\n  -fl                 Filter by amount of lines in response. Comma separated list of line counts and ranges\r\n  -fmode              Filter set operator. Either of: and, or (default: or)\r\n  -fr                 Filter regexp\r\n  -fs                 Filter HTTP response size. Comma separated list of sizes and ranges\r\n  -ft                 Filter by number of milliseconds to the first response byte, either greater or less than. EG: >100 or <100\r\n  -fw                 Filter by amount of words in response. Comma separated list of word counts and ranges\r\n\r\nINPUT OPTIONS:\r\n  -D                  DirSearch wordlist compatibility mode. Used in conjunction with -e flag. (default: false)\r\n  -e                  Comma separated list of extensions. Extends FUZZ keyword.\r\n  -enc                Encoders for keywords, eg. 'FUZZ:urlencode b64encode'\r\n  -ic                 Ignore wordlist comments (default: false)\r\n  -input-cmd          Command producing the input. --input-num is required when using this input method. Overrides -w.\r\n  -input-num          Number of inputs to test. Used in conjunction with --input-cmd. (default: 100)\r\n  -input-shell        Shell to be used for running command\r\n  -mode               Multi-wordlist operation mode. Available modes: clusterbomb, pitchfork, sniper (default: clusterbomb)\r\n  -request            File containing the raw http request\r\n  -request-proto      Protocol to use along with raw request (default: https)\r\n  -w                  Wordlist file path and (optional) keyword separated by colon. eg. '/path/to/wordlist:KEYWORD'\r\n\r\nOUTPUT OPTIONS:\r\n  -debug-log          Write all of the internal logging to the specified file.\r\n  -o                  Write output to file\r\n  -od                 Directory path to store matched results to.\r\n  -of                 Output file format. Available formats: json, ejson, html, md, csv, ecsv (or, 'all' for all formats) (default: json)\r\n  -or                 Don't create the output file if we don't have results (default: false)\r\n\r\nEXAMPLE USAGE:\r\n  Fuzz file paths from wordlist.txt, match all responses but filter out those with content-size 42.\r\n  Colored, verbose output.\r\n    ffuf -w wordlist.txt -u https://example.org/FUZZ -mc all -fs 42 -c -v\r\n\r\n  Fuzz Host-header, match HTTP 200 responses.\r\n    ffuf -w hosts.txt -u https://example.org/ -H \"Host: FUZZ\" -mc 200\r\n\r\n  Fuzz POST JSON data. Match all responses not containing text \"error\".\r\n    ffuf -w entries.txt -u https://example.org/ -X POST -H \"Content-Type: application/json\" \\\r\n      -d '{\"name\": \"FUZZ\", \"anotherkey\": \"anothervalue\"}' -fr \"error\"\r\n\r\n  Fuzz multiple locations. Match only responses reflecting the value of \"VAL\" keyword. Colored.\r\n    ffuf -w params.txt:PARAM -w values.txt:VAL -u https://example.org/?PARAM=VAL -mr \"VAL\" -c\r\n\r\n  More information and examples: https://github.com/ffuf/ffuf\r\n\r\nEncountered error(s): 1 errors occurred.\r\n\t* Either -w or --input-cmd flag is required\r\n\r\n\n"
+          }
+        },
+        "hydra": {
+          "tool_name": "hydra",
+          "target": "192.168.131.128",
+          "phase": "comprehensive_analysis",
+          "command": "hydra http://192.168.131.128",
+          "exit_code": 255,
+          "stdout": "Hydra v9.5 (c) 2023 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).\r\n\r\nHydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2025-11-29 00:52:00\r\n[ERROR] There is no service \"http\", most likely you mean one of the many web modules, e.g. http-get or http-form-post. Read it up!\r\n",
+          "stderr": "",
+          "execution_time": 0.125284,
+          "start_time": "2025-11-29T11:52:00.422481",
+          "end_time": "2025-11-29T11:52:00.547765",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "hosts": [],
+            "services": [],
+            "raw_output": "Hydra v9.5 (c) 2023 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).\r\n\r\nHydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2025-11-29 00:52:00\r\n[ERROR] There is no service \"http\", most likely you mean one of the many web modules, e.g. http-get or http-form-post. Read it up!\r\n\n"
+          }
+        },
+        "dalfox": {
+          "tool_name": "dalfox",
+          "target": "192.168.131.128",
+          "phase": "comprehensive_analysis",
+          "command": "dalfox url http://192.168.131.128",
+          "exit_code": 127,
+          "stdout": "zsh:1: command not found: dalfox\r\n",
+          "stderr": "",
+          "execution_time": 0.124976,
+          "start_time": "2025-11-29T11:52:00.548350",
+          "end_time": "2025-11-29T11:52:00.673326",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "raw_output": "zsh:1: command not found: dalfox\r\n"
+          }
+        },
+        "commix": {
+          "tool_name": "commix",
+          "target": "192.168.131.128",
+          "phase": "comprehensive_analysis",
+          "command": "commix --url=\"http://192.168.131.128\" --batch",
+          "exit_code": 0,
+          "stdout": "                                      __\r\n   ___   ___     ___ ___     ___ ___ /\\_\\   __  _\r\n /`___\\ / __`\\ /' __` __`\\ /' __` __`\\/\\ \\ /\\ \\/'\\  \u001b[1m\u001b[4m\u001b[37mv4.0-stable\u001b[0m\r\n/\\ \\__//\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\ \\ \\\\/>  </\r\n\\ \\____\\ \\____/\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\/\\_/\\_\\ \u001b[90m\u001b[4mhttps://commixproject.com\u001b[0m\r\n \\/____/\\/___/  \\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\//\\/_/ (\u001b[91m@commixproject\u001b[0m)\r\n\r\n+--\r\n\u001b[1mAutomated All-in-One OS Command Injection Exploitation Tool\u001b[0m\r\nCopyright \u00a9 2014-2024 Anastasios Stasinopoulos\u001b[0m (\u001b[91m@ancst\u001b[0m)\r\n+--\r\n\r\n(\u001b[1m\u001b[31m!\u001b[0m) Legal disclaimer: Usage of commix for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program.\r\n\u001b[0m\r\n[\u001b[94m00:52:00\u001b[0m] [\u001b[32m\u001b[1minfo\u001b[0m] \u001b[1mTesting connection to the target URL. \u001b[0m\r\n[\u001b[94m00:52:21\u001b[0m] [\u001b[41mcritical\u001b[0m] Unable to connect to the target URL (Reason: Connection refused). \u001b[0m\r\n",
+          "stderr": "",
+          "execution_time": 21.30554,
+          "start_time": "2025-11-29T11:52:00.673919",
+          "end_time": "2025-11-29T11:52:21.979459",
+          "success": true,
+          "parsed_results": {
+            "vulnerabilities": [
+              {
+                "id": "16cf96a8-f2c0-4155-83f2-68fdd2464b72",
+                "type": "command_injection",
+                "severity": 9.0,
+                "confidence": 0.95,
+                "name": "Command Injection",
+                "location": "Detected by Commix",
+                "evidence": "                                      __\r\n   ___   ___     ___ ___     ___ ___ /\\_\\   __  _\r\n /`___\\ / __`\\ /' __` __`\\ /' __` __`\\/\\ \\ /\\ \\/'\\  \u001b[1m\u001b[4m\u001b[37mv4.0-stable\u001b[0m\r\n/\\ \\__//\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\ \\ \\\\/>  </\r\n\\ \\____\\ \\____/\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\/\\_/\\_\\ \u001b[90m\u001b[4mhttps://commixproject.com\u001b[0m\r\n \\/____/\\/___/  \\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\//\\/_/ (\u001b[91m@commixproject\u001b[0m)\r\n\r\n+--\r\n\u001b[1mAutomated All-in-One OS Command Injection Exploitation Tool\u001b[0m\r\nCopyright \u00a9 2014-2024 Anas",
+                "exploitable": true,
+                "tool": "commix",
+                "target": "192.168.131.128"
+              }
+            ],
+            "raw_output": "                                      __\r\n   ___   ___     ___ ___     ___ ___ /\\_\\   __  _\r\n /`___\\ / __`\\ /' __` __`\\ /' __` __`\\/\\ \\ /\\ \\/'\\  \u001b[1m\u001b[4m\u001b[37mv4.0-stable\u001b[0m\r\n/\\ \\__//\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\ \\ \\\\/>  </\r\n\\ \\____\\ \\____/\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\/\\_/\\_\\ \u001b[90m\u001b[4mhttps://commixproject.com\u001b[0m\r\n \\/____/\\/___/  \\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\//\\/_/ (\u001b[91m@commixproject\u001b[0m)\r\n\r\n+--\r\n\u001b[1mAutomated All-in-One OS Command Injection Exploitation Tool\u001b[0m\r\nCopyright \u00a9 2014-2024 Anastasios Stasinopoulos\u001b[0m (\u001b[91m@ancst\u001b[0m)\r\n+--\r\n\r\n(\u001b[1m\u001b[31m!\u001b[0m) Legal disclaimer: Usage of commix for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program.\r\n\u001b[0m\r\n[\u001b[94m00:52:00\u001b[0m] [\u001b[32m\u001b[1minfo\u001b[0m] \u001b[1mTesting connection to the target URL. \u001b[0m\r\n[\u001b[94m00:52:21\u001b[0m] [\u001b[41mcritical\u001b[0m] Unable to connect to the target URL (Reason: Connection refused). \u001b[0m\r\n"
+          }
+        },
+        "wpscan": {
+          "tool_name": "wpscan",
+          "target": "192.168.131.128",
+          "phase": "comprehensive_analysis",
+          "command": "wpscan --url http://192.168.131.128",
+          "exit_code": 4,
+          "stdout": "_______________________________________________________________\r\n         __          _______   _____\r\n         \\ \\        / /  __ \\ / ____|\r\n          \\ \\  /\\  / /| |__) | (___   ___  __ _ _ __ \u00ae\r\n           \\ \\/  \\/ / |  ___/ \\___ \\ / __|/ _` | '_ \\\r\n            \\  /\\  /  | |     ____) | (__| (_| | | | |\r\n             \\/  \\/   |_|    |_____/ \\___|\\__,_|_| |_|\r\n\r\n         WordPress Security Scanner by the WPScan Team\r\n                         Version 3.8.28\r\n       Sponsored by Automattic - https://automattic.com/\r\n       @_WPScan_, @ethicalhack3r, @erwan_lr, @firefart\r\n_______________________________________________________________\r\n\r\n\r\nScan Aborted: The url supplied 'http://192.168.131.128/' seems to be down (Could not connect to server)\r\n",
+          "stderr": "",
+          "execution_time": 22.220454,
+          "start_time": "2025-11-29T11:52:21.981228",
+          "end_time": "2025-11-29T11:52:44.201682",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "hosts": [],
+            "services": [],
+            "raw_output": "_______________________________________________________________\r\n         __          _______   _____\r\n         \\ \\        / /  __ \\ / ____|\r\n          \\ \\  /\\  / /| |__) | (___   ___  __ _ _ __ \u00ae\r\n           \\ \\/  \\/ / |  ___/ \\___ \\ / __|/ _` | '_ \\\r\n            \\  /\\  /  | |     ____) | (__| (_| | | | |\r\n             \\/  \\/   |_|    |_____/ \\___|\\__,_|_| |_|\r\n\r\n         WordPress Security Scanner by the WPScan Team\r\n                         Version 3.8.28\r\n       Sponsored by Automattic - https://automattic.com/\r\n       @_WPScan_, @ethicalhack3r, @erwan_lr, @firefart\r\n_______________________________________________________________\r\n\r\n\r\nScan Aborted: The url supplied 'http://192.168.131.128/' seems to be down (Could not connect to server)\r\n\n"
+          }
+        },
+        "sslscan": {
+          "tool_name": "sslscan",
+          "target": "192.168.131.128",
+          "phase": "comprehensive_analysis",
+          "command": "sslscan 192.168.131.128",
+          "exit_code": 0,
+          "stdout": "Version: \u001b[32m2.1.5\u001b[0m\r\nOpenSSL 3.5.0 8 Apr 2025\r\n\u001b[0m\r\n\u001b[31mERROR: Could not open a connection to host 192.168.131.128 (192.168.131.128) on port 443 (connect: Connection refused).\u001b[0m\r\n",
+          "stderr": "",
+          "execution_time": 21.11364,
+          "start_time": "2025-11-29T11:52:44.202449",
+          "end_time": "2025-11-29T11:53:05.316089",
+          "success": true,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "hosts": [],
+            "services": [],
+            "raw_output": "Version: \u001b[32m2.1.5\u001b[0m\r\nOpenSSL 3.5.0 8 Apr 2025\r\n\u001b[0m\r\n\u001b[31mERROR: Could not open a connection to host 192.168.131.128 (192.168.131.128) on port 443 (connect: Connection refused).\u001b[0m\r\n\n"
+          }
+        },
+        "enum4linux": {
+          "tool_name": "enum4linux",
+          "target": "192.168.131.128",
+          "phase": "comprehensive_analysis",
+          "command": "enum4linux 192.168.131.128 -a",
+          "exit_code": 1,
+          "stdout": "Starting enum4linux v0.9.1 ( http://labs.portcullis.co.uk/application/enum4linux/ ) on Sat Nov 29 00:53:05 2025\r\n\r\n\u001b[34m =========================================( \u001b[0m\u001b[32mTarget Information\u001b[0m\u001b[34m )=========================================\r\n\r\n\u001b[0mTarget ........... 192.168.131.128\r\nRID Range ........ 500-550,1000-1050\r\nUsername ......... ''\r\nPassword ......... ''\r\nKnown Usernames .. administrator, guest, krbtgt, domain admins, root, bin, none\r\n\r\n\r\n\u001b[34m ==========================( \u001b[0m\u001b[32mEnumerating Workgroup/Domain on 192.168.131.128\u001b[0m\u001b[34m )==========================\r\n\r\n\u001b[0m\u001b[33m\r\n[E] \u001b[0m\u001b[31mCan't find workgroup/domain\r\n\r\n\u001b[0m\r\n\r\n\u001b[34m ==============================( \u001b[0m\u001b[32mNbtstat Information for 192.168.131.128\u001b[0m\u001b[34m )==============================\r\n\r\n\u001b[0mLooking up status of 192.168.131.128\r\nNo reply from 192.168.131.128\r\n\r\n\u001b[34m ==================================( \u001b[0m\u001b[32mSession Check on 192.168.131.128\u001b[0m\u001b[34m )==================================\r\n\r\n\u001b[0m\u001b[33m\r\n[E] \u001b[0m\u001b[31mServer doesn't allow session using username '', password ''.  Aborting remainder of tests.\r\n\r\n\u001b[0m",
+          "stderr": "",
+          "execution_time": 25.326922,
+          "start_time": "2025-11-29T11:53:05.316895",
+          "end_time": "2025-11-29T11:53:30.643817",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [
+              {
+                "id": "2eecb728-2bb1-4899-adee-750bba4857a0",
+                "type": "generic_finding",
+                "severity": 5.0,
+                "confidence": 0.7,
+                "name": "Tool Output Analysis",
+                "location": "Generic parsing",
+                "evidence": "[E] \u001b[0m\u001b[31mServer doesn't allow session using username '', password ''.  Aborting remainder of tests.",
+                "exploitable": true,
+                "tool": "enum4linux",
+                "target": "192.168.131.128"
+              }
+            ],
+            "hosts": [],
+            "services": [],
+            "raw_output": "Starting enum4linux v0.9.1 ( http://labs.portcullis.co.uk/application/enum4linux/ ) on Sat Nov 29 00:53:05 2025\r\n\r\n\u001b[34m =========================================( \u001b[0m\u001b[32mTarget Information\u001b[0m\u001b[34m )=========================================\r\n\r\n\u001b[0mTarget ........... 192.168.131.128\r\nRID Range ........ 500-550,1000-1050\r\nUsername ......... ''\r\nPassword ......... ''\r\nKnown Usernames .. administrator, guest, krbtgt, domain admins, root, bin, none\r\n\r\n\r\n\u001b[34m ==========================( \u001b[0m\u001b[32mEnumerating Workgroup/Domain on 192.168.131.128\u001b[0m\u001b[34m )==========================\r\n\r\n\u001b[0m\u001b[33m\r\n[E] \u001b[0m\u001b[31mCan't find workgroup/domain\r\n\r\n\u001b[0m\r\n\r\n\u001b[34m ==============================( \u001b[0m\u001b[32mNbtstat Information for 192.168.131.128\u001b[0m\u001b[34m )==============================\r\n\r\n\u001b[0mLooking up status of 192.168.131.128\r\nNo reply from 192.168.131.128\r\n\r\n\u001b[34m ==================================( \u001b[0m\u001b[32mSession Check on 192.168.131.128\u001b[0m\u001b[34m )==================================\r\n\r\n\u001b[0m\u001b[33m\r\n[E] \u001b[0m\u001b[31mServer doesn't allow session using username '', password ''.  Aborting remainder of tests.\r\n\r\n\u001b[0m\n"
+          }
+        },
+        "whatweb": {
+          "tool_name": "whatweb",
+          "target": "192.168.131.128",
+          "phase": "comprehensive_analysis",
+          "command": "whatweb http://192.168.131.128 -a 1",
+          "exit_code": 0,
+          "stdout": "\u001b[1m\u001b[31mERROR Opening: http://192.168.131.128 - execution expired\u001b[0m\r\n",
+          "stderr": "",
+          "execution_time": 16.807193,
+          "start_time": "2025-11-29T11:53:30.644493",
+          "end_time": "2025-11-29T11:53:47.451686",
+          "success": true,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "technologies": [],
+            "raw_output": "\u001b[1m\u001b[31mERROR Opening: http://192.168.131.128 - execution expired\u001b[0m\r\n"
+          }
+        },
+        "dnsenum": {
+          "tool_name": "dnsenum",
+          "target": "192.168.131.128",
+          "phase": "comprehensive_analysis",
+          "command": "dnsenum 192.168.131.128 --enum",
+          "exit_code": 255,
+          "stdout": "dnsenum VERSION:1.3.1\r\n\u001b[1;34m\r\n-----   192.168.131.128   -----\r\n\u001b[0m\u001b[1;31m\r\n\r\nHost's addresses:\r\n__________________\r\n\r\n\u001b[0m\u001b[1;31m\r\n\r\nName Servers:\r\n______________\r\n\r\n 192.168.131.128 NS record query failed: NXDOMAIN\r\n\u001b[0m",
+          "stderr": "",
+          "execution_time": 0.42673,
+          "start_time": "2025-11-29T11:53:47.452557",
+          "end_time": "2025-11-29T11:53:47.879287",
+          "success": false,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "hosts": [],
+            "services": [],
+            "raw_output": "dnsenum VERSION:1.3.1\r\n\u001b[1;34m\r\n-----   192.168.131.128   -----\r\n\u001b[0m\u001b[1;31m\r\n\r\nHost's addresses:\r\n__________________\r\n\r\n\u001b[0m\u001b[1;31m\r\n\r\nName Servers:\r\n______________\r\n\r\n 192.168.131.128 NS record query failed: NXDOMAIN\r\n\u001b[0m\n"
+          }
+        },
+        "amass": {
+          "tool_name": "amass",
+          "target": "192.168.131.128",
+          "phase": "comprehensive_analysis",
+          "command": "amass enum -d 192.168.131.128 -passive -d landscape.canonical.com -passive",
+          "exit_code": 0,
+          "stdout": "\u001b[92mstaging.landscape.canonical.com\u001b[0m\u001b[94m (FQDN)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95ma_record\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m162.213.34.90\u001b[0m\u001b[94m (IPAddress)\u001b[0m\r\n\u001b[92mstaging.landscape.canonical.com\u001b[0m\u001b[94m (FQDN)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95ma_record\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m162.213.34.89\u001b[0m\u001b[94m (IPAddress)\u001b[0m\r\n\u001b[92m185.125.188.0/22\u001b[0m\u001b[94m (Netblock)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95mcontains\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m185.125.189.31\u001b[0m\u001b[94m (IPAddress)\u001b[0m\r\n\u001b[92m185.125.188.0/22\u001b[0m\u001b[94m (Netblock)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95mcontains\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m185.125.189.30\u001b[0m\u001b[94m (IPAddress)\u001b[0m\r\n\u001b[92m162.213.32.0/22\u001b[0m\u001b[94m (Netblock)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95mcontains\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m162.213.34.90\u001b[0m\u001b[94m (IPAddress)\u001b[0m\r\n\u001b[92m162.213.32.0/22\u001b[0m\u001b[94m (Netblock)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95mcontains\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m162.213.34.89\u001b[0m\u001b[94m (IPAddress)\u001b[0m\r\n\u001b[92m41231\u001b[0m\u001b[94m (ASN)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95mmanaged_by\u001b[0m \u001b[97m-->\u001b[0m \u001b[92mCANONICAL-AS\u001b[0m\u001b[94m (RIROrganization)\u001b[0m\r\n\u001b[92m41231\u001b[0m\u001b[94m (ASN)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95mannounces\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m185.125.188.0/22\u001b[0m\u001b[94m (Netblock)\u001b[0m\r\n\u001b[92m41231\u001b[0m\u001b[94m (ASN)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95mannounces\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m162.213.32.0/22\u001b[0m\u001b[94m (Netblock)\u001b[0m\r\n\u001b[92mlandscape.canonical.com\u001b[0m\u001b[94m (FQDN)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95ma_record\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m185.125.189.31\u001b[0m\u001b[94m (IPAddress)\u001b[0m\r\n\u001b[92mlandscape.canonical.com\u001b[0m\u001b[94m (FQDN)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95ma_record\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m185.125.189.30\u001b[0m\u001b[94m (IPAddress)\u001b[0m\r\n\u001b[92m30.189.125.185.in-addr.arpa\u001b[0m\u001b[94m (FQDN)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95mptr_record\u001b[0m \u001b[97m-->\u001b[0m \u001b[92mlandscape.canonical.com\u001b[0m\u001b[94m (FQDN)\u001b[0m\r\n\u001b[92m31.189.125.185.in-addr.arpa\u001b[0m\u001b[94m (FQDN)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95mptr_record\u001b[0m \u001b[97m-->\u001b[0m \u001b[92mlandscape.canonical.com\u001b[0m\u001b[94m (FQDN)\u001b[0m\r\n\r\n\u001b[92mThe enumeration has finished\u001b[0m\r\n",
+          "stderr": "",
+          "execution_time": 445.802267,
+          "start_time": "2025-11-29T11:53:47.879744",
+          "end_time": "2025-11-29T12:01:13.682011",
+          "success": true,
+          "parsed_results": {
+            "vulnerabilities": [],
+            "hosts": [],
+            "services": [],
+            "raw_output": "\u001b[92mstaging.landscape.canonical.com\u001b[0m\u001b[94m (FQDN)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95ma_record\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m162.213.34.90\u001b[0m\u001b[94m (IPAddress)\u001b[0m\r\n\u001b[92mstaging.landscape.canonical.com\u001b[0m\u001b[94m (FQDN)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95ma_record\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m162.213.34.89\u001b[0m\u001b[94m (IPAddress)\u001b[0m\r\n\u001b[92m185.125.188.0/22\u001b[0m\u001b[94m (Netblock)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95mcontains\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m185.125.189.31\u001b[0m\u001b[94m (IPAddress)\u001b[0m\r\n\u001b[92m185.125.188.0/22\u001b[0m\u001b[94m (Netblock)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95mcontains\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m185.125.189.30\u001b[0m\u001b[94m (IPAddress)\u001b[0m\r\n\u001b[92m162.213.32.0/22\u001b[0m\u001b[94m (Netblock)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95mcontains\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m162.213.34.90\u001b[0m\u001b[94m (IPAddress)\u001b[0m\r\n\u001b[92m162.213.32.0/22\u001b[0m\u001b[94m (Netblock)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95mcontains\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m162.213.34.89\u001b[0m\u001b[94m (IPAddress)\u001b[0m\r\n\u001b[92m41231\u001b[0m\u001b[94m (ASN)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95mmanaged_by\u001b[0m \u001b[97m-->\u001b[0m \u001b[92mCANONICAL-AS\u001b[0m\u001b[94m (RIROrganization)\u001b[0m\r\n\u001b[92m41231\u001b[0m\u001b[94m (ASN)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95mannounces\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m185.125.188.0/22\u001b[0m\u001b[94m (Netblock)\u001b[0m\r\n\u001b[92m41231\u001b[0m\u001b[94m (ASN)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95mannounces\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m162.213.32.0/22\u001b[0m\u001b[94m (Netblock)\u001b[0m\r\n\u001b[92mlandscape.canonical.com\u001b[0m\u001b[94m (FQDN)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95ma_record\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m185.125.189.31\u001b[0m\u001b[94m (IPAddress)\u001b[0m\r\n\u001b[92mlandscape.canonical.com\u001b[0m\u001b[94m (FQDN)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95ma_record\u001b[0m \u001b[97m-->\u001b[0m \u001b[92m185.125.189.30\u001b[0m\u001b[94m (IPAddress)\u001b[0m\r\n\u001b[92m30.189.125.185.in-addr.arpa\u001b[0m\u001b[94m (FQDN)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95mptr_record\u001b[0m \u001b[97m-->\u001b[0m \u001b[92mlandscape.canonical.com\u001b[0m\u001b[94m (FQDN)\u001b[0m\r\n\u001b[92m31.189.125.185.in-addr.arpa\u001b[0m\u001b[94m (FQDN)\u001b[0m \u001b[97m-->\u001b[0m \u001b[95mptr_record\u001b[0m \u001b[97m-->\u001b[0m \u001b[92mlandscape.canonical.com\u001b[0m\u001b[94m (FQDN)\u001b[0m\r\n\r\n\u001b[92mThe enumeration has finished\u001b[0m\r\n\n"
+          }
+        }
+      },
+      "vulnerabilities_found": [
+        {
+          "id": "b4c8da34-8c78-42f6-9868-139433637e2f",
+          "type": "generic_finding",
+          "severity": 5.0,
+          "confidence": 0.7,
+          "name": "Tool Output Analysis",
+          "location": "Generic parsing",
+          "evidence": "-r                  Follow redirects (default: false)",
+          "exploitable": true,
+          "tool": "ffuf",
+          "target": "192.168.131.128"
+        },
+        {
+          "id": "16cf96a8-f2c0-4155-83f2-68fdd2464b72",
+          "type": "command_injection",
+          "severity": 9.0,
+          "confidence": 0.95,
+          "name": "Command Injection",
+          "location": "Detected by Commix",
+          "evidence": "                                      __\r\n   ___   ___     ___ ___     ___ ___ /\\_\\   __  _\r\n /`___\\ / __`\\ /' __` __`\\ /' __` __`\\/\\ \\ /\\ \\/'\\  \u001b[1m\u001b[4m\u001b[37mv4.0-stable\u001b[0m\r\n/\\ \\__//\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\ \\ \\\\/>  </\r\n\\ \\____\\ \\____/\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\/\\_/\\_\\ \u001b[90m\u001b[4mhttps://commixproject.com\u001b[0m\r\n \\/____/\\/___/  \\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\//\\/_/ (\u001b[91m@commixproject\u001b[0m)\r\n\r\n+--\r\n\u001b[1mAutomated All-in-One OS Command Injection Exploitation Tool\u001b[0m\r\nCopyright \u00a9 2014-2024 Anas",
+          "exploitable": true,
+          "tool": "commix",
+          "target": "192.168.131.128"
+        },
+        {
+          "id": "2eecb728-2bb1-4899-adee-750bba4857a0",
+          "type": "generic_finding",
+          "severity": 5.0,
+          "confidence": 0.7,
+          "name": "Tool Output Analysis",
+          "location": "Generic parsing",
+          "evidence": "[E] \u001b[0m\u001b[31mServer doesn't allow session using username '', password ''.  Aborting remainder of tests.",
+          "exploitable": true,
+          "tool": "enum4linux",
+          "target": "192.168.131.128"
+        }
+      ],
+      "patterns_identified": [
+        {
+          "type": "tool_effectiveness",
+          "description": "Effectiveness scores for each tool",
+          "data": {
+            "nmap": {
+              "vulns_found": 0,
+              "success": true,
+              "execution_time": 9.061428,
+              "effectiveness_score": 0.0
+            },
+            "nikto": {
+              "vulns_found": 0,
+              "success": true,
+              "execution_time": 20.710093,
+              "effectiveness_score": 0.0
+            },
+            "nuclei": {
+              "vulns_found": 0,
+              "success": false,
+              "execution_time": 0.12506,
+              "effectiveness_score": 0
+            },
+            "sqlmap": {
+              "vulns_found": 0,
+              "success": false,
+              "execution_time": 84.798689,
+              "effectiveness_score": 0
+            },
+            "gobuster": {
+              "vulns_found": 0,
+              "success": false,
+              "execution_time": 0.139809,
+              "effectiveness_score": 0
+            },
+            "ffuf": {
+              "vulns_found": 1,
+              "success": false,
+              "execution_time": 0.127661,
+              "effectiveness_score": 0
+            },
+            "hydra": {
+              "vulns_found": 0,
+              "success": false,
+              "execution_time": 0.125284,
+              "effectiveness_score": 0
+            },
+            "dalfox": {
+              "vulns_found": 0,
+              "success": false,
+              "execution_time": 0.124976,
+              "effectiveness_score": 0
+            },
+            "commix": {
+              "vulns_found": 1,
+              "success": true,
+              "execution_time": 21.30554,
+              "effectiveness_score": 0.04693614900162117
+            },
+            "wpscan": {
+              "vulns_found": 0,
+              "success": false,
+              "execution_time": 22.220454,
+              "effectiveness_score": 0
+            },
+            "sslscan": {
+              "vulns_found": 0,
+              "success": true,
+              "execution_time": 21.11364,
+              "effectiveness_score": 0.0
+            },
+            "enum4linux": {
+              "vulns_found": 1,
+              "success": false,
+              "execution_time": 25.326922,
+              "effectiveness_score": 0
+            },
+            "whatweb": {
+              "vulns_found": 0,
+              "success": true,
+              "execution_time": 16.807193,
+              "effectiveness_score": 0.0
+            },
+            "dnsenum": {
+              "vulns_found": 0,
+              "success": false,
+              "execution_time": 0.42673,
+              "effectiveness_score": 0
+            },
+            "amass": {
+              "vulns_found": 0,
+              "success": true,
+              "execution_time": 445.802267,
+              "effectiveness_score": 0.0
+            }
+          }
+        },
+        {
+          "type": "common_vulnerabilities",
+          "description": "Common vulnerability types found",
+          "data": {
+            "generic_finding": 2
+          }
+        },
+        {
+          "type": "severity_distribution",
+          "description": "Distribution of vulnerabilities by severity",
+          "data": {
+            "5": 2,
+            "9": 1
+          }
+        },
+        {
+          "type": "tool_synergy",
+          "description": "Tool combinations that find related vulnerabilities",
+          "data": {
+            "enum4linux+ffuf": 1
+          }
+        }
+      ],
+      "end_time": "2025-11-29T12:01:13.698736"
+    }
+  },
+  "overall_patterns": {
+    "vulnerability_types": {
+      "open_port": 2,
+      "generic_finding": 5,
+      "command_injection": 2
+    },
+    "severity_distribution": {
+      "4": 2,
+      "5": 5,
+      "9": 2
+    }
+  },
+  "end_time": "2025-11-29T12:01:13.700818"
+}

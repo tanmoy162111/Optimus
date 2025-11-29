@@ -1,0 +1,22 @@
+{
+  "workflow_summary": {
+    "id": "owasp_workflow_20251129_112421",
+    "duration": 0.0,
+    "steps_completed": 2
+  },
+  "training_summary": {
+    "status": "completed",
+    "results_file": "data\\owasp_training_new\\training_data\\simple_training_results_simple_owasp_training_20251129_112421.json",
+    "targets_processed": 2,
+    "total_vulnerabilities": 9
+  },
+  "analysis_summary": {
+    "status": "completed",
+    "analysis_file": "data\\owasp_training_new\\analysis\\analysis_results.json",
+    "patterns_extracted": 0
+  },
+  "retraining_summary": {
+    "status": "failed",
+    "error": "2025-11-29 12:01:16.348345: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.\n2025-11-29 12:01:20.299150: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.\nTraceback (most recent call last):\n  File \"D:\\Work\\Ai Engineering\\Git\\Optimus\\backend\\retrain_improved_models.py\", line 50, in <module>\n    print(\"  - Increased n_estimators: 200 \\u2192 300\")\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Tanmoy Saha\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\encodings\\cp1252.py\", line 19, in encode\n    return codecs.charmap_encode(input,self.errors,encoding_table)[0]\n           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'charmap' codec can't encode character '\\u2192' in position 32: character maps to <undefined>\n"
+  }
+}

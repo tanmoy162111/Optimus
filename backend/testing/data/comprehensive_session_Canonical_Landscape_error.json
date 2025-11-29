@@ -1,0 +1,7 @@
+{
+  "error": "unhashable type: 'dict'",
+  "target": "https://landscape.canonical.com",
+  "tools_executed": [],
+  "findings": [],
+  "coverage": 0
+}

@@ -1,0 +1,20 @@
+{
+  "targets": [
+    {
+      "name": "Canonical Landscape",
+      "url": "https://landscape.canonical.com",
+      "type": "web",
+      "difficulty": "medium",
+      "known_vulns": ["xss", "misconfiguration"],
+      "expected_findings": 3
+    },
+    {
+      "name": "Local OWASP VM",
+      "url": "http://192.168.131.128",
+      "type": "web",
+      "difficulty": "medium",
+      "known_vulns": ["sql_injection", "xss", "auth_bypass"],
+      "expected_findings": 5
+    }
+  ]
+}

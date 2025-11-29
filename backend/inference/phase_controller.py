@@ -33,7 +33,7 @@ class PhaseController:
         coverage = current_state.get('coverage', 0.0)
         
         # Convert tools_executed to list of tool names if it contains dicts
-        if tools_executed and isinstance(tools_executed[0], dict):
+        if tools_executed and len(tools_executed) > 0 and isinstance(tools_executed[0], dict):
             tool_names = [t['tool'] for t in tools_executed]
         else:
             tool_names = tools_executed
@@ -107,7 +107,7 @@ class PhaseController:
             
         # Also complete if we've executed enough recon tools
         tools_executed = state.get('tools_executed', [])
-        if tools_executed and isinstance(tools_executed[0], dict):
+        if tools_executed and len(tools_executed) > 0 and isinstance(tools_executed[0], dict):
             tool_count = len(tools_executed)
         else:
             tool_count = len(tools_executed)
@@ -130,7 +130,7 @@ class PhaseController:
             
         # Also complete if we've executed enough scanning tools
         tools_executed = state.get('tools_executed', [])
-        if tools_executed and isinstance(tools_executed[0], dict):
+        if tools_executed and len(tools_executed) > 0 and isinstance(tools_executed[0], dict):
             tool_count = len(tools_executed)
         else:
             tool_count = len(tools_executed)
@@ -155,7 +155,7 @@ class PhaseController:
             
         # Also complete if we've executed enough exploitation tools
         tools_executed = state.get('tools_executed', [])
-        if tools_executed and isinstance(tools_executed[0], dict):
+        if tools_executed and len(tools_executed) > 0 and isinstance(tools_executed[0], dict):
             tool_count = len(tools_executed)
         else:
             tool_count = len(tools_executed)
@@ -177,7 +177,7 @@ class PhaseController:
             
         # Also complete if we've executed enough post-exploitation tools
         tools_executed = state.get('tools_executed', [])
-        if tools_executed and isinstance(tools_executed[0], dict):
+        if tools_executed and len(tools_executed) > 0 and isinstance(tools_executed[0], dict):
             tool_count = len(tools_executed)
         else:
             tool_count = len(tools_executed)
@@ -197,7 +197,7 @@ class PhaseController:
             
         # Also complete if we've executed enough cleanup tools
         tools_executed = state.get('tools_executed', [])
-        if tools_executed and isinstance(tools_executed[0], dict):
+        if tools_executed and len(tools_executed) > 0 and isinstance(tools_executed[0], dict):
             tool_count = len(tools_executed)
         else:
             tool_count = len(tools_executed)

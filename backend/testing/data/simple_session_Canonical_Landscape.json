@@ -1,0 +1,122 @@
+{
+  "target": "https://landscape.canonical.com",
+  "tools_executed": [
+    "nmap",
+    "whatweb"
+  ],
+  "findings": [
+    {
+      "id": "28d6d5f4-4958-494a-818d-ac348f790eb1",
+      "type": "open_port",
+      "severity": 4.0,
+      "confidence": 0.95,
+      "name": "Open Port: 80/http-proxy",
+      "location": "Port 80",
+      "evidence": "80/tcp  open  http-proxy     HAProxy http proxy HAProxy http proxy",
+      "exploitable": false
+    },
+    {
+      "id": "f58f0368-e3d2-413c-a8be-3c6aee5e5c6c",
+      "type": "open_port",
+      "severity": 4.0,
+      "confidence": 0.95,
+      "name": "Open Port: 443/ssl/http-proxy",
+      "location": "Port 443",
+      "evidence": "443/tcp open  ssl/http-proxy HAProxy http proxy HAProxy http proxy",
+      "exploitable": false
+    }
+  ],
+  "tool_results": {
+    "nmap": {
+      "tool_name": "nmap",
+      "target": "https://landscape.canonical.com",
+      "phase": "reconnaissance",
+      "command": "nmap landscape.canonical.com -sV -T2 -p 80,443 --max-retries 3",
+      "exit_code": 0,
+      "stdout": "Starting Nmap 7.95 ( https://nmap.org ) at 2025-11-29 07:10 EST\r\nNmap scan report for landscape.canonical.com (185.125.189.30)\r\nHost is up (0.19s latency).\r\n\r\nPORT    STATE SERVICE        VERSION\r\n80/tcp  open  http-proxy     HAProxy http proxy\r\n443/tcp open  ssl/http-proxy HAProxy http proxy\r\n\r\nService detection performed. Please report any incorrect results at https://nmap.org/submit/ .\r\nNmap done: 1 IP address (1 host up) scanned in 32.57 seconds\r\n",
+      "stderr": "",
+      "execution_time": 32.893161,
+      "start_time": "2025-11-29T18:10:01.151522",
+      "end_time": "2025-11-29T18:10:34.044683",
+      "success": true,
+      "parsed_results": {
+        "vulnerabilities": [
+          {
+            "id": "28d6d5f4-4958-494a-818d-ac348f790eb1",
+            "type": "open_port",
+            "severity": 4.0,
+            "confidence": 0.95,
+            "name": "Open Port: 80/http-proxy",
+            "location": "Port 80",
+            "evidence": "80/tcp  open  http-proxy     HAProxy http proxy HAProxy http proxy",
+            "exploitable": false
+          },
+          {
+            "id": "f58f0368-e3d2-413c-a8be-3c6aee5e5c6c",
+            "type": "open_port",
+            "severity": 4.0,
+            "confidence": 0.95,
+            "name": "Open Port: 443/ssl/http-proxy",
+            "location": "Port 443",
+            "evidence": "443/tcp open  ssl/http-proxy HAProxy http proxy HAProxy http proxy",
+            "exploitable": false
+          }
+        ],
+        "services": [
+          {
+            "port": "80",
+            "service": "http-proxy",
+            "version": "HAProxy http proxy"
+          },
+          {
+            "port": "443",
+            "service": "ssl/http-proxy",
+            "version": "HAProxy http proxy"
+          }
+        ],
+        "hosts": [],
+        "raw_output": "Starting Nmap 7.95 ( https://nmap.org ) at 2025-11-29 07:10 EST\r\nNmap scan report for landscape.canonical.com (185.125.189.30)\r\nHost is up (0.19s latency).\r\n\r\nPORT    STATE SERVICE        VERSION\r\n80/tcp  open  http-proxy     HAProxy http proxy\r\n443/tcp open  ssl/http-proxy HAProxy http proxy\r\n\r\nService detection performed. Please report any incorrect results at https://nmap.org/submit/ .\r\nNmap done: 1 IP address (1 host up) scanned in 32.57 seconds\r\n"
+      }
+    },
+    "whatweb": {
+      "tool_name": "whatweb",
+      "target": "https://landscape.canonical.com",
+      "phase": "reconnaissance",
+      "command": "whatweb https://landscape.canonical.com -a 1",
+      "exit_code": 0,
+      "stdout": "\u001b[1m\u001b[34mhttps://landscape.canonical.com\u001b[0m [303 See Other] \u001b[1mCookies\u001b[0m[\u001b[0m\u001b[22mlandscape_session\u001b[0m], \u001b[1mDreambox\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mHTTPServer\u001b[0m[\u001b[1m\u001b[36mTwistedWeb/22.1.0\u001b[0m], \u001b[1mHttpOnly\u001b[0m[\u001b[0m\u001b[22mlandscape_session\u001b[0m], \u001b[1mIP\u001b[0m[\u001b[0m\u001b[22m185.125.189.30\u001b[0m], \u001b[1mRedirectLocation\u001b[0m[\u001b[0m\u001b[22m/new_dashboard/login?redirect-to=%2F&external\u001b[0m], \u001b[1mStrict-Transport-Security\u001b[0m[\u001b[0m\u001b[22mmax-age=2592000\u001b[0m], \u001b[1mTwistedWeb\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mUncommonHeaders\u001b[0m[\u001b[0m\u001b[22mcontent-security-policy,x-content-type-options,x-vcs-revision,x-request-id\u001b[0m], \u001b[1mX-Frame-Options\u001b[0m[\u001b[0m\u001b[22mSAMEORIGIN\u001b[0m], \u001b[1mX-Powered-By\u001b[0m[\u001b[0m\u001b[22mZope (www.zope.org), Python (www.python.org)\u001b[0m], \u001b[1mX-XSS-Protection\u001b[0m[\u001b[0m\u001b[22m1; mode=block\u001b[0m]\r\n\u001b[1m\u001b[34mhttps://landscape.canonical.com/new_dashboard/login?redirect-to=%2F&external\u001b[0m [302 Found] \u001b[1mDreambox\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mHTTPServer\u001b[0m[\u001b[1m\u001b[36mTwistedWeb/22.1.0\u001b[0m], \u001b[1mIP\u001b[0m[\u001b[0m\u001b[22m185.125.189.30\u001b[0m], \u001b[1mMeta-Refresh-Redirect\u001b[0m[\u001b[0m\u001b[22m/new_dashboard/login/?redirect-to=%252F&external\u001b[0m], \u001b[1mRedirectLocation\u001b[0m[\u001b[0m\u001b[22m/new_dashboard/login/?redirect-to=%252F&external\u001b[0m], \u001b[1mTwistedWeb\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mUncommonHeaders\u001b[0m[\u001b[0m\u001b[22mcontent-security-policy,referrer-policy\u001b[0m]\r\n\u001b[1m\u001b[34mhttps://landscape.canonical.com/new_dashboard/login/?redirect-to=%252F&external\u001b[0m [200 OK] \u001b[1mDreambox\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mHTML5\u001b[0m, \u001b[1mHTTPServer\u001b[0m[\u001b[1m\u001b[36mTwistedWeb/22.1.0\u001b[0m], \u001b[1mIP\u001b[0m[\u001b[0m\u001b[22m185.125.189.30\u001b[0m], \u001b[1mScript\u001b[0m[\u001b[0m\u001b[22mmodule\u001b[0m], \u001b[1mTitle\u001b[0m[\u001b[1m\u001b[33mLandscape\u001b[0m], \u001b[1mTwistedWeb\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mUncommonHeaders\u001b[0m[\u001b[0m\u001b[22mcontent-security-policy,referrer-policy\u001b[0m]\r\n",
+      "stderr": "",
+      "execution_time": 20.713159,
+      "start_time": "2025-11-29T18:10:34.057101",
+      "end_time": "2025-11-29T18:10:54.770260",
+      "success": true,
+      "parsed_results": {
+        "vulnerabilities": [],
+        "technologies": [
+          "1m\u001b[34mhttps://landscape.canonical.com\u001b[0m [303 See Other",
+          "1mCookies\u001b[0m[\u001b[0m\u001b[22mlandscape_session\u001b[0m",
+          "1mDreambox\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m",
+          "1mHTTPServer\u001b[0m[\u001b[1m\u001b[36mTwistedWeb/22.1.0\u001b[0m",
+          "1mHttpOnly\u001b[0m[\u001b[0m\u001b[22mlandscape_session\u001b[0m",
+          "1mIP\u001b[0m[\u001b[0m\u001b[22m185.125.189.30\u001b[0m",
+          "1mRedirectLocation\u001b[0m[\u001b[0m\u001b[22m/new_dashboard/login?redirect-to=%2F&external\u001b[0m",
+          "1mStrict-Transport-Security\u001b[0m[\u001b[0m\u001b[22mmax-age=2592000\u001b[0m",
+          "1mTwistedWeb\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m",
+          "1mUncommonHeaders\u001b[0m[\u001b[0m\u001b[22mcontent-security-policy,x-content-type-options,x-vcs-revision,x-request-id\u001b[0m",
+          "1mX-Frame-Options\u001b[0m[\u001b[0m\u001b[22mSAMEORIGIN\u001b[0m",
+          "1mX-Powered-By\u001b[0m[\u001b[0m\u001b[22mZope (www.zope.org), Python (www.python.org)\u001b[0m",
+          "1mX-XSS-Protection\u001b[0m[\u001b[0m\u001b[22m1; mode=block\u001b[0m",
+          "1m\u001b[34mhttps://landscape.canonical.com/new_dashboard/login?redirect-to=%2F&external\u001b[0m [302 Found",
+          "1mMeta-Refresh-Redirect\u001b[0m[\u001b[0m\u001b[22m/new_dashboard/login/?redirect-to=%252F&external\u001b[0m",
+          "1mRedirectLocation\u001b[0m[\u001b[0m\u001b[22m/new_dashboard/login/?redirect-to=%252F&external\u001b[0m",
+          "1mUncommonHeaders\u001b[0m[\u001b[0m\u001b[22mcontent-security-policy,referrer-policy\u001b[0m",
+          "1m\u001b[34mhttps://landscape.canonical.com/new_dashboard/login/?redirect-to=%252F&external\u001b[0m [200 OK",
+          "1mHTML5\u001b[0m, \u001b[1mHTTPServer\u001b[0m[\u001b[1m\u001b[36mTwistedWeb/22.1.0\u001b[0m",
+          "1mScript\u001b[0m[\u001b[0m\u001b[22mmodule\u001b[0m",
+          "1mTitle\u001b[0m[\u001b[1m\u001b[33mLandscape\u001b[0m"
+        ],
+        "raw_output": "\u001b[1m\u001b[34mhttps://landscape.canonical.com\u001b[0m [303 See Other] \u001b[1mCookies\u001b[0m[\u001b[0m\u001b[22mlandscape_session\u001b[0m], \u001b[1mDreambox\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mHTTPServer\u001b[0m[\u001b[1m\u001b[36mTwistedWeb/22.1.0\u001b[0m], \u001b[1mHttpOnly\u001b[0m[\u001b[0m\u001b[22mlandscape_session\u001b[0m], \u001b[1mIP\u001b[0m[\u001b[0m\u001b[22m185.125.189.30\u001b[0m], \u001b[1mRedirectLocation\u001b[0m[\u001b[0m\u001b[22m/new_dashboard/login?redirect-to=%2F&external\u001b[0m], \u001b[1mStrict-Transport-Security\u001b[0m[\u001b[0m\u001b[22mmax-age=2592000\u001b[0m], \u001b[1mTwistedWeb\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mUncommonHeaders\u001b[0m[\u001b[0m\u001b[22mcontent-security-policy,x-content-type-options,x-vcs-revision,x-request-id\u001b[0m], \u001b[1mX-Frame-Options\u001b[0m[\u001b[0m\u001b[22mSAMEORIGIN\u001b[0m], \u001b[1mX-Powered-By\u001b[0m[\u001b[0m\u001b[22mZope (www.zope.org), Python (www.python.org)\u001b[0m], \u001b[1mX-XSS-Protection\u001b[0m[\u001b[0m\u001b[22m1; mode=block\u001b[0m]\r\n\u001b[1m\u001b[34mhttps://landscape.canonical.com/new_dashboard/login?redirect-to=%2F&external\u001b[0m [302 Found] \u001b[1mDreambox\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mHTTPServer\u001b[0m[\u001b[1m\u001b[36mTwistedWeb/22.1.0\u001b[0m], \u001b[1mIP\u001b[0m[\u001b[0m\u001b[22m185.125.189.30\u001b[0m], \u001b[1mMeta-Refresh-Redirect\u001b[0m[\u001b[0m\u001b[22m/new_dashboard/login/?redirect-to=%252F&external\u001b[0m], \u001b[1mRedirectLocation\u001b[0m[\u001b[0m\u001b[22m/new_dashboard/login/?redirect-to=%252F&external\u001b[0m], \u001b[1mTwistedWeb\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mUncommonHeaders\u001b[0m[\u001b[0m\u001b[22mcontent-security-policy,referrer-policy\u001b[0m]\r\n\u001b[1m\u001b[34mhttps://landscape.canonical.com/new_dashboard/login/?redirect-to=%252F&external\u001b[0m [200 OK] \u001b[1mDreambox\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mHTML5\u001b[0m, \u001b[1mHTTPServer\u001b[0m[\u001b[1m\u001b[36mTwistedWeb/22.1.0\u001b[0m], \u001b[1mIP\u001b[0m[\u001b[0m\u001b[22m185.125.189.30\u001b[0m], \u001b[1mScript\u001b[0m[\u001b[0m\u001b[22mmodule\u001b[0m], \u001b[1mTitle\u001b[0m[\u001b[1m\u001b[33mLandscape\u001b[0m], \u001b[1mTwistedWeb\u001b[0m[\u001b[1m\u001b[32m22.1.0\u001b[0m], \u001b[1mUncommonHeaders\u001b[0m[\u001b[0m\u001b[22mcontent-security-policy,referrer-policy\u001b[0m]\r\n"
+      }
+    }
+  }
+}
