@@ -329,12 +329,17 @@ class AutonomousPentestAgent:
         
         # Get tools that haven't been executed recently
         all_tools = list(self.tool_db.tools.keys())
+        print(f"[DEBUG] All available tools: {len(all_tools)}")
+        print(f"[DEBUG] Recently executed tools: {recent_tools}")
+        
         available_tools = [tool for tool in all_tools if tool not in recent_tools]
+        print(f"[DEBUG] Available tools: {len(available_tools)}")
         
         # If we have findings, explore related tools
         if findings > 0:
             # Prioritize tools based on finding types
             priority_tools = self._get_priority_tools_for_findings(finding_types, available_tools)
+            print(f"[DEBUG] Priority tools based on findings: {priority_tools}")
             if priority_tools:
                 return {
                     'action': 'execute_tool',
