@@ -772,7 +772,7 @@ class AutonomousPentestAgent:
         if 'phase_data' not in scan_state:
             scan_state['phase_data'] = {}
             
-        phase = scan_state['phase']
+        phase = scan_state.get('phase', 'reconnaissance')  # Provide default value
         
         if phase == 'reconnaissance':
             # Count technologies and subdomains

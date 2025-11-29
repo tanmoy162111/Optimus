@@ -172,6 +172,8 @@ class FullyAutonomousTrainer:
             
         except Exception as e:
             print(f"  [Episode] Failed: {e}")
+            import traceback
+            traceback.print_exc()
             episode_data = {
                 'episode_num': episode_num,
                 'target': target,
