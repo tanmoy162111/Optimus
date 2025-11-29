@@ -395,7 +395,12 @@ class AutonomousPentestAgent:
             'subdomains': ['subfinder', 'amass'],
             'ports_open': ['nmap', 'masscan'],
             'wordpress': ['wpscan'],
-            'directories': ['ffuf', 'gobuster', 'dirb']
+            'directories': ['ffuf', 'gobuster', 'dirb'],
+            'cms': ['wpscan'],
+            'outdated_software': ['nikto'],
+            'misconfigurations': ['nuclei'],
+            'information_disclosure': ['nikto'],
+            'command_injection': ['commix']
         }
         
         priority_tools = []
@@ -413,6 +418,10 @@ class AutonomousPentestAgent:
             if tool not in seen:
                 unique_priority_tools.append(tool)
                 seen.add(tool)
+        
+        print(f"[DEBUG] Finding types: {finding_types}")
+        print(f"[DEBUG] Priority tools before filtering: {[tool for ftype in finding_types.keys() if ftype in tool_priorities for tool in tool_priorities[ftype]]}")
+        print(f"[DEBUG] Priority tools after filtering: {unique_priority_tools}")
         
         return unique_priority_tools
 
