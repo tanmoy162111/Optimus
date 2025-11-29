@@ -197,10 +197,36 @@ def execute_tool():
                 # Use new ToolManager with PTY support
                 tool_manager = ToolManager(socketio)
                 
+                # Calculate time remaining for dynamic timeout adjustment
+                time_budget = 3600  # Default 1 hour
+                start_time_str = scan.get('start_time')
+                if start_time_str:
+                    try:
+                        from datetime import datetime
+                        start_time = datetime.fromisoformat(start_time_str)
+                        elapsed = (datetime.now() - start_time).total_seconds()
+                        time_remaining = max(0.0, (time_budget - elapsed) / time_budget)  # Normalized 0-1
+                    except:
+                        time_remaining = 1.0  # Default to full time if parsing fails
+                else:
+                    time_remaining = 1.0
+                
+                # Enhance options with more context for dynamic timeout calculation
+                enhanced_options = options.copy()
+                enhanced_options.update({
+                    'phase': scan.get('phase', 'scanning'),
+                    'findings': scan.get('findings', []),
+                    'tools_executed': scan.get('tools_executed', []),
+                    'target_type': scan.get('target_type', 'web'),
+                    'timeout': options.get('timeout', 300),
+                    'time_remaining': time_remaining,
+                    'coverage': scan.get('coverage', 0.0)
+                })
+                
                 result = tool_manager.execute_tool(
                     tool_name=tool_name,
                     target=target,
-                    parameters=options,
+                    parameters=enhanced_options,
                     scan_id=scan_id,
                     phase=scan.get('phase', 'scanning')
                 )

@@ -87,6 +87,16 @@ class PhaseAwareToolSelector:
                 blacklisted.append(tool)
         scan_state['blacklisted_tools'] = blacklisted
 
+        # Ensure tools_executed is properly formatted in scan_state
+        # This prevents issues where tools_executed might be a mix of strings and dicts
+        formatted_tools_executed = []
+        for tool_entry in scan_state.get('tools_executed', []):
+            if isinstance(tool_entry, dict):
+                formatted_tools_executed.append(tool_entry['tool'])
+            else:
+                formatted_tools_executed.append(tool_entry)
+        tools_executed = formatted_tools_executed
+
         # NEW: Check if last tool was ineffective (no findings)
         if len(tools_executed) > 0:
             last_tool = tools_executed[-1]

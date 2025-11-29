@@ -8,11 +8,41 @@ logger = logging.getLogger(__name__)
 class RuleBasedToolSelector:
     """
     Expert system for tool selection based on pentesting best practices
+    Enhanced with learning from attack patterns and execution history
     """
     
     def __init__(self):
         self.phase_tools = self._initialize_phase_tools()
         self.attack_response_tools = self._initialize_attack_responses()
+        self.tool_effectiveness = {}  # Track tool performance
+        self.vulnerability_patterns = {}  # Track successful attack patterns
+    
+    def learn_from_execution(self, tool: str, findings: List[Dict], execution_time: float):
+        """
+        Learn from tool execution results to improve future recommendations
+        """
+        if tool not in self.tool_effectiveness:
+            self.tool_effectiveness[tool] = {
+                'executions': 0,
+                'total_findings': 0,
+                'total_time': 0.0,
+                'avg_findings_per_execution': 0.0,
+                'avg_time_per_execution': 0.0
+            }
+        
+        stats = self.tool_effectiveness[tool]
+        stats['executions'] += 1
+        stats['total_findings'] += len(findings)
+        stats['total_time'] += execution_time
+        stats['avg_findings_per_execution'] = stats['total_findings'] / stats['executions']
+        stats['avg_time_per_execution'] = stats['total_time'] / stats['executions']
+        
+        # Track vulnerability patterns
+        for finding in findings:
+            vuln_type = finding.get('type', 'unknown')
+            if vuln_type not in self.vulnerability_patterns:
+                self.vulnerability_patterns[vuln_type] = 0
+            self.vulnerability_patterns[vuln_type] += 1
     
     def _initialize_phase_tools(self) -> Dict[str, List[str]]:
         """
@@ -124,6 +154,15 @@ class RuleBasedToolSelector:
         # Remove already-executed tools
         recommended = [tool for tool in recommended if tool not in tools_executed]
         
+        # NEW: Additional check to prevent recommending tools that have been executed multiple times
+        # Count tool executions
+        tool_execution_counts = {}
+        for tool in tools_executed:
+            tool_execution_counts[tool] = tool_execution_counts.get(tool, 0) + 1
+        
+        # Filter out tools that have been executed 3+ times
+        recommended = [tool for tool in recommended if tool_execution_counts.get(tool, 0) < 3]
+        
         # Limit to top 3
         return recommended[:3]
     
@@ -146,39 +185,54 @@ class RuleBasedToolSelector:
     
     def _recommend_scanning(self, context: Dict, tools_executed: List[str],
                         technologies: List[str]) -> List[str]:
-        """Scanning phase logic"""
+        """Scanning phase logic with learning-based prioritization"""
         recommended = []
         
         # Always start with nmap
         if 'nmap' not in tools_executed:
             return ['nmap']
         
-        # Then nuclei for CVE detection
-        if 'nuclei' not in tools_executed:
+        # Prioritize tools based on learning data
+        # Get tools that have shown good performance
+        effective_tools = []
+        for tool, stats in self.tool_effectiveness.items():
+            if stats['avg_findings_per_execution'] > 0.5:  # At least 0.5 findings per execution
+                effective_tools.append((tool, stats['avg_findings_per_execution']))
+        
+        # Sort by effectiveness
+        effective_tools.sort(key=lambda x: x[1], reverse=True)
+        
+        # Add effective tools first
+        for tool, effectiveness in effective_tools:
+            if tool not in tools_executed and tool in ['nuclei', 'nikto', 'wpscan', 'joomscan', 'sslscan']:
+                recommended.append(tool)
+        
+        # Then nuclei for CVE detection (if not already added)
+        if 'nuclei' not in tools_executed and 'nuclei' not in recommended:
             recommended.append('nuclei')
         
         # Web-specific tools
         if context.get('target_type') == 'web':
-            if 'nikto' not in tools_executed:
+            if 'nikto' not in tools_executed and 'nikto' not in recommended:
                 recommended.append('nikto')
         
         # Technology-specific tools
-        if 'wordpress' in technologies and 'wpscan' not in tools_executed:
+        if 'wordpress' in technologies and 'wpscan' not in tools_executed and 'wpscan' not in recommended:
             recommended.insert(0, 'wpscan')  # High priority
         
-        if 'joomla' in technologies and 'joomscan' not in tools_executed:
+        if 'joomla' in technologies and 'joomscan' not in tools_executed and 'joomscan' not in recommended:
             recommended.insert(0, 'joomscan')
         
         # SSL/TLS if HTTPS
         if 'https' in context.get('target', ''):
-            if 'sslscan' not in tools_executed:
+            if 'sslscan' not in tools_executed and 'sslscan' not in recommended:
                 recommended.append('sslscan')
         
         return recommended
     
     def _recommend_exploitation(self, context: Dict, findings: List[Dict],
                              tools_executed: List[str]) -> List[str]:
-        """Exploitation phase logic"""
+        """Exploitation phase logic with learning-based tool selection"""
         recommended = []
         
         # React to discovered vulnerabilities
@@ -187,13 +241,27 @@ class RuleBasedToolSelector:
         # Prioritize by severity
         critical_findings = [f for f in findings if f.get('severity', 0) >= 9.0]
         
+        # First, use learning data to prioritize tools that have been effective
+        effective_exploitation_tools = []
+        for tool, stats in self.tool_effectiveness.items():
+            if stats['avg_findings_per_execution'] > 0.3:  # Lower threshold for exploitation
+                effective_exploitation_tools.append((tool, stats['avg_findings_per_execution']))
+        
+        # Sort by effectiveness
+        effective_exploitation_tools.sort(key=lambda x: x[1], reverse=True)
+        
+        # Add effective tools first
+        for tool, effectiveness in effective_exploitation_tools:
+            if tool not in tools_executed and tool in ['sqlmap', 'metasploit', 'hydra', 'dalfox', 'commix', 'xsser']:
+                recommended.append(tool)
+        
         for finding in sorted(findings, key=lambda x: x.get('severity', 0), reverse=True):
             attack_type = finding.get('type', '')
             
             # Get appropriate tool for this attack
             exploit_tool = self.attack_response_tools.get(attack_type)
             
-            if exploit_tool and exploit_tool not in tools_executed:
+            if exploit_tool and exploit_tool not in tools_executed and exploit_tool not in recommended:
                 recommended.append(exploit_tool)
                 logger.info(f"Recommending {exploit_tool} for {attack_type} "
                            f"(severity: {finding.get('severity')})")
@@ -202,7 +270,7 @@ class RuleBasedToolSelector:
         if not recommended:
             if context.get('target_type') == 'web':
                 general_tools = ['sqlmap', 'metasploit']
-                recommended = [t for t in general_tools if t not in tools_executed]
+                recommended = [t for t in general_tools if t not in tools_executed and t not in recommended]
         
         return recommended
     
@@ -214,22 +282,20 @@ class RuleBasedToolSelector:
         # Determine OS from context
         os_type = context.get('os_type', 'linux').lower()
         
-        # Privilege escalation
-        if os_type == 'linux' and 'linpeas' not in tools_executed:
+        # Privilege escalation - always recommend for post-exploitation phase
+        if os_type == 'linux':
             recommended.append('linpeas')
-        elif os_type == 'windows' and 'winpeas' not in tools_executed:
+        elif os_type == 'windows':
             recommended.append('winpeas')
         
         # Credential dumping
-        if os_type == 'windows' and 'mimikatz' not in tools_executed:
+        if os_type == 'windows':
             recommended.append('mimikatz')
         
-        if 'lazagne' not in tools_executed:
-            recommended.append('lazagne')  # Multi-platform
+        recommended.append('lazagne')  # Multi-platform
         
         # Lateral movement
-        if 'crackmapexec' not in tools_executed:
-            recommended.append('crackmapexec')
+        recommended.append('crackmapexec')
         
         return recommended
     

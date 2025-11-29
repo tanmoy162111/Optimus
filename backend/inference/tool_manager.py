@@ -29,6 +29,8 @@ class ToolManager:
         self.keepalive_interval = 30
         # Initialize the tool knowledge base
         self.tool_kb = ToolKnowledgeBase()
+        # Tool execution history for dynamic timeout adjustment
+        self.tool_execution_history = {}
         logger.info("[ToolManager] Initialized with dynamic command generation")
     
     def connect_ssh(self) -> paramiko.SSHClient:
@@ -95,12 +97,42 @@ class ToolManager:
         
         raise Exception("Failed to establish SSH connection after all retries")
     
+    def _get_tool_execution_history(self, tool_name: str) -> List[float]:
+        """
+        Get execution history for a tool to inform dynamic timeout adjustments
+        
+        Args:
+            tool_name: Name of the tool
+            
+
+        Returns:
+            List of execution times in seconds
+        """
+        return self.tool_execution_history.get(tool_name, [])
+    
     def execute_tool(self, tool_name: str, target: str, parameters: Dict[str, Any],
                   scan_id: str, phase: str) -> Dict[str, Any]:
         """
         Execute pentesting tool with real-time output streaming
         """
         start_time = datetime.now()
+        
+        # Special handling for linpeas - should only run in post-exploitation with active session
+        # But allow it to run if specifically requested in post-exploitation phase
+        if tool_name in ['linpeas', 'linpeas.sh'] and phase != 'post_exploitation':
+            logger.warning(f"[ToolManager] linpeas should only run in post-exploitation phase, not {phase}")
+            # Check if this is a legitimate post-exploitation scenario
+            # Look for indicators that we have an active session
+            if 'session_id' in parameters or 'active_session' in parameters:
+                logger.info("[ToolManager] linpeas execution authorized with active session")
+            else:
+                return {
+                    'tool_name': tool_name,
+                    'target': target,
+                    'phase': phase,
+                    'error': 'linpeas should only run in post-exploitation phase with active session',
+                    'success': False
+                }
         
         # Check API requirements
         has_requirements, missing_keys = self.check_tool_requirements(tool_name)
@@ -164,6 +196,15 @@ class ToolManager:
             
             end_time = datetime.now()
             execution_time = (end_time - start_time).total_seconds()
+            
+            # Record execution time for dynamic timeout adjustment
+            if tool_name not in self.tool_execution_history:
+                self.tool_execution_history[tool_name] = []
+            self.tool_execution_history[tool_name].append(execution_time)
+            
+            # Keep only last 10 executions to prevent memory bloat
+            if len(self.tool_execution_history[tool_name]) > 10:
+                self.tool_execution_history[tool_name] = self.tool_execution_history[tool_name][-10:]
             
             # Parse output
             from inference.output_parser import OutputParser
@@ -271,7 +312,36 @@ class ToolManager:
             
             start_time = time.time()
             last_data_time = time.time()
-            data_timeout = 120  # 2 minutes without any data = timeout
+            
+            # Set data timeout based on tool type and overall timeout
+            # Some tools like nmap can legitimately have long periods between output
+            # Calculate adaptive data timeout based on overall timeout
+            adaptive_factor = min(3.0, max(1.0, timeout / 300.0))  # Scale factor based on overall timeout
+            
+            if tool_name in ['nmap', 'masscan', 'ike-scan']:
+                # Network scanners can take longer between outputs
+                base_data_timeout = 300  # 5 minutes base
+                data_timeout = int(base_data_timeout * adaptive_factor)
+                # Cap at 30 minutes for network scanners
+                data_timeout = min(data_timeout, 1800)
+            elif tool_name in ['linpeas', 'winpeas']:
+                # Privilege escalation tools
+                base_data_timeout = 180  # 3 minutes base
+                data_timeout = int(base_data_timeout * adaptive_factor)
+                # Cap at 15 minutes for privilege escalation tools
+                data_timeout = min(data_timeout, 900)
+            elif tool_name in ['nikto', 'nuclei']:
+                # Web scanners can take longer between outputs
+                base_data_timeout = 240  # 4 minutes base
+                data_timeout = int(base_data_timeout * adaptive_factor)
+                # Cap at 25 minutes for web scanners
+                data_timeout = min(data_timeout, 1500)
+            else:
+                # Other tools
+                base_data_timeout = 120  # 2 minutes base
+                data_timeout = int(base_data_timeout * adaptive_factor)
+                # Cap at 10 minutes for other tools
+                data_timeout = min(data_timeout, 600)
             
             while True:
                 # Check for overall timeout
@@ -395,22 +465,117 @@ class ToolManager:
             'technologies_detected': parameters.get('technologies_detected', []),
         }
         
-        # Special handling for specific tools - increase timeout
-        long_running_tools = ['linpeas', 'linpeas.sh', 'winpeas', 'gobuster', 'ffuf']
-        if tool_name in long_running_tools:
-            # These tools can take a long time, so increase timeout
-            parameters['timeout'] = max(parameters.get('timeout', 300), 900)  # Min 15 minutes
-            print(f"[DEBUG] Increased timeout for {tool_name} to {parameters['timeout']}s")
+        # Enhanced dynamic timeout calculation with learning-based adjustments
+        base_timeout = parameters.get('timeout', 300)
         
-        # Use Knowledge Base to generate optimal command
+        # Define timeout multipliers for different tool categories with more granularity
+        timeout_multipliers = {
+            # Long-running enumeration tools
+            'long_enumeration': {
+                'tools': ['linpeas', 'linpeas.sh', 'winpeas', 'gobuster', 'ffuf', 'cewl', 'crunch'],
+                'multiplier': 3.0,  # 3x base timeout (up to 45 minutes)
+                'progressive_extension': True  # Allow progressive timeout extension
+            },
+            # Exploitation frameworks that can take significant time
+            'exploitation_frameworks': {
+                'tools': ['metasploit', 'burpsuite'],
+                'multiplier': 5.0,  # 5x base timeout (up to 75 minutes) - increased for Metasploit
+                'progressive_extension': True
+            },
+            # Network scanning tools
+            'network_scanners': {
+                'tools': ['nmap', 'masscan', 'ike-scan'],
+                'multiplier': 3.0,  # 3x base timeout (up to 45 minutes) - increased for nMap
+                'progressive_extension': True
+            },
+            # Web application scanners
+            'web_scanners': {
+                'tools': ['nikto', 'nuclei', 'wpscan', 'sqlmap'],
+                'multiplier': 3.5,  # 3.5x base timeout (up to 52.5 minutes) - increased for Nikto
+                'progressive_extension': True
+            },
+            # Brute force tools
+            'brute_force': {
+                'tools': ['hydra', 'medusa', 'john', 'hashcat'],
+                'multiplier': 4.0,  # 4x base timeout (up to 60 minutes)
+                'progressive_extension': True
+            }
+        }
+        
+        # Determine appropriate timeout multiplier based on tool category
+        multiplier = 1.0
+        tool_category = None
+        progressive_extension = False
+        
+        for category, config in timeout_multipliers.items():
+            if tool_name in config['tools']:
+                tool_category = category
+                multiplier = config['multiplier']
+                progressive_extension = config.get('progressive_extension', False)
+                break
+        
+        # Adjust timeout based on scan context
+        context_adjustment = 1.0
+        if parameters.get('aggressive', False):
+            context_adjustment = 1.5  # Increase timeout for aggressive scans
+        if parameters.get('stealth_required', False):
+            context_adjustment = 2.0  # Double timeout for stealth mode
+        if parameters.get('phase') == 'post_exploitation':
+            context_adjustment = 1.5  # Increase timeout for post-exploitation
+        
+        # Progressive timeout extension for tools that may need more time
+        if progressive_extension:
+            # Check if this tool has been executed before and how long it took
+            execution_history = self._get_tool_execution_history(tool_name)
+            if execution_history:
+                avg_execution_time = sum(execution_history) / len(execution_history)
+                # If average execution time is close to current timeout, increase it
+                if avg_execution_time > (base_timeout * multiplier * context_adjustment * 0.8):
+                    context_adjustment *= 1.5  # Increase by 50%
+        
+        # Additional context-based adjustments
+        time_remaining = context.get('time_remaining', 1.0)
+        coverage = context.get('coverage', 0.0)
+        
+        # If we're running low on time, give more time to tools likely to find vulnerabilities
+        if time_remaining < 0.3 and coverage < 0.7:  # Less than 30% time remaining and low coverage
+            if tool_category in ['exploitation_frameworks', 'web_scanners']:
+                context_adjustment *= 1.3  # Give more time to exploitation tools
+        
+        # If we have high coverage, reduce timeout for exploratory tools
+        if coverage > 0.8:
+            if tool_category in ['long_enumeration', 'network_scanners']:
+                context_adjustment *= 0.7  # Reduce time for exploratory tools when we have enough coverage
+        
+        # Calculate final timeout
+        calculated_timeout = int(base_timeout * multiplier * context_adjustment)
+        
+        # Ensure reasonable bounds (minimum 5 minutes, maximum 180 minutes for long-running tools)
+        max_timeout = 10800 if progressive_extension else 7200  # 180 mins vs 120 mins
+        final_timeout = max(300, min(calculated_timeout, max_timeout))
+        
+        # Update parameters with calculated timeout
+        parameters['timeout'] = final_timeout
+        
+        if multiplier > 1.0 or context_adjustment > 1.0:
+            print(f"[DEBUG] Dynamic timeout for {tool_name} ({tool_category}): {final_timeout}s (base: {base_timeout}s, mult: {multiplier}x, context: {context_adjustment}x, progressive: {progressive_extension})")
+        
+        # Use Knowledge Base for adaptive command generation
         try:
-            # Pass the extracted hostname for tools that need it, but keep full target for URL-based tools
             command_target = hostname if tool_name in ['nmap', 'nikto', 'fierce', 'enum4linux', 'sslscan'] else target
-            command = self.tool_kb.build_command(tool_name, command_target, context)
-            logger.info(f"[ToolManager] Dynamic command: {command[:150]}")
+            
+            # NEW: Use adaptive command building
+            findings = parameters.get('findings', [])
+            command = self.tool_kb.build_adaptive_command(
+                tool_name, 
+                command_target, 
+                context,
+                findings
+            )
+            
+            logger.info(f"[ToolManager] Adaptive command: {command[:150]}")
         except Exception as e:
-            logger.error(f"[ToolManager] KB command generation failed: {e}, using fallback")
-            # Fallback to simple command
+            logger.error(f"[ToolManager] Command generation failed: {e}, using fallback")
             command = self._fallback_command(tool_name, target)
         
         # TEMPORARILY DISABLE timeout wrapper for debugging
@@ -455,6 +620,12 @@ class ToolManager:
             'sslscan': f"sslscan {target}",
             'cewl': f"cewl {target}",
         }
+        
+        # Special handling for linpeas - it's a local tool, not a remote scanner
+        if actual_tool in ['linpeas', 'linpeas.sh']:
+            logger.warning(f"[ToolManager] linpeas is a LOCAL privilege escalation tool and should only be run on COMPROMISED targets, not {target}")
+            logger.warning("[ToolManager] linpeas should be executed AFTER gaining access to a target system")
+            
         return fallback_commands.get(actual_tool, f"{actual_tool} {target}")
 
     def _build_sqlmap_for_juiceshop(self, target: str, parameters: Dict[str, Any]) -> str:
@@ -510,6 +681,16 @@ class ToolManager:
             base += f" -p {params['port_range']}"
         else:
             base += " -p-"  # All ports
+        
+        # Add timeout parameters to prevent hanging and handle retransmissions
+        base += " --host-timeout 45m"     # Increased host timeout
+        base += " --max-retries 5"        # Increased retries to handle retransmissions
+        base += " --min-rate 150"         # Reduced minimum packet rate for stability
+        base += " --max-rate 3000"        # Reduced maximum packet rate to avoid overwhelming
+        base += " --scan-delay 100ms"     # Increased scan delay to avoid network congestion
+        base += " --max-scan-delay 1s"    # Maximum scan delay
+        base += " --defeat-rst-ratelimit" # Defeat reset rate limiting
+        base += " --disable-arp-ping"     # Disable ARP ping for remote targets
         
         base += " -oX /tmp/nmap_output.xml"
         return base

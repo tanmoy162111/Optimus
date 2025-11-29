@@ -24,27 +24,32 @@ class ToolKnowledgeBase:
                         'scan_type': ['-sn', '-sV'],  # Ping scan or version detection
                         'timing': ['-T2', '-T3'],  # Slower for stealth
                         'ports': ['-p 80,443', '-p 1-1000'],
+                        'options': ['--max-retries 3', '--host-timeout 10m'],
                     },
                     'scanning': {
                         'scan_type': ['-sV', '-sS -sV'],  # Version + service detection
                         'timing': ['-T4'],
                         'ports': ['-p 1-65535', '-p-'],  # All ports
                         'scripts': ['--script=vuln', '--script=default,vuln'],
+                        'options': ['--max-retries 5', '--host-timeout 30m', '--defeat-rst-ratelimit'],
                     },
                     'exploitation': {
                         'scan_type': ['-sV -sC'],
                         'timing': ['-T4'],
                         'ports': ['-p {specific_port}'],  # Target specific port
+                        'options': ['--max-retries 4', '--host-timeout 20m'],
                     }
                 },
                 'conditions': {
                     'waf_detected': {
                         'timing': '-T2',  # Slower
                         'scan_type': '-sS',  # Stealth SYN scan
+                        'options': '--defeat-rst-ratelimit',
                     },
                     'time_critical': {
                         'timing': '-T5',
                         'ports': '--top-ports 100',
+                        'options': '--max-retries 2',
                     }
                 }
             },
@@ -300,7 +305,8 @@ class ToolKnowledgeBase:
                     'time_critical': {
                         'options': '-s',  # Skip some time-consuming checks
                     }
-                }
+                },
+                'notes': 'linpeas is a LOCAL privilege escalation checker that should only be run on compromised targets, not as a remote scanner'
             },
 
             'winpeas': {
@@ -314,7 +320,8 @@ class ToolKnowledgeBase:
                     'time_critical': {
                         'options': 'basic',  # Basic checks only
                     }
-                }
+                },
+                'notes': 'winpeas is a LOCAL privilege escalation checker for Windows that should only be run on compromised targets, not as a remote scanner'
             },
 
             'metasploit': {
@@ -736,6 +743,139 @@ class ToolKnowledgeBase:
         if best_params and best_params not in command:
             command += f" {best_params}"
             logger.info(f"[ToolKB] Applied learned parameter for {tool}: {best_params}")
+
+        return command
+
+    def build_adaptive_command(self, tool: str, target: str, context: Dict[str, Any],
+                           findings: List[Dict] = None) -> str:
+        """
+        Build command that adapts based on findings
+
+        Args:
+            tool: Tool name
+            target: Target URL/IP
+            context: Scan context
+            findings: Current findings (vulnerabilities discovered)
+
+        Returns:
+            Optimized command string
+        """
+        findings = findings or []
+
+        # Get base command
+        command = self.build_command(tool, target, context)
+
+        # Enhance based on findings
+        if findings:
+            command = self._enhance_with_findings(command, tool, findings)
+
+        # Enhance based on failed attempts
+        tools_executed = context.get('tools_executed', [])
+        if tools_executed:
+            command = self._enhance_with_history(command, tool, tools_executed)
+
+        return command
+
+    def _enhance_with_findings(self, command: str, tool: str, findings: List[Dict]) -> str:
+        """Enhance command based on discovered findings"""
+
+        # Get vulnerability types
+        vuln_types = [f.get('type') for f in findings]
+        locations = [f.get('location') for f in findings if f.get('location')]
+
+        # Tool-specific enhancements
+        if tool == 'sqlmap' and 'sql_injection' in vuln_types:
+            # Target specific vulnerable parameter if known
+            for finding in findings:
+                if finding.get('type') == 'sql_injection':
+                    param = finding.get('parameter')
+                    if param:
+                        # Update sqlmap to target specific parameter
+                        if '-p' not in command:
+                            command += f' -p {param}'
+
+                        # Increase aggression since we know there's SQL injection
+                        if '--level' not in command:
+                            command += ' --level=5'
+                        if '--risk' not in command:
+                            command += ' --risk=3'
+                    break
+
+        elif tool == 'nikto' and locations:
+            # Target specific paths where vulnerabilities found
+            first_location = locations[0]
+            if first_location and '/' in first_location:
+                path = first_location.split('?')[0]  # Remove query string
+                if ' -h ' in command:
+                    # Add path targeting
+                    pass  # Nikto doesn't need path targeting in the same way
+
+        elif tool == 'nuclei':
+            # Use templates matching found vulnerability types
+            templates = []
+            if 'sql_injection' in vuln_types:
+                templates.append('sqli')
+            if 'xss' in vuln_types:
+                templates.append('xss')
+            if 'command_injection' in vuln_types:
+                templates.append('rce')
+
+            if templates:
+                template_str = ','.join(templates)
+                if '-tags' in command:
+                    command = re.sub(r'-tags \S+', f'-tags {template_str}', command)
+                else:
+                    command += f' -tags {template_str}'
+
+        return command
+
+    def _enhance_with_history(self, command: str, tool: str, history: List) -> str:
+        """Enhance command based on execution history"""
+
+        # Count how many times this tool has been used
+        tool_uses = sum(1 for t in history if
+                       (isinstance(t, dict) and t.get('tool') == tool) or t == tool)
+
+        # Increase aggression on repeated use
+        if tool_uses > 1:
+            if tool == 'nmap':
+                # More aggressive port scanning
+                if '-T' in command:
+                    command = re.sub(r'-T\d', '-T5', command)
+                else:
+                    command += ' -T5'
+
+                # Expand port range
+                if '-p' in command and not '-p-' in command:
+                    command = re.sub(r'-p \S+', '-p-', command)
+                
+                # Add host timeout to prevent hanging
+                if '--host-timeout' not in command:
+                    command += ' --host-timeout 30m'
+                
+                # Add additional timeout parameters to handle retransmissions
+                if '--max-retries' not in command:
+                    command += ' --max-retries 5'  # Increased retries to handle retransmissions
+                if '--min-rate' not in command:
+                    command += ' --min-rate 100'   # Lower minimum rate for stability
+                if '--max-rate' not in command:
+                    command += ' --max-rate 2000'  # Maximum packet rate
+                if '--scan-delay' not in command:
+                    command += ' --scan-delay 50ms'  # Scan delay
+                if '--defeat-rst-ratelimit' not in command:
+                    command += ' --defeat-rst-ratelimit'  # Defeat reset rate limiting
+
+            elif tool == 'nikto':
+                # Enable all tests
+                if '-Tuning' not in command:
+                    command += ' -Tuning 123456789'
+
+            elif tool in ['gobuster', 'ffuf']:
+                # Use larger wordlist
+                if tool_uses == 2:
+                    command = command.replace('common.txt', 'big.txt')
+                elif tool_uses >= 3:
+                    command = command.replace('big.txt', 'directory-list-2.3-medium.txt')
 
         return command
 

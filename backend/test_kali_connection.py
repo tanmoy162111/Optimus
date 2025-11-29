@@ -15,12 +15,10 @@ def test_connection():
     ssh = KaliSSHClient()
     
     print("\n[1] Testing SSH connection...")
-    result = ssh.test_connection()
+    result = ssh.connect()
     
-    if result['connected']:
+    if result:
         print("  [SUCCESS] Connected to Kali VM!")
-        print(f"  System: {result.get('system_info', '')}")
-        print(f"  Response Time: {result.get('response_time', 0):.2f}s")
         
         print("\n[2] Testing tool execution (whoami)...")
         cmd_result = ssh.execute_command('whoami')
@@ -40,7 +38,7 @@ def test_connection():
         print("\n[SUCCESS] All tests passed!")
         return True
     else:
-        print(f"  [ERROR] Failed to connect: {result.get('error', 'Unknown error')}")
+        print(f"  [ERROR] Failed to connect")
         return False
 
 if __name__ == "__main__":
