@@ -772,7 +772,11 @@ class AutonomousPentestAgent:
         parsed_results = result.get('parsed_results', {})
         new_vulns = parsed_results.get('vulnerabilities', [])
         
+        print(f"[DEBUG] Tool {tool_name} found {len(new_vulns)} vulnerabilities")
         if new_vulns:
+            for i, vuln in enumerate(new_vulns):
+                print(f"[DEBUG] Vulnerability {i+1}: {vuln}")
+            
             logger.info(f"✓ Found {len(new_vulns)} new vulnerabilities")
             
             # Add to scan findings
