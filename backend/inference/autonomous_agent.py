@@ -440,7 +440,7 @@ class AutonomousPentestAgent:
         # Base parameters
         parameters = {
             'aggressive': len(findings) < 3,  # Be more aggressive if few findings
-            'timeout': 300,
+            'timeout': 120,  # Reduced timeout to prevent long waits
             'target_type': scan_state.get('target_profile', {}).get('type', 'web')
         }
         
