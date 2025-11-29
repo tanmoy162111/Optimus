@@ -349,8 +349,9 @@ class AutonomousPentestAgent:
                 }
         
         # If we haven't executed many tools, try exploration
-        if unique_tools < 10 and available_tools:
+        if unique_tools < 15 and available_tools:  # Increased from 10 to 15
             exploration_tool = available_tools[0] if available_tools else 'nmap'
+            print(f"[DEBUG] Exploring new tool: {exploration_tool}")
             return {
                 'action': 'execute_tool',
                 'tool': exploration_tool,
@@ -359,16 +360,18 @@ class AutonomousPentestAgent:
             }
         
         # If we've executed many tools but have few findings, change approach
-        if unique_tools >= 10 and findings < 3:
+        if unique_tools >= 15 and findings < 5:  # Increased thresholds
+            print(f"[DEBUG] Many tools executed ({unique_tools}) but few findings ({findings}), changing approach")
             return {
                 'action': 'change_approach',
                 'new_approach': 'intensive_exploitation',
-                'reason': 'Many tools executed but few findings, switching to intensive exploitation'
+                'reason': f'Many tools executed ({unique_tools}) but few findings ({findings}), switching to intensive exploitation'
             }
         
         # Default: execute a random available tool
         if available_tools:
             tool = available_tools[0]
+            print(f"[DEBUG] Default execution of tool: {tool}")
             return {
                 'action': 'execute_tool',
                 'tool': tool,
@@ -377,6 +380,7 @@ class AutonomousPentestAgent:
             }
         
         # If no tools available, terminate
+        print(f"[DEBUG] No more tools available to execute")
         return {
             'action': 'terminate',
             'reason': 'No more tools available to execute'
