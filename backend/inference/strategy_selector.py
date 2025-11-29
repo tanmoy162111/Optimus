@@ -3,6 +3,8 @@ Strategy Selector - Selects optimal scanning strategies based on target profile 
 """
 import logging
 from typing import Dict, Any
+from collections import defaultdict
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -13,21 +15,35 @@ class StrategySelector:
         self.strategies = {
             'adaptive': {
                 'description': 'Adaptive strategy that changes based on findings',
-                'tools': ['nmap', 'nikto', 'whatweb']
+                'tools': ['nmap', 'nikto', 'whatweb'],
+                'success_rate': 0.5,  # Track success
+                'avg_findings': 0.0,
+                'executions': 0
             },
             'aggressive': {
                 'description': 'Aggressive scanning with all available tools',
-                'tools': ['nmap', 'nikto', 'sqlmap', 'gobuster', 'ffuf', 'nuclei']
+                'tools': ['nmap', 'nikto', 'sqlmap', 'gobuster', 'ffuf', 'nuclei'],
+                'success_rate': 0.5,
+                'avg_findings': 0.0,
+                'executions': 0
             },
             'stealth': {
                 'description': 'Stealth scanning with slower, less detectable tools',
-                'tools': ['nmap', 'whatweb']
+                'tools': ['nmap', 'whatweb'],
+                'success_rate': 0.5,
+                'avg_findings': 0.0,
+                'executions': 0
             },
-            'comprehensive': {
-                'description': 'Comprehensive scanning with maximum coverage',
-                'tools': ['nmap', 'nikto', 'sqlmap', 'gobuster', 'ffuf', 'nuclei', 'wpscan', 'sslscan']
+            'targeted': {
+                'description': 'Targeted exploitation based on discovered vulnerabilities',
+                'tools': ['sqlmap', 'dalfox', 'commix'],
+                'success_rate': 0.5,
+                'avg_findings': 0.0,
+                'executions': 0
             }
         }
+        
+        self.strategy_performance_history = defaultdict(list)
     
     def select_strategy(self, scan_state: Dict[str, Any]) -> str:
         """
@@ -50,17 +66,46 @@ class StrategySelector:
         # Change strategy based on findings and progress
         findings = scan_state.get('findings', [])
         phase = scan_state.get('phase', 'reconnaissance')
+        time_remaining = scan_state.get('time_remaining', 1.0)
         
-        # If we have many findings, be more aggressive
-        if len(findings) > 10:
-            return 'aggressive'
+        # Score each strategy
+        strategy_scores = {}
         
-        # If we're in exploitation phase, be aggressive
-        if phase in ['exploitation', 'post_exploitation']:
-            return 'aggressive'
+        for strategy_name, strategy_data in self.strategies.items():
+            score = 0.0
+            
+            # Base score from learned performance
+            if strategy_data['executions'] > 0:
+                score += strategy_data['avg_findings'] * 10  # Weight findings heavily
+                score += strategy_data['success_rate'] * 5
+            else:
+                score += 5.0  # Neutral score for untried strategies
+            
+            # Adjust for phase
+            if phase == 'reconnaissance':
+                if strategy_name in ['adaptive', 'stealth']:
+                    score += 3.0
+            elif phase == 'exploitation':
+                if strategy_name in ['aggressive', 'targeted']:
+                    score += 3.0
+                if len(findings) > 0:
+                    if strategy_name == 'targeted':
+                        score += 5.0  # Highly favor targeted when vulns known
+            
+            # Adjust for time constraints
+            if time_remaining < 0.3:
+                if strategy_name == 'aggressive':
+                    score += 2.0  # Need results fast
+            
+            strategy_scores[strategy_name] = score
         
-        # Default to current strategy
-        return scan_state.get('strategy', 'adaptive')
+        # Select best strategy
+        best_strategy = max(strategy_scores, key=strategy_scores.get)
+        
+        logger.info(f"Strategy selection: {best_strategy} "
+                   f"(scores: {strategy_scores})")
+        
+        return best_strategy
     
     def should_change_strategy(self, scan_state: Dict[str, Any]) -> bool:
         """
@@ -102,6 +147,97 @@ class StrategySelector:
             List of recommended tools
         """
         return self.strategies.get(strategy, {}).get('tools', ['nmap'])
+    
+    def update_strategy_performance(self, strategy: str, scan_results: Dict):
+        """
+        Update strategy performance based on actual scan results
+        
+        Args:
+            strategy: Strategy used
+            scan_results: Results from scan execution including:
+                - findings_count: Number of vulnerabilities found
+                - execution_time: Time taken
+                - coverage: Scan coverage achieved
+                - tools_used: Tools executed
+                - success_rate: Tool success rate
+        """
+        if strategy not in self.strategies:
+            return
+            
+        # Extract metrics
+        findings = scan_results.get('findings_count', 0)
+        tools_used = len(scan_results.get('tools_used', []))
+        success_rate = scan_results.get('success_rate', 0.0)
+        
+        # Update strategy stats
+        strat = self.strategies[strategy]
+        strat['executions'] += 1
+        
+        # Update average findings
+        strat['avg_findings'] = (
+            (strat['avg_findings'] * (strat['executions'] - 1) + findings) 
+            / strat['executions']
+        )
+        
+        # Update success rate
+        strat['success_rate'] = (
+            (strat['success_rate'] * (strat['executions'] - 1) + success_rate)
+            / strat['executions']
+        )
+        
+        # Record in history
+        self.strategy_performance_history[strategy].append({
+            'timestamp': datetime.now().isoformat(),
+            'findings': findings,
+            'tools_used': tools_used,
+            'success_rate': success_rate
+        })
+        
+        logger.info(f"Updated {strategy} strategy: "
+                   f"avg_findings={strat['avg_findings']:.2f}, "
+                   f"success_rate={strat['success_rate']:.2f}")
+    
+    def get_strategy_report(self) -> Dict[str, Any]:
+        """Generate performance report for all strategies"""
+        report = {
+            'strategies': {},
+            'best_overall': None,
+            'recommendations': []
+        }
+        
+        best_score = -1
+        best_strategy = None
+        
+        for name, data in self.strategies.items():
+            if data['executions'] > 0:
+                effectiveness = (data['avg_findings'] * 0.6) + (data['success_rate'] * 0.4)
+                report['strategies'][name] = {
+                    'executions': data['executions'],
+                    'avg_findings': data['avg_findings'],
+                    'success_rate': data['success_rate'],
+                    'effectiveness_score': effectiveness
+                }
+                
+                if effectiveness > best_score:
+                    best_score = effectiveness
+                    best_strategy = name
+        
+        report['best_overall'] = best_strategy
+        
+        # Generate recommendations
+        for name, data in self.strategies.items():
+            if data['executions'] > 3:  # Enough data
+                if data['success_rate'] < 0.3:
+                    report['recommendations'].append(
+                        f"Consider tuning {name} strategy - low success rate"
+                    )
+                
+                if data['avg_findings'] < 1.0 and name != 'stealth':
+                    report['recommendations'].append(
+                        f"{name} strategy finding few vulnerabilities - review tool selection"
+                    )
+        
+        return report
 
 # For backwards compatibility
 AdaptiveStrategySelector = StrategySelector

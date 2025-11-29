@@ -14,6 +14,8 @@ class RealTimeLearningModule:
         self.execution_history = defaultdict(list)
         self.tool_effectiveness = defaultdict(lambda: {'success_count': 0, 'total_count': 0, 'findings': 0})
         self.patterns = {}
+        # Add context-aware effectiveness tracking
+        self.context_effectiveness = defaultdict(dict)
     
     def learn_from_execution(self, tool_name: str, result: Dict[str, Any], scan_state: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -74,6 +76,126 @@ class RealTimeLearningModule:
                 'findings_count': 0,
                 'recommendations': []
             }
+    
+    def learn_from_live_execution(self, tool_name: str, context: Dict, execution_result: Dict, ground_truth: Dict = None) -> Dict:
+        """
+        Learn from actual tool execution against live target
+        
+        Args:
+            tool_name: Tool executed
+            context: Scan context (phase, target_type, etc.)
+            execution_result: Actual execution results from ToolManager
+            ground_truth: Known vulnerabilities for validation (optional)
+            
+        Learning updates:
+        1. Tool effectiveness in this context
+        2. Time patterns (when tool is fast/slow)
+        3. Finding patterns (what types of vulns found)
+        4. Parameter effectiveness (which options worked)
+        
+        Returns:
+            Learning insights and recommendations
+        """
+        # Extract metrics from execution
+        execution_time = execution_result.get('execution_time', 0)
+        success = execution_result.get('success', False)
+        findings = execution_result.get('parsed_results', {}).get('vulnerabilities', [])
+        
+        # Update tool effectiveness tracking
+        context_key = self._create_context_key(context)
+        
+        if context_key not in self.context_effectiveness:
+            self.context_effectiveness[context_key] = defaultdict(lambda: {
+                'executions': 0,
+                'successes': 0,
+                'total_findings': 0,
+                'avg_time': 0.0
+            })
+        
+        stats = self.context_effectiveness[context_key][tool_name]
+        stats['executions'] += 1
+        if success:
+            stats['successes'] += 1
+        stats['total_findings'] += len(findings)
+        stats['avg_time'] = (stats['avg_time'] * (stats['executions'] - 1) + execution_time) / stats['executions']
+        
+        # Calculate effectiveness score
+        effectiveness = self._calculate_contextual_effectiveness(stats)
+        
+        # Generate recommendations
+        recommendations = self._generate_recommendations(
+            tool_name, context, effectiveness, findings
+        )
+        
+        return {
+            'effectiveness_score': effectiveness,
+            'recommendations': recommendations,
+            'should_continue': effectiveness > 0.3,
+            'alternative_tools': self._suggest_alternatives(context, effectiveness)
+        }
+    
+    def _create_context_key(self, context: Dict) -> str:
+        """Create hashable context key for tracking"""
+        return f"{context.get('phase', 'unknown')}_{context.get('target_type', 'unknown')}"
+    
+    def _calculate_contextual_effectiveness(self, stats: Dict) -> float:
+        """Calculate tool effectiveness in specific context"""
+        if stats['executions'] == 0:
+            return 0.5  # Neutral for untried tools
+            
+        success_rate = stats['successes'] / stats['executions']
+        findings_rate = stats['total_findings'] / stats['executions']
+        
+        # Combine metrics
+        effectiveness = (success_rate * 0.4) + (min(findings_rate / 5.0, 1.0) * 0.6)
+        return effectiveness
+    
+    def _generate_recommendations(self, tool_name: str, context: Dict, effectiveness: float, findings: List) -> List[str]:
+        """Generate actionable recommendations based on execution"""
+        recommendations = []
+        
+        if effectiveness < 0.3:
+            recommendations.append(f"Consider replacing {tool_name} - low effectiveness in {context['phase']}")
+        
+        if len(findings) == 0 and context.get('expected_findings', 0) > 0:
+            recommendations.append(f"{tool_name} missed expected findings - check parameters")
+        
+        if effectiveness > 0.7:
+            recommendations.append(f"{tool_name} highly effective in {context['phase']} - prioritize")
+        
+        return recommendations
+    
+    def _suggest_alternatives(self, context: Dict, effectiveness: float) -> List[str]:
+        """Suggest alternative tools based on context and effectiveness"""
+        # This would be enhanced with actual tool database
+        alternatives = []
+        
+        phase = context.get('phase', 'reconnaissance')
+        if phase == 'reconnaissance':
+            alternatives = ['amass', 'sublist3r', 'theHarvester']
+        elif phase == 'scanning':
+            alternatives = ['nmap', 'nikto', 'nuclei']
+        elif phase == 'exploitation':
+            alternatives = ['sqlmap', 'dalfox', 'commix']
+        
+        return alternatives[:3]  # Return top 3 alternatives
+    
+    def get_best_tools_for_context(self, context: Dict, top_n: int = 3) -> List[str]:
+        """Get best performing tools for given context"""
+        context_key = self._create_context_key(context)
+        
+        if context_key not in self.context_effectiveness:
+            return []  # No data yet
+            
+        # Sort tools by effectiveness
+        tools_effectiveness = []
+        for tool, stats in self.context_effectiveness[context_key].items():
+            effectiveness = self._calculate_contextual_effectiveness(stats)
+            tools_effectiveness.append((tool, effectiveness))
+            
+        tools_effectiveness.sort(key=lambda x: x[1], reverse=True)
+        
+        return [tool for tool, _ in tools_effectiveness[:top_n]]
     
     def get_tool_effectiveness(self, tool_name: str) -> float:
         """

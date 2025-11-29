@@ -51,6 +51,15 @@ Records and analyzes execution results:
 - **Pattern Recognition**: Identifies trends in successful approaches
 - **Knowledge Updates**: Refines tool selection algorithms
 
+### 6. Training System
+
+Comprehensive training framework that enables the agent to learn from live execution results:
+
+- **Training Session Manager**: Orchestrates complete training sessions with practice VMs
+- **Real-time Learning Module**: Enhanced with live execution feedback and context-aware tracking
+- **Strategy Selector**: Adapts scanning strategies based on performance metrics
+- **Data Collection**: Gathers comprehensive execution metrics for analysis
+
 ## Data Flow
 
 ```mermaid
@@ -68,6 +77,10 @@ graph TD
     B --> L[Continuous Learning]
     L --> M[Performance Data]
     M --> N[Improved Decision Making]
+    B --> O[Training System]
+    O --> P[Live VM Execution]
+    P --> Q[Feedback Loop]
+    Q --> L
 ```
 
 ## Tool Database Structure
@@ -141,6 +154,38 @@ The knowledge base enhances report quality and accuracy:
 - **Language Variants**: Approach differences for various technologies
 - **Framework Awareness**: Context-specific exploitation methods
 
+## Training System Architecture
+
+The training system enables the agent to learn from live execution results on practice VMs:
+
+### Training Session Manager
+
+Manages end-to-end training sessions for the autonomous agent:
+
+- Executes scans against practice VMs
+- Collects execution data (tool outputs, timings, findings)
+- Feeds results back to learning modules
+- Updates models based on performance
+- Generates training reports
+
+### Real-time Learning Module Enhancements
+
+Extended with live execution feedback:
+
+- Context-aware effectiveness tracking
+- Performance-based recommendations
+- Alternative tool suggestions
+- Best tool selection for specific contexts
+
+### Strategy Selector Enhancements
+
+Adaptive strategy selection based on learned performance:
+
+- Performance tracking for all strategies
+- Context-aware strategy selection
+- Performance-based recommendations
+- Strategy effectiveness reporting
+
 ## Adding New Tools
 
 To extend the agent's capabilities with new tools:
@@ -166,6 +211,13 @@ To extend the agent's capabilities with new tools:
 - **Reinforcement Learning**: Adaptive approach refinement
 - **Game Theory**: Strategic interaction with defensive systems
 - **Risk Modeling**: Quantitative assessment of attack paths
+
+### Enhanced Training System
+
+- **Multi-Target Training**: Simultaneous training on multiple VM types
+- **Transfer Learning**: Applying knowledge across different target environments
+- **Adversarial Training**: Learning from defensive countermeasures
+- **Performance Benchmarking**: Comparing agent performance against human experts
 
 ## Conclusion
 
