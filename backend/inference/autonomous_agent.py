@@ -1,6 +1,7 @@
 """Fully Autonomous Pentest Agent - INTELLIGENT, Adaptive, Self-Learning"""
 import uuid
 import logging
+import time
 from datetime import datetime
 from typing import Dict, List, Any
 
@@ -15,12 +16,13 @@ logger = logging.getLogger(__name__)
 class AutonomousPentestAgent:
     """Main autonomous pentesting orchestration engine"""
     
-    def __init__(self):
+    def __init__(self, socketio=None):
         self.tool_selector = PhaseAwareToolSelector()
         self.phase_controller = PhaseController()
-        self.tool_manager = ToolManager(None)  # Will be set during execution
+        self.tool_manager = ToolManager(socketio)  # Pass socketio to ToolManager
         self.knowledge_base = VulnerabilityKnowledgeBase()
         self.tool_db = DynamicToolDatabase()
+        self.socketio = socketio  # Store socketio reference
         logger.info("🤖 Autonomous Pentest Agent initialized")
     
     def run_autonomous_scan(self, target: str, scan_config: Dict = None) -> Dict[str, Any]:
@@ -109,6 +111,12 @@ class AutonomousPentestAgent:
             
         scan_state['status'] = 'completed'
         return self._generate_final_report(scan_state)
+
+    def conduct_scan(self, target: str, scan_config: Dict = None) -> Dict[str, Any]:
+        """
+        Alias for run_autonomous_scan to maintain compatibility with workflow engine
+        """
+        return self.run_autonomous_scan(target, scan_config)
 
     def _initialize_scan_state(self, target: str, scan_config: Dict) -> Dict[str, Any]:
         """
@@ -310,11 +318,8 @@ class AutonomousPentestAgent:
                           scan_state: Dict) -> Dict[str, Any]:
         """Execute tool with real Kali VM connection"""
         try:
-            # Initialize tool manager with proper socketio
-            from flask_socketio import SocketIO
-            tool_manager = ToolManager(SocketIO())
-            
-            result = tool_manager.execute_tool(
+            # Use the existing tool manager with proper socketio
+            result = self.tool_manager.execute_tool(
                 tool_name=tool_name,
                 target=target,
                 parameters={

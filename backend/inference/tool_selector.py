@@ -123,7 +123,9 @@ class PhaseAwareToolSelector:
         # Use phase-specific models first (Tier 1)
         if self.use_phase_specific and self.phase_specific_selector:
             try:
-                ps_result = self.phase_specific_selector.recommend_tools(scan_state)
+                # Prepare context for phase-specific models (convert unhashable types)
+                context = self._prepare_context_for_model(scan_state)
+                ps_result = self.phase_specific_selector.recommend_tools(context)
                 
                 if not ps_result.get('error') and ps_result.get('confidence', 0) >= 0.7:
                     logger.info(f"Using phase-specific model: {ps_result['tools'][:3]}")
@@ -189,26 +191,152 @@ class PhaseAwareToolSelector:
                 'reasoning': f'Recommended tools excluding {len(blacklisted)} blacklisted and {len(tools_executed)} already executed tools'
             }
 
+    def _prepare_context_for_model(self, scan_state: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Prepare context for phase-specific models by converting unhashable types
+        to hashable equivalents that can be processed by the feature extraction
+        """
+        # Create a clean copy of the scan state
+        context = {}
+        
+        # Copy simple types directly
+        for key, value in scan_state.items():
+            if isinstance(value, (str, int, float, bool)):
+                context[key] = value
+            elif isinstance(value, (list, tuple)):
+                # Convert lists/tuples to counts or simple representations
+                if key == 'findings':
+                    # Extract key information from findings
+                    context['vulnerabilities_found'] = len(value)
+                    if value:
+                        # Get highest severity
+                        severities = [f.get('severity', 0) for f in value if isinstance(f, dict)]
+                        context['highest_severity'] = max(severities) if severities else 0
+                        
+                        # Get vulnerability types
+                        vuln_types = [f.get('type', 'unknown') for f in value if isinstance(f, dict)]
+                        # Convert to boolean flags for common vuln types
+                        context['sql_injection_found'] = 'sql_injection' in vuln_types
+                        context['xss_found'] = 'xss' in vuln_types
+                        context['command_injection_found'] = 'command_injection' in vuln_types
+                elif key == 'tools_executed':
+                    # Convert to count and tool types
+                    context['num_tools_executed'] = len(value)
+                    # Get unique tools executed
+                    unique_tools = list(set([t['tool'] if isinstance(t, dict) else t for t in value]))
+                    context['tools_executed'] = unique_tools
+                else:
+                    # For other lists, just store the count
+                    context[key] = len(value)
+            elif isinstance(value, dict):
+                # For dictionaries, extract key information
+                if key == 'phase_data':
+                    # Extract phase-specific data
+                    for subkey, subvalue in value.items():
+                        context[subkey] = subvalue
+                else:
+                    # For other dictionaries, convert to string representation or extract key info
+                    context[key] = str(value)  # Simple conversion to avoid unhashable issues
+            else:
+                # For other types, convert to string
+                context[key] = str(value)
+        
+        # Add missing default values that models expect
+        expected_features = {
+            'target_type': 'web',
+            'time_in_phase': 0,
+            'subdomains_discovered': 0,
+            'emails_discovered': 0,
+            'technologies_discovered': 0,
+            'employees_discovered': 0,
+            'passive_recon_complete': False,
+            'active_recon_started': False,
+            'stealth_required': False,
+            'detection_risk': 0.0,
+            'domain_complexity': 0.0,
+            'open_ports_found': 0,
+            'scan_coverage': 0.0,
+            'services_enumerated': 0,
+            'wordpress_detected': False,
+            'joomla_detected': False,
+            'has_ssl_tls': False,
+            'has_database': False,
+            'has_smb': False,
+            'aggressive_mode': False,
+            'access_gained': False,
+            'exploit_attempts': 0,
+            'num_critical_vulns': 0,
+            'num_exploitable_vulns': 0,
+            'waf_detected': False,
+            'authentication_required': False,
+            'target_hardening_level': 0.0,
+            'current_user_privilege': 'user',
+            'os_type': 'linux',
+            'privilege_escalated': False,
+            'persistence_established': False,
+            'credentials_dumped': False,
+            'lateral_movement_success': False,
+            'domain_joined': False,
+            'antivirus_detected': False,
+            'edr_detected': False,
+            'other_hosts_visible': 0,
+            'detection_probability': 0.0,
+            'log_entries_present': 0,
+            'artifacts_present': 0,
+            'backdoors_installed': 0,
+            'forensic_evidence_score': 0.0,
+            'logs_cleaned': False,
+            'timestamps_modified': False,
+            'artifacts_removed': False,
+            'time_remaining': 0,
+            'stealth_critical': False,
+            'detection_imminent': False,
+            'admin_access': False
+        }
+        
+        # Fill in missing values with defaults
+        for key, default_value in expected_features.items():
+            if key not in context:
+                context[key] = default_value
+        
+        return context
+
     def apply_phase_rules(self, state: Dict[str, Any], phase: str) -> List[str]:
         """Apply rule-based tool selection for phase - ENHANCED"""
         rule_tools = []
         tools_executed = [t['tool'] if isinstance(t, dict) else t 
                           for t in state.get('tools_executed', [])]
         
+        # Map tool names to available tools on Kali VM
+        tool_mapping = {
+            'sublist3r': 'amass',  # Use amass instead of sublist3r
+            'theHarvester': 'dnsenum',  # Use dnsenum as alternative
+            'linpeas.sh': 'linpeas',  # Normalize name
+        }
+        
         if phase == 'reconnaissance':
             # Start with subdomain enumeration
-            if 'sublist3r' not in tools_executed:
-                rule_tools.append('sublist3r')
+            actual_tool = tool_mapping.get('sublist3r', 'sublist3r')
+            if actual_tool not in tools_executed:
+                rule_tools.append(actual_tool)
             
             # If sublist3r already ran, try other recon tools
-            if 'sublist3r' in tools_executed:
+            if actual_tool in tools_executed:
                 if 'whatweb' not in tools_executed:
                     rule_tools.append('whatweb')
-                if 'dnsenum' not in tools_executed:
-                    rule_tools.append('dnsenum')
+                actual_dns_tool = tool_mapping.get('theHarvester', 'theHarvester')
+                if actual_dns_tool not in tools_executed:
+                    rule_tools.append(actual_dns_tool)
+                # Add fierce for DNS enumeration
+                if 'fierce' not in tools_executed:
+                    rule_tools.append('fierce')
+                # Add enum4linux for SMB enumeration
+                if 'enum4linux' not in tools_executed:
+                    rule_tools.append('enum4linux')
             
             # If all recon tools tried, force nmap to start scanning
-            if all(t in tools_executed for t in ['sublist3r', 'whatweb', 'dnsenum']):
+            all_recon_tools = [tool_mapping.get('sublist3r', 'sublist3r'), 'whatweb', tool_mapping.get('theHarvester', 'theHarvester'), 'fierce', 'enum4linux']
+            if all(t in tools_executed for t in all_recon_tools):
                 rule_tools.append('nmap')  # This will trigger phase transition
                 
         elif phase == 'scanning':
@@ -221,6 +349,18 @@ class PhaseAwareToolSelector:
                     rule_tools.append('nikto')
                 if 'nuclei' not in tools_executed:
                     rule_tools.append('nuclei')
+                # Add directory brute forcing tools
+                if 'gobuster' not in tools_executed:
+                    rule_tools.append('gobuster')
+                if 'ffuf' not in tools_executed:
+                    rule_tools.append('ffuf')
+                # Add SSL/TLS scanning
+                if 'sslscan' not in tools_executed:
+                    rule_tools.append('sslscan')
+                # Add WordPress scanning if WordPress detected
+                technologies = state.get('technologies_detected', [])
+                if 'wordpress' in technologies and 'wpscan' not in tools_executed:
+                    rule_tools.append('wpscan')
                     
         elif phase == 'exploitation':
             # Check what vulnerabilities were found
@@ -231,11 +371,28 @@ class PhaseAwareToolSelector:
                 rule_tools.append('sqlmap')
             elif 'xss' in vuln_types and 'dalfox' not in tools_executed:
                 rule_tools.append('dalfox')
+            elif 'command_injection' in vuln_types and 'commix' not in tools_executed:
+                rule_tools.append('commix')
             else:
                 # No specific vulnerabilities, try generic exploitation
                 if 'sqlmap' not in tools_executed:
                     rule_tools.append('sqlmap')
+                # Add password brute forcing
+                if 'hydra' not in tools_executed:
+                    rule_tools.append('hydra')
+                # Add metasploit for advanced exploitation
+                if 'metasploit' not in tools_executed:
+                    rule_tools.append('metasploit')
                     
+        elif phase == 'post_exploitation':
+            # Check for privilege escalation tools
+            actual_linpeas = tool_mapping.get('linpeas.sh', 'linpeas.sh')
+            if actual_linpeas not in tools_executed:
+                rule_tools.append(actual_linpeas)
+            # Add winpeas for Windows systems
+            if 'winpeas' not in tools_executed:
+                rule_tools.append('winpeas')
+                
         return rule_tools
     
     def extract_phase_features(self, scan_state: Dict[str, Any]) -> List[float]:
@@ -299,29 +456,32 @@ class PhaseAwareToolSelector:
         return {
             'reconnaissance': {
                 'allowed_tools': ['sublist3r', 'theHarvester', 'shodan', 'dnsenum', 
-                                'fierce', 'whatweb', 'builtwith'],
-                'default_tools': ['sublist3r', 'whatweb'],
+                                'fierce', 'whatweb', 'builtwith', 'amass', 'enum4linux',
+                                'cewl', 'crunch', 'arjun', 'bloodhound-python'],
+                'default_tools': ['amass', 'whatweb', 'fierce'],
                 'ml_confidence_threshold': 0.6,
                 'max_tools_per_iteration': 3
             },
             'scanning': {
                 'allowed_tools': ['nmap', 'masscan', 'nuclei', 'nikto', 'nessus', 
-                                'unicornscan', 'enum4linux'],
-                'default_tools': ['nmap', 'nikto'],
+                                'unicornscan', 'enum4linux', 'metasploit', 'gobuster', 
+                                'ffuf', 'sslscan', 'wpscan', 'ike-scan', 'dirb'],
+                'default_tools': ['nmap', 'nikto', 'gobuster'],
                 'ml_confidence_threshold': 0.7,
                 'max_tools_per_iteration': 4
             },
             'exploitation': {
                 'allowed_tools': ['sqlmap', 'metasploit', 'dalfox', 'commix', 
-                                'xsser', 'hydra', 'medusa'],
-                'default_tools': ['sqlmap'],
+                                'xsser', 'hydra', 'medusa', 'hydra', 'john', 'hashcat',
+                                'nosqlmap', 'tplmap', 'jwt_tool', 'burpsuite', 'weevely'],
+                'default_tools': ['sqlmap', 'hydra', 'metasploit'],
                 'ml_confidence_threshold': 0.8,
                 'max_tools_per_iteration': 2
             },
             'post_exploitation': {
                 'allowed_tools': ['linpeas', 'winpeas', 'mimikatz', 'lazagne', 
-                                'crackmapexec', 'psexec'],
-                'default_tools': ['linpeas'],
+                                'crackmapexec', 'psexec', 'linpeas.sh', 'bloodhound-python'],
+                'default_tools': ['linpeas', 'winpeas'],
                 'ml_confidence_threshold': 0.7,
                 'max_tools_per_iteration': 3
             },

@@ -1,5 +1,5 @@
 """
-SSH Client for Remote Tool Execution on Kali VM
+Fixed SSH Client with proper timeout handling for long-running tools
 """
 import paramiko
 import time
@@ -13,34 +13,25 @@ class KaliSSHClient:
     """SSH client for executing pentesting tools on Kali VM"""
     
     def __init__(self, config: Dict[str, Any] = None):
-        """
-        Initialize SSH client with Kali VM config
-        Args:
-            config: Dict with host, port, username, password, key_path
-        """
         self.config = config or Config.KALI_VM
         self.client = None
         self.connected = False
         
     def connect(self) -> bool:
-        """
-        Establish SSH connection to Kali VM
-        Returns:
-            True if connected successfully
-        """
+        """Establish SSH connection to Kali VM"""
         try:
             self.client = paramiko.SSHClient()
             self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
             retries = int(self.config.get('connect_retries', 3))
-            timeout = int(self.config.get('connect_timeout', 30))
+            timeout = int(self.config.get('connect_timeout', 60))  # INCREASED
             last_err = None
 
             for attempt in range(1, retries + 1):
                 try:
-                    # Try key-based auth first, then password
+                    logger.info(f"Connecting to {self.config['host']} (attempt {attempt}/{retries})...")
+                    
                     if self.config.get('key_path'):
-                        logger.info(f"Connecting to {self.config['host']} (attempt {attempt}/{retries}) with SSH key...")
                         self.client.connect(
                             hostname=self.config['host'],
                             port=self.config['port'],
@@ -51,7 +42,6 @@ class KaliSSHClient:
                             look_for_keys=True
                         )
                     else:
-                        logger.info(f"Connecting to {self.config['host']} (attempt {attempt}/{retries}) with password...")
                         self.client.connect(
                             hostname=self.config['host'],
                             port=self.config['port'],
@@ -62,25 +52,28 @@ class KaliSSHClient:
                             look_for_keys=False
                         )
 
-                    # Enable server keepalive to maintain session
+                    # Enable keepalive
                     transport = self.client.get_transport()
                     if transport:
                         keepalive = int(self.config.get('keepalive_seconds', 30))
                         transport.set_keepalive(keepalive)
 
                     self.connected = True
-                    logger.info(f"Successfully connected to Kali VM at {self.config['host']} (timeout={timeout}s)")
+                    logger.info(f"✅ Successfully connected to Kali VM")
                     return True
+                    
                 except Exception as e:
                     last_err = e
                     logger.warning(f"SSH connect attempt {attempt}/{retries} failed: {e}")
-                    time.sleep(2 * attempt)
+                    if attempt < retries:
+                        time.sleep(2 * attempt)
 
-            logger.error(f"Failed to connect to Kali VM after {retries} attempts: {last_err}")
+            logger.error(f"❌ Failed to connect after {retries} attempts: {last_err}")
             self.connected = False
             return False
+            
         except Exception as e:
-            logger.error(f"Failed to initialize SSH client: {e}")
+            logger.error(f"❌ Failed to initialize SSH client: {e}")
             self.connected = False
             return False
     
@@ -94,17 +87,13 @@ class KaliSSHClient:
     def execute_command(
         self, 
         command: str, 
-        timeout: int = 300,
+        timeout: int = 600,  # INCREASED DEFAULT to 10 minutes
         output_callback: Optional[Callable[[str], None]] = None
     ) -> Dict[str, Any]:
         """
-        Execute command on Kali VM and stream output
-        Args:
-            command: Command to execute
-            timeout: Max execution time in seconds
-            output_callback: Function to call with each output line
-        Returns:
-            Dict with stdout, stderr, exit_code, execution_time
+        Execute command with PROPER timeout for long-running scans
+        
+        CRITICAL: Many pentesting tools take 5-15 minutes to complete
         """
         if not self.connected:
             if not self.connect():
@@ -117,59 +106,97 @@ class KaliSSHClient:
                 }
         
         try:
-            logger.info(f"Executing command: {command}")
+            logger.info(f"Executing: {command[:100]}...")
             start_time = time.time()
             
-            # Execute command
+            # Execute command with PTY
             stdin, stdout, stderr = self.client.exec_command(
                 command,
                 timeout=timeout,
-                get_pty=True  # Needed for interactive commands
+                get_pty=True
             )
             
             # Stream output
             stdout_lines = []
             stderr_lines = []
             
-            # Read stdout in real-time
-            while not stdout.channel.exit_status_ready():
+            # FIXED: Better non-blocking I/O with longer data timeout
+            stdout.channel.setblocking(0)
+            stderr.channel.setblocking(0)
+            
+            last_data_time = time.time()
+            data_timeout = 300  # 5 minutes without data = timeout
+            
+            while True:
+                # Check overall timeout
+                elapsed = time.time() - start_time
+                if elapsed > timeout:
+                    logger.warning(f"⏰ Command timeout after {timeout}s")
+                    break
+                
+                # Check if command finished
+                if stdout.channel.exit_status_ready():
+                    break
+                
+                # Check data timeout (no output for 5 minutes = stalled)
+                if time.time() - last_data_time > data_timeout:
+                    logger.warning(f"⏰ No data for {data_timeout}s, assuming stalled")
+                    break
+                
+                # Read stdout
                 if stdout.channel.recv_ready():
-                    line = stdout.channel.recv(1024).decode('utf-8', errors='ignore')
-                    if line:
-                        stdout_lines.append(line)
+                    chunk = stdout.channel.recv(4096).decode('utf-8', errors='ignore')
+                    if chunk:
+                        stdout_lines.append(chunk)
+                        last_data_time = time.time()
+                        
                         if output_callback:
-                            output_callback(line)
-                time.sleep(0.1)
+                            output_callback(chunk)
+                        
+                        # Print progress indicator
+                        if len(stdout_lines) % 10 == 0:
+                            logger.info(f"📊 Received {len(stdout_lines)} output chunks...")
+                
+                # Read stderr
+                if stderr.channel.recv_ready():
+                    chunk = stderr.channel.recv(4096).decode('utf-8', errors='ignore')
+                    if chunk:
+                        stderr_lines.append(chunk)
+                        last_data_time = time.time()
+                
+                time.sleep(0.5)  # Increased from 0.1 to reduce CPU usage
             
             # Get remaining output
-            remaining_stdout = stdout.read().decode('utf-8', errors='ignore')
-            if remaining_stdout:
-                stdout_lines.append(remaining_stdout)
-                if output_callback:
-                    output_callback(remaining_stdout)
+            while stdout.channel.recv_ready():
+                chunk = stdout.channel.recv(4096).decode('utf-8', errors='ignore')
+                if chunk:
+                    stdout_lines.append(chunk)
             
-            # Get stderr
-            stderr_output = stderr.read().decode('utf-8', errors='ignore')
-            if stderr_output:
-                stderr_lines.append(stderr_output)
+            while stderr.channel.recv_ready():
+                chunk = stderr.channel.recv(4096).decode('utf-8', errors='ignore')
+                if chunk:
+                    stderr_lines.append(chunk)
             
             exit_code = stdout.channel.recv_exit_status()
             execution_time = time.time() - start_time
             
-            result = {
+            stdout_str = ''.join(stdout_lines)
+            stderr_str = ''.join(stderr_lines)
+            
+            logger.info(f"✅ Command completed: exit={exit_code}, time={execution_time:.1f}s, "
+                       f"stdout={len(stdout_str)} chars")
+            
+            return {
                 'success': exit_code == 0,
-                'stdout': ''.join(stdout_lines),
-                'stderr': ''.join(stderr_lines),
+                'stdout': stdout_str,
+                'stderr': stderr_str,
                 'exit_code': exit_code,
                 'execution_time': execution_time,
                 'command': command
             }
             
-            logger.info(f"Command completed with exit code {exit_code} in {execution_time:.2f}s")
-            return result
-            
         except Exception as e:
-            logger.error(f"Error executing command: {e}")
+            logger.error(f"❌ Command execution error: {e}")
             return {
                 'success': False,
                 'error': str(e),
@@ -177,117 +204,6 @@ class KaliSSHClient:
                 'stderr': str(e),
                 'exit_code': -1,
                 'command': command
-            }
-    
-    def execute_tool(
-        self,
-        tool_name: str,
-        target: str,
-        options: Dict[str, Any] = None,
-        output_callback: Optional[Callable[[str], None]] = None
-    ) -> Dict[str, Any]:
-        """
-        Execute pentesting tool with standard options
-        Args:
-            tool_name: Tool to execute (nmap, sqlmap, etc.)
-            target: Target URL/IP
-            options: Additional tool-specific options
-            output_callback: Function for streaming output
-        Returns:
-            Execution result dict
-        """
-        options = options or {}
-        
-        # Build command based on tool
-        command = self._build_tool_command(tool_name, target, options)
-        
-        if not command:
-            return {
-                'success': False,
-                'error': f'Unknown tool: {tool_name}',
-                'stdout': '',
-                'stderr': f'Tool {tool_name} not supported',
-                'exit_code': -1
-            }
-        
-        # Execute with timeout based on tool type
-        timeout = options.get('timeout', 300)
-        return self.execute_command(command, timeout=timeout, output_callback=output_callback)
-    
-    def _build_tool_command(self, tool: str, target: str, options: Dict[str, Any]) -> str:
-        """Build command string for specific tool"""
-        
-        commands = {
-            # Network scanning
-            'nmap': f"nmap -T4 -A {target}",
-            'masscan': f"masscan {target} -p1-65535",
-            
-            # Web scanning
-            'nikto': f"nikto -h {target}",
-            'nuclei': f"nuclei -u {target}",
-            'whatweb': f"whatweb {target}",
-            
-            # Web exploitation
-            'sqlmap': f"sqlmap -u {target} --batch --level=1 --risk=1",
-            'dalfox': f"dalfox url {target}",
-            'commix': f"commix --url={target} --batch",
-            
-            # Directory brute-forcing
-            'dirb': f"dirb {target}",
-            'gobuster': f"gobuster dir -u {target} -w /usr/share/wordlists/dirb/common.txt",
-            
-            # Reconnaissance
-            'sublist3r': f"sublist3r -d {target}",
-            'dnsenum': f"dnsenum {target}",
-            
-            # Exploitation frameworks
-            'metasploit': f"msfconsole -q -x 'search {target}; exit'",
-            
-            # Password attacks
-            'hydra': f"hydra {target}",
-            
-            # CMS scanners
-            'wpscan': f"wpscan --url {target} --enumerate vp,vt,u",
-        }
-        
-        base_cmd = commands.get(tool)
-        if not base_cmd:
-            return ""
-        
-        # Add custom options if provided
-        if options.get('extra_args'):
-            base_cmd += f" {options['extra_args']}"
-        
-        return base_cmd
-    
-    def test_connection(self) -> Dict[str, Any]:
-        """
-        Test connection to Kali VM
-        Returns:
-            Dict with connection status and info
-        """
-        try:
-            if not self.connect():
-                return {
-                    'connected': False,
-                    'error': 'Failed to establish connection'
-                }
-            
-            # Run simple test command
-            result = self.execute_command('uname -a && whoami')
-            
-            return {
-                'connected': True,
-                'host': self.config['host'],
-                'username': self.config['username'],
-                'system_info': result.get('stdout', '').strip(),
-                'response_time': result.get('execution_time', 0)
-            }
-            
-        except Exception as e:
-            return {
-                'connected': False,
-                'error': str(e)
             }
     
     def __enter__(self):

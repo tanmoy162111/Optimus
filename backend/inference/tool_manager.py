@@ -1,6 +1,5 @@
 """Robust SSH-based tool execution manager with PTY support
-Handles: sudo, interactive commands, real-time streaming, error recovery
-"""
+Handles: sudo, interactive commands, real-time streaming, error recovery"""
 import paramiko
 import select
 import threading
@@ -146,13 +145,14 @@ class ToolManager:
             command = self.build_command(tool_name, target, parameters)
             
             # Notify frontend
-            self.socketio.emit('tool_execution_start', {
-                'scan_id': scan_id,
-                'tool': tool_name,
-                'phase': phase,
-                'command': command[:200],  # Truncate for safety
-                'timestamp': start_time.isoformat()
-            })
+            if self.socketio:
+                self.socketio.emit('tool_execution_start', {
+                    'scan_id': scan_id,
+                    'tool': tool_name,
+                    'phase': phase,
+                    'command': command[:200],  # Truncate for safety
+                    'timestamp': start_time.isoformat()
+                })
             
             # Execute with streaming
             exit_code, stdout, stderr = self.execute_with_streaming(
@@ -197,23 +197,25 @@ class ToolManager:
                 )
             
             # Notify completion
-            self.socketio.emit('tool_execution_complete', {
-                'scan_id': scan_id,
-                'tool': tool_name,
-                'success': result['success'],
-                'execution_time': execution_time,
-                'findings_count': len(parsed_results.get('vulnerabilities', []))
-            })
+            if self.socketio:
+                self.socketio.emit('tool_execution_complete', {
+                    'scan_id': scan_id,
+                    'tool': tool_name,
+                    'success': result['success'],
+                    'execution_time': execution_time,
+                    'findings_count': len(parsed_results.get('vulnerabilities', []))
+                })
             
             return result
             
         except Exception as e:
             print(f"❌ Tool execution error: {e}")
-            self.socketio.emit('tool_execution_error', {
-                'scan_id': scan_id,
-                'tool': tool_name,
-                'error': str(e)
-            })
+            if self.socketio:
+                self.socketio.emit('tool_execution_error', {
+                    'scan_id': scan_id,
+                    'tool': tool_name,
+                    'error': str(e)
+                })
             raise
     
     def execute_with_streaming(self, command: str, scan_id: str,
@@ -298,12 +300,13 @@ class ToolManager:
                         last_data_time = time.time()
                         
                         # Stream to frontend
-                        self.socketio.emit('tool_output', {
-                            'scan_id': scan_id,
-                            'tool': tool_name,
-                            'output': chunk,
-                            'timestamp': datetime.now().isoformat()
-                        })
+                        if self.socketio:
+                            self.socketio.emit('tool_output', {
+                                'scan_id': scan_id,
+                                'tool': tool_name,
+                                'output': chunk,
+                                'timestamp': datetime.now().isoformat()
+                            })
                         
                         # Print to console (truncated)
                         print(chunk[:200], end='', flush=True)
@@ -316,11 +319,12 @@ class ToolManager:
                         last_data_time = time.time()
                         
                         # Stream errors
-                        self.socketio.emit('tool_error_output', {
-                            'scan_id': scan_id,
-                            'tool': tool_name,
-                            'error': chunk
-                        })
+                        if self.socketio:
+                            self.socketio.emit('tool_error_output', {
+                                'scan_id': scan_id,
+                                'tool': tool_name,
+                                'error': chunk
+                            })
                 
                 # Small delay to prevent CPU spinning
                 time.sleep(0.1)
@@ -330,11 +334,12 @@ class ToolManager:
                 chunk = channel.recv(4096).decode('utf-8', errors='ignore')
                 if chunk:
                     stdout_data.append(chunk)
-                    self.socketio.emit('tool_output', {
-                        'scan_id': scan_id,
-                        'tool': tool_name,
-                        'output': chunk
-                    })
+                    if self.socketio:
+                        self.socketio.emit('tool_output', {
+                            'scan_id': scan_id,
+                            'tool': tool_name,
+                            'output': chunk
+                        })
             
             while channel.recv_stderr_ready():
                 chunk = channel.recv_stderr(4096).decode('utf-8', errors='ignore')
@@ -390,42 +395,67 @@ class ToolManager:
             'technologies_detected': parameters.get('technologies_detected', []),
         }
         
-        # Special handling for linpeas - increase timeout
-        if tool_name == 'linpeas':
-            # linpeas can take a long time, so increase timeout
+        # Special handling for specific tools - increase timeout
+        long_running_tools = ['linpeas', 'linpeas.sh', 'winpeas', 'gobuster', 'ffuf']
+        if tool_name in long_running_tools:
+            # These tools can take a long time, so increase timeout
             parameters['timeout'] = max(parameters.get('timeout', 300), 900)  # Min 15 minutes
-            print(f"[DEBUG] Increased timeout for linpeas to {parameters['timeout']}s")
+            print(f"[DEBUG] Increased timeout for {tool_name} to {parameters['timeout']}s")
         
         # Use Knowledge Base to generate optimal command
         try:
-            command = self.tool_kb.build_command(tool_name, target, context)
+            # Pass the extracted hostname for tools that need it, but keep full target for URL-based tools
+            command_target = hostname if tool_name in ['nmap', 'nikto', 'fierce', 'enum4linux', 'sslscan'] else target
+            command = self.tool_kb.build_command(tool_name, command_target, context)
             logger.info(f"[ToolManager] Dynamic command: {command[:150]}")
         except Exception as e:
             logger.error(f"[ToolManager] KB command generation failed: {e}, using fallback")
             # Fallback to simple command
             command = self._fallback_command(tool_name, target)
         
+        # TEMPORARILY DISABLE timeout wrapper for debugging
         # Add timeout wrapper for non-linpeas tools
-        if tool_name != 'linpeas':  # linpeas handles its own timeout internally
-            timeout = parameters.get('timeout', 300)
-            command = f"timeout {timeout} {command}"
+        # if tool_name != 'linpeas':  # linpeas handles its own timeout internally
+        #     timeout = parameters.get('timeout', 300)
+        #     command = f"timeout {timeout} {command}"
         
         return command
 
     def _fallback_command(self, tool_name: str, target: str) -> str:
         """Fallback commands if Knowledge Base fails"""
+        # Map tool names to available tools on Kali VM
+        tool_mapping = {
+            'sublist3r': 'amass',  # Use amass instead of sublist3r
+            'theHarvester': 'dnsenum',  # Use dnsenum as alternative
+            'linpeas.sh': 'linpeas',  # Normalize name
+        }
+        
+        # Use the mapped tool if available
+        actual_tool = tool_mapping.get(tool_name, tool_name)
+        
         fallback_commands = {
             'nmap': f"nmap -sV -T4 {target}",
             'nikto': f"nikto -h {target}",
             'sqlmap': f"sqlmap -u '{target}' --batch",
-            'sublist3r': f"sublist3r -d {target} -n",
+            'amass': f"amass enum -d {target}",  # Updated for amass
+            'dnsenum': f"dnsenum {target}",  # Updated for dnsenum
             'whatweb': f"whatweb {target}",
             'nuclei': f"nuclei -u {target} -severity critical,high",
             'dalfox': f"dalfox url {target}",
             'commix': f"commix --url='{target}' --batch",
-            'linpeas': f"linpeas.sh",  # linpeas doesn't take target parameter
+            'gobuster': f"gobuster dir -u {target} -w /usr/share/dirb/wordlists/common.txt",
+            'ffuf': f"ffuf -u {target}/FUZZ -w /usr/share/dirb/wordlists/common.txt:FUZZ",
+            'fierce': f"fierce --domain {target}",
+            'wpscan': f"wpscan --url {target}",
+            'hydra': f"hydra {target}",
+            'linpeas': f"/usr/share/peass/linpeas/linpeas.sh",  # Full path for linpeas
+            'winpeas': f"/usr/share/peass/winpeas/winpeas.exe",  # Full path for winpeas
+            'metasploit': f"msfconsole -q -x \"use auxiliary/scanner/portscan/tcp; set RHOSTS {target}; run; exit\"",
+            'enum4linux': f"enum4linux {target}",
+            'sslscan': f"sslscan {target}",
+            'cewl': f"cewl {target}",
         }
-        return fallback_commands.get(tool_name, f"{tool_name} {target}")
+        return fallback_commands.get(actual_tool, f"{actual_tool} {target}")
 
     def _build_sqlmap_for_juiceshop(self, target: str, parameters: Dict[str, Any]) -> str:
         """
@@ -534,6 +564,10 @@ class ToolManager:
                 'required': ['ONYPHE_API_KEY'],
                 'optional': []
             },
+            'wpscan': {
+                'optional': ['WPVULNDB_API_KEY'],  # For better vulnerability detection
+                'required': []
+            }
         }
         
         if tool_name not in api_requirements:
@@ -559,8 +593,10 @@ class ToolManager:
             'shodan': 'nmap',
             'netlas': 'nmap',
             'onyphe': 'nmap',
-            'theHarvester': 'sublist3r',
+            'theHarvester': 'dnsenum',  # Updated to dnsenum
+            'sublist3r': 'amass',  # Updated to amass
             'censys': 'nmap',
+            'linpeas.sh': 'linpeas',  # Normalize name
         }
         return fallbacks.get(tool_name)
 
