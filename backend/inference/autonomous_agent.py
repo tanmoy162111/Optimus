@@ -245,6 +245,7 @@ class AutonomousPentestAgent:
             'scan_id': str(uuid.uuid4()),
             'target': target,
             'target_profile': target_profile,
+            'phase': 'reconnaissance',  # Add phase for compatibility
             'findings': [],
             'tools_executed': [],
             'coverage': 0,
@@ -772,7 +773,8 @@ class AutonomousPentestAgent:
         if 'phase_data' not in scan_state:
             scan_state['phase_data'] = {}
             
-        phase = scan_state.get('phase', 'reconnaissance')  # Provide default value
+        # Provide default value for phase
+        phase = scan_state.get('phase', 'reconnaissance')
         
         if phase == 'reconnaissance':
             # Count technologies and subdomains
