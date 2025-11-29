@@ -1,0 +1,595 @@
+{
+  "training_id": "training_20251129_203725",
+  "duration_seconds": 3327.277389,
+  "total_episodes": 5,
+  "targets_trained": 2,
+  "episode_history": [
+    {
+      "episode_num": 0,
+      "target": "http://192.168.131.128",
+      "duration": 412.983188,
+      "tools_used": [
+        {
+          "tool": "nmap",
+          "timestamp": "2025-11-29T20:37:46.154560",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "nmap",
+          "timestamp": "2025-11-29T20:37:46.154567",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T20:39:01.484759",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T20:39:01.484771",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "whatweb",
+          "timestamp": "2025-11-29T20:39:09.343618",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "whatweb",
+          "timestamp": "2025-11-29T20:39:09.343632",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "masscan",
+          "timestamp": "2025-11-29T20:39:09.975406",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "masscan",
+          "timestamp": "2025-11-29T20:39:09.975415",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T20:39:13.621530",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T20:39:13.621535",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "linpeas",
+          "timestamp": "2025-11-29T20:44:17.977054",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "linpeas",
+          "timestamp": "2025-11-29T20:44:17.977064",
+          "success": true,
+          "exit_code": 0
+        }
+      ],
+      "findings": [
+        {
+          "id": "5492b6eb-9b4d-4c87-8b69-b480299c3b3e",
+          "type": "open_port",
+          "severity": 4.0,
+          "confidence": 0.95,
+          "name": "Open Port: 80/http",
+          "location": "Port 80",
+          "evidence": "80/tcp  open  http     Apache httpd 2.2.14 ((Ubuntu) mod_mono/2.4.3 PHP/5.3.2-1ubuntu4.30 with Suhosin-Patch proxy_html/3.0.1 mod_python/3.3.1 Python/2.6.5 mod_ssl/2.2.14 OpenSSL...) Apache httpd 2.2.14 ((Ubuntu) mod_mono/2.4.3 PHP/5.3.2-1ubuntu4.30 with Suhosin-Patch proxy_html/3.0.1 mod_python/3.3.1 Python/2.6.5 mod_ssl/2.2.14 OpenSSL...)",
+          "exploitable": true
+        },
+        {
+          "id": "0ca2cd37-b072-4811-9fdf-1a93ae45b84a",
+          "type": "open_port",
+          "severity": 4.0,
+          "confidence": 0.95,
+          "name": "Open Port: 443/ssl/http",
+          "location": "Port 443",
+          "evidence": "443/tcp open  ssl/http Apache httpd 2.2.14 ((Ubuntu) mod_mono/2.4.3 PHP/5.3.2-1ubuntu4.30 with Suhosin-Patch proxy_html/3.0.1 mod_python/3.3.1 Python/2.6.5 mod_ssl/2.2.14 OpenSSL...) Apache httpd 2.2.14 ((Ubuntu) mod_mono/2.4.3 PHP/5.3.2-1ubuntu4.30 with Suhosin-Patch proxy_html/3.0.1 mod_python/3.3.1 Python/2.6.5 mod_ssl/2.2.14 OpenSSL...)",
+          "exploitable": false
+        },
+        {
+          "id": "1641e877-3694-4b0b-b0fc-bcd937dbc1cc",
+          "type": "generic_finding",
+          "severity": 5.0,
+          "confidence": 0.7,
+          "name": "Tool Output Analysis",
+          "location": "Generic parsing",
+          "evidence": "|         \u001b[1;33mFollow on Twitter\u001b[1;32m         :     \u001b[1;31m@hacktricks_live\u001b[1;32m                        |\n\u001b[1;31;103mRED/YELLOW\u001b[0m: 95% a PE vector\n\u001b[0m\u001b[1;34m\u255a \u001b[1;34m\u001b[3mhttps://book.hacktricks.wiki/en/linux-hardening/privilege-escalation/index.html#kernel-exploits\n\u001b[1;34m\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563 \u001b[1;32mExecuting Linux Exploit Suggester\n\u001b[0m\u001b[1;34m\u255a \u001b[1;34m\u001b[3mhttps://github.com/mzet-/linux-exploit-suggester\n\u001b[0m[+] \u001b[1;31m[CVE-2022-2586] nft_object UAF\u001b[0m\n[+] \u001b[1;31m[CVE-2021-22555] Netfilter heap out-of-bounds write\u001b[0m\nDetails: https://google.github.io/security-research/pocs/linux/cve-2021-22555/writeup.html\nDownload URL: https://raw.githubusercontent.com/google/security-research/master/pocs/linux/cve-2021-22555/exploit.c\next-url: https://raw.githubusercontent.com/bcoles/kernel-exploits/master/CVE-2021-22555/exploit.c",
+          "exploitable": true
+        }
+      ],
+      "coverage": 1.0,
+      "strategy_used": "adaptive",
+      "success": true,
+      "timestamp": "2025-11-29T20:37:25.495745"
+    },
+    {
+      "episode_num": 1,
+      "target": "https://landscape.canonical.com",
+      "duration": 1120.324597,
+      "tools_used": [
+        {
+          "tool": "nmap",
+          "timestamp": "2025-11-29T20:45:01.500744",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "nmap",
+          "timestamp": "2025-11-29T20:45:01.500752",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T20:58:02.878568",
+          "success": false,
+          "exit_code": -1
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T20:58:02.878577",
+          "success": false,
+          "exit_code": -1
+        },
+        {
+          "tool": "whatweb",
+          "timestamp": "2025-11-29T20:58:28.508799",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "whatweb",
+          "timestamp": "2025-11-29T20:58:28.508807",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "masscan",
+          "timestamp": "2025-11-29T20:58:29.137610",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "masscan",
+          "timestamp": "2025-11-29T20:58:29.137619",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T20:59:11.448176",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T20:59:11.448184",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "linpeas",
+          "timestamp": "2025-11-29T21:02:58.301767",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "linpeas",
+          "timestamp": "2025-11-29T21:02:58.301777",
+          "success": true,
+          "exit_code": 0
+        }
+      ],
+      "findings": [
+        {
+          "id": "46b0b627-dd6b-49a0-81ec-594115a96dc7",
+          "type": "open_port",
+          "severity": 4.0,
+          "confidence": 0.95,
+          "name": "Open Port: 80/http-proxy",
+          "location": "Port 80",
+          "evidence": "80/tcp  open  http-proxy     HAProxy http proxy HAProxy http proxy",
+          "exploitable": false
+        },
+        {
+          "id": "14f5ba6a-618b-4c21-938e-2b8d620cab2c",
+          "type": "open_port",
+          "severity": 4.0,
+          "confidence": 0.95,
+          "name": "Open Port: 443/ssl/http-proxy",
+          "location": "Port 443",
+          "evidence": "443/tcp open  ssl/http-proxy HAProxy http proxy HAProxy http proxy",
+          "exploitable": false
+        },
+        {
+          "id": "bbeeb586-d4da-4262-9c61-b8ca36c85d5d",
+          "type": "generic_finding",
+          "severity": 5.0,
+          "confidence": 0.7,
+          "name": "Tool Output Analysis",
+          "location": "Generic parsing",
+          "evidence": "|         \u001b[1;33mFollow on Twitter\u001b[1;32m         :     \u001b[1;31m@hacktricks_live\u001b[1;32m                        |\n\u001b[1;31;103mRED/YELLOW\u001b[0m: 95% a PE vector\n\u001b[0m\u001b[1;34m\u255a \u001b[1;34m\u001b[3mhttps://book.hacktricks.wiki/en/linux-hardening/privilege-escalation/index.html#kernel-exploits\n\u001b[1;34m\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563 \u001b[1;32mExecuting Linux Exploit Suggester\n\u001b[0m\u001b[1;34m\u255a \u001b[1;34m\u001b[3mhttps://github.com/mzet-/linux-exploit-suggester\n\u001b[0m[+] \u001b[1;31m[CVE-2022-2586] nft_object UAF\u001b[0m\n[+] \u001b[1;31m[CVE-2021-22555] Netfilter heap out-of-bounds write\u001b[0m\nDetails: https://google.github.io/security-research/pocs/linux/cve-2021-22555/writeup.html\nDownload URL: https://raw.githubusercontent.com/google/security-research/master/pocs/linux/cve-2021-22555/exploit.c\next-url: https://raw.githubusercontent.com/bcoles/kernel-exploits/master/CVE-2021-22555/exploit.c",
+          "exploitable": true
+        }
+      ],
+      "coverage": 1.0,
+      "strategy_used": "adaptive",
+      "success": true,
+      "timestamp": "2025-11-29T20:44:18.478980"
+    },
+    {
+      "episode_num": 2,
+      "target": "http://192.168.131.128",
+      "duration": 332.136573,
+      "tools_used": [
+        {
+          "tool": "nmap",
+          "timestamp": "2025-11-29T21:03:19.019963",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "nmap",
+          "timestamp": "2025-11-29T21:03:19.019967",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T21:04:32.255485",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T21:04:32.255490",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "whatweb",
+          "timestamp": "2025-11-29T21:04:39.410986",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "whatweb",
+          "timestamp": "2025-11-29T21:04:39.410996",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "masscan",
+          "timestamp": "2025-11-29T21:04:40.044684",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "masscan",
+          "timestamp": "2025-11-29T21:04:40.044693",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T21:04:43.093498",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T21:04:43.093507",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "linpeas",
+          "timestamp": "2025-11-29T21:08:30.438695",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "linpeas",
+          "timestamp": "2025-11-29T21:08:30.438703",
+          "success": true,
+          "exit_code": 0
+        }
+      ],
+      "findings": [
+        {
+          "id": "04b0e1bd-9acd-47e0-8fa3-f400edb506f1",
+          "type": "open_port",
+          "severity": 4.0,
+          "confidence": 0.95,
+          "name": "Open Port: 80/http",
+          "location": "Port 80",
+          "evidence": "80/tcp  open  http     Apache httpd 2.2.14 ((Ubuntu) mod_mono/2.4.3 PHP/5.3.2-1ubuntu4.30 with Suhosin-Patch proxy_html/3.0.1 mod_python/3.3.1 Python/2.6.5 mod_ssl/2.2.14 OpenSSL...) Apache httpd 2.2.14 ((Ubuntu) mod_mono/2.4.3 PHP/5.3.2-1ubuntu4.30 with Suhosin-Patch proxy_html/3.0.1 mod_python/3.3.1 Python/2.6.5 mod_ssl/2.2.14 OpenSSL...)",
+          "exploitable": true
+        },
+        {
+          "id": "6105f3d7-b041-4d94-b82e-4960a4db68a0",
+          "type": "open_port",
+          "severity": 4.0,
+          "confidence": 0.95,
+          "name": "Open Port: 443/ssl/http",
+          "location": "Port 443",
+          "evidence": "443/tcp open  ssl/http Apache httpd 2.2.14 ((Ubuntu) mod_mono/2.4.3 PHP/5.3.2-1ubuntu4.30 with Suhosin-Patch proxy_html/3.0.1 mod_python/3.3.1 Python/2.6.5 mod_ssl/2.2.14 OpenSSL...) Apache httpd 2.2.14 ((Ubuntu) mod_mono/2.4.3 PHP/5.3.2-1ubuntu4.30 with Suhosin-Patch proxy_html/3.0.1 mod_python/3.3.1 Python/2.6.5 mod_ssl/2.2.14 OpenSSL...)",
+          "exploitable": false
+        },
+        {
+          "id": "58d31f47-d0aa-4e12-96d7-2809f726a92b",
+          "type": "generic_finding",
+          "severity": 5.0,
+          "confidence": 0.7,
+          "name": "Tool Output Analysis",
+          "location": "Generic parsing",
+          "evidence": "|         \u001b[1;33mFollow on Twitter\u001b[1;32m         :     \u001b[1;31m@hacktricks_live\u001b[1;32m                        |\n\u001b[1;31;103mRED/YELLOW\u001b[0m: 95% a PE vector\n\u001b[0m\u001b[1;34m\u255a \u001b[1;34m\u001b[3mhttps://book.hacktricks.wiki/en/linux-hardening/privilege-escalation/index.html#kernel-exploits\n\u001b[1;34m\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563 \u001b[1;32mExecuting Linux Exploit Suggester\n\u001b[0m\u001b[1;34m\u255a \u001b[1;34m\u001b[3mhttps://github.com/mzet-/linux-exploit-suggester\n\u001b[0m[+] \u001b[1;31m[CVE-2022-2586] nft_object UAF\u001b[0m\n[+] \u001b[1;31m[CVE-2021-22555] Netfilter heap out-of-bounds write\u001b[0m\nDetails: https://google.github.io/security-research/pocs/linux/cve-2021-22555/writeup.html\nDownload URL: https://raw.githubusercontent.com/google/security-research/master/pocs/linux/cve-2021-22555/exploit.c\next-url: https://raw.githubusercontent.com/bcoles/kernel-exploits/master/CVE-2021-22555/exploit.c",
+          "exploitable": true
+        }
+      ],
+      "coverage": 1.0,
+      "strategy_used": "adaptive",
+      "success": true,
+      "timestamp": "2025-11-29T21:02:58.803647"
+    },
+    {
+      "episode_num": 3,
+      "target": "https://landscape.canonical.com",
+      "duration": 1127.305587,
+      "tools_used": [
+        {
+          "tool": "nmap",
+          "timestamp": "2025-11-29T21:09:12.554645",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "nmap",
+          "timestamp": "2025-11-29T21:09:12.554649",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T21:22:19.779163",
+          "success": false,
+          "exit_code": -1
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T21:22:19.779174",
+          "success": false,
+          "exit_code": -1
+        },
+        {
+          "tool": "whatweb",
+          "timestamp": "2025-11-29T21:23:22.985960",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "whatweb",
+          "timestamp": "2025-11-29T21:23:22.985971",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "masscan",
+          "timestamp": "2025-11-29T21:23:23.618393",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "masscan",
+          "timestamp": "2025-11-29T21:23:23.618400",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T21:23:34.795420",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T21:23:34.795428",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "linpeas",
+          "timestamp": "2025-11-29T21:27:17.744293",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "linpeas",
+          "timestamp": "2025-11-29T21:27:17.744305",
+          "success": true,
+          "exit_code": 0
+        }
+      ],
+      "findings": [
+        {
+          "id": "4f10da04-e478-4f30-b3ec-7367aae44409",
+          "type": "open_port",
+          "severity": 4.0,
+          "confidence": 0.95,
+          "name": "Open Port: 80/http-proxy",
+          "location": "Port 80",
+          "evidence": "80/tcp  open  http-proxy     HAProxy http proxy HAProxy http proxy",
+          "exploitable": false
+        },
+        {
+          "id": "8f6bab00-7749-4d88-ad74-b5b5e1d7b3ed",
+          "type": "open_port",
+          "severity": 4.0,
+          "confidence": 0.95,
+          "name": "Open Port: 443/ssl/http-proxy",
+          "location": "Port 443",
+          "evidence": "443/tcp open  ssl/http-proxy HAProxy http proxy HAProxy http proxy",
+          "exploitable": false
+        },
+        {
+          "id": "2a03e5c2-ac65-435e-b659-520af66288b5",
+          "type": "generic_finding",
+          "severity": 5.0,
+          "confidence": 0.7,
+          "name": "Tool Output Analysis",
+          "location": "Generic parsing",
+          "evidence": "|         \u001b[1;33mFollow on Twitter\u001b[1;32m         :     \u001b[1;31m@hacktricks_live\u001b[1;32m                        |\n\u001b[1;31;103mRED/YELLOW\u001b[0m: 95% a PE vector\n\u001b[0m\u001b[1;34m\u255a \u001b[1;34m\u001b[3mhttps://book.hacktricks.wiki/en/linux-hardening/privilege-escalation/index.html#kernel-exploits\n\u001b[1;34m\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563 \u001b[1;32mExecuting Linux Exploit Suggester\n\u001b[0m\u001b[1;34m\u255a \u001b[1;34m\u001b[3mhttps://github.com/mzet-/linux-exploit-suggester\n\u001b[0m[+] \u001b[1;31m[CVE-2022-2586] nft_object UAF\u001b[0m\n[+] \u001b[1;31m[CVE-2021-22555] Netfilter heap out-of-bounds write\u001b[0m\nDetails: https://google.github.io/security-research/pocs/linux/cve-2021-22555/writeup.html\nDownload URL: https://raw.githubusercontent.com/google/security-research/master/pocs/linux/cve-2021-22555/exploit.c\next-url: https://raw.githubusercontent.com/bcoles/kernel-exploits/master/CVE-2021-22555/exploit.c",
+          "exploitable": true
+        }
+      ],
+      "coverage": 1.0,
+      "strategy_used": "adaptive",
+      "success": true,
+      "timestamp": "2025-11-29T21:08:30.940261"
+    },
+    {
+      "episode_num": 4,
+      "target": "http://192.168.131.128",
+      "duration": 334.525053,
+      "tools_used": [
+        {
+          "tool": "nmap",
+          "timestamp": "2025-11-29T21:27:38.562902",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "nmap",
+          "timestamp": "2025-11-29T21:27:38.562907",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T21:28:49.680395",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T21:28:49.680402",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "whatweb",
+          "timestamp": "2025-11-29T21:28:59.746378",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "whatweb",
+          "timestamp": "2025-11-29T21:28:59.746392",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "masscan",
+          "timestamp": "2025-11-29T21:29:00.378704",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "masscan",
+          "timestamp": "2025-11-29T21:29:00.378714",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T21:29:03.621527",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T21:29:03.621537",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "linpeas",
+          "timestamp": "2025-11-29T21:32:52.269276",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "linpeas",
+          "timestamp": "2025-11-29T21:32:52.269287",
+          "success": true,
+          "exit_code": 0
+        }
+      ],
+      "findings": [
+        {
+          "id": "90c5c353-09e8-4d40-9b45-c0b1719b9d36",
+          "type": "open_port",
+          "severity": 4.0,
+          "confidence": 0.95,
+          "name": "Open Port: 80/http",
+          "location": "Port 80",
+          "evidence": "80/tcp  open  http     Apache httpd 2.2.14 ((Ubuntu) mod_mono/2.4.3 PHP/5.3.2-1ubuntu4.30 with Suhosin-Patch proxy_html/3.0.1 mod_python/3.3.1 Python/2.6.5 mod_ssl/2.2.14 OpenSSL...) Apache httpd 2.2.14 ((Ubuntu) mod_mono/2.4.3 PHP/5.3.2-1ubuntu4.30 with Suhosin-Patch proxy_html/3.0.1 mod_python/3.3.1 Python/2.6.5 mod_ssl/2.2.14 OpenSSL...)",
+          "exploitable": true
+        },
+        {
+          "id": "ebd52e04-fadf-418a-a90c-785d6897492f",
+          "type": "open_port",
+          "severity": 4.0,
+          "confidence": 0.95,
+          "name": "Open Port: 443/ssl/http",
+          "location": "Port 443",
+          "evidence": "443/tcp open  ssl/http Apache httpd 2.2.14 ((Ubuntu) mod_mono/2.4.3 PHP/5.3.2-1ubuntu4.30 with Suhosin-Patch proxy_html/3.0.1 mod_python/3.3.1 Python/2.6.5 mod_ssl/2.2.14 OpenSSL...) Apache httpd 2.2.14 ((Ubuntu) mod_mono/2.4.3 PHP/5.3.2-1ubuntu4.30 with Suhosin-Patch proxy_html/3.0.1 mod_python/3.3.1 Python/2.6.5 mod_ssl/2.2.14 OpenSSL...)",
+          "exploitable": false
+        },
+        {
+          "id": "791278e6-6eb4-4a0b-a83b-9ff5e9b7f4ef",
+          "type": "generic_finding",
+          "severity": 5.0,
+          "confidence": 0.7,
+          "name": "Tool Output Analysis",
+          "location": "Generic parsing",
+          "evidence": "|         \u001b[1;33mFollow on Twitter\u001b[1;32m         :     \u001b[1;31m@hacktricks_live\u001b[1;32m                        |\n\u001b[1;31;103mRED/YELLOW\u001b[0m: 95% a PE vector\n\u001b[0m\u001b[1;34m\u255a \u001b[1;34m\u001b[3mhttps://book.hacktricks.wiki/en/linux-hardening/privilege-escalation/index.html#kernel-exploits\n\u001b[1;34m\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563 \u001b[1;32mExecuting Linux Exploit Suggester\n\u001b[0m\u001b[1;34m\u255a \u001b[1;34m\u001b[3mhttps://github.com/mzet-/linux-exploit-suggester\n\u001b[0m[+] \u001b[1;31m[CVE-2022-2586] nft_object UAF\u001b[0m\n[+] \u001b[1;31m[CVE-2021-22555] Netfilter heap out-of-bounds write\u001b[0m\nDetails: https://google.github.io/security-research/pocs/linux/cve-2021-22555/writeup.html\nDownload URL: https://raw.githubusercontent.com/google/security-research/master/pocs/linux/cve-2021-22555/exploit.c\next-url: https://raw.githubusercontent.com/bcoles/kernel-exploits/master/CVE-2021-22555/exploit.c",
+          "exploitable": true
+        }
+      ],
+      "coverage": 1.0,
+      "strategy_used": "adaptive",
+      "success": true,
+      "timestamp": "2025-11-29T21:27:18.245886"
+    }
+  ],
+  "final_strategy_report": {
+    "strategies": {
+      "adaptive": {
+        "executions": 1,
+        "avg_findings": 3.0,
+        "success_rate": 1.0,
+        "effectiveness_score": 2.1999999999999997
+      }
+    },
+    "best_overall": "adaptive",
+    "recommendations": []
+  }
+}
