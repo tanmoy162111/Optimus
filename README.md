@@ -9,10 +9,11 @@ The Optimus AI Agent is designed to automate the penetration testing process by 
 ## Key Features
 
 - **Autonomous Scanning**: Automatically selects and executes appropriate security tools
-- **Dynamic Tool Selection**: Chooses tools based on current scan state and findings
+- **Dynamic Tool Selection**: Choises tools based on current scan state and findings
 - **Continuous Learning**: Improves decision-making through machine learning
 - **Adaptive Strategy**: Adjusts approach based on environmental feedback
 - **Comprehensive Reporting**: Generates detailed security reports with remediation guidance
+- **Fully Autonomous Mode**: Agent makes all decisions based on tool outputs and findings
 
 ## Architecture
 
@@ -69,9 +70,23 @@ pip install -r backend/requirements.txt
 # Run a scan
 python backend/run_scan.py --target http://example.com
 
-# Train the agent
+# Train the agent with standard mode
 python backend/training_environment/train_agent_on_vms.py --targets http://practice-vm.local --episodes 50
+
+# Train the agent with fully autonomous mode
+python backend/training_environment/fully_autonomous_training.py --targets http://practice-vm.local --max-episodes 10
 ```
+
+## Fully Autonomous Training Mode
+
+The fully autonomous training mode allows the agent to make all decisions based on tool outputs and findings:
+
+- **No Phase Controller**: Agent determines workflow dynamically
+- **Adaptive Tool Selection**: Agent selects tools based on previous findings
+- **Self-Directed Learning**: Agent chooses approaches and attacking patterns from its knowledge
+- **Context-Aware Execution**: Agent executes commands with appropriate parameters based on findings
+
+This mode represents the most advanced form of autonomous operation where the agent operates without predefined phases or fixed tool selections.
 
 ## Documentation
 
