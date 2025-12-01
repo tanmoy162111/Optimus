@@ -29,11 +29,13 @@ from api.scan_routes import scan_bp
 from api.training_routes import training_bp
 from api.metrics_routes import metrics_bp
 from api.report_routes import report_bp
+from api.intelligence_routes import intelligence_bp
 
 app.register_blueprint(scan_bp, url_prefix='/api/scan')
 app.register_blueprint(training_bp, url_prefix='/api/training')
 app.register_blueprint(metrics_bp, url_prefix='/api/metrics')
 app.register_blueprint(report_bp, url_prefix='/api/report')
+app.register_blueprint(intelligence_bp)
 
 # Import WebSocket handlers
 from api.websocket_handlers import register_handlers
@@ -55,6 +57,7 @@ def index():
             'training': '/api/training',
             'metrics': '/api/metrics',
             'report': '/api/report',
+            'intelligence': '/api/intelligence',
             'websocket': '/socket.io'
         }
     }, 200

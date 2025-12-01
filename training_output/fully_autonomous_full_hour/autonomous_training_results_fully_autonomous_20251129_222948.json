@@ -1,0 +1,17 @@
+{
+  "training_id": "fully_autonomous_20251129_222948",
+  "duration_seconds": 73.901875,
+  "total_episodes": 1,
+  "targets_trained": 1,
+  "episode_results": [
+    {
+      "episode_num": 0,
+      "target": "http://192.168.131.128",
+      "success": false,
+      "error": "'phase'",
+      "timestamp": "2025-11-29T22:29:48.660175"
+    }
+  ],
+  "tools_executed": {},
+  "total_findings": 0
+}

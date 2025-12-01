@@ -383,6 +383,140 @@ class ToolKnowledgeBase:
                 }
             },
             
+            'dalfox': {
+                'base': 'dalfox url {target}',
+                'parameters': {
+                    'exploitation': {
+                        'options': ['--silence', '--skip-bav'],
+                    }
+                },
+                'conditions': {
+                    'xss_confirmed': {
+                        'options': '--deep-domxss --mining-dict',
+                    }
+                }
+            },
+            
+            'nuclei': {
+                'base': 'nuclei -u {target}',
+                'parameters': {
+                    'scanning': {
+                        'severity': ['-severity critical,high', '-severity critical,high,medium'],
+                        'options': ['-silent'],
+                    },
+                    'exploitation': {
+                        'severity': ['-severity critical'],
+                        'templates': ['-t cves/', '-t vulnerabilities/'],
+                    }
+                },
+                'conditions': {
+                    'wordpress_detected': {
+                        'templates': '-t wordpress/',
+                    },
+                    'cms_detected': {
+                        'templates': '-t technologies/{cms}/',
+                    }
+                }
+            },
+            
+            'subfinder': {
+                'base': 'subfinder -d {domain}',
+                'parameters': {
+                    'reconnaissance': {
+                        'options': ['-silent'],  # Silent mode
+                    }
+                },
+                'conditions': {
+                    'aggressive_mode': {
+                        'options': '-recursive',  # Recursive enumeration
+                    }
+                }
+            },
+            
+            'gospider': {
+                'base': 'gospider -s {target}',
+                'parameters': {
+                    'scanning': {
+                        'options': ['-q', '-w'],  # Quiet mode with sitemap
+                    }
+                },
+                'conditions': {
+                    'deep_crawl': {
+                        'options': '-d 3',  # Depth 3 crawling
+                    }
+                }
+            },
+            
+            'katana': {
+                'base': 'katana -u {target}',
+                'parameters': {
+                    'scanning': {
+                        'options': ['-silent', '-jc'],  # Silent mode with js crawler
+                    }
+                },
+                'conditions': {
+                    'deep_crawl': {
+                        'options': '-d 5',  # Depth 5 crawling
+                    }
+                }
+            },
+            
+            'arjun': {
+                'base': 'arjun -u {target}',
+                'parameters': {
+                    'reconnaissance': {
+                        'options': ['--headers'],  # Find hidden parameters
+                    }
+                },
+                'conditions': {
+                    'api_target': {
+                        'options': '--json',  # JSON output
+                    }
+                }
+            },
+            
+            'httprobe': {
+                'base': 'httprobe',
+                'parameters': {
+                    'reconnaissance': {
+                        'options': [''],  # Basic execution
+                    }
+                },
+                'conditions': {
+                    'fast_check': {
+                        'options': '-c 50',  # 50 concurrent connections
+                    }
+                }
+            },
+            
+            'netlas': {
+                'base': 'netlas query "domain:{domain}"',
+                'parameters': {
+                    'reconnaissance': {
+                        'options': [''],  # Basic query
+                    }
+                },
+                'conditions': {
+                    'detailed_scan': {
+                        'options': '-f json',  # JSON output
+                    }
+                }
+            },
+            
+            'onyphe': {
+                'base': 'onyphe -s {target}',
+                'parameters': {
+                    'reconnaissance': {
+                        'options': [''],  # Basic scan
+                    }
+                },
+                'conditions': {
+                    'full_scan': {
+                        'options': '-a',  # All modules
+                    }
+                }
+            },
+            
             'john': {
                 'base': 'john {hash_file}',
                 'parameters': {
@@ -617,6 +751,16 @@ class ToolKnowledgeBase:
             'sublist3r': 'amass',  # Use amass instead of sublist3r
             'theHarvester': 'dnsenum',  # Use dnsenum as alternative
             'linpeas.sh': 'linpeas',  # Normalize name
+            # Add mappings for missing tools to alternatives that are available
+            'dalfox': 'xsser',  # Use xsser as alternative to dalfox
+            'nuclei': 'nikto',  # Use nikto as alternative to nuclei
+            'subfinder': 'amass',  # Use amass as alternative to subfinder
+            'gospider': 'whatweb',  # Use whatweb as alternative to gospider
+            'katana': 'whatweb',  # Use whatweb as alternative to katana
+            'arjun': 'whatweb',  # Use whatweb as alternative to arjun
+            'httprobe': 'whatweb',  # Use whatweb as alternative to httprobe
+            'netlas': 'nmap',  # Use nmap as alternative to netlas
+            'onyphe': 'nmap',  # Use nmap as alternative to onyphe
         }
         
         # Use the mapped tool if available

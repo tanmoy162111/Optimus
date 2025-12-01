@@ -468,126 +468,135 @@ class ToolManager:
         # Enhanced dynamic timeout calculation with learning-based adjustments
         base_timeout = parameters.get('timeout', 300)
         
-        # Define timeout multipliers for different tool categories with more granularity
-        timeout_multipliers = {
-            # Long-running enumeration tools
-            'long_enumeration': {
-                'tools': ['linpeas', 'linpeas.sh', 'winpeas', 'gobuster', 'ffuf', 'cewl', 'crunch'],
-                'multiplier': 3.0,  # 3x base timeout (up to 45 minutes)
-                'progressive_extension': True  # Allow progressive timeout extension
-            },
-            # Exploitation frameworks that can take significant time
-            'exploitation_frameworks': {
-                'tools': ['metasploit', 'burpsuite'],
-                'multiplier': 5.0,  # 5x base timeout (up to 75 minutes) - increased for Metasploit
-                'progressive_extension': True
-            },
-            # Network scanning tools
-            'network_scanners': {
-                'tools': ['nmap', 'masscan', 'ike-scan'],
-                'multiplier': 3.0,  # 3x base timeout (up to 45 minutes) - increased for nMap
-                'progressive_extension': True
-            },
-            # Web application scanners
-            'web_scanners': {
-                'tools': ['nikto', 'nuclei', 'wpscan', 'sqlmap'],
-                'multiplier': 3.5,  # 3.5x base timeout (up to 52.5 minutes) - increased for Nikto
-                'progressive_extension': True
-            },
-            # Brute force tools
-            'brute_force': {
-                'tools': ['hydra', 'medusa', 'john', 'hashcat'],
-                'multiplier': 4.0,  # 4x base timeout (up to 60 minutes)
-                'progressive_extension': True
+        # Check if we're in autonomous mode - if so, respect the timeout strictly
+        if parameters.get('autonomous_mode', False):
+            # In autonomous mode, use the provided timeout without modification
+            final_timeout = base_timeout
+            parameters['timeout'] = final_timeout
+            print(f"[DEBUG] Autonomous mode: Using strict timeout of {final_timeout}s")
+            # Use Knowledge Base for adaptive command generation
+            try:
+                command_target = hostname if tool_name in ['nmap', 'nikto', 'fierce', 'enum4linux', 'sslscan'] else target
+                # Use the correct method name
+                command = self.tool_kb.build_command(tool_name, command_target, context)
+                if command:
+                    print(f"[DEBUG] Using KB-generated command: {command}")
+                    return command
+            except Exception as e:
+                logger.warning(f"KB command generation failed: {e}")
+            
+            # Fallback to default command building
+            return self._build_default_command(tool_name, target, parameters)
+        else:
+            # Define timeout multipliers for different tool categories with more granularity
+            timeout_multipliers = {
+                # Long-running enumeration tools
+                'long_enumeration': {
+                    'tools': ['linpeas', 'linpeas.sh', 'winpeas', 'gobuster', 'ffuf', 'cewl', 'crunch'],
+                    'multiplier': 3.0,  # 3x base timeout (up to 45 minutes)
+                    'progressive_extension': True  # Allow progressive timeout extension
+                },
+                # Exploitation frameworks that can take significant time
+                'exploitation_frameworks': {
+                    'tools': ['metasploit', 'burpsuite'],
+                    'multiplier': 5.0,  # 5x base timeout (up to 75 minutes) - increased for Metasploit
+                    'progressive_extension': True
+                },
+                # Network scanning tools
+                'network_scanners': {
+                    'tools': ['nmap', 'masscan', 'ike-scan'],
+                    'multiplier': 3.0,  # 3x base timeout (up to 45 minutes) - increased for nMap
+                    'progressive_extension': True
+                },
+                # Web application scanners
+                'web_scanners': {
+                    'tools': ['nikto', 'nuclei', 'wpscan', 'sqlmap'],
+                    'multiplier': 3.5,  # 3.5x base timeout (up to 52.5 minutes) - increased for Nikto
+                    'progressive_extension': True
+                },
+                # Brute force tools
+                'brute_force': {
+                    'tools': ['hydra', 'medusa', 'john', 'hashcat'],
+                    'multiplier': 4.0,  # 4x base timeout (up to 60 minutes)
+                    'progressive_extension': True
+                }
             }
-        }
-        
-        # Determine appropriate timeout multiplier based on tool category
-        multiplier = 1.0
-        tool_category = None
-        progressive_extension = False
-        
-        for category, config in timeout_multipliers.items():
-            if tool_name in config['tools']:
-                tool_category = category
-                multiplier = config['multiplier']
-                progressive_extension = config.get('progressive_extension', False)
-                break
-        
-        # Adjust timeout based on scan context
-        context_adjustment = 1.0
-        if parameters.get('aggressive', False):
-            context_adjustment = 1.5  # Increase timeout for aggressive scans
-        if parameters.get('stealth_required', False):
-            context_adjustment = 2.0  # Double timeout for stealth mode
-        if parameters.get('phase') == 'post_exploitation':
-            context_adjustment = 1.5  # Increase timeout for post-exploitation
-        
-        # Progressive timeout extension for tools that may need more time
-        if progressive_extension:
-            # Check if this tool has been executed before and how long it took
-            execution_history = self._get_tool_execution_history(tool_name)
-            if execution_history:
-                avg_execution_time = sum(execution_history) / len(execution_history)
-                # If average execution time is close to current timeout, increase it
-                if avg_execution_time > (base_timeout * multiplier * context_adjustment * 0.8):
-                    context_adjustment *= 1.5  # Increase by 50%
-        
-        # Additional context-based adjustments
-        time_remaining = context.get('time_remaining', 1.0)
-        coverage = context.get('coverage', 0.0)
-        
-        # If we're running low on time, give more time to tools likely to find vulnerabilities
-        if time_remaining < 0.3 and coverage < 0.7:  # Less than 30% time remaining and low coverage
-            if tool_category in ['exploitation_frameworks', 'web_scanners']:
-                context_adjustment *= 1.3  # Give more time to exploitation tools
-        
-        # If we have high coverage, reduce timeout for exploratory tools
-        if coverage > 0.8:
-            if tool_category in ['long_enumeration', 'network_scanners']:
-                context_adjustment *= 0.7  # Reduce time for exploratory tools when we have enough coverage
-        
-        # Calculate final timeout
-        calculated_timeout = int(base_timeout * multiplier * context_adjustment)
-        
-        # Ensure reasonable bounds (minimum 5 minutes, maximum 180 minutes for long-running tools)
-        max_timeout = 10800 if progressive_extension else 7200  # 180 mins vs 120 mins
-        final_timeout = max(300, min(calculated_timeout, max_timeout))
-        
-        # Update parameters with calculated timeout
-        parameters['timeout'] = final_timeout
-        
-        if multiplier > 1.0 or context_adjustment > 1.0:
-            print(f"[DEBUG] Dynamic timeout for {tool_name} ({tool_category}): {final_timeout}s (base: {base_timeout}s, mult: {multiplier}x, context: {context_adjustment}x, progressive: {progressive_extension})")
+            
+            # Determine appropriate timeout multiplier based on tool category
+            multiplier = 1.0
+            tool_category = None
+            progressive_extension = False
+            
+            for category, config in timeout_multipliers.items():
+                if tool_name in config['tools']:
+                    tool_category = category
+                    multiplier = config['multiplier']
+                    progressive_extension = config.get('progressive_extension', False)
+                    break
+            
+            # Adjust timeout based on scan context
+            context_adjustment = 1.0
+            if parameters.get('aggressive', False):
+                context_adjustment = 1.5  # Increase timeout for aggressive scans
+            if parameters.get('stealth_required', False):
+                context_adjustment = 2.0  # Double timeout for stealth mode
+            if parameters.get('phase') == 'post_exploitation':
+                context_adjustment = 1.5  # Increase timeout for post-exploitation
+            
+            # Progressive timeout extension for tools that may need more time
+            if progressive_extension:
+                # Check if this tool has been executed before and how long it took
+                execution_history = self._get_tool_execution_history(tool_name)
+                if execution_history:
+                    avg_execution_time = sum(execution_history) / len(execution_history)
+                    # If average execution time is close to current timeout, increase it
+                    if avg_execution_time > (base_timeout * multiplier * context_adjustment * 0.8):
+                        context_adjustment *= 1.5  # Increase by 50%
+            
+            # Additional context-based adjustments
+            time_remaining = context.get('time_remaining', 1.0)
+            coverage = context.get('coverage', 0.0)
+            
+            # If we're running low on time, give more time to tools likely to find vulnerabilities
+            if time_remaining < 0.3 and coverage < 0.7:  # Less than 30% time remaining and low coverage
+                if tool_category in ['exploitation_frameworks', 'web_scanners']:
+                    context_adjustment *= 1.3  # Give more time to exploitation tools
+            
+            # If we have high coverage, reduce timeout for exploratory tools
+            if coverage > 0.8:
+                if tool_category in ['long_enumeration', 'network_scanners']:
+                    context_adjustment *= 0.7  # Reduce time for exploratory tools when we have enough coverage
+            
+            # Calculate final timeout
+            calculated_timeout = int(base_timeout * multiplier * context_adjustment)
+            
+            # Ensure reasonable bounds (minimum 5 minutes, maximum 180 minutes for long-running tools)
+            max_timeout = 10800 if progressive_extension else 7200  # 180 mins vs 120 mins
+            final_timeout = max(300, min(calculated_timeout, max_timeout))
+            
+            # Update parameters with calculated timeout
+            parameters['timeout'] = final_timeout
+            
+            if multiplier > 1.0 or context_adjustment > 1.0:
+                print(f"[DEBUG] Dynamic timeout for {tool_name} ({tool_category}): {final_timeout}s (base: {base_timeout}s, mult: {multiplier}x, context: {context_adjustment}x, progressive: {progressive_extension})")
         
         # Use Knowledge Base for adaptive command generation
         try:
             command_target = hostname if tool_name in ['nmap', 'nikto', 'fierce', 'enum4linux', 'sslscan'] else target
-            
-            # NEW: Use adaptive command building
-            findings = parameters.get('findings', [])
-            command = self.tool_kb.build_adaptive_command(
-                tool_name, 
-                command_target, 
-                context,
-                findings
-            )
-            
-            logger.info(f"[ToolManager] Adaptive command: {command[:150]}")
+            # Use the correct method name
+            command = self.tool_kb.build_command(tool_name, command_target, context)
+            if command:
+                print(f"[DEBUG] Using KB-generated command: {command}")
+                return command
         except Exception as e:
-            logger.error(f"[ToolManager] Command generation failed: {e}, using fallback")
-            command = self._fallback_command(tool_name, target)
+            logger.warning(f"KB command generation failed: {e}")
         
-        # TEMPORARILY DISABLE timeout wrapper for debugging
-        # Add timeout wrapper for non-linpeas tools
-        # if tool_name != 'linpeas':  # linpeas handles its own timeout internally
-        #     timeout = parameters.get('timeout', 300)
-        #     command = f"timeout {timeout} {command}"
-        
-        return command
-
-    def _fallback_command(self, tool_name: str, target: str) -> str:
-        """Fallback commands if Knowledge Base fails"""
+        # Fallback to default command building
+        return self._build_default_command(tool_name, target, parameters)
+    
+    def _build_default_command(self, tool_name: str, target: str,
+                             parameters: Dict[str, Any]) -> str:
+        """Fallback command building if Knowledge Base fails"""
         # Map tool names to available tools on Kali VM
         tool_mapping = {
             'sublist3r': 'amass',  # Use amass instead of sublist3r
@@ -598,35 +607,159 @@ class ToolManager:
         # Use the mapped tool if available
         actual_tool = tool_mapping.get(tool_name, tool_name)
         
+        # Check if tool exists in standard locations or Go bin directories
+        tool_paths = {
+            'nmap': 'nmap',
+            'nikto': 'nikto',
+            'sqlmap': 'sqlmap',
+            'amass': 'amass',
+            'dnsenum': 'dnsenum',
+            'whatweb': 'whatweb',
+            'nuclei': 'nuclei',  # Will check in Go bin if not in standard location
+            'dalfox': '/home/kali/go/bin/dalfox',  # Explicitly use Go bin path
+            'commix': 'commix',
+            'gobuster': 'gobuster',
+            'ffuf': 'ffuf',
+            'fierce': 'fierce',
+            'wpscan': 'wpscan',
+            'hydra': 'hydra',
+            'linpeas': '/usr/share/peass/linpeas/linpeas.sh',
+            'winpeas': '/usr/share/peass/winpeas/winpeas.exe',
+            'metasploit': 'msfconsole',
+            'enum4linux': 'enum4linux',
+            'sslscan': 'sslscan',
+            'cewl': 'cewl',
+            'subfinder': '/home/kali/go/bin/subfinder',  # Explicitly use Go bin path
+            'gospider': 'whatweb',  # Use whatweb as fallback
+            'katana': 'whatweb',  # Use whatweb as fallback
+            'arjun': '/home/kali/.local/bin/arjun',  # Explicitly use local bin path
+            'httprobe': 'whatweb',  # Use whatweb as fallback
+            'netlas': 'nmap',  # Use nmap as fallback
+            'onyphe': 'nmap',  # Use nmap as fallback
+            'xsser': 'dalfox',  # Use dalfox as fallback
+        }
+        
+        # Get the appropriate path for the tool
+        tool_path = tool_paths.get(actual_tool, actual_tool)
+        
         fallback_commands = {
-            'nmap': f"nmap -sV -T4 {target}",
-            'nikto': f"nikto -h {target}",
-            'sqlmap': f"sqlmap -u '{target}' --batch",
-            'amass': f"amass enum -d {target}",  # Updated for amass
-            'dnsenum': f"dnsenum {target}",  # Updated for dnsenum
-            'whatweb': f"whatweb {target}",
-            'nuclei': f"nuclei -u {target} -severity critical,high",
-            'dalfox': f"dalfox url {target}",
-            'commix': f"commix --url='{target}' --batch",
-            'gobuster': f"gobuster dir -u {target} -w /usr/share/dirb/wordlists/common.txt",
-            'ffuf': f"ffuf -u {target}/FUZZ -w /usr/share/dirb/wordlists/common.txt:FUZZ",
-            'fierce': f"fierce --domain {target}",
-            'wpscan': f"wpscan --url {target}",
-            'hydra': f"hydra {target}",
-            'linpeas': f"/usr/share/peass/linpeas/linpeas.sh",  # Full path for linpeas
-            'winpeas': f"/usr/share/peass/winpeas/winpeas.exe",  # Full path for winpeas
-            'metasploit': f"msfconsole -q -x \"use auxiliary/scanner/portscan/tcp; set RHOSTS {target}; run; exit\"",
-            'enum4linux': f"enum4linux {target}",
-            'sslscan': f"sslscan {target}",
-            'cewl': f"cewl {target}",
+            'nmap': f"{tool_path} -sV -T4 {target}",
+            'nikto': f"{tool_path} -h {target}",
+            'sqlmap': f"{tool_path} -u '{target}' --batch",
+            'amass': f"{tool_path} enum -d {target}",
+            'dnsenum': f"{tool_path} {target}",
+            'whatweb': f"{tool_path} {target}",
+            'nuclei': f"{tool_path} -u {target} -severity critical,high",
+            'dalfox': f"{tool_path} url {target}",
+            'commix': f"{tool_path} --url='{target}' --batch",
+            'gobuster': f"{tool_path} dir -u {target} -w /usr/share/dirb/wordlists/common.txt",
+            'ffuf': f"{tool_path} -u {target}/FUZZ -w /usr/share/dirb/wordlists/common.txt:FUZZ",
+            'fierce': f"{tool_path} --domain {target}",
+            'wpscan': f"{tool_path} --url {target}",
+            'hydra': f"{tool_path} {target}",
+            'linpeas': f"{tool_path}",  # Full path for linpeas
+            'winpeas': f"{tool_path}",  # Full path for winpeas
+            'metasploit': f"{tool_path} -q -x \"use auxiliary/scanner/portscan/tcp; set RHOSTS {target}; run; exit\"",
+            'enum4linux': f"{tool_path} {target}",
+            'sslscan': f"{tool_path} {target}",
+            'cewl': f"{tool_path} {target}",
         }
         
         # Special handling for linpeas - it's a local tool, not a remote scanner
         if actual_tool in ['linpeas', 'linpeas.sh']:
             logger.warning(f"[ToolManager] linpeas is a LOCAL privilege escalation tool and should only be run on COMPROMISED targets, not {target}")
             logger.warning("[ToolManager] linpeas should be executed AFTER gaining access to a target system")
-            
-        return fallback_commands.get(actual_tool, f"{actual_tool} {target}")
+        
+        # Get the command, fallback to just the tool path and target
+        command = fallback_commands.get(actual_tool, f"{tool_path} {target}")
+        return command
+
+    def _fallback_command(self, tool_name: str, target: str) -> str:
+        """Fallback commands if Knowledge Base fails"""
+        # Map tool names to available tools on Kali VM
+        tool_mapping = {
+            'sublist3r': 'amass',  # Use amass instead of sublist3r
+            'theHarvester': 'dnsenum',  # Use dnsenum as alternative
+            'linpeas.sh': 'linpeas',  # Normalize name
+            # Map missing tools to available alternatives
+            'nuclei': 'nikto',  # Use nikto as alternative to nuclei
+            'gospider': 'whatweb',  # Use whatweb as alternative to gospider
+            'katana': 'whatweb',  # Use whatweb as alternative to katana
+            'httprobe': 'whatweb',  # Use whatweb as alternative to httprobe
+            'netlas': 'nmap',  # Use nmap as alternative to netlas
+            'onyphe': 'nmap',  # Use nmap as alternative to onyphe
+            'xsser': 'dalfox',  # Use dalfox as alternative to xsser
+        }
+        
+        # Use the mapped tool if available
+        actual_tool = tool_mapping.get(tool_name, tool_name)
+        
+        # Check if tool exists in standard locations or Go bin directories
+        tool_paths = {
+            'nmap': 'nmap',
+            'nikto': 'nikto',
+            'sqlmap': 'sqlmap',
+            'amass': 'amass',
+            'dnsenum': 'dnsenum',
+            'whatweb': 'whatweb',
+            'nuclei': 'nuclei',
+            'dalfox': '/home/kali/go/bin/dalfox',  # Explicitly use Go bin path
+            'commix': 'commix',
+            'gobuster': 'gobuster',
+            'ffuf': 'ffuf',
+            'fierce': 'fierce',
+            'wpscan': 'wpscan',
+            'hydra': 'hydra',
+            'linpeas': '/usr/share/peass/linpeas/linpeas.sh',
+            'winpeas': '/usr/share/peass/winpeas/winpeas.exe',
+            'metasploit': 'msfconsole',
+            'enum4linux': 'enum4linux',
+            'sslscan': 'sslscan',
+            'cewl': 'cewl',
+            'subfinder': '/home/kali/go/bin/subfinder',  # Explicitly use Go bin path
+            'gospider': 'whatweb',  # Use whatweb as fallback
+            'katana': 'whatweb',  # Use whatweb as fallback
+            'arjun': '/home/kali/.local/bin/arjun',  # Explicitly use local bin path
+            'httprobe': 'whatweb',  # Use whatweb as fallback
+            'netlas': 'nmap',  # Use nmap as fallback
+            'onyphe': 'nmap',  # Use nmap as fallback
+            'xsser': 'dalfox',  # Use dalfox as fallback
+        }
+        
+        # Get the appropriate path for the tool
+        tool_path = tool_paths.get(actual_tool, actual_tool)
+        
+        fallback_commands = {
+            'nmap': f"{tool_path} -sV -T4 {target}",
+            'nikto': f"{tool_path} -h {target}",
+            'sqlmap': f"{tool_path} -u '{target}' --batch",
+            'amass': f"{tool_path} enum -d {target}",
+            'dnsenum': f"{tool_path} {target}",
+            'whatweb': f"{tool_path} {target}",
+            'nuclei': f"{tool_path} -u {target} -severity critical,high",
+            'dalfox': f"{tool_path} url {target}",
+            'commix': f"{tool_path} --url='{target}' --batch",
+            'gobuster': f"{tool_path} dir -u {target} -w /usr/share/dirb/wordlists/common.txt",
+            'ffuf': f"{tool_path} -u {target}/FUZZ -w /usr/share/dirb/wordlists/common.txt:FUZZ",
+            'fierce': f"{tool_path} --domain {target}",
+            'wpscan': f"{tool_path} --url {target}",
+            'hydra': f"{tool_path} {target}",
+            'linpeas': f"{tool_path}",
+            'winpeas': f"{tool_path}",
+            'metasploit': f"{tool_path} -q -x \"use auxiliary/scanner/portscan/tcp; set RHOSTS {target}; run; exit\"",
+            'enum4linux': f"{tool_path} {target}",
+            'sslscan': f"{tool_path} {target}",
+            'cewl': f"{tool_path} {target}",
+        }
+        
+        # Special handling for linpeas - it's a local tool, not a remote scanner
+        if actual_tool in ['linpeas', 'linpeas.sh']:
+            logger.warning(f"[ToolManager] linpeas is a LOCAL privilege escalation tool and should only be run on COMPROMISED targets, not {target}")
+            logger.warning("[ToolManager] linpeas should be executed AFTER gaining access to a target system")
+        
+        # Get the command, fallback to just the tool path and target
+        command = fallback_commands.get(actual_tool, f"{tool_path} {target}")
+        return command
 
     def _build_sqlmap_for_juiceshop(self, target: str, parameters: Dict[str, Any]) -> str:
         """
@@ -778,6 +911,12 @@ class ToolManager:
             'sublist3r': 'amass',  # Updated to amass
             'censys': 'nmap',
             'linpeas.sh': 'linpeas',  # Normalize name
+            # Additional fallbacks for missing tools
+            'nuclei': 'nikto',
+            'gospider': 'whatweb',
+            'katana': 'whatweb',
+            'httprobe': 'whatweb',
+            'xsser': 'dalfox',
         }
         return fallbacks.get(tool_name)
 

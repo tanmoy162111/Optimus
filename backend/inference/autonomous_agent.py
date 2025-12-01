@@ -50,6 +50,10 @@ class AutonomousPentestAgent:
         tool_execution_attempts = {}
         max_tool_attempts = 3  # Reduced from 5
         
+        # Track approach changes
+        approach_changes = 0
+        max_approach_changes = 3
+        
         while not self._is_scan_complete(scan_state) and iteration < max_iterations:
             iteration += 1
             logger.info(f"=== Iteration {iteration} | Phase: {scan_state['phase']} | Strategy: {scan_state.get('strategy', 'none')} ===")
@@ -93,10 +97,29 @@ class AutonomousPentestAgent:
             recommended_tools = tool_recommendation['tools']
             
             if not recommended_tools or tool_recommendation.get('method') == 'exhausted':
-                logger.info("Tool selector exhausted, transitioning phase")
-                next_phase = self.phase_controller.get_next_phase(scan_state['phase'], scan_state)
-                scan_state['phase'] = next_phase
-                scan_state['strategy'] = self.strategy_selector.select_strategy(scan_state)
+                logger.info("Tool selector exhausted, checking phase transition")
+                # Check if we should change approach or move to next phase
+                next_phase = self.phase_controller.should_transition(scan_state)
+                if next_phase != scan_state['phase']:
+                    logger.info(f"📍 Phase transition based on exhaustion: {scan_state['phase']} → {next_phase}")
+                    scan_state['phase'] = next_phase
+                    scan_state['strategy'] = self.strategy_selector.select_strategy(scan_state)
+                    # Reset approach changes when moving to new phase
+                    approach_changes = 0
+                else:
+                    # Same phase, might need to change approach
+                    if approach_changes < max_approach_changes:
+                        logger.info(f"🔄 Changing approach in current phase: {scan_state['phase']}")
+                        scan_state['strategy'] = self.strategy_selector.select_strategy(scan_state)
+                        approach_changes += 1
+                        scan_state['strategy_changes'] += 1
+                    else:
+                        # Move to next phase if we've exhausted approach changes
+                        logger.info(f"📍 Moving to next phase after exhausting approaches: {scan_state['phase']} → {next_phase}")
+                        next_phase = self.phase_controller.get_next_phase(scan_state['phase'], scan_state)
+                        scan_state['phase'] = next_phase
+                        scan_state['strategy'] = self.strategy_selector.select_strategy(scan_state)
+                        approach_changes = 0
                 continue
             
             # Execute tool with attempt tracking
@@ -145,6 +168,7 @@ class AutonomousPentestAgent:
                 scan_state['phase'] = next_phase
                 scan_state['strategy'] = self.strategy_selector.select_strategy(scan_state)
                 stalled_iterations = 0
+                approach_changes = 0  # Reset approach changes when moving to new phase
             
             time.sleep(0.5)
             
@@ -152,84 +176,81 @@ class AutonomousPentestAgent:
         return self._generate_final_report(scan_state)
 
     def _run_fully_autonomous_scan(self, target: str, scan_config: Dict) -> Dict[str, Any]:
-        """
-        Run fully autonomous scan where agent makes all decisions based on findings
-        
-        Args:
-            target: Target URL/IP
-            scan_config: Configuration for the scan
-            
-        Returns:
-            Scan results
-        """
-        logger.info("🚀 Starting FULLY AUTONOMOUS scan mode")
-        
+        """Run fully autonomous scan with intelligent decision making"""
         scan_state = self._initialize_fully_autonomous_state(target, scan_config)
-        
-        max_iterations = scan_config.get('max_iterations', 100)
-        iteration = 0
         decision_log = []
         
-        # Track tool execution attempts to prevent infinite loops
-        tool_execution_attempts = {}
-        max_tool_attempts = 5
+        print("[AutonomousAgent] Starting fully autonomous scan...")
+        
+        iteration = 0
+        max_iterations = scan_config.get('max_iterations', 50)
         
         while not self._is_fully_autonomous_scan_complete(scan_state) and iteration < max_iterations:
             iteration += 1
-            logger.info(f"=== Fully Autonomous Iteration {iteration} ===")
+            print(f"\n[AutonomousAgent] Iteration {iteration}")
             
-            # Analyze current situation based on findings
-            situation_analysis = self._analyze_situation_fully_autonomous(scan_state)
+            # Analyze current situation
+            analysis = self._analyze_situation_fully_autonomous(scan_state)
             
-            # Make decision based on analysis
-            decision = self._make_autonomous_decision(scan_state, situation_analysis)
+            # Make autonomous decision
+            decision = self._make_autonomous_decision(scan_state, analysis)
+            decision['iteration'] = iteration
+            decision['timestamp'] = datetime.now().isoformat()
+            decision_log.append(decision)
             
-            # Log decision
-            decision_log.append({
-                'iteration': iteration,
-                'analysis': situation_analysis,
-                'decision': decision,
-                'timestamp': datetime.now().isoformat()
-            })
+            print(f"[AutonomousAgent] Decision: {decision['action']} - {decision['reason']}")
             
             # Execute decision
             if decision['action'] == 'execute_tool':
-                tool_to_execute = decision['tool']
-                parameters = decision.get('parameters', {})
+                tool_name = decision['tool']
+                parameters = decision['parameters']
                 
-                # Prevent infinite attempts
-                tool_execution_attempts[tool_to_execute] = tool_execution_attempts.get(tool_to_execute, 0) + 1
-                if tool_execution_attempts[tool_to_execute] > max_tool_attempts:
-                    logger.warning(f"Tool {tool_to_execute} attempted {max_tool_attempts} times, skipping")
-                    continue
+                print(f"[AutonomousAgent] Executing {tool_name} with params: {parameters}")
                 
-                logger.info(f"🔧 Executing tool: {tool_to_execute} with parameters: {parameters}")
+                # Execute tool
+                result = self._execute_tool_with_timeout(tool_name, target, parameters)
                 
-                result = self._execute_tool_real(
-                    tool_to_execute, 
-                    target,
-                    scan_state,
-                    parameters
-                )
-                
-                # Update scan state with results
-                self._update_scan_state_real(scan_state, result)
+                # Process results
+                self._process_tool_results(scan_state, result)
                 
                 # Learn from execution
-                self._learn_from_execution(tool_to_execute, result, scan_state)
+                self._learn_from_execution(tool_name, result, scan_state)
                 
             elif decision['action'] == 'change_approach':
-                logger.info(f"🔄 Changing approach: {decision['reason']}")
-                # Update scan state with new approach
-                scan_state['current_approach'] = decision.get('new_approach', 'default')
+                new_approach = decision['new_approach']
+                print(f"[AutonomousAgent] Changing approach to: {new_approach}")
+                scan_state['current_approach'] = new_approach
+                scan_state['adaptive_choices'].append({
+                    'type': 'approach_change',
+                    'from': scan_state.get('current_approach', 'initial'),
+                    'to': new_approach,
+                    'reason': decision['reason'],
+                    'iteration': iteration
+                })
+                
+            elif decision['action'] == 'change_phase':  # NEW: Handle phase changes
+                new_phase = decision['new_phase']
+                print(f"[AutonomousAgent] Changing phase to: {new_phase}")
+                scan_state['phase'] = new_phase
+                scan_state['adaptive_choices'].append({
+                    'type': 'phase_change',
+                    'from': scan_state.get('phase', 'reconnaissance'),
+                    'to': new_phase,
+                    'reason': decision['reason'],
+                    'iteration': iteration
+                })
                 
             elif decision['action'] == 'terminate':
-                logger.info(f"⏹️ Terminating scan: {decision['reason']}")
+                print(f"[AutonomousAgent] Terminating scan: {decision['reason']}")
                 break
             
-            time.sleep(0.5)
+            # Update coverage
+            scan_state['coverage'] = self._calculate_coverage_real(scan_state)
+            
+            # Small delay to prevent overwhelming the system
+            time.sleep(0.1)
         
-        scan_state['status'] = 'completed'
+        print("[AutonomousAgent] Fully autonomous scan completed.")
         scan_state['decision_log'] = decision_log
         return self._generate_fully_autonomous_report(scan_state)
 
@@ -302,6 +323,10 @@ class AutonomousPentestAgent:
         
         avg_severity = sum(severity_levels) / len(severity_levels) if severity_levels else 0
         
+        # NEW: Match findings with knowledge base to determine attack patterns
+        attack_patterns = self._match_findings_to_attack_patterns(findings)
+        suggested_phases = self._suggest_next_phases_based_on_findings(findings, scan_state.get('phase', 'reconnaissance'))
+        
         analysis = {
             'total_findings': len(findings),
             'unique_tools_executed': len(unique_tools),
@@ -310,7 +335,9 @@ class AutonomousPentestAgent:
             'technologies_detected': technologies,
             'coverage_estimate': min(len(findings) / 5.0, 1.0),  # Estimate coverage
             'tools_executed_recently': [t['tool'] if isinstance(t, dict) else t 
-                                       for t in tools_executed[-5:]]  # Last 5 tools
+                                       for t in tools_executed[-5:]],  # Last 5 tools
+            'attack_patterns': attack_patterns,  # NEW: Identified attack patterns
+            'suggested_phases': suggested_phases  # NEW: Suggested next phases
         }
         
         print(f"[DEBUG] Analysis - Total findings: {len(findings)}")
@@ -318,9 +345,70 @@ class AutonomousPentestAgent:
         print(f"[DEBUG] Analysis - Finding types: {finding_types}")
         print(f"[DEBUG] Analysis - Average severity: {avg_severity}")
         print(f"[DEBUG] Analysis - Technologies detected: {technologies}")
+        print(f"[DEBUG] Analysis - Attack patterns: {attack_patterns}")  # NEW
+        print(f"[DEBUG] Analysis - Suggested phases: {suggested_phases}")  # NEW
         
         return analysis
 
+    def _match_findings_to_attack_patterns(self, findings: List[Dict]) -> List[Dict]:
+        """
+        Match findings with knowledge base to identify attack patterns
+        """
+        attack_patterns = []
+        
+        # Group findings by type
+        findings_by_type = {}
+        for finding in findings:
+            ftype = finding.get('type', 'unknown')
+            if ftype not in findings_by_type:
+                findings_by_type[ftype] = []
+            findings_by_type[ftype].append(finding)
+        
+        # For each finding type, get attack pattern information from knowledge base
+        for ftype, ffindings in findings_by_type.items():
+            # Get exploitation technique from knowledge base
+            technique_info = self.knowledge_base.get_exploitation_technique(ftype)
+            if technique_info:
+                pattern = {
+                    'type': ftype,
+                    'count': len(ffindings),
+                    'techniques': technique_info.get('techniques', []),
+                    'tools': technique_info.get('tools', []),
+                    'detection_signatures': technique_info.get('detection_signatures', []),
+                    'cwe_id': self.knowledge_base.map_to_cwe({'type': ftype}),
+                    'severity_range': [min(f.get('severity', 0) for f in ffindings),
+                                     max(f.get('severity', 0) for f in ffindings)]
+                }
+                attack_patterns.append(pattern)
+        
+        return attack_patterns
+
+    def _suggest_next_phases_based_on_findings(self, findings: List[Dict], current_phase: str) -> List[str]:
+        """
+        Suggest next phases based on findings and current phase
+        """
+        # Phase progression logic based on findings
+        phase_suggestions = {
+            'reconnaissance': ['scanning', 'exploitation'],
+            'scanning': ['exploitation', 'post_exploitation'],
+            'exploitation': ['post_exploitation', 'covering_tracks'],
+            'post_exploitation': ['covering_tracks'],
+            'covering_tracks': []
+        }
+        
+        # If we have high-severity findings, suggest exploitation
+        high_severity_findings = [f for f in findings if f.get('severity', 0) >= 7.0]
+        if high_severity_findings and current_phase in ['reconnaissance', 'scanning']:
+            return ['exploitation'] + phase_suggestions.get(current_phase, [])
+        
+        # If we have exploitable findings, suggest post-exploitation
+        exploitable_findings = [f for f in findings if f.get('exploitable', False)]
+        if exploitable_findings and current_phase in ['exploitation']:
+            return ['post_exploitation'] + phase_suggestions.get(current_phase, [])
+        
+        # Default suggestions based on current phase
+        return phase_suggestions.get(current_phase, [])
+    
     def _make_autonomous_decision(self, scan_state: Dict, analysis: Dict) -> Dict[str, Any]:
         """
         Make autonomous decision based on current state and analysis
@@ -332,6 +420,8 @@ class AutonomousPentestAgent:
         unique_tools = analysis['unique_tools_executed']
         finding_types = analysis['finding_types']
         recent_tools = analysis['tools_executed_recently']
+        attack_patterns = analysis.get('attack_patterns', [])  # NEW: Attack patterns from knowledge
+        suggested_phases = analysis.get('suggested_phases', [])  # NEW: Suggested phases
         
         # Get tools that haven't been executed recently
         all_tools = list(self.tool_db.tools.keys())
@@ -340,6 +430,24 @@ class AutonomousPentestAgent:
         
         available_tools = [tool for tool in all_tools if tool not in recent_tools]
         print(f"[DEBUG] Available tools: {len(available_tools)}")
+        
+        # NEW: If we have identified attack patterns, prioritize tools for those patterns
+        if attack_patterns:
+            pattern_tools = []
+            for pattern in attack_patterns:
+                pattern_tools.extend(pattern.get('tools', []))
+            
+            # Filter to available tools only
+            pattern_tools = [tool for tool in pattern_tools if tool in available_tools]
+            
+            if pattern_tools:
+                print(f"[DEBUG] Pattern-based tools: {pattern_tools}")
+                return {
+                    'action': 'execute_tool',
+                    'tool': pattern_tools[0],
+                    'parameters': self._generate_tool_parameters(pattern_tools[0], scan_state, analysis),
+                    'reason': f'Executing {pattern_tools[0]} based on identified attack patterns: {[p["type"] for p in attack_patterns]}'
+                }
         
         # If we have findings, explore related tools
         if findings > 0:
@@ -352,6 +460,18 @@ class AutonomousPentestAgent:
                     'tool': priority_tools[0],
                     'parameters': self._generate_tool_parameters(priority_tools[0], scan_state, analysis),
                     'reason': f'Exploring {priority_tools[0]} based on findings: {list(finding_types.keys())}'
+                }
+        
+        # NEW: If we have suggested phases and current approach isn't working, consider phase change
+        current_phase = scan_state.get('phase', 'reconnaissance')
+        if suggested_phases and unique_tools >= 10 and findings < 3:
+            # Consider transitioning to a suggested phase
+            if suggested_phases and suggested_phases[0] != current_phase:
+                print(f"[DEBUG] Suggested phase transition: {current_phase} -> {suggested_phases[0]}")
+                return {
+                    'action': 'change_phase',
+                    'new_phase': suggested_phases[0],
+                    'reason': f'Transitioning to {suggested_phases[0]} based on findings analysis'
                 }
         
         # If we haven't executed many tools, try exploration
@@ -396,7 +516,7 @@ class AutonomousPentestAgent:
         """Get priority tools based on finding types"""
         tool_priorities = {
             'sql_injection': ['sqlmap', 'commix'],
-            'xss': ['dalfox', 'xsser'],
+            'xss': ['dalfox', 'xsser'],  # Add xsser as alternative to dalfox
             'web_vulnerabilities': ['nikto', 'nuclei'],
             'subdomains': ['subfinder', 'amass'],
             'ports_open': ['nmap', 'masscan'],
@@ -437,11 +557,12 @@ class AutonomousPentestAgent:
         findings = scan_state.get('findings', [])
         technologies = scan_state.get('technologies_detected', [])
         
-        # Base parameters
+        # Base parameters - stricter timeout for fully autonomous mode
         parameters = {
             'aggressive': len(findings) < 3,  # Be more aggressive if few findings
-            'timeout': 120,  # Reduced timeout to prevent long waits
-            'target_type': scan_state.get('target_profile', {}).get('type', 'web')
+            'timeout': 90,  # Further reduced timeout to prevent long waits in autonomous mode
+            'target_type': scan_state.get('target_profile', {}).get('type', 'web'),
+            'autonomous_mode': True  # Flag to indicate this is fully autonomous mode
         }
         
         # Tool-specific parameter generation

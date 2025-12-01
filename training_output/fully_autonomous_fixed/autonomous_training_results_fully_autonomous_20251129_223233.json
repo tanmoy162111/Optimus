@@ -1,0 +1,3883 @@
+{
+  "training_id": "fully_autonomous_20251129_223233",
+  "duration_seconds": 215.545309,
+  "total_episodes": 1,
+  "targets_trained": 1,
+  "episode_results": [
+    {
+      "episode_num": 0,
+      "target": "http://192.168.131.128",
+      "duration": 215.542095,
+      "tools_used": [
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T22:33:45.341698",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T22:33:45.341707",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T22:33:46.974781",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T22:33:46.974793",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "dalfox",
+          "timestamp": "2025-11-29T22:33:47.599908",
+          "success": false,
+          "exit_code": 127
+        },
+        {
+          "tool": "dalfox",
+          "timestamp": "2025-11-29T22:33:47.599915",
+          "success": false,
+          "exit_code": 127
+        },
+        {
+          "tool": "commix",
+          "timestamp": "2025-11-29T22:33:48.427554",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "commix",
+          "timestamp": "2025-11-29T22:33:48.427567",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T22:34:20.075009",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T22:34:20.075015",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T22:34:21.903509",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T22:34:21.903522",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "dalfox",
+          "timestamp": "2025-11-29T22:34:22.531510",
+          "success": false,
+          "exit_code": 127
+        },
+        {
+          "tool": "dalfox",
+          "timestamp": "2025-11-29T22:34:22.531519",
+          "success": false,
+          "exit_code": 127
+        },
+        {
+          "tool": "commix",
+          "timestamp": "2025-11-29T22:34:23.259812",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "commix",
+          "timestamp": "2025-11-29T22:34:23.259818",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T22:34:56.914748",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T22:34:56.914757",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T22:34:58.545267",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T22:34:58.545274",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "dalfox",
+          "timestamp": "2025-11-29T22:34:59.174241",
+          "success": false,
+          "exit_code": 127
+        },
+        {
+          "tool": "dalfox",
+          "timestamp": "2025-11-29T22:34:59.174249",
+          "success": false,
+          "exit_code": 127
+        },
+        {
+          "tool": "commix",
+          "timestamp": "2025-11-29T22:34:59.901936",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "commix",
+          "timestamp": "2025-11-29T22:34:59.901942",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T22:35:34.370345",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T22:35:34.370353",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T22:35:35.914658",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T22:35:35.914668",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "dalfox",
+          "timestamp": "2025-11-29T22:35:36.543341",
+          "success": false,
+          "exit_code": 127
+        },
+        {
+          "tool": "dalfox",
+          "timestamp": "2025-11-29T22:35:36.543349",
+          "success": false,
+          "exit_code": 127
+        },
+        {
+          "tool": "commix",
+          "timestamp": "2025-11-29T22:35:37.271076",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "commix",
+          "timestamp": "2025-11-29T22:35:37.271080",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T22:36:05.813809",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T22:36:05.813815",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T22:36:07.345029",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "sqlmap",
+          "timestamp": "2025-11-29T22:36:07.345036",
+          "success": false,
+          "exit_code": 1
+        },
+        {
+          "tool": "dalfox",
+          "timestamp": "2025-11-29T22:36:07.969604",
+          "success": false,
+          "exit_code": 127
+        },
+        {
+          "tool": "dalfox",
+          "timestamp": "2025-11-29T22:36:07.969611",
+          "success": false,
+          "exit_code": 127
+        },
+        {
+          "tool": "commix",
+          "timestamp": "2025-11-29T22:36:08.698108",
+          "success": true,
+          "exit_code": 0
+        },
+        {
+          "tool": "commix",
+          "timestamp": "2025-11-29T22:36:08.698115",
+          "success": true,
+          "exit_code": 0
+        }
+      ],
+      "findings": [
+        {
+          "id": "4efc2c32-4cf6-4383-8924-54757e40d1e0",
+          "type": "command_injection",
+          "severity": 9.0,
+          "confidence": 0.95,
+          "name": "Command Injection",
+          "location": "Detected by Commix",
+          "evidence": "                                      __\r\n   ___   ___     ___ ___     ___ ___ /\\_\\   __  _\r\n /`___\\ / __`\\ /' __` __`\\ /' __` __`\\/\\ \\ /\\ \\/'\\  \u001b[1m\u001b[4m\u001b[37mv4.0-stable\u001b[0m\r\n/\\ \\__//\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\ \\ \\\\/>  </\r\n\\ \\____\\ \\____/\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\/\\_/\\_\\ \u001b[90m\u001b[4mhttps://commixproject.com\u001b[0m\r\n \\/____/\\/___/  \\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\//\\/_/ (\u001b[91m@commixproject\u001b[0m)\r\n\r\n+--\r\n\u001b[1mAutomated All-in-One OS Command Injection Exploitation Tool\u001b[0m\r\nCopyright \u00a9 2014-2024 Anas",
+          "exploitable": true
+        },
+        {
+          "id": "3b033005-1021-4320-8afb-e3ba570fd2f7",
+          "type": "command_injection",
+          "severity": 9.0,
+          "confidence": 0.95,
+          "name": "Command Injection",
+          "location": "Detected by Commix",
+          "evidence": "                                      __\r\n   ___   ___     ___ ___     ___ ___ /\\_\\   __  _\r\n /`___\\ / __`\\ /' __` __`\\ /' __` __`\\/\\ \\ /\\ \\/'\\  \u001b[1m\u001b[4m\u001b[37mv4.0-stable\u001b[0m\r\n/\\ \\__//\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\ \\ \\\\/>  </\r\n\\ \\____\\ \\____/\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\/\\_/\\_\\ \u001b[90m\u001b[4mhttps://commixproject.com\u001b[0m\r\n \\/____/\\/___/  \\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\//\\/_/ (\u001b[91m@commixproject\u001b[0m)\r\n\r\n+--\r\n\u001b[1mAutomated All-in-One OS Command Injection Exploitation Tool\u001b[0m\r\nCopyright \u00a9 2014-2024 Anas",
+          "exploitable": true
+        },
+        {
+          "id": "855a8343-6a17-477e-bdc6-8a665b2bffc1",
+          "type": "command_injection",
+          "severity": 9.0,
+          "confidence": 0.95,
+          "name": "Command Injection",
+          "location": "Detected by Commix",
+          "evidence": "                                      __\r\n   ___   ___     ___ ___     ___ ___ /\\_\\   __  _\r\n /`___\\ / __`\\ /' __` __`\\ /' __` __`\\/\\ \\ /\\ \\/'\\  \u001b[1m\u001b[4m\u001b[37mv4.0-stable\u001b[0m\r\n/\\ \\__//\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\ \\ \\\\/>  </\r\n\\ \\____\\ \\____/\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\/\\_/\\_\\ \u001b[90m\u001b[4mhttps://commixproject.com\u001b[0m\r\n \\/____/\\/___/  \\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\//\\/_/ (\u001b[91m@commixproject\u001b[0m)\r\n\r\n+--\r\n\u001b[1mAutomated All-in-One OS Command Injection Exploitation Tool\u001b[0m\r\nCopyright \u00a9 2014-2024 Anas",
+          "exploitable": true
+        },
+        {
+          "id": "d2e48319-d2ed-4071-b395-853912aa8a98",
+          "type": "command_injection",
+          "severity": 9.0,
+          "confidence": 0.95,
+          "name": "Command Injection",
+          "location": "Detected by Commix",
+          "evidence": "                                      __\r\n   ___   ___     ___ ___     ___ ___ /\\_\\   __  _\r\n /`___\\ / __`\\ /' __` __`\\ /' __` __`\\/\\ \\ /\\ \\/'\\  \u001b[1m\u001b[4m\u001b[37mv4.0-stable\u001b[0m\r\n/\\ \\__//\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\ \\ \\\\/>  </\r\n\\ \\____\\ \\____/\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\/\\_/\\_\\ \u001b[90m\u001b[4mhttps://commixproject.com\u001b[0m\r\n \\/____/\\/___/  \\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\//\\/_/ (\u001b[91m@commixproject\u001b[0m)\r\n\r\n+--\r\n\u001b[1mAutomated All-in-One OS Command Injection Exploitation Tool\u001b[0m\r\nCopyright \u00a9 2014-2024 Anas",
+          "exploitable": true
+        },
+        {
+          "id": "2f06e697-a96c-4937-b0b5-ce8cd066437d",
+          "type": "command_injection",
+          "severity": 9.0,
+          "confidence": 0.95,
+          "name": "Command Injection",
+          "location": "Detected by Commix",
+          "evidence": "                                      __\r\n   ___   ___     ___ ___     ___ ___ /\\_\\   __  _\r\n /`___\\ / __`\\ /' __` __`\\ /' __` __`\\/\\ \\ /\\ \\/'\\  \u001b[1m\u001b[4m\u001b[37mv4.0-stable\u001b[0m\r\n/\\ \\__//\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\/\\ \\ \\ \\\\/>  </\r\n\\ \\____\\ \\____/\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\ \\_\\/\\_/\\_\\ \u001b[90m\u001b[4mhttps://commixproject.com\u001b[0m\r\n \\/____/\\/___/  \\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\/_/\\//\\/_/ (\u001b[91m@commixproject\u001b[0m)\r\n\r\n+--\r\n\u001b[1mAutomated All-in-One OS Command Injection Exploitation Tool\u001b[0m\r\nCopyright \u00a9 2014-2024 Anas",
+          "exploitable": true
+        }
+      ],
+      "coverage": 0.25,
+      "strategy_used": "adaptive",
+      "success": true,
+      "timestamp": "2025-11-29T22:32:33.675469",
+      "decision_points": [
+        {
+          "iteration": 1,
+          "analysis": {
+            "total_findings": 0,
+            "unique_tools_executed": 0,
+            "finding_types": {},
+            "average_severity": 0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.0,
+            "tools_executed_recently": []
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": true,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:32:33.793275"
+        },
+        {
+          "iteration": 2,
+          "analysis": {
+            "total_findings": 0,
+            "unique_tools_executed": 1,
+            "finding_types": {},
+            "average_severity": 0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.0,
+            "tools_executed_recently": [
+              "nikto",
+              "nikto"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "sqlmap",
+            "parameters": {
+              "aggressive": true,
+              "timeout": 300,
+              "target_type": "web",
+              "url": "http://192.168.131.128",
+              "crawl_depth": 2
+            },
+            "reason": "Exploring new tool: sqlmap"
+          },
+          "timestamp": "2025-11-29T22:33:45.842205"
+        },
+        {
+          "iteration": 3,
+          "analysis": {
+            "total_findings": 0,
+            "unique_tools_executed": 2,
+            "finding_types": {},
+            "average_severity": 0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.0,
+            "tools_executed_recently": [
+              "nikto",
+              "nikto",
+              "sqlmap",
+              "sqlmap"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "dalfox",
+            "parameters": {
+              "aggressive": true,
+              "timeout": 300,
+              "target_type": "web"
+            },
+            "reason": "Exploring new tool: dalfox"
+          },
+          "timestamp": "2025-11-29T22:33:47.475688"
+        },
+        {
+          "iteration": 4,
+          "analysis": {
+            "total_findings": 0,
+            "unique_tools_executed": 3,
+            "finding_types": {},
+            "average_severity": 0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.0,
+            "tools_executed_recently": [
+              "nikto",
+              "sqlmap",
+              "sqlmap",
+              "dalfox",
+              "dalfox"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "commix",
+            "parameters": {
+              "aggressive": true,
+              "timeout": 300,
+              "target_type": "web"
+            },
+            "reason": "Exploring new tool: commix"
+          },
+          "timestamp": "2025-11-29T22:33:48.100725"
+        },
+        {
+          "iteration": 5,
+          "analysis": {
+            "total_findings": 1,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 1
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.2,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": true,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:33:48.928285"
+        },
+        {
+          "iteration": 6,
+          "analysis": {
+            "total_findings": 1,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 1
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.2,
+            "tools_executed_recently": [
+              "dalfox",
+              "commix",
+              "commix",
+              "nikto",
+              "nikto"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "sqlmap",
+            "parameters": {
+              "aggressive": true,
+              "timeout": 300,
+              "target_type": "web",
+              "url": "http://192.168.131.128",
+              "crawl_depth": 2
+            },
+            "reason": "Exploring new tool: sqlmap"
+          },
+          "timestamp": "2025-11-29T22:34:20.575775"
+        },
+        {
+          "iteration": 7,
+          "analysis": {
+            "total_findings": 1,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 1
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.2,
+            "tools_executed_recently": [
+              "commix",
+              "nikto",
+              "nikto",
+              "sqlmap",
+              "sqlmap"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "dalfox",
+            "parameters": {
+              "aggressive": true,
+              "timeout": 300,
+              "target_type": "web"
+            },
+            "reason": "Exploring new tool: dalfox"
+          },
+          "timestamp": "2025-11-29T22:34:22.404487"
+        },
+        {
+          "iteration": 8,
+          "analysis": {
+            "total_findings": 1,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 1
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.2,
+            "tools_executed_recently": [
+              "nikto",
+              "sqlmap",
+              "sqlmap",
+              "dalfox",
+              "dalfox"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "commix",
+            "parameters": {
+              "aggressive": true,
+              "timeout": 300,
+              "target_type": "web"
+            },
+            "reason": "Exploring new tool: commix"
+          },
+          "timestamp": "2025-11-29T22:34:23.032627"
+        },
+        {
+          "iteration": 9,
+          "analysis": {
+            "total_findings": 2,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 2
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.4,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": true,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:34:23.760530"
+        },
+        {
+          "iteration": 10,
+          "analysis": {
+            "total_findings": 2,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 2
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.4,
+            "tools_executed_recently": [
+              "dalfox",
+              "commix",
+              "commix",
+              "nikto",
+              "nikto"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "sqlmap",
+            "parameters": {
+              "aggressive": true,
+              "timeout": 300,
+              "target_type": "web",
+              "url": "http://192.168.131.128",
+              "crawl_depth": 2
+            },
+            "reason": "Exploring new tool: sqlmap"
+          },
+          "timestamp": "2025-11-29T22:34:57.415438"
+        },
+        {
+          "iteration": 11,
+          "analysis": {
+            "total_findings": 2,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 2
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.4,
+            "tools_executed_recently": [
+              "commix",
+              "nikto",
+              "nikto",
+              "sqlmap",
+              "sqlmap"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "dalfox",
+            "parameters": {
+              "aggressive": true,
+              "timeout": 300,
+              "target_type": "web"
+            },
+            "reason": "Exploring new tool: dalfox"
+          },
+          "timestamp": "2025-11-29T22:34:59.046068"
+        },
+        {
+          "iteration": 12,
+          "analysis": {
+            "total_findings": 2,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 2
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.4,
+            "tools_executed_recently": [
+              "nikto",
+              "sqlmap",
+              "sqlmap",
+              "dalfox",
+              "dalfox"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "commix",
+            "parameters": {
+              "aggressive": true,
+              "timeout": 300,
+              "target_type": "web"
+            },
+            "reason": "Exploring new tool: commix"
+          },
+          "timestamp": "2025-11-29T22:34:59.674838"
+        },
+        {
+          "iteration": 13,
+          "analysis": {
+            "total_findings": 3,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 3
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.6,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:35:00.402597"
+        },
+        {
+          "iteration": 14,
+          "analysis": {
+            "total_findings": 3,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 3
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.6,
+            "tools_executed_recently": [
+              "dalfox",
+              "commix",
+              "commix",
+              "nikto",
+              "nikto"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "sqlmap",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "url": "http://192.168.131.128",
+              "crawl_depth": 2
+            },
+            "reason": "Exploring new tool: sqlmap"
+          },
+          "timestamp": "2025-11-29T22:35:34.871152"
+        },
+        {
+          "iteration": 15,
+          "analysis": {
+            "total_findings": 3,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 3
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.6,
+            "tools_executed_recently": [
+              "commix",
+              "nikto",
+              "nikto",
+              "sqlmap",
+              "sqlmap"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "dalfox",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web"
+            },
+            "reason": "Exploring new tool: dalfox"
+          },
+          "timestamp": "2025-11-29T22:35:36.415353"
+        },
+        {
+          "iteration": 16,
+          "analysis": {
+            "total_findings": 3,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 3
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.6,
+            "tools_executed_recently": [
+              "nikto",
+              "sqlmap",
+              "sqlmap",
+              "dalfox",
+              "dalfox"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "commix",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web"
+            },
+            "reason": "Exploring new tool: commix"
+          },
+          "timestamp": "2025-11-29T22:35:37.044275"
+        },
+        {
+          "iteration": 17,
+          "analysis": {
+            "total_findings": 4,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 4
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.8,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:35:37.772048"
+        },
+        {
+          "iteration": 18,
+          "analysis": {
+            "total_findings": 4,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 4
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.8,
+            "tools_executed_recently": [
+              "dalfox",
+              "commix",
+              "commix",
+              "nikto",
+              "nikto"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "sqlmap",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "url": "http://192.168.131.128",
+              "crawl_depth": 2
+            },
+            "reason": "Exploring new tool: sqlmap"
+          },
+          "timestamp": "2025-11-29T22:36:06.314946"
+        },
+        {
+          "iteration": 19,
+          "analysis": {
+            "total_findings": 4,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 4
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.8,
+            "tools_executed_recently": [
+              "commix",
+              "nikto",
+              "nikto",
+              "sqlmap",
+              "sqlmap"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "dalfox",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web"
+            },
+            "reason": "Exploring new tool: dalfox"
+          },
+          "timestamp": "2025-11-29T22:36:07.845540"
+        },
+        {
+          "iteration": 20,
+          "analysis": {
+            "total_findings": 4,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 4
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.8,
+            "tools_executed_recently": [
+              "nikto",
+              "sqlmap",
+              "sqlmap",
+              "dalfox",
+              "dalfox"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "commix",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web"
+            },
+            "reason": "Exploring new tool: commix"
+          },
+          "timestamp": "2025-11-29T22:36:08.470348"
+        },
+        {
+          "iteration": 21,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.198644"
+        },
+        {
+          "iteration": 22,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.199070"
+        },
+        {
+          "iteration": 23,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.199388"
+        },
+        {
+          "iteration": 24,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.199657"
+        },
+        {
+          "iteration": 25,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.199943"
+        },
+        {
+          "iteration": 26,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.200195"
+        },
+        {
+          "iteration": 27,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.200457"
+        },
+        {
+          "iteration": 28,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.200665"
+        },
+        {
+          "iteration": 29,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.200869"
+        },
+        {
+          "iteration": 30,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.201056"
+        },
+        {
+          "iteration": 31,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.201230"
+        },
+        {
+          "iteration": 32,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.201393"
+        },
+        {
+          "iteration": 33,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.201583"
+        },
+        {
+          "iteration": 34,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.201790"
+        },
+        {
+          "iteration": 35,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.201997"
+        },
+        {
+          "iteration": 36,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.202226"
+        },
+        {
+          "iteration": 37,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.202438"
+        },
+        {
+          "iteration": 38,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.202609"
+        },
+        {
+          "iteration": 39,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.202821"
+        },
+        {
+          "iteration": 40,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.203001"
+        },
+        {
+          "iteration": 41,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.203176"
+        },
+        {
+          "iteration": 42,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.203391"
+        },
+        {
+          "iteration": 43,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.203586"
+        },
+        {
+          "iteration": 44,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.203792"
+        },
+        {
+          "iteration": 45,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.204012"
+        },
+        {
+          "iteration": 46,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.204220"
+        },
+        {
+          "iteration": 47,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.204464"
+        },
+        {
+          "iteration": 48,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.204715"
+        },
+        {
+          "iteration": 49,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.204982"
+        },
+        {
+          "iteration": 50,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.205295"
+        },
+        {
+          "iteration": 51,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.205536"
+        },
+        {
+          "iteration": 52,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.205759"
+        },
+        {
+          "iteration": 53,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.205953"
+        },
+        {
+          "iteration": 54,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.206142"
+        },
+        {
+          "iteration": 55,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.206356"
+        },
+        {
+          "iteration": 56,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.206592"
+        },
+        {
+          "iteration": 57,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.206851"
+        },
+        {
+          "iteration": 58,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.207078"
+        },
+        {
+          "iteration": 59,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.207292"
+        },
+        {
+          "iteration": 60,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.207499"
+        },
+        {
+          "iteration": 61,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.207679"
+        },
+        {
+          "iteration": 62,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.207907"
+        },
+        {
+          "iteration": 63,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.208162"
+        },
+        {
+          "iteration": 64,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.208496"
+        },
+        {
+          "iteration": 65,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.208920"
+        },
+        {
+          "iteration": 66,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.209149"
+        },
+        {
+          "iteration": 67,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.209369"
+        },
+        {
+          "iteration": 68,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.209660"
+        },
+        {
+          "iteration": 69,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.209930"
+        },
+        {
+          "iteration": 70,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.210185"
+        },
+        {
+          "iteration": 71,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.210443"
+        },
+        {
+          "iteration": 72,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.210711"
+        },
+        {
+          "iteration": 73,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.210902"
+        },
+        {
+          "iteration": 74,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.211108"
+        },
+        {
+          "iteration": 75,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.211320"
+        },
+        {
+          "iteration": 76,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.211493"
+        },
+        {
+          "iteration": 77,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.211675"
+        },
+        {
+          "iteration": 78,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.212113"
+        },
+        {
+          "iteration": 79,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.212438"
+        },
+        {
+          "iteration": 80,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.212677"
+        },
+        {
+          "iteration": 81,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.212873"
+        },
+        {
+          "iteration": 82,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.213057"
+        },
+        {
+          "iteration": 83,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.213248"
+        },
+        {
+          "iteration": 84,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.213441"
+        },
+        {
+          "iteration": 85,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.213732"
+        },
+        {
+          "iteration": 86,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.214010"
+        },
+        {
+          "iteration": 87,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.214305"
+        },
+        {
+          "iteration": 88,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.214530"
+        },
+        {
+          "iteration": 89,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.214786"
+        },
+        {
+          "iteration": 90,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.215084"
+        },
+        {
+          "iteration": 91,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.215335"
+        },
+        {
+          "iteration": 92,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.215670"
+        },
+        {
+          "iteration": 93,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.215984"
+        },
+        {
+          "iteration": 94,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.216263"
+        },
+        {
+          "iteration": 95,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.216534"
+        },
+        {
+          "iteration": 96,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.216839"
+        },
+        {
+          "iteration": 97,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.216987"
+        },
+        {
+          "iteration": 98,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.217118"
+        },
+        {
+          "iteration": 99,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.217251"
+        },
+        {
+          "iteration": 100,
+          "analysis": {
+            "total_findings": 5,
+            "unique_tools_executed": 4,
+            "finding_types": {
+              "command_injection": 5
+            },
+            "average_severity": 9.0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 1.0,
+            "tools_executed_recently": [
+              "sqlmap",
+              "dalfox",
+              "dalfox",
+              "commix",
+              "commix"
+            ]
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": false,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:36:09.217395"
+        }
+      ],
+      "adaptive_choices": []
+    }
+  ],
+  "tools_executed": {
+    "nikto": 10,
+    "sqlmap": 10,
+    "dalfox": 10,
+    "commix": 10
+  },
+  "total_findings": 5
+}

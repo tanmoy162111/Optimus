@@ -51,6 +51,16 @@ class DynamicToolDatabase:
                 'prerequisites': ['http_service'],
                 'output_parser': 'dalfox',
             },
+            'xsser': {
+                'category': 'xss_scanner',
+                'capabilities': ['xss_detection', 'dom_based_xss', 'reflected_xss'],
+                'detects': ['xss', 'dom_xss'],
+                'platform': 'any',
+                'speed': 'fast',
+                'stealth': 'medium',
+                'prerequisites': ['http_service'],
+                'output_parser': 'dalfox',  # Use same parser as dalfox
+            },
             'commix': {
                 'category': 'command_injection',
                 'capabilities': ['command_injection_detection', 'os_command_execution'],

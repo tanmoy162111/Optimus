@@ -1,0 +1,81 @@
+{
+  "training_id": "fully_autonomous_20251129_220519",
+  "duration_seconds": 931.646887,
+  "total_episodes": 3,
+  "targets_trained": 2,
+  "episode_results": [
+    {
+      "episode_num": 0,
+      "target": "http://192.168.131.128",
+      "success": false,
+      "error": "'phase'",
+      "timestamp": "2025-11-29T22:05:19.240585"
+    },
+    {
+      "episode_num": 1,
+      "target": "https://landscape.canonical.com",
+      "duration": 778.72093,
+      "tools_used": [
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T22:19:38.992004",
+          "success": false,
+          "exit_code": -1
+        },
+        {
+          "tool": "nikto",
+          "timestamp": "2025-11-29T22:19:38.992019",
+          "success": false,
+          "exit_code": -1
+        }
+      ],
+      "findings": [],
+      "coverage": 0,
+      "strategy_used": "adaptive",
+      "success": true,
+      "timestamp": "2025-11-29T22:06:40.772091",
+      "decision_points": [
+        {
+          "iteration": 1,
+          "analysis": {
+            "total_findings": 0,
+            "unique_tools_executed": 0,
+            "finding_types": {},
+            "average_severity": 0,
+            "technologies_detected": [
+              "http_server",
+              "web_framework"
+            ],
+            "coverage_estimate": 0.0,
+            "tools_executed_recently": []
+          },
+          "decision": {
+            "action": "execute_tool",
+            "tool": "nikto",
+            "parameters": {
+              "aggressive": true,
+              "timeout": 300,
+              "target_type": "web",
+              "evasion": false,
+              "plugins": "all"
+            },
+            "reason": "Exploring new tool: nikto"
+          },
+          "timestamp": "2025-11-29T22:06:40.895107"
+        }
+      ],
+      "adaptive_choices": []
+    },
+    {
+      "episode_num": 2,
+      "target": "http://192.168.131.128",
+      "success": false,
+      "error": "'phase'",
+      "timestamp": "2025-11-29T22:19:39.500497"
+    }
+  ],
+  "tools_executed": {
+    "nikto": 2
+  },
+  "total_findings": 0
+}

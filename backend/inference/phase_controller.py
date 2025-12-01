@@ -16,6 +16,14 @@ class PhaseController:
             'covering_tracks'
         ]
         self.transition_history = []
+        # Define tools available for each phase
+        self.phase_tools = {
+            'reconnaissance': ['sublist3r', 'amass', 'theHarvester', 'whatweb', 'dnsenum'],
+            'scanning': ['nmap', 'nikto', 'nuclei', 'masscan'],
+            'exploitation': ['sqlmap', 'dalfox', 'commix', 'ffuf', 'wpscan'],
+            'post_exploitation': ['linpeas', 'winpeas'],
+            'covering_tracks': ['clear_logs']
+        }
     
     def should_transition(self, current_state: Dict[str, Any]) -> str:
         """
@@ -42,6 +50,21 @@ class PhaseController:
         print(f"  Tools executed: {len(tool_names)}")
         print(f"  Findings: {len(findings)}")
         print(f"  Coverage: {coverage:.2f}")
+        
+        # NEW: Check if all tools in current phase have been tried without findings
+        if self._should_change_approach_or_phase(current_state):
+            print(f"[PhaseController] All tools in {phase} tried without sufficient findings")
+            # Decide whether to change approach or move to next phase
+            if self._should_change_approach(current_state):
+                # Stay in current phase but change approach
+                print(f"[PhaseController] Changing approach in {phase}")
+                # We'll return current phase but the agent should change its approach
+                return phase
+            else:
+                # Move to next phase
+                print(f"[PhaseController] Moving to next phase")
+                next_phase = self.get_next_phase(phase, current_state)
+                return next_phase
         
         # NEW: Check for tool repetition that indicates stuck state
         if len(tool_names) >= 5:
@@ -93,6 +116,80 @@ class PhaseController:
             return next_phase
         else:
             return phase
+    
+    def _should_change_approach_or_phase(self, state: Dict[str, Any]) -> bool:
+        """
+        Check if all tools in current phase have been tried without sufficient findings
+        
+        Args:
+            state: Current scan state
+            
+        Returns:
+            True if all tools have been tried and we should consider changing approach or phase
+        """
+        phase = state['phase']
+        findings = state.get('findings', [])
+        tools_executed = state.get('tools_executed', [])
+        
+        # Get tools for current phase
+        phase_tools = self.phase_tools.get(phase, [])
+        if not phase_tools:
+            return False
+            
+        # Get executed tool names
+        if tools_executed and len(tools_executed) > 0 and isinstance(tools_executed[0], dict):
+            tool_names = [t['tool'] for t in tools_executed]
+        else:
+            tool_names = tools_executed
+            
+        # Check if all phase tools have been executed
+        executed_phase_tools = [tool for tool in tool_names if tool in phase_tools]
+        unique_executed_phase_tools = list(set(executed_phase_tools))
+        
+        # If we've tried all tools in this phase and have few findings, consider change
+        if len(unique_executed_phase_tools) >= len(phase_tools) and len(findings) < 3:
+            return True
+            
+        return False
+    
+    def _should_change_approach(self, state: Dict[str, Any]) -> bool:
+        """
+        Determine if we should change approach rather than move to next phase
+        
+        Args:
+            state: Current scan state
+            
+        Returns:
+            True if we should change approach, False if we should move to next phase
+        """
+        phase = state['phase']
+        findings = state.get('findings', [])
+        tools_executed = state.get('tools_executed', [])
+        coverage = state.get('coverage', 0.0)
+        
+        # Get executed tool names
+        if tools_executed and len(tools_executed) > 0 and isinstance(tools_executed[0], dict):
+            tool_names = [t['tool'] for t in tools_executed]
+        else:
+            tool_names = tools_executed
+            
+        # Get tools for current phase
+        phase_tools = self.phase_tools.get(phase, [])
+        
+        # If we have some findings but coverage is low, try different approach
+        if len(findings) > 0 and coverage < 0.3:
+            return True
+            
+        # If we've tried many tools but have very few findings, try different approach
+        if len(tool_names) >= 8 and len(findings) < 2:
+            return True
+            
+        # If we're in early phases and haven't found much, try different approach
+        if phase in ['reconnaissance', 'scanning'] and len(findings) < 1:
+            return True
+            
+        # Otherwise, move to next phase
+        return False
     
     def _check_recon_complete(self, state: Dict[str, Any]) -> bool:
         """Check if reconnaissance phase is complete"""
