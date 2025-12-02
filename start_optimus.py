@@ -1,344 +1,204 @@
 #!/usr/bin/env python3
 """
-Start Optimus Components Script
-
-This script starts all Optimus components (Kali VM, Backend, Frontend) 
-without requiring batch or shell files, avoiding input redirection issues.
+Optimus Startup Script
+Starts the Optimus platform including backend, frontend, and Kali VM
 """
 
 import os
 import sys
 import subprocess
 import time
-import platform
+import argparse
 
-def check_virtualbox():
-    """Check if VirtualBox is installed and accessible"""
-    vbox_path = r"D:\Virtualbox\VBoxManage.exe"
-    if not os.path.exists(vbox_path):
-        print("ERROR: VirtualBox not found at", vbox_path)
-        print("Please check your VirtualBox installation path.")
-        return None
-    return vbox_path
-
-def is_kali_running(vbox_path):
-    """Check if Kali VM is already running"""
-    try:
-        result = subprocess.run([vbox_path, "list", "runningvms"], 
-                              capture_output=True, text=True, timeout=10)
-        return "kali" in result.stdout.lower()
-    except Exception as e:
-        print(f"Warning: Could not check Kali VM status: {e}")
-        return False
-
-def start_kali_vm(vbox_path):
-    """Start Kali VM in headless mode"""
-    print("[1/3] Starting Kali VM...")
-    
-    if is_kali_running(vbox_path):
-        print("Kali VM is already running.")
-        return True
-    
-    try:
-        print("Starting Kali VM in headless mode...")
-        result = subprocess.run([vbox_path, "startvm", "kali", "--type", "headless"],
-                              capture_output=True, text=True, timeout=30)
-        
-        if result.returncode == 0:
-            print("Kali VM started successfully!")
-            print("Waiting 60 seconds for Kali VM to boot and SSH service to start...")
-            # Show progress during wait
-            for i in range(60):
-                time.sleep(1)
-                if (i + 1) % 10 == 0:
-                    print(f"  {i + 1} seconds elapsed...")
-            print("Kali VM is ready!")
-            return True
-        else:
-            print(f"Failed to start Kali VM: {result.stderr}")
-            return False
-    except Exception as e:
-        print(f"Error starting Kali VM: {e}")
-        return False
-
-def find_python_executable():
-    """Find the appropriate Python executable"""
-    # Priority order for Python paths
+def check_python():
+    """Check if Python is available and return the path"""
     python_paths = [
         r"C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\python.exe",
         r"C:\Program Files\Python313\python.exe",
         r"C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python314\python.exe",
-        r"C:\Program Files\Python314\python.exe",
-        "python"  # Fallback to system python
+        r"C:\Program Files\Python314\python.exe"
     ]
     
-    # Check for virtual environment first
-    venv_path = os.path.join("backend", "venv", "Scripts", "python.exe")
-    if os.path.exists(venv_path):
-        return venv_path
-    
-    # Check other paths
+    # Check for specific Python installations
     for path in python_paths:
-        if path == "python" or os.path.exists(path):
+        if os.path.exists(path):
             return path
     
-    return "python"  # Final fallback
+    # Fallback to system python
+    return "python"
 
-def start_backend():
-    """Start Backend Server"""
-    print("\n[2/3] Starting Backend Server...")
+def check_virtualbox():
+    """Check if VirtualBox is installed"""
+    vbox_paths = [
+        r"D:\Virtualbox\VBoxManage.exe",
+        r"C:\Program Files\Oracle\VirtualBox\VBoxManage.exe",
+        r"C:\Program Files (x86)\Oracle\VirtualBox\VBoxManage.exe"
+    ]
     
-    # Change to backend directory
-    backend_dir = os.path.join(os.getcwd(), "backend")
-    if not os.path.exists(backend_dir):
-        print("ERROR: Backend directory not found!")
-        return False
+    for path in vbox_paths:
+        if os.path.exists(path):
+            return path
     
-    # Find Python executable
-    python_exe = find_python_executable()
-    print(f"Using Python: {python_exe}")
-    
-    try:
-        # Start backend in background
-        backend_process = subprocess.Popen(
-            [python_exe, "app.py"],
-            cwd=backend_dir,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
-        )
-        
-        print(f"Backend server started successfully! (PID: {backend_process.pid})")
-        print("Access the API at: http://localhost:5000")
-        
-        # Wait a moment for server to initialize
-        time.sleep(5)
-        return True
-        
-    except Exception as e:
-        print(f"Failed to start backend server: {e}")
-        return False
+    return None
 
-def check_node_npm():
-    """Check if Node.js and npm are installed"""
-    # Add Node.js to PATH if it exists in default location
-    nodejs_path = r"C:\Program Files\nodejs"
-    if os.path.exists(nodejs_path):
-        # Add to PATH for this session
-        current_path = os.environ.get('PATH', '')
-        if nodejs_path not in current_path:
-            os.environ['PATH'] = current_path + os.pathsep + nodejs_path
-            print(f"Added Node.js to PATH: {nodejs_path}")
-    
+def start_kali_vm(vbox_path):
+    """Start the Kali VM if it's not already running"""
     try:
-        # Try to run node
-        result = subprocess.run(["node", "--version"], 
-                              capture_output=True, text=True, timeout=10)
+        # Check if Kali VM is already running
+        result = subprocess.run([vbox_path, "list", "runningvms"], 
+                              capture_output=True, text=True, timeout=30)
+        
+        if "kali" in result.stdout.lower():
+            print("✅ Kali VM is already running")
+            return True
+            
+        print("🔄 Starting Kali VM...")
+        # Start Kali VM in headless mode
+        result = subprocess.run([vbox_path, "startvm", "kali", "--type", "headless"], 
+                              capture_output=True, text=True, timeout=30)
+        
         if result.returncode == 0:
-            print(f"Node.js version: {result.stdout.strip()}")
+            print("⏳ Waiting for Kali VM to boot (60 seconds)...")
+            time.sleep(60)  # Wait for VM to fully boot
+            print("✅ Kali VM started successfully")
+            return True
         else:
-            print(f"Node.js error: {result.stderr}")
+            print(f"❌ Failed to start Kali VM: {result.stderr}")
             return False
             
-        # Try to run npm (both with and without .cmd extension)
-        npm_commands = ["npm", "npm.cmd"]
-        npm_found = False
-        npm_version = ""
-        
-        for npm_cmd in npm_commands:
-            try:
-                result = subprocess.run([npm_cmd, "--version"], 
-                                      capture_output=True, text=True, timeout=10)
-                if result.returncode == 0:
-                    npm_version = result.stdout.strip()
-                    npm_found = True
-                    print(f"npm version: {npm_version}")
-                    break
-                else:
-                    print(f"npm ({npm_cmd}) error: {result.stderr}")
-            except FileNotFoundError:
-                continue
-        
-        if not npm_found:
-            print("ERROR: npm not found!")
-            print("Please ensure npm is properly installed with Node.js")
-            return False
-            
-        return True
+    except subprocess.TimeoutExpired:
+        print("❌ Timeout while checking/starting Kali VM")
+        return False
     except Exception as e:
-        print(f"Error checking Node.js/npm: {e}")
+        print(f"❌ Error managing Kali VM: {e}")
         return False
 
-def install_frontend_dependencies():
-    """Install frontend dependencies if needed"""
-    frontend_dir = os.path.join(os.getcwd(), "frontend")
-    node_modules_dir = os.path.join(frontend_dir, "node_modules")
-    
-    if not os.path.exists(node_modules_dir):
-        print("Installing frontend dependencies...")
-        try:
-            # Add Node.js to PATH if needed
-            nodejs_path = r"C:\Program Files\nodejs"
-            if os.path.exists(nodejs_path):
-                env = os.environ.copy()
-                current_path = env.get('PATH', '')
-                if nodejs_path not in current_path:
-                    env['PATH'] = current_path + os.pathsep + nodejs_path
-            else:
-                env = None
-                
-            # Try npm with both .exe and .cmd extensions
-            npm_commands = ["npm", "npm.cmd"]
-            install_success = False
-            
-            for npm_cmd in npm_commands:
-                try:
-                    result = subprocess.run([npm_cmd, "install"], 
-                                          cwd=frontend_dir,
-                                          env=env,
-                                          capture_output=True, 
-                                          text=True, 
-                                          timeout=300)
-                    if result.returncode == 0:
-                        print("Dependencies installed successfully!")
-                        install_success = True
-                        break
-                    else:
-                        print(f"npm ({npm_cmd}) install error: {result.stderr}")
-                except FileNotFoundError:
-                    continue
-                    
-            if not install_success:
-                print("Failed to install dependencies with any npm command")
-                return False
-                
-        except Exception as e:
-            print(f"Error installing dependencies: {e}")
+def start_backend(python_path):
+    """Start the backend server"""
+    try:
+        backend_dir = os.path.join(os.getcwd(), "backend")
+        if not os.path.exists(backend_dir):
+            print("❌ Backend directory not found")
             return False
-    
-    return True
+            
+        print("🔄 Starting Backend Server...")
+        # Start backend in a new process
+        backend_process = subprocess.Popen([
+            python_path, "app.py"
+        ], cwd=backend_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
+        print("⏳ Waiting for backend to initialize (10 seconds)...")
+        time.sleep(10)
+        
+        # Check if backend is still running
+        if backend_process.poll() is None:
+            print("✅ Backend Server started successfully")
+            return True
+        else:
+            stdout, stderr = backend_process.communicate()
+            print(f"❌ Backend Server failed to start: {stderr.decode()}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ Error starting backend: {e}")
+        return False
 
 def start_frontend():
-    """Start Frontend Dev Server"""
-    print("\n[3/3] Starting Frontend Dev Server...")
-    
-    # Check if Node.js and npm are available
-    if not check_node_npm():
-        return False
-    
-    # Change to frontend directory
-    frontend_dir = os.path.join(os.getcwd(), "frontend")
-    if not os.path.exists(frontend_dir):
-        print("ERROR: Frontend directory not found!")
-        return False
-    
-    # Install dependencies if needed
-    if not install_frontend_dependencies():
-        return False
-    
+    """Start the frontend development server"""
     try:
-        # Add Node.js to PATH if needed
-        nodejs_path = r"C:\Program Files\nodejs"
-        if os.path.exists(nodejs_path):
-            env = os.environ.copy()
-            current_path = env.get('PATH', '')
-            if nodejs_path not in current_path:
-                env['PATH'] = current_path + os.pathsep + nodejs_path
-        else:
-            env = None
-            
-        # Start frontend in background (try both npm and npm.cmd)
-        npm_commands = ["npm", "npm.cmd"]
-        frontend_process = None
-        start_success = False
-        
-        for npm_cmd in npm_commands:
-            try:
-                frontend_process = subprocess.Popen(
-                    [npm_cmd, "run", "dev"],
-                    cwd=frontend_dir,
-                    env=env,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
-                )
-                print(f"Frontend dev server started successfully! (PID: {frontend_process.pid})")
-                print("Access the frontend at: http://localhost:5173")
-                start_success = True
-                break
-            except FileNotFoundError:
-                continue
-                
-        if not start_success:
-            print("Failed to start frontend dev server with any npm command")
+        frontend_dir = os.path.join(os.getcwd(), "frontend")
+        if not os.path.exists(frontend_dir):
+            print("❌ Frontend directory not found")
             return False
+            
+        print("🔄 Starting Frontend Development Server...")
+        # Start frontend in a new process
+        frontend_process = subprocess.Popen([
+            "npm", "run", "dev"
+        ], cwd=frontend_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         
-        # Wait a moment for server to initialize
-        time.sleep(3)
-        return True
+        print("⏳ Waiting for frontend to initialize (10 seconds)...")
+        time.sleep(10)
         
+        # Check if frontend is still running
+        if frontend_process.poll() is None:
+            print("✅ Frontend Development Server started successfully")
+            return True
+        else:
+            stdout, stderr = frontend_process.communicate()
+            print(f"❌ Frontend Development Server failed to start: {stderr.decode()}")
+            return False
+            
     except Exception as e:
-        print(f"Failed to start frontend dev server: {e}")
+        print(f"❌ Error starting frontend: {e}")
         return False
-
-def stop_kali_vm(vbox_path):
-    """Stop Kali VM if running"""
-    if is_kali_running(vbox_path):
-        print("Stopping Kali VM...")
-        try:
-            subprocess.run([vbox_path, "controlvm", "kali", "poweroff"],
-                          capture_output=True, timeout=30)
-            print("Kali VM stopped successfully!")
-            # Wait for VM to fully shut down
-            time.sleep(10)
-        except Exception as e:
-            print(f"Warning: Could not stop Kali VM: {e}")
 
 def main():
-    """Main function to start all Optimus components"""
-    print("=" * 60)
-    print("Starting Optimus Components")
-    print("=" * 60)
+    """Main function to start Optimus platform"""
+    print("🚀 Starting Optimus Platform...")
+    print("=" * 50)
     
-    # Check VirtualBox installation
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description="Start Optimus Platform")
+    parser.add_argument("--skip-vm", action="store_true", 
+                       help="Skip starting the Kali VM")
+    parser.add_argument("--skip-backend", action="store_true", 
+                       help="Skip starting the backend server")
+    parser.add_argument("--skip-frontend", action="store_true", 
+                       help="Skip starting the frontend server")
+    
+    args = parser.parse_args()
+    
+    # Check dependencies
+    python_path = check_python()
+    print(f"🐍 Python Path: {python_path}")
+    
     vbox_path = check_virtualbox()
-    if not vbox_path:
-        sys.exit(1)
+    if vbox_path:
+        print(f"📦 VirtualBox Path: {vbox_path}")
+    else:
+        print("⚠️  VirtualBox not found")
+    
+    # Start components based on arguments
+    success = True
     
     # Start Kali VM
-    if not start_kali_vm(vbox_path):
-        print("Failed to start Kali VM!")
-        sys.exit(1)
+    if not args.skip_vm and vbox_path:
+        if not start_kali_vm(vbox_path):
+            success = False
+            print("⚠️  Continuing without Kali VM...")
+    else:
+        print("⏭️  Skipping Kali VM start")
     
     # Start Backend
-    if not start_backend():
-        print("Failed to start Backend Server!")
-        # Stop Kali VM since we couldn't start backend
-        stop_kali_vm(vbox_path)
-        sys.exit(1)
+    if not args.skip_backend:
+        if not start_backend(python_path):
+            success = False
+    else:
+        print("⏭️  Skipping Backend start")
     
     # Start Frontend
-    if not start_frontend():
-        print("Failed to start Frontend Dev Server!")
-        # Note: Don't stop backend or Kali VM as they might still be useful
-        sys.exit(1)
+    if not args.skip_frontend:
+        if not start_frontend():
+            success = False
+    else:
+        print("⏭️  Skipping Frontend start")
     
-    print("\n" + "=" * 60)
-    print("All Optimus Components Started Successfully!")
-    print("=" * 60)
-    print("Kali VM:     Running in headless mode")
-    print("Backend:     http://localhost:5000")
-    print("Frontend:    http://localhost:5173")
-    print("SSH Access:  127.0.0.1:2222 (kali/kali)")
-    print("\nPress Ctrl+C to stop all services...")
+    # Final status
+    print("=" * 50)
+    if success:
+        print("🎉 Optimus Platform Started Successfully!")
+        print("\n🔗 Access Points:")
+        print("   Backend API:  http://localhost:5000")
+        print("   Frontend UI:  http://localhost:5173")
+        if not args.skip_vm and vbox_path:
+            print("   Kali VM SSH:  127.0.0.1:2222")
+        print("\n⏹️  To stop the platform, run: python stop_optimus.py")
+    else:
+        print("❌ Some components failed to start. Check the logs above.")
+        return 1
     
-    try:
-        # Keep script running
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        print("\n\nStopping all services...")
-        stop_kali_vm(vbox_path)
-        print("All services stopped. Goodbye!")
-        sys.exit(0)
+    return 0
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

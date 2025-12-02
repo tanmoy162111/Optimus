@@ -33,13 +33,14 @@ optimus/
 - Python 3.13
 - Node.js 16+
 - npm 8+
+- VirtualBox with Kali Linux VM (named "kali")
 
 ### Installation
 
 1. Install backend dependencies:
 ```bash
 cd backend
-pip install -r requirements.txt
+"C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\python.exe" -m pip install -r requirements.txt
 ```
 
 2. Install frontend dependencies:
@@ -52,23 +53,24 @@ npm install
 
 #### Using Scripts
 ```bash
-# Start the application
-./scripts/start.sh  # On Unix/Linux/Mac
-start.bat          # On Windows
+# Start the application (Windows)
+start.bat
 
-# Stop the application
-./scripts/stop.sh   # On Unix/Linux/Mac
-stop.bat           # On Windows
+# Start the application (Cross-platform)
+python start_optimus.py
 
-# Check health
-./scripts/health_check.sh  # On Unix/Linux/Mac
+# Stop the application (Windows)
+stop.bat
+
+# Stop the application (Cross-platform)
+python stop_optimus.py
 ```
 
 #### Manual Start
 1. Start the backend:
 ```bash
 cd backend
-python app.py
+"C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\python.exe" app.py
 ```
 
 2. Start the frontend:
@@ -81,6 +83,7 @@ npm run dev
 - Frontend: http://localhost:5173
 - Backend API: http://localhost:5000
 - Health Check: http://localhost:5000/health
+- Kali VM SSH: 127.0.0.1:2222 (when running)
 
 ## Features
 - AI-driven autonomous scanning
@@ -89,12 +92,14 @@ npm run dev
 - Intelligent tool recommendation
 - WebSocket-based real-time updates
 - Detailed reporting and findings visualization
+- Kali Linux VM integration for tool execution
 
 ## Documentation
 - [Frontend-Backend Integration Guide](docs/FRONTEND_INTEGRATION_GUIDE.md)
 - [Hybrid Tool System Documentation](docs/HYBRID_TOOL_SYSTEM.md)
 - [API Documentation](docs/API.md)
 - [User Guide](docs/USER_GUIDE.md)
+- [Troubleshooting Guide](TROUBLESHOOTING_SUMMARY.md)
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.

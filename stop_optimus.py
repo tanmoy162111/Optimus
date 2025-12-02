@@ -1,125 +1,207 @@
 #!/usr/bin/env python3
 """
-Stop Optimus Components Script
-
-This script stops all Optimus components (Kali VM, Backend, Frontend).
+Optimus Stop Script
+Stops the Optimus platform including backend, frontend, and Kali VM
 """
 
 import os
 import sys
 import subprocess
 import time
+import argparse
 import psutil
 
 def check_virtualbox():
-    """Check if VirtualBox is installed and accessible"""
-    vbox_path = r"D:\Virtualbox\VBoxManage.exe"
-    if not os.path.exists(vbox_path):
-        print("ERROR: VirtualBox not found at", vbox_path)
-        print("Please check your VirtualBox installation path.")
-        return None
-    return vbox_path
-
-def is_kali_running(vbox_path):
-    """Check if Kali VM is already running"""
-    try:
-        result = subprocess.run([vbox_path, "list", "runningvms"], 
-                              capture_output=True, text=True, timeout=10)
-        return "kali" in result.stdout.lower()
-    except Exception as e:
-        print(f"Warning: Could not check Kali VM status: {e}")
-        return False
+    """Check if VirtualBox is installed"""
+    vbox_paths = [
+        r"D:\Virtualbox\VBoxManage.exe",
+        r"C:\Program Files\Oracle\VirtualBox\VBoxManage.exe",
+        r"C:\Program Files (x86)\Oracle\VirtualBox\VBoxManage.exe"
+    ]
+    
+    for path in vbox_paths:
+        if os.path.exists(path):
+            return path
+    
+    return None
 
 def stop_kali_vm(vbox_path):
-    """Stop Kali VM if running"""
-    print("Checking Kali VM status...")
-    
-    if not is_kali_running(vbox_path):
-        print("Kali VM is not running.")
-        return True
-    
+    """Stop the Kali VM"""
     try:
-        print("Stopping Kali VM...")
-        result = subprocess.run([vbox_path, "controlvm", "kali", "poweroff"],
+        print("🔄 Stopping Kali VM...")
+        # Power off Kali VM
+        result = subprocess.run([vbox_path, "controlvm", "kali", "poweroff"], 
                               capture_output=True, text=True, timeout=30)
         
         if result.returncode == 0:
-            print("Kali VM stopped successfully!")
-            # Wait for VM to fully shut down
-            time.sleep(10)
+            print("✅ Kali VM powered off successfully")
             return True
         else:
-            print(f"Failed to stop Kali VM: {result.stderr}")
+            print(f"⚠️  Failed to power off Kali VM: {result.stderr}")
             return False
+            
+    except subprocess.TimeoutExpired:
+        print("❌ Timeout while stopping Kali VM")
+        return False
     except Exception as e:
-        print(f"Error stopping Kali VM: {e}")
+        print(f"❌ Error stopping Kali VM: {e}")
         return False
 
-def kill_processes_by_name(name):
-    """Kill all processes with the given name"""
-    killed = False
-    for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
-        try:
-            if proc.info['name'] and name.lower() in proc.info['name'].lower():
-                # Check if it's related to our app
-                cmdline = ' '.join(proc.info['cmdline']) if proc.info['cmdline'] else ''
-                if 'app.py' in cmdline or 'optimus' in cmdline.lower() or 'vite' in cmdline.lower() or 'node' in cmdline.lower():
-                    print(f"Terminating process {proc.info['name']} (PID: {proc.info['pid']})")
-                    proc.kill()
-                    killed = True
-        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-            pass
-    
-    return killed
-
 def stop_backend():
-    """Stop Backend Server"""
-    print("Stopping Backend Server...")
-    
-    # Try to kill Python processes running app.py
-    if kill_processes_by_name("python"):
-        print("Backend server stopped.")
-    else:
-        print("No backend server processes found.")
+    """Stop the backend server"""
+    try:
+        print("🔄 Stopping Backend Server...")
+        stopped = False
+        
+        # Find and kill Python processes running app.py
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+            try:
+                if proc.info['name'] and 'python' in proc.info['name'].lower():
+                    if proc.info['cmdline'] and 'app.py' in ' '.join(proc.info['cmdline']):
+                        proc.kill()
+                        print(f"✅ Backend Server (PID {proc.info['pid']}) stopped")
+                        stopped = True
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass
+        
+        if not stopped:
+            print("⚠️  No Backend Server process found")
+        
+        return True
+            
+    except Exception as e:
+        print(f"❌ Error stopping backend: {e}")
+        return False
 
 def stop_frontend():
-    """Stop Frontend Dev Server"""
-    print("Stopping Frontend Dev Server...")
-    
-    # Try to kill Node.js processes related to Vite/dev server
-    killed_node = kill_processes_by_name("node")
-    killed_npm = kill_processes_by_name("npm")
-    
-    if killed_node or killed_npm:
-        print("Frontend dev server stopped.")
-    else:
-        print("No frontend dev server processes found.")
+    """Stop the frontend development server"""
+    try:
+        print("🔄 Stopping Frontend Development Server...")
+        stopped = False
+        
+        # Find and kill Node.js processes running Vite
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+            try:
+                if proc.info['name'] and ('node' in proc.info['name'].lower() or 'npm' in proc.info['name'].lower()):
+                    if proc.info['cmdline'] and ('vite' in ' '.join(proc.info['cmdline']) or 'dev' in ' '.join(proc.info['cmdline'])):
+                        proc.kill()
+                        print(f"✅ Frontend Development Server (PID {proc.info['pid']}) stopped")
+                        stopped = True
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass
+        
+        if not stopped:
+            print("⚠️  No Frontend Development Server process found")
+        
+        return True
+            
+    except Exception as e:
+        print(f"❌ Error stopping frontend: {e}")
+        return False
+
+def kill_processes_on_ports(ports):
+    """Kill processes running on specific ports"""
+    try:
+        for port in ports:
+            print(f"🔄 Killing processes on port {port}...")
+            # Find processes using the port
+            result = subprocess.run(['netstat', '-ano', '|', 'findstr', f':{port}'], 
+                                  capture_output=True, text=True, shell=True)
+            
+            if result.returncode == 0:
+                lines = result.stdout.strip().split('\n')
+                for line in lines:
+                    if 'LISTENING' in line:
+                        parts = line.split()
+                        if len(parts) >= 5:
+                            pid = parts[-1]
+                            try:
+                                proc = psutil.Process(int(pid))
+                                proc.kill()
+                                print(f"✅ Process on port {port} (PID {pid}) killed")
+                            except (psutil.NoSuchProcess, psutil.AccessDenied, ValueError):
+                                print(f"⚠️  Could not kill process {pid} on port {port}")
+            else:
+                print(f"⚠️  No processes found on port {port}")
+                
+        return True
+        
+    except Exception as e:
+        print(f"❌ Error killing processes on ports: {e}")
+        return False
 
 def main():
-    """Main function to stop all Optimus components"""
-    print("=" * 60)
-    print("Stopping Optimus Components")
-    print("=" * 60)
+    """Main function to stop Optimus platform"""
+    print("🛑 Stopping Optimus Platform...")
+    print("=" * 50)
     
-    # Check VirtualBox installation
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description="Stop Optimus Platform")
+    parser.add_argument("--skip-vm", action="store_true", 
+                       help="Skip stopping the Kali VM")
+    parser.add_argument("--skip-backend", action="store_true", 
+                       help="Skip stopping the backend server")
+    parser.add_argument("--skip-frontend", action="store_true", 
+                       help="Skip stopping the frontend server")
+    parser.add_argument("--force-ports", action="store_true",
+                       help="Force kill processes on standard ports (5000, 5173)")
+    
+    args = parser.parse_args()
+    
+    # Check for VirtualBox
     vbox_path = check_virtualbox()
-    if not vbox_path:
-        # Continue anyway to stop other components
-        pass
-    
-    # Stop Kali VM
     if vbox_path:
-        stop_kali_vm(vbox_path)
+        print(f"📦 VirtualBox Path: {vbox_path}")
+    else:
+        print("⚠️  VirtualBox not found")
+    
+    success = True
+    
+    # Stop components based on arguments
+    # Stop Kali VM
+    if not args.skip_vm and vbox_path:
+        if not stop_kali_vm(vbox_path):
+            success = False
+    else:
+        print("⏭️  Skipping Kali VM stop")
     
     # Stop Backend
-    stop_backend()
+    if not args.skip_backend:
+        if not stop_backend():
+            success = False
+    else:
+        print("⏭️  Skipping Backend stop")
     
     # Stop Frontend
-    stop_frontend()
+    if not args.skip_frontend:
+        if not stop_frontend():
+            success = False
+    else:
+        print("⏭️  Skipping Frontend stop")
     
-    print("\n" + "=" * 60)
-    print("All Optimus Components Stopped!")
-    print("=" * 60)
+    # Force kill processes on ports if requested
+    if args.force_ports:
+        print("🔄 Force killing processes on standard ports...")
+        kill_processes_on_ports([5000, 5173])
+    
+    # Final status
+    print("=" * 50)
+    if success:
+        print("🎉 Optimus Platform Stopped Successfully!")
+    else:
+        print("⚠️  Some components may not have stopped properly.")
+        return 1
+    
+    return 0
 
 if __name__ == "__main__":
-    main()
+    # Install psutil if not available
+    try:
+        import psutil
+    except ImportError:
+        print("🔄 Installing required dependency 'psutil'...")
+        subprocess.run([sys.executable, "-m", "pip", "install", "psutil"], 
+                      check=True, capture_output=True)
+        import psutil
+    
+    sys.exit(main())
