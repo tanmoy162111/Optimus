@@ -1,0 +1,208 @@
+================================================================================
+                    OPTIMUS - START/STOP GUIDE
+================================================================================
+
+QUICK START
+-----------
+
+To start all Optimus components:
+  1. Double-click: start.bat
+  OR
+  2. Open Command Prompt and run: start.bat
+
+To stop all Optimus components:
+  1. Double-click: stop.bat
+  OR
+  2. Open Command Prompt and run: stop.bat
+
+================================================================================
+
+WHAT start.bat DOES
+--------------------
+
+The start.bat script automatically:
+
+1. STARTS KALI VM (headless mode)
+   - Uses VirtualBox at: D:\Virtualbox\VBoxManage.exe
+   - VM Name: "kali"
+   - Waits 60 seconds for VM to fully boot
+   - SSH access: 127.0.0.1:2222 (kali/kali)
+
+2. STARTS BACKEND SERVER (Flask + SocketIO)
+   - Location: /backend/app.py
+   - Port: 5000
+   - URL: http://localhost:5000
+   - WebSocket: ws://localhost:5000
+
+3. STARTS FRONTEND DEV SERVER (React + Vite)
+   - Location: /frontend/
+   - Port: 5173
+   - URL: http://localhost:5173
+   - Auto-installs dependencies if needed
+
+================================================================================
+
+CONFIGURATION
+--------------
+
+If your setup differs, edit start.bat and change these variables:
+
+Line 24: set "VBOX_PATH=D:\Virtualbox\VBoxManage.exe"
+         ^ Change to your VirtualBox location
+
+Line 25: set "KALI_VM_NAME=kali"
+         ^ Change to your actual Kali VM name
+
+Line 26: set "KALI_SSH_BOOT_TIME=60"
+         ^ Change wait time if VM takes longer to boot
+
+Lines 29-30: set "BACKEND_PORT=5000" and "FRONTEND_PORT=5173"
+             ^ Change if these ports conflict with other services
+
+================================================================================
+
+ACCESSING THE APPLICATION
+---------------------------
+
+After start.bat completes:
+
+Frontend UI:     http://localhost:5173
+Backend API:     http://localhost:5000
+Kali SSH:        ssh -p 2222 kali@127.0.0.1 (password: kali)
+
+The frontend will automatically try to connect to the backend on port 5000.
+
+================================================================================
+
+TROUBLESHOOTING
+----------------
+
+Issue: VirtualBox not found
+Solution: Ensure VirtualBox is installed at D:\Virtualbox
+          Or edit start.bat and set correct VBOX_PATH
+
+Issue: Kali VM won't start
+Solution: - Verify VM name in VirtualBox matches KALI_VM_NAME in start.bat
+          - Ensure VM has SSH enabled and port forwarding configured
+          - Check that no other services use port 2222
+
+Issue: Backend won't start
+Solution: - Verify Python is installed and in PATH
+          - Check that port 5000 is not in use
+          - Review logs in the "Optimus Backend" window
+
+Issue: Frontend won't start
+Solution: - Verify Node.js and npm are installed
+          - Check that port 5173 is not in use
+          - Manual fix: cd frontend && npm install && npm run dev
+
+Issue: Ports already in use
+Solution: Edit start.bat and change BACKEND_PORT and FRONTEND_PORT
+          Or stop the conflicting service
+
+================================================================================
+
+MANAGING THE WINDOWS
+---------------------
+
+start.bat opens new Command Prompt windows for:
+  - Backend Server (titled "Optimus Backend")
+  - Frontend Server (titled "Optimus Frontend")
+
+Kali VM runs headless (no window).
+
+To stop individual services:
+  1. Close the corresponding Command Prompt window
+  2. OR run: stop.bat (stops all services)
+
+To view real-time logs:
+  - Keep the Command Prompt windows open
+  - All output and errors will appear there
+
+================================================================================
+
+SHUTTING DOWN
+--------------
+
+Option 1: Run stop.bat
+  - Automatically stops all services
+  - Powers off Kali VM safely
+  - Closes backend and frontend servers
+
+Option 2: Manual shutdown
+  - Close "Optimus Backend" window (stops backend)
+  - Close "Optimus Frontend" window (stops frontend)
+  - VirtualBox: D:\Virtualbox\VBoxManage.exe controlvm kali poweroff
+
+================================================================================
+
+PORT INFORMATION
+-----------------
+
+Service              Port    Protocol  URL/Address
+-------              ----    --------  -----------
+Kali VM SSH          2222    SSH       127.0.0.1:2222
+Backend API          5000    HTTP      http://localhost:5000
+Backend WebSocket    5000    WS        ws://localhost:5000
+Frontend Dev         5173    HTTP      http://localhost:5173
+
+If these ports conflict with other services, edit start.bat and change them.
+
+================================================================================
+
+COMMON COMMANDS
+----------------
+
+View running processes on port:
+  netstat -ano | findstr :5000   (backend)
+  netstat -ano | findstr :5173   (frontend)
+  netstat -ano | findstr :2222   (Kali SSH)
+
+Kill process by port (Windows):
+  for /f "tokens=5" %%a in ('netstat -ano ^| findstr :5000') do taskkill /F /PID %%a
+
+List VirtualBox VMs:
+  D:\Virtualbox\VBoxManage.exe list vms
+
+Check VM status:
+  D:\Virtualbox\VBoxManage.exe list runningvms
+
+SSH to Kali:
+  ssh -p 2222 kali@127.0.0.1
+
+================================================================================
+
+ENVIRONMENT SETUP
+------------------
+
+Required:
+  - VirtualBox (with Kali VM created and configured)
+  - Python 3.7+ (for backend)
+  - Node.js 14+ (for frontend)
+  - npm (usually comes with Node.js)
+
+Optional:
+  - Create .env file in project root with API keys (see .env.example)
+
+================================================================================
+
+PERFORMANCE NOTES
+------------------
+
+First startup may take longer:
+  - Kali VM: 60 seconds to boot
+  - npm install: First time only (subsequent starts are faster)
+  - Backend: 5 seconds to initialize
+  - Frontend: 3 seconds to start dev server
+
+Total time: ~90 seconds for first run, ~70 seconds for subsequent runs
+
+================================================================================
+
+For more information, see:
+  - README.md
+  - .env.example (for configuration)
+  - backend/app.py (Flask configuration)
+  - frontend/package.json (npm scripts)
+
+================================================================================

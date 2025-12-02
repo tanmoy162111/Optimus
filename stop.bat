@@ -1,47 +1,22 @@
 @echo off
-echo ============================================================
-echo Stopping Project Optimus
-echo ============================================================
+:: Optimus Stop Script for Windows
+:: Stops both backend and frontend servers
 
-REM Stop Backend (Python)
-echo.
-echo [1/3] Stopping Backend Server...
-for /f "tokens=5" %%a in ('netstat -ano ^| findstr :5000 ^| findstr LISTENING') do (
-    taskkill /F /PID %%a >nul 2>&1
-    echo Backend stopped.
-)
+echo 🛑 Stopping Optimus Platform...
 
-REM Stop Frontend (Node)
-echo.
-echo [2/3] Stopping Frontend Dev Server...
-for /f "tokens=5" %%a in ('netstat -ano ^| findstr :5173 ^| findstr LISTENING') do (
-    taskkill /F /PID %%a >nul 2>&1
-    echo Frontend stopped.
-)
+:: Kill Python processes (backend)
+echo 🔧 Stopping Backend Server...
+taskkill /f /im python.exe /fi "WINDOWTITLE eq Optimus Backend*" 2>nul
 
-REM Stop Kali VM
-set VBOX_PATH=D:\Virtualbox\VBoxManage.exe
+:: Kill Node.js processes (frontend)
+echo 🎨 Stopping Frontend Server...
+taskkill /f /im node.exe /fi "WINDOWTITLE eq Optimus Frontend*" 2>nul
 
-REM Check if VirtualBox exists at the specified path
-if not exist "%VBOX_PATH%" (
-    echo Warning: VirtualBox not found at %VBOX_PATH%
-    echo Please check your VirtualBox installation path.
-    goto :continue
-)
+:: Alternative method using port numbers
+echo 🧹 Cleaning up any remaining processes...
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :5000') do taskkill /f /pid %%a 2>nul
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :5173') do taskkill /f /pid %%a 2>nul
 
-echo.
-echo [3/3] Stopping Kali VM...
-"%VBOX_PATH%" controlvm "kali" poweroff
-if %errorlevel%==0 (
-    echo Kali VM powered off.
-) else (
-    echo Warning: Failed to power off Kali VM. Please ensure VBoxManage path and VM name are correct.
-)
+echo ✅ Optimus Platform Stopped!
 
-:continue
-echo.
-echo ============================================================
-echo Project Optimus Stopped Successfully!
-echo ============================================================
-echo.
 pause

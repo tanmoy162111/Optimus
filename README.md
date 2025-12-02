@@ -1,103 +1,100 @@
-# Optimus AI Agent
-
-An autonomous penetration testing system that intelligently selects and executes security tools based on context and learned knowledge.
+# Optimus - AI-Driven Autonomous Penetration Testing Platform
 
 ## Overview
+Optimus is an advanced AI-driven autonomous penetration testing platform that combines machine learning, automated tool execution, and intelligent decision-making to perform comprehensive security assessments.
 
-The Optimus AI Agent is designed to automate the penetration testing process by dynamically adapting its approach based on findings and environmental factors. Unlike traditional scanners with fixed tool lists, the AI agent learns from execution results to improve future decisions.
-
-## Key Features
-
-- **Autonomous Scanning**: Automatically selects and executes appropriate security tools
-- **Dynamic Tool Selection**: Choises tools based on current scan state and findings
-- **Continuous Learning**: Improves decision-making through machine learning
-- **Adaptive Strategy**: Adjusts approach based on environmental feedback
-- **Comprehensive Reporting**: Generates detailed security reports with remediation guidance
-- **Fully Autonomous Mode**: Agent makes all decisions based on tool outputs and findings
-
-## Architecture
-
-The system consists of several core components:
-
-1. **Autonomous Pentest Agent** - Main orchestrator that drives the penetration testing process
-2. **Dynamic Tool Database** - Central repository of all penetration testing tools with metadata
-3. **Knowledge Base** - Persistent storage of security knowledge and vulnerability patterns
-4. **Decision Engine** - AI-powered component that makes strategic choices
-5. **Continuous Learning Module** - Records and analyzes execution results to improve future decisions
-
-## Training System
-
-The agent includes a comprehensive training system that enables it to learn from live execution results on practice VMs:
-
-- **Training Session Manager** - Orchestrates complete training sessions
-- **Real-time Learning Module** - Learns from tool execution results with context awareness
-- **Strategy Selector** - Adapts scanning strategies based on performance metrics
-- **Data Collection** - Gathers comprehensive execution metrics for analysis
-
-See [Training System Documentation](docs/TRAINING_SYSTEM.md) for detailed information.
+## Project Structure
+```
+optimus/
+├── backend/                    # Python Flask backend
+│   ├── api/                    # API endpoints
+│   ├── websocket/              # WebSocket handlers
+│   ├── tools/                  # Hybrid Tool System
+│   ├── intelligence/           # AI/ML modules
+│   ├── data/                   # Runtime data
+│   └── app.py                 # Main Flask application
+│
+├── frontend/                   # React frontend
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   └── stores/
+│   └── public/
+│
+├── scripts/                    # Start/stop scripts
+├── logs/                       # Application logs
+└── docs/                       # Documentation
+```
 
 ## Getting Started
 
 ### Prerequisites
-
-- Python 3.8+
-- Kali Linux VM for tool execution
-- Practice VMs for training (OWASP Juice Shop, DVWA, etc.)
+- Python 3.13
+- Node.js 16+
+- npm 8+
 
 ### Installation
 
+1. Install backend dependencies:
 ```bash
-# Clone the repository
-git clone <repository-url>
-cd optimus-ai-agent
-
-# Install dependencies
-pip install -r backend/requirements.txt
+cd backend
+pip install -r requirements.txt
 ```
 
-### Configuration
-
-1. Set up the `.env` file with your configuration
-2. Configure SSH access to your Kali Linux VM
-3. Ensure practice VMs are accessible
-
-### Running the Agent
-
+2. Install frontend dependencies:
 ```bash
-# Start the backend service
-./start-backend.sh
-
-# Run a scan
-python backend/run_scan.py --target http://example.com
-
-# Train the agent with standard mode
-python backend/training_environment/train_agent_on_vms.py --targets http://practice-vm.local --episodes 50
-
-# Train the agent with fully autonomous mode
-python backend/training_environment/fully_autonomous_training.py --targets http://practice-vm.local --max-episodes 10
+cd frontend
+npm install
 ```
 
-## Fully Autonomous Training Mode
+### Running the Application
 
-The fully autonomous training mode allows the agent to make all decisions based on tool outputs and findings:
+#### Using Scripts
+```bash
+# Start the application
+./scripts/start.sh  # On Unix/Linux/Mac
+start.bat          # On Windows
 
-- **No Phase Controller**: Agent determines workflow dynamically
-- **Adaptive Tool Selection**: Agent selects tools based on previous findings
-- **Self-Directed Learning**: Agent chooses approaches and attacking patterns from its knowledge
-- **Context-Aware Execution**: Agent executes commands with appropriate parameters based on findings
+# Stop the application
+./scripts/stop.sh   # On Unix/Linux/Mac
+stop.bat           # On Windows
 
-This mode represents the most advanced form of autonomous operation where the agent operates without predefined phases or fixed tool selections.
+# Check health
+./scripts/health_check.sh  # On Unix/Linux/Mac
+```
+
+#### Manual Start
+1. Start the backend:
+```bash
+cd backend
+python app.py
+```
+
+2. Start the frontend:
+```bash
+cd frontend
+npm run dev
+```
+
+## Accessing the Application
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:5000
+- Health Check: http://localhost:5000/health
+
+## Features
+- AI-driven autonomous scanning
+- Real-time dashboard with scan progress
+- Comprehensive tool management
+- Intelligent tool recommendation
+- WebSocket-based real-time updates
+- Detailed reporting and findings visualization
 
 ## Documentation
-
-- [Agent Architecture](docs/AGENT_ARCHITECTURE.md) - Detailed system architecture
-- [Training System](docs/TRAINING_SYSTEM.md) - Training system documentation
-- [User Guide](docs/USER_GUIDE_REPORTS.md) - User guide and report examples
-
-## Contributing
-
-Contributions are welcome! Please read our contributing guidelines before submitting pull requests.
+- [Frontend-Backend Integration Guide](docs/FRONTEND_INTEGRATION_GUIDE.md)
+- [Hybrid Tool System Documentation](docs/HYBRID_TOOL_SYSTEM.md)
+- [API Documentation](docs/API.md)
+- [User Guide](docs/USER_GUIDE.md)
 
 ## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.

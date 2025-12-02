@@ -4,8 +4,25 @@ echo "============================================================"
 echo "Starting All Optimus Components"
 echo "============================================================"
 
-# Get script directory
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+# Get script directory using a more compatible approach
+SCRIPT_DIR="$(pwd)"
+echo "Script directory: $SCRIPT_DIR"
+
+# Check if required scripts exist
+if [ ! -f "$SCRIPT_DIR/start-kali.sh" ]; then
+    echo "ERROR: start-kali.sh not found in $SCRIPT_DIR"
+    exit 1
+fi
+
+if [ ! -f "$SCRIPT_DIR/start-backend.sh" ]; then
+    echo "ERROR: start-backend.sh not found in $SCRIPT_DIR"
+    exit 1
+fi
+
+if [ ! -f "$SCRIPT_DIR/start-frontend.sh" ]; then
+    echo "ERROR: start-frontend.sh not found in $SCRIPT_DIR"
+    exit 1
+fi
 
 # Start Kali VM
 echo "[1/3] Starting Kali VM..."
@@ -28,7 +45,8 @@ fi
 echo ""
 
 # Wait a moment for backend to fully initialize
-sleep 5
+# Use Windows ping as a substitute for sleep
+cmd.exe //c "ping -n 6 127.0.0.1 > nul"
 
 # Start Frontend
 echo "[3/3] Starting Frontend Dev Server..."
@@ -52,4 +70,5 @@ echo "Press Ctrl+C to stop all services..."
 echo ""
 
 # Keep script running
-wait
+# Use read instead of wait for better compatibility
+read -p "Press Enter to stop all services..."

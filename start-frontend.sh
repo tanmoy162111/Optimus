@@ -4,8 +4,29 @@ echo "============================================================"
 echo "Starting Optimus Frontend Dev Server"
 echo "============================================================"
 
+# Add Node.js to PATH if it exists in the default location
+if [ -d "/c/Program Files/nodejs" ]; then
+    export PATH="/c/Program Files/nodejs:$PATH"
+    echo "Added Node.js to PATH"
+fi
+
 # Change to frontend directory
 cd "$(dirname "$0")/frontend" || exit 1
+
+# Check if npm is available
+if ! command -v npm &> /dev/null; then
+    # Try with .cmd extension on Windows
+    if command -v npm.cmd &> /dev/null; then
+        alias npm=npm.cmd
+    else
+        echo "ERROR: npm is not installed or not in PATH"
+        echo "Please install Node.js from https://nodejs.org/"
+        echo "Node.js installation includes npm package manager"
+        exit 1
+    fi
+fi
+
+echo "Using npm version: $(npm --version)"
 
 # Check if node_modules exists
 if [ ! -d "node_modules" ]; then

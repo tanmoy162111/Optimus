@@ -43,3 +43,6 @@ PyPDF2==3.0.1
 # Testing
 pytest==7.4.3
 pytest-cov==4.1.0
+
+# Tools Module Dependencies
+aiohttp>=3.8.0

@@ -52,4 +52,62 @@ def register_handlers(socketio):
     # - 'scan_complete': Scan finished
     # - 'error': Error occurred
     
+    # === Hybrid Tool System Events ===
+    
+    @socketio.on('tool_resolution')
+    def handle_tool_resolution(data):
+        """Handle tool resolution events from hybrid system"""
+        scan_id = data.get('scan_id')
+        if scan_id:
+            emit('tool_resolution', data, room=scan_id)
+    
+    @socketio.on('tool_executing')
+    def handle_tool_executing(data):
+        """Handle tool execution start events"""
+        scan_id = data.get('scan_id')
+        if scan_id:
+            emit('tool_executing', data, room=scan_id)
+    
+    @socketio.on('tool_complete')
+    def handle_tool_complete(data):
+        """Handle tool completion events"""
+        scan_id = data.get('scan_id')
+        if scan_id:
+            emit('tool_complete', data, room=scan_id)
+    
+    @socketio.on('tool_error')
+    def handle_tool_error(data):
+        """Handle tool error events"""
+        scan_id = data.get('scan_id')
+        if scan_id:
+            emit('tool_error', data, room=scan_id)
+    
+    @socketio.on('tool_fallback')
+    def handle_tool_fallback(data):
+        """Handle tool fallback events"""
+        scan_id = data.get('scan_id')
+        if scan_id:
+            emit('tool_fallback', data, room=scan_id)
+    
+    @socketio.on('tool_warning')
+    def handle_tool_warning(data):
+        """Handle tool warning events"""
+        scan_id = data.get('scan_id')
+        if scan_id:
+            emit('tool_warning', data, room=scan_id)
+    
+    @socketio.on('tool_blocked')
+    def handle_tool_blocked(data):
+        """Handle tool blocked events"""
+        scan_id = data.get('scan_id')
+        if scan_id:
+            emit('tool_blocked', data, room=scan_id)
+    
+    @socketio.on('tool_discovery')
+    def handle_tool_discovery(data):
+        """Handle tool discovery events"""
+        scan_id = data.get('scan_id')
+        if scan_id:
+            emit('tool_discovery', data, room=scan_id)
+    
     logger.info("WebSocket handlers registered")
