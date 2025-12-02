@@ -10,7 +10,7 @@ import os
 import logging
 from datetime import datetime
 from typing import Dict, Any, Optional, Callable, List
-from config import Config
+from config_pkg import Config
 
 # Add import for the new tool knowledge base
 from inference.tool_knowledge_base import ToolKnowledgeBase

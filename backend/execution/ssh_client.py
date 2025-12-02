@@ -5,7 +5,7 @@ import paramiko
 import time
 import logging
 from typing import Dict, Any, Callable, Optional
-from config import Config
+from ..config import Config
 
 logger = logging.getLogger(__name__)
 

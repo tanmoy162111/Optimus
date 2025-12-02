@@ -71,6 +71,10 @@ DATA_DIR = BACKEND_DIR / 'data'
 (DATA_DIR / 'reports').mkdir(parents=True, exist_ok=True)
 (BACKEND_DIR.parent / 'logs').mkdir(parents=True, exist_ok=True)
 
+# Global active scans dictionary for shared access
+active_scans = {}
+scan_history = []
+
 # Import and register blueprints
 from api.routes import api_bp
 from api.scan_routes import scan_bp

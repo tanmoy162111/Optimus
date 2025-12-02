@@ -11,6 +11,9 @@ logger = logging.getLogger('optimus.websocket')
 # Store connected clients
 connected_clients = {}
 
+# Import global scan storage
+from app import active_scans, scan_history
+
 def register_socket_handlers(socketio):
     """Register all WebSocket event handlers."""
     

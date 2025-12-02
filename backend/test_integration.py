@@ -6,7 +6,7 @@ import os
 sys.path.insert(0, os.path.dirname(__file__))
 
 from datetime import datetime
-from config import Config
+from .config import Config
 from models_schema import Vulnerability, ScanState
 from training.feature_extractor import DatasetFeatureExtractor
 from training.pattern_extractor import PatternExtractor

@@ -4,7 +4,7 @@ Tests connectivity between Windows host and Kali VM
 import socket
 import paramiko
 import time
-from config import Config
+from .config import Config
 
 def test_tcp_connection():
     """Test raw TCP connection to Kali SSH port"""

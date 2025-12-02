@@ -2,7 +2,7 @@
 Test Kali VM SSH Connection
 """
 from execution.ssh_client import KaliSSHClient
-from config import Config
+from .config import Config
 
 def test_connection():
     print("=" * 60)

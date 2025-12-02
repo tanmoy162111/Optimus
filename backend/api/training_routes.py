@@ -64,7 +64,7 @@ def list_models():
     """List available trained models"""
     try:
         import os
-        from config import Config
+        from ..config import Config
         
         model_dir = Config.MODEL_PATH
         models = []

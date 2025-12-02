@@ -6,7 +6,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from typing import Dict, List, Any
-from config import Config
+from config_pkg import Config
 import logging
 from .rule_based_tool_selector import RuleBasedToolSelector
 

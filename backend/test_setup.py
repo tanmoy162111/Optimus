@@ -80,7 +80,7 @@ except Exception as e:
 print("\n[5] Testing Custom Modules:")
 try:
     sys.path.insert(0, os.path.dirname(__file__))
-    from config import Config
+    from .config import Config
     print(f"    ✓ Config loaded")
     print(f"      - Phases: {len(Config.PHASES)}")
     print(f"      - Flask Port: {Config.FLASK_PORT}")
