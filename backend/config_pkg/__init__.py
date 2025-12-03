@@ -10,6 +10,5 @@ sys.path.insert(0, str(backend_dir))
 # Now we can import Config from config.py
 from config import Config
 
-# Empty init file - this makes the config directory a package
-# The actual Config class is imported directly from config.py in the backend root
-pass
+# Make Config available when importing from config_pkg
+__all__ = ['Config']

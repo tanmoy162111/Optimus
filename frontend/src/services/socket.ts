@@ -6,8 +6,7 @@ import type {
   ToolOutputEvent, 
   ToolExecutionEvent,
   ScanUpdateEvent,
-  FindingEvent,
-  Vulnerability 
+  FindingEvent
 } from '@/types';
 
 // ============================================
@@ -141,24 +140,21 @@ class SocketService {
     this.socket.on('connect', () => {
       console.log('[WS] Connected to server');
       this.reconnectAttempts = 0;
-      this.emit('connect');
     });
     
     this.socket.on('disconnect', (reason) => {
       console.log('[WS] Disconnected:', reason);
-      this.emit('disconnect', reason);
     });
     
     this.socket.on('connect_error', (error) => {
       console.error('[WS] Connection error:', error.message);
       this.reconnectAttempts++;
-      this.emit('connect_error', error);
     });
     
     // Re-attach all stored listeners
     this.listeners.forEach((callbacks, event) => {
       callbacks.forEach(callback => {
-        this.socket!.on(event, callback as (...args: unknown[]) => void);
+        this.socket!.on(event, callback as any);
       });
     });
   }
@@ -174,7 +170,7 @@ class SocketService {
     this.listeners.get(event)!.add(callback as EventCallback);
     
     if (this.socket) {
-      this.socket.on(event, callback as (...args: unknown[]) => void);
+      this.socket.on(event, callback as any);
     }
     
     // Return unsubscribe function
@@ -187,7 +183,7 @@ class SocketService {
   off<K extends keyof SocketEvents>(event: K, callback?: SocketEvents[K]): void {
     if (callback) {
       this.listeners.get(event)?.delete(callback as EventCallback);
-      this.socket?.off(event, callback as (...args: unknown[]) => void);
+      this.socket?.off(event, callback as any);
     } else {
       this.listeners.delete(event);
       this.socket?.off(event);

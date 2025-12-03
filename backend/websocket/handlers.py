@@ -1,18 +1,19 @@
 """
 WebSocket Event Handlers
+Real-time communication for scan updates and tool execution
 """
 
 import logging
-from flask_socketio import emit, join_room, leave_room
 from datetime import datetime
+from flask_socketio import join_room, leave_room, emit
 
-logger = logging.getLogger('optimus.websocket')
+logger = logging.getLogger(__name__)
 
 # Store connected clients
 connected_clients = {}
 
-# Import global scan storage
-from app import active_scans, scan_history
+# Import global scan storage from globals.py
+from globals import active_scans, scan_history
 
 def register_socket_handlers(socketio):
     """Register all WebSocket event handlers."""

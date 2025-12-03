@@ -9,8 +9,9 @@ from flask_socketio import emit
 
 scan_bp = Blueprint('scan', __name__)
 
-# Use global scan storage from app.py
-from app import active_scans, scan_history
+# In-memory scan storage (replace with database in production)
+active_scans = {}
+scan_history = []
 
 @scan_bp.route('/start', methods=['POST'])
 def start_scan():

@@ -10,8 +10,8 @@ class Config:
     FLASK_PORT = int(os.getenv('FLASK_PORT', 5000))
     
     # Kali VM
-    KALI_HOST = os.getenv('KALI_HOST', '192.168.1.105')
-    KALI_PORT = int(os.getenv('KALI_PORT', 22))
+    KALI_HOST = os.getenv('KALI_HOST', '127.0.0.1')
+    KALI_PORT = int(os.getenv('KALI_PORT', 2222))
     KALI_USER = os.getenv('KALI_USER', 'kali')
     KALI_PASSWORD = os.getenv('KALI_PASSWORD', 'kali')
     KALI_KEY_PATH = os.getenv('KALI_KEY_PATH', '')

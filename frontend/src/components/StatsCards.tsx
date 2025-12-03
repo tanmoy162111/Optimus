@@ -5,12 +5,9 @@ import {
   AlertTriangle,
   Shield,
   Wrench,
-  Target,
-  Clock,
   TrendingUp,
   TrendingDown,
   Minus,
-  Zap,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui';
@@ -38,7 +35,6 @@ export const StatCard: React.FC<StatCardProps> = ({
   value,
   subtitle,
   icon: Icon,
-  color,
   trend,
   className,
   delay = 0,
@@ -65,26 +61,23 @@ export const StatCard: React.FC<StatCardProps> = ({
     >
       <Card
         variant="default"
-        padding="md"
         className={cn(
-          'relative overflow-hidden group hover:border-opacity-50 transition-all duration-300',
+          'relative overflow-hidden group hover:border-opacity-50 transition-all duration-300 p-4',
           className
         )}
-        style={{ borderColor: `${color}30` }}
       >
         {/* Background Glow */}
         <div
           className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-10 group-hover:opacity-20 transition-opacity"
-          style={{ backgroundColor: color }}
+
         />
 
         <div className="relative z-10">
           <div className="flex items-start justify-between mb-4">
             <div
               className="w-10 h-10 rounded-lg flex items-center justify-center"
-              style={{ backgroundColor: `${color}20` }}
             >
-              <Icon className="w-5 h-5" style={{ color }} />
+              <Icon className="w-5 h-5" />
             </div>
 
             {trend && TrendIcon && (
@@ -107,9 +100,7 @@ export const StatCard: React.FC<StatCardProps> = ({
         {/* Animated border */}
         <div
           className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-          style={{
-            background: `linear-gradient(135deg, ${color}20 0%, transparent 50%, ${color}10 100%)`,
-          }}
+
         />
       </Card>
     </motion.div>
@@ -209,7 +200,7 @@ export const SeverityDistribution: React.FC<SeverityDistributionProps> = ({
   ];
 
   return (
-    <Card variant="default" padding="md" className={className}>
+    <Card variant="default" className={cn('p-4', className)}>
       <h3 className="text-lg font-semibold text-white mb-4">
         Severity Distribution
       </h3>
@@ -231,7 +222,6 @@ export const SeverityDistribution: React.FC<SeverityDistributionProps> = ({
                   animate={{ width: `${item.percentage}%` }}
                   transition={{ duration: 0.5, delay: idx * 0.1 }}
                   className="h-full"
-                  style={{ backgroundColor: item.color }}
                 />
               )
             ))}
@@ -243,7 +233,6 @@ export const SeverityDistribution: React.FC<SeverityDistributionProps> = ({
               <div key={item.label} className="text-center">
                 <div
                   className="w-3 h-3 rounded-full mx-auto mb-1"
-                  style={{ backgroundColor: item.color }}
                 />
                 <p className="text-lg font-semibold text-white">{item.value}</p>
                 <p className="text-[10px] text-gray-500">{item.label}</p>
@@ -279,7 +268,7 @@ export const MiniStat: React.FC<MiniStatProps> = ({
         className="w-8 h-8 rounded-lg flex items-center justify-center"
         style={{ backgroundColor: `${color}15` }}
       >
-        <Icon className="w-4 h-4" style={{ color }} />
+        <Icon className="w-4 h-4" />
       </div>
       <div>
         <p className="text-white font-medium">{value}</p>
@@ -317,7 +306,7 @@ export const SystemHealth: React.FC<SystemHealthProps> = ({
   const config = statusConfig[status];
 
   return (
-    <Card variant="default" padding="md" className={className}>
+    <Card variant="default" className={cn('p-4', className)}>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-white">System Health</h3>
         <div className="flex items-center gap-2">
@@ -325,10 +314,7 @@ export const SystemHealth: React.FC<SystemHealthProps> = ({
             className="w-2 h-2 rounded-full"
             style={{ backgroundColor: config.color }}
           />
-          <span
-            className="text-sm font-medium"
-            style={{ color: config.color }}
-          >
+          <span className="text-sm font-medium">
             {config.label}
           </span>
         </div>
@@ -353,7 +339,7 @@ interface HealthMetricProps {
   color: string;
 }
 
-const HealthMetric: React.FC<HealthMetricProps> = ({ label, value, color }) => {
+const HealthMetric: React.FC<HealthMetricProps> = ({ label, value }) => {
   return (
     <div>
       <div className="flex items-center justify-between mb-1">
@@ -366,10 +352,7 @@ const HealthMetric: React.FC<HealthMetricProps> = ({ label, value, color }) => {
           animate={{ width: `${value}%` }}
           transition={{ duration: 0.5 }}
           className="h-full rounded-full"
-          style={{
-            backgroundColor: color,
-            boxShadow: `0 0 10px ${color}`,
-          }}
+
         />
       </div>
     </div>

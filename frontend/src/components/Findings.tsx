@@ -8,7 +8,6 @@ import {
   ChevronUp,
   Copy,
   Check,
-  Filter,
   Search,
   X,
 } from 'lucide-react';
@@ -61,15 +60,13 @@ export const VulnerabilityCard: React.FC<VulnerabilityCardProps> = ({
     >
       <Card
         variant="default"
-        padding="none"
         className={cn(
-          'overflow-hidden transition-all duration-300',
+          'p-0 overflow-hidden transition-all duration-300',
           'hover:border-opacity-50',
           isExpanded && 'ring-1 ring-opacity-30'
         )}
         style={{
           borderColor: severityConfig.borderColor,
-          ...(isExpanded && { ringColor: severityConfig.color }),
         }}
       >
         {/* Severity indicator bar */}
@@ -87,7 +84,7 @@ export const VulnerabilityCard: React.FC<VulnerabilityCardProps> = ({
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 mb-2">
                 <Badge
-                  variant={severityBadgeVariant[severityLevel]}
+                  variant={severityBadgeVariant[severityLevel] === 'critical' ? 'danger' : severityBadgeVariant[severityLevel] === 'high' ? 'warning' : severityBadgeVariant[severityLevel] === 'medium' ? 'default' : severityBadgeVariant[severityLevel] === 'low' ? 'info' : severityBadgeVariant[severityLevel]}
                   size="sm"
                 >
                   {severityLevel.toUpperCase()} ({vuln.severity.toFixed(1)})
@@ -98,7 +95,7 @@ export const VulnerabilityCard: React.FC<VulnerabilityCardProps> = ({
                   </Badge>
                 )}
                 {vuln.cve && (
-                  <Badge variant="purple" size="sm">
+                  <Badge variant="default" size="sm">
                     {vuln.cve}
                   </Badge>
                 )}
@@ -324,22 +321,22 @@ export const FindingsPanel: React.FC<FindingsPanelProps> = ({
       {/* Severity Summary */}
       <div className="flex items-center gap-2 mb-4 flex-wrap">
         {counts.critical > 0 && (
-          <Badge variant="critical" size="sm">
+          <Badge variant="danger" size="sm">
             {counts.critical} Critical
           </Badge>
         )}
         {counts.high > 0 && (
-          <Badge variant="high" size="sm">
+          <Badge variant="warning" size="sm">
             {counts.high} High
           </Badge>
         )}
         {counts.medium > 0 && (
-          <Badge variant="medium" size="sm">
+          <Badge variant="default" size="sm">
             {counts.medium} Medium
           </Badge>
         )}
         {counts.low > 0 && (
-          <Badge variant="low" size="sm">
+          <Badge variant="info" size="sm">
             {counts.low} Low
           </Badge>
         )}
@@ -386,7 +383,7 @@ export const FindingsPanel: React.FC<FindingsPanelProps> = ({
         <div className="flex items-center gap-2 mb-4">
           <span className="text-xs text-gray-500">Filters:</span>
           {searchQuery && (
-            <Badge variant="outline" size="sm" className="gap-1">
+            <Badge variant="default" size="sm" className="gap-1">
               {searchQuery}
               <button onClick={() => setSearchQuery('')}>
                 <X className="w-3 h-3" />
@@ -394,7 +391,7 @@ export const FindingsPanel: React.FC<FindingsPanelProps> = ({
             </Badge>
           )}
           {severityFilter !== 'all' && (
-            <Badge variant="outline" size="sm" className="gap-1">
+            <Badge variant="default" size="sm" className="gap-1">
               {severityFilter}
               <button onClick={() => setSeverityFilter('all')}>
                 <X className="w-3 h-3" />

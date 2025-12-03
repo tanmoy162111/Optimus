@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosError } from 'axios';
 import { config } from '@/config';
 import type { 
   Scan, 
@@ -9,7 +9,6 @@ import type {
   Report,
   MLModel,
   SystemHealth,
-  ApiResponse,
   PaginatedResponse 
 } from '@/types';
 

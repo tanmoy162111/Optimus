@@ -10,10 +10,9 @@ import {
   Target,
   Shield,
   ArrowLeft,
-  ExternalLink,
   Printer,
 } from 'lucide-react';
-import { cn, formatDate, formatDuration, countBySeverity } from '@/lib/utils';
+import { formatDate, formatDuration, countBySeverity } from '@/lib/utils';
 import { api } from '@/services/api';
 import {
   Card,
@@ -23,7 +22,7 @@ import {
   FindingsPanel,
   SeverityDistribution,
 } from '@/components';
-import type { Scan, Report } from '@/types';
+import type { Scan } from '@/types';
 
 // ============================================
 // Reports List Page
@@ -86,23 +85,23 @@ export const ReportsPage: React.FC = () => {
 
       {/* Reports Grid */}
       {error ? (
-        <Card variant="default" padding="lg" className="text-center">
+        <Card variant="default" className="p-6 text-center">
           <AlertTriangle className="w-12 h-12 text-neon-orange mx-auto mb-4" />
           <h2 className="text-xl font-bold text-white mb-2">Error</h2>
           <p className="text-gray-400 mb-4">{error}</p>
-          <Button variant="outline" onClick={loadScans}>
+          <Button variant="secondary" onClick={loadScans}>
             Try Again
           </Button>
         </Card>
       ) : scans.length === 0 ? (
-        <Card variant="default" padding="lg" className="text-center">
+        <Card variant="default" className="p-6 text-center">
           <FileText className="w-16 h-16 text-gray-600 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-white mb-2">No reports yet</h2>
           <p className="text-gray-400 mb-4">
             Complete a scan to generate a report
           </p>
           <Link to="/scan">
-            <Button variant="cyber">
+            <Button variant="primary">
               <Target className="w-4 h-4" />
               Start a Scan
             </Button>
@@ -145,8 +144,7 @@ const ReportCard: React.FC<ReportCardProps> = ({ scan }) => {
     <Link to={`/report/${scan.scan_id}`}>
       <Card
         variant="default"
-        padding="md"
-        className="h-full hover:border-neon-green/30 transition-all cursor-pointer group"
+        className="p-4 h-full hover:border-neon-green/30 transition-all cursor-pointer group"
       >
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1 min-w-0">
@@ -298,12 +296,12 @@ export const ReportDetailPage: React.FC = () => {
   if (error || !scan) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Card variant="default" padding="lg" className="max-w-md text-center">
+        <Card variant="default" className="p-6 max-w-md text-center">
           <AlertTriangle className="w-12 h-12 text-neon-orange mx-auto mb-4" />
           <h2 className="text-xl font-bold text-white mb-2">Error</h2>
           <p className="text-gray-400 mb-4">{error || 'Report not found'}</p>
           <Link to="/reports">
-            <Button variant="outline">
+            <Button variant="secondary">
               <ArrowLeft className="w-4 h-4" />
               Back to Reports
             </Button>
@@ -350,7 +348,7 @@ export const ReportDetailPage: React.FC = () => {
               <Download className="w-4 h-4" />
               HTML
             </Button>
-            <Button variant="outline" size="sm" onClick={() => window.print()}>
+            <Button variant="secondary" size="sm" onClick={() => window.print()}>
               <Printer className="w-4 h-4" />
               Print
             </Button>
@@ -392,7 +390,7 @@ export const ReportDetailPage: React.FC = () => {
         {/* Sidebar */}
         <div className="space-y-4">
           {/* Scan Info */}
-          <Card variant="default" padding="md">
+          <Card variant="default" className="p-4">
             <h3 className="text-sm font-medium text-white mb-4">Scan Details</h3>
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
@@ -431,7 +429,7 @@ export const ReportDetailPage: React.FC = () => {
 
         {/* Findings */}
         <div className="lg:col-span-3">
-          <Card variant="default" padding="md">
+          <Card variant="default" className="p-4">
             <FindingsPanel
               findings={scan.findings}
               maxHeight="calc(100vh - 400px)"
@@ -459,7 +457,7 @@ const SummaryStatCard: React.FC<SummaryStatCardProps> = ({
   color,
 }) => {
   return (
-    <Card variant="default" padding="md" className="text-center">
+    <Card variant="default" className="p-4 text-center">
       <p className="text-3xl font-bold mb-1" style={{ color }}>
         {value}
       </p>

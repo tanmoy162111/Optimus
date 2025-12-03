@@ -70,7 +70,7 @@ export const ScanProgress: React.FC<ScanProgressProps> = ({
   }
 
   return (
-    <Card variant="default" padding="md" className={cn('', className)}>
+    <Card variant="default" className={cn('p-4', className)}>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
@@ -181,7 +181,7 @@ export const ScanProgress: React.FC<ScanProgressProps> = ({
                         'w-4 h-4',
                         isPending ? 'text-gray-500' : 'text-white'
                       )}
-                      style={{ color: isActive ? config.color : undefined }}
+
                     />
                   )}
                 </motion.div>
@@ -192,7 +192,6 @@ export const ScanProgress: React.FC<ScanProgressProps> = ({
                       'text-xs font-medium',
                       isActive ? 'text-white' : isPending ? 'text-gray-600' : 'text-gray-400'
                     )}
-                    style={{ color: isActive ? config.color : undefined }}
                   >
                     {config.label}
                   </p>
@@ -259,15 +258,13 @@ const CompactProgress: React.FC<CompactProgressProps> = ({
     <div className={cn('flex items-center gap-4', className)}>
       <div
         className="w-8 h-8 rounded-lg flex items-center justify-center"
-        style={{ backgroundColor: `${config.color}20` }}
       >
         {scan.status === 'running' ? (
           <Loader2
             className="w-4 h-4 animate-spin"
-            style={{ color: config.color }}
           />
         ) : (
-          <Icon className="w-4 h-4" style={{ color: config.color }} />
+          <Icon className="w-4 h-4" />
         )}
       </div>
 
@@ -334,14 +331,13 @@ interface StatItemProps {
   color: string;
 }
 
-const StatItem: React.FC<StatItemProps> = ({ icon: Icon, label, value, color }) => {
+const StatItem: React.FC<StatItemProps> = ({ icon: Icon, label, value }) => {
   return (
     <div className="text-center">
       <div
         className="w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-2"
-        style={{ backgroundColor: `${color}20` }}
       >
-        <Icon className="w-4 h-4" style={{ color }} />
+        <Icon className="w-4 h-4" />
       </div>
       <p className="text-lg font-semibold text-white">{value}</p>
       <p className="text-xs text-gray-500">{label}</p>

@@ -46,7 +46,7 @@ interface ScanState {
 
 export const useScanStore = create<ScanState>()(
   devtools(
-    (set, get) => ({
+    (set) => ({
       currentScan: null,
       scanHistory: [],
       isScanning: false,

@@ -1,19 +1,29 @@
-"""Robust SSH-based tool execution manager with PTY support
-Handles: sudo, interactive commands, real-time streaming, error recovery"""
-import paramiko
-import select
-import threading
-import time
-import re
-import socket
-import os
-import logging
-from datetime import datetime
-from typing import Dict, Any, Optional, Callable, List
-from config_pkg import Config
+"""Enhanced Tool Manager with Hybrid Intelligence and Real-time Streaming
+Supports 50+ pentesting tools with dynamic command generation
+"""
 
-# Add import for the new tool knowledge base
-from inference.tool_knowledge_base import ToolKnowledgeBase
+import paramiko
+import time
+import logging
+import socket
+from datetime import datetime
+from typing import Dict, Any, Tuple, Optional, List
+import subprocess
+
+# Import the output parser
+from .output_parser import OutputParser
+from .tool_knowledge_base import ToolKnowledgeBase
+# Import Config from the backend root
+from config import Config
+
+# Try to import hybrid tool system
+HYBRID_SYSTEM_AVAILABLE = False
+try:
+    from hybrid.hybrid_tool_system import get_hybrid_tool_system
+    HYBRID_SYSTEM_AVAILABLE = True
+    print("Hybrid tool system available")
+except ImportError:
+    print("Warning: Hybrid tool system not available")
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +41,18 @@ class ToolManager:
         self.tool_kb = ToolKnowledgeBase()
         # Tool execution history for dynamic timeout adjustment
         self.tool_execution_history = {}
+        # Initialize the output parser
+        self.output_parser = OutputParser()
+        
+        # Try to initialize hybrid tool system
+        self.hybrid_system = None
+        if HYBRID_SYSTEM_AVAILABLE:
+            try:
+                self.hybrid_system = get_hybrid_tool_system()
+                logger.info("[ToolManager] Hybrid tool system initialized")
+            except Exception as e:
+                logger.warning(f"[ToolManager] Failed to initialize hybrid tool system: {e}")
+        
         logger.info("[ToolManager] Initialized with dynamic command generation")
     
     def connect_ssh(self) -> paramiko.SSHClient:
@@ -134,6 +156,42 @@ class ToolManager:
                     'success': False
                 }
         
+        # Try to resolve tool using hybrid system first
+        resolved_command = None
+        if self.hybrid_system:
+            try:
+                task_description = f"Execute {tool_name} during {phase} phase"
+                resolution = self.hybrid_system.resolve_tool(
+                    tool_name=tool_name,
+                    task=task_description,
+                    target=target,
+                    context={
+                        'phase': phase,
+                        'parameters': parameters,
+                        'scan_id': scan_id
+                    }
+                )
+                
+                # If resolution was successful, use the generated command
+                if resolution.status in ['resolved', 'partial']:
+                    resolved_command = resolution.command
+                    logger.info(f"Using hybrid system resolved command for {tool_name}: {resolved_command}")
+                    
+                    # Stream resolution info to frontend
+                    if self.socketio:
+                        self.socketio.emit('tool_resolution', {
+                            'scan_id': scan_id,
+                            'tool': tool_name,
+                            'source': resolution.source.value if hasattr(resolution.source, 'value') else str(resolution.source),
+                            'confidence': resolution.confidence,
+                            'status': resolution.status.value if hasattr(resolution.status, 'value') else str(resolution.status),
+                            'explanation': resolution.explanation
+                        })
+                else:
+                    logger.warning(f"Hybrid system failed to resolve {tool_name}, falling back to original")
+            except Exception as e:
+                logger.error(f"Hybrid system resolution failed: {e}")
+        
         # Check API requirements
         has_requirements, missing_keys = self.check_tool_requirements(tool_name)
         if not has_requirements:
@@ -173,8 +231,11 @@ class ToolManager:
                         # Final failure
                         raise Exception(f"Failed to connect to Kali VM after {max_connection_retries} attempts: {conn_error}")
             
-            # Build command
-            command = self.build_command(tool_name, target, parameters)
+            # Build command - use resolved command if available
+            if resolved_command:
+                command = resolved_command
+            else:
+                command = self.build_command(tool_name, target, parameters)
             
             # Notify frontend
             if self.socketio:
@@ -202,16 +263,38 @@ class ToolManager:
                 self.tool_execution_history[tool_name] = []
             self.tool_execution_history[tool_name].append(execution_time)
             
-            # Keep only last 10 executions to prevent memory bloat
-            if len(self.tool_execution_history[tool_name]) > 10:
-                self.tool_execution_history[tool_name] = self.tool_execution_history[tool_name][-10:]
-            
             # Parse output
-            from inference.output_parser import OutputParser
-            parser = OutputParser()
-            parsed_results = parser.parse_tool_output(tool_name, stdout, stderr)
+            parsed_results = self.output_parser.parse_tool_output(tool_name, stdout, stderr)
             
-            result = {
+            # Count findings
+            findings_count = len(parsed_results.get('vulnerabilities', []))
+            
+            # Record execution result for learning (if hybrid system available)
+            if self.hybrid_system:
+                try:
+                    self.hybrid_system.record_execution_result(
+                        tool_name=tool_name,
+                        command=command,
+                        success=(exit_code == 0),
+                        output=stdout,
+                        findings=parsed_results.get('vulnerabilities', [])
+                    )
+                except Exception as e:
+                    logger.warning(f"Failed to record execution result: {e}")
+            
+            # Notify completion
+            if self.socketio:
+                self.socketio.emit('tool_execution_complete', {
+                    'scan_id': scan_id,
+                    'tool': tool_name,
+                    'phase': phase,
+                    'exit_code': exit_code,
+                    'findings_count': findings_count,
+                    'execution_time': execution_time,
+                    'success': (exit_code == 0)
+                })
+            
+            return {
                 'tool_name': tool_name,
                 'target': target,
                 'phase': phase,
@@ -219,45 +302,33 @@ class ToolManager:
                 'exit_code': exit_code,
                 'stdout': stdout,
                 'stderr': stderr,
+                'parsed_results': parsed_results,
+                'findings_count': findings_count,
                 'execution_time': execution_time,
-                'start_time': start_time.isoformat(),
-                'end_time': end_time.isoformat(),
-                'success': exit_code == 0,
-                'parsed_results': parsed_results
+                'success': (exit_code == 0)
             }
             
-            # Learn from execution
-            if result.get('success'):
-                findings_count = len(result.get('parsed_results', {}).get('vulnerabilities', []))
-                execution_time_val = result.get('execution_time', 0)
-                self.tool_kb.learn_from_execution(
-                    tool_name, 
-                    command, 
-                    findings_count, 
-                    execution_time_val
-                )
-            
-            # Notify completion
-            if self.socketio:
-                self.socketio.emit('tool_execution_complete', {
-                    'scan_id': scan_id,
-                    'tool': tool_name,
-                    'success': result['success'],
-                    'execution_time': execution_time,
-                    'findings_count': len(parsed_results.get('vulnerabilities', []))
-                })
-            
-            return result
-            
         except Exception as e:
-            print(f"❌ Tool execution error: {e}")
+            logger.error(f"Tool execution failed: {e}")
+            import traceback
+            traceback.print_exc()
+            
+            # Notify error
             if self.socketio:
                 self.socketio.emit('tool_execution_error', {
                     'scan_id': scan_id,
                     'tool': tool_name,
+                    'phase': phase,
                     'error': str(e)
                 })
-            raise
+            
+            return {
+                'tool_name': tool_name,
+                'target': target,
+                'phase': phase,
+                'error': str(e),
+                'success': False
+            }
     
     def execute_with_streaming(self, command: str, scan_id: str,
                             tool_name: str, timeout: int = 300) -> tuple:

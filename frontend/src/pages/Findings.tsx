@@ -12,7 +12,6 @@ import { api } from '@/services/api';
 import {
   Card,
   Button,
-  Badge,
   Spinner,
   FindingsPanel,
   SeverityDistribution,
@@ -91,11 +90,11 @@ export const FindingsPage: React.FC = () => {
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Card variant="default" padding="lg" className="max-w-md text-center">
+        <Card variant="default" className="p-6 max-w-md text-center">
           <AlertTriangle className="w-12 h-12 text-neon-orange mx-auto mb-4" />
           <h2 className="text-xl font-bold text-white mb-2">Error</h2>
           <p className="text-gray-400 mb-4">{error}</p>
-          <Button variant="outline" onClick={loadData}>
+          <Button variant="secondary" onClick={loadData}>
             <RefreshCw className="w-4 h-4" />
             Try Again
           </Button>
@@ -126,7 +125,7 @@ export const FindingsPage: React.FC = () => {
             <RefreshCw className="w-4 h-4" />
             Refresh
           </Button>
-          <Button variant="outline" size="sm" onClick={exportFindings}>
+          <Button variant="secondary" size="sm" onClick={exportFindings}>
             <Download className="w-4 h-4" />
             Export
           </Button>
@@ -166,7 +165,7 @@ export const FindingsPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Filters Sidebar */}
         <div className="space-y-4">
-          <Card variant="default" padding="md">
+          <Card variant="default" className="p-4">
             <div className="flex items-center gap-2 mb-4">
               <Filter className="w-4 h-4 text-gray-400" />
               <h3 className="text-sm font-medium text-white">Filter by Scan</h3>
@@ -218,7 +217,7 @@ export const FindingsPage: React.FC = () => {
         {/* Findings List */}
         <div className="lg:col-span-3">
           {filteredFindings.length === 0 ? (
-            <Card variant="default" padding="lg" className="text-center">
+            <Card variant="default" className="p-6 text-center">
               <Shield className="w-16 h-16 text-gray-600 mx-auto mb-4" />
               <h2 className="text-xl font-bold text-white mb-2">
                 No findings yet
@@ -228,7 +227,7 @@ export const FindingsPage: React.FC = () => {
               </p>
             </Card>
           ) : (
-            <Card variant="default" padding="md">
+            <Card variant="default" className="p-4">
               <FindingsPanel
                 findings={filteredFindings}
                 maxHeight="calc(100vh - 300px)"
@@ -253,7 +252,7 @@ interface StatBoxProps {
 
 const StatBox: React.FC<StatBoxProps> = ({ label, count, color }) => {
   return (
-    <Card variant="default" padding="md" className="text-center">
+    <Card variant="default" className="p-4 text-center">
       <div
         className="text-3xl font-bold mb-1"
         style={{ color }}

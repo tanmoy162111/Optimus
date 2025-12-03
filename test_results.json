@@ -1,0 +1,82 @@
+{
+  "timestamp": "2025-12-03T09:04:29.666461",
+  "tests": [
+    {
+      "name": "Health Endpoint",
+      "passed": true,
+      "warning": false,
+      "message": "Status: healthy, Components: ['api', 'intelligence', 'tools', 'websocket']"
+    },
+    {
+      "name": "Root Endpoint",
+      "passed": true,
+      "warning": false,
+      "message": "API: Optimus API, Version: 1.0.0"
+    },
+    {
+      "name": "API Blueprint",
+      "passed": true,
+      "warning": false,
+      "message": "HTTP 200"
+    },
+    {
+      "name": "Scan Routes",
+      "passed": true,
+      "warning": false,
+      "message": "Active scans: 1"
+    },
+    {
+      "name": "Tool Routes",
+      "passed": true,
+      "warning": false,
+      "message": "Categories: 15"
+    },
+    {
+      "name": "SSH Connection",
+      "passed": true,
+      "warning": false,
+      "message": "Connected as: kali"
+    },
+    {
+      "name": "Essential Tools",
+      "passed": true,
+      "warning": false,
+      "message": "Available: nmap, nikto, sqlmap, gobuster, nuclei, whatweb"
+    },
+    {
+      "name": "Tool Execution",
+      "passed": true,
+      "warning": false,
+      "message": "Nmap version 7.95 ( https://nmap.org )"
+    },
+    {
+      "name": "WebSocket Connect",
+      "passed": false,
+      "warning": false,
+      "message": "Connection failed: module 'websocket' has no attribute 'WebSocketException'"
+    },
+    {
+      "name": "Start Scan",
+      "passed": false,
+      "warning": false,
+      "message": "HTTP 500: {\"error\":\"Internal server error\",\"message\":\"500 Internal Server Error: The server encountered an int"
+    },
+    {
+      "name": "Frontend Serves",
+      "passed": true,
+      "warning": false,
+      "message": "HTML page loaded"
+    }
+  ],
+  "passed": 9,
+  "failed": 2,
+  "warnings": 0,
+  "summary": {
+    "total": 11,
+    "passed": 9,
+    "failed": 2,
+    "warnings": 0,
+    "pass_rate": 81.81818181818183,
+    "status": "PARTIAL"
+  }
+}

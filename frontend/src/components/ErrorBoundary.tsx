@@ -53,7 +53,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
       return (
         <div className="min-h-screen bg-cyber-black flex items-center justify-center p-4">
-          <Card variant="default" padding="lg" className="max-w-lg w-full text-center">
+          <Card variant="default" className="p-6 max-w-lg w-full text-center">
             <div className="w-16 h-16 rounded-full bg-neon-red/20 flex items-center justify-center mx-auto mb-6">
               <AlertTriangle className="w-8 h-8 text-neon-red" />
             </div>
@@ -79,7 +79,7 @@ export class ErrorBoundary extends Component<Props, State> {
             )}
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button variant="outline" onClick={this.handleReset}>
+              <Button variant="secondary" onClick={this.handleReset}>
                 Try Again
               </Button>
               <Button variant="secondary" onClick={this.handleReload}>
@@ -112,7 +112,7 @@ interface PageErrorProps {
 export const PageError: React.FC<PageErrorProps> = ({ error, resetError }) => {
   return (
     <div className="flex items-center justify-center min-h-[400px]">
-      <Card variant="default" padding="lg" className="max-w-md w-full text-center">
+      <Card variant="default" className="p-6 max-w-md w-full text-center">
         <AlertTriangle className="w-12 h-12 text-neon-orange mx-auto mb-4" />
         <h2 className="text-xl font-bold text-white mb-2">
           Failed to load this page
@@ -121,7 +121,7 @@ export const PageError: React.FC<PageErrorProps> = ({ error, resetError }) => {
           {error?.message || 'An error occurred while loading this content.'}
         </p>
         {resetError && (
-          <Button variant="outline" onClick={resetError}>
+          <Button variant="secondary" onClick={resetError}>
             <RefreshCw className="w-4 h-4" />
             Try Again
           </Button>

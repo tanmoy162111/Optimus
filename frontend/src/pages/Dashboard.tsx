@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Target,
   ArrowRight,
   Clock,
-  Activity,
   Shield,
   Zap,
   TrendingUp,
   AlertTriangle,
 } from 'lucide-react';
-import { cn, formatDuration, formatDate, countBySeverity } from '@/lib/utils';
-import { useDashboardData, useWebSocket, useScanEvents } from '@/hooks';
+import { formatDuration, formatDate, countBySeverity } from '@/lib/utils';
+import { useDashboardData, useSocket, useScanSocket } from '@/hooks';
 import { useScanStore } from '@/stores';
 import {
   Card,
@@ -36,10 +35,10 @@ export const DashboardPage: React.FC = () => {
   const { currentScan, isScanning } = useScanStore();
   
   // Initialize WebSocket connection
-  useWebSocket();
+  useSocket();
   
   // Subscribe to scan events if there's an active scan
-  useScanEvents(currentScan?.scan_id);
+  useScanSocket(currentScan?.scan_id || null);
 
   if (isLoading) {
     return (
@@ -55,11 +54,11 @@ export const DashboardPage: React.FC = () => {
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Card variant="default" padding="lg" className="max-w-md text-center">
+        <Card variant="default" className="p-6 max-w-md text-center">
           <AlertTriangle className="w-12 h-12 text-neon-orange mx-auto mb-4" />
           <h2 className="text-xl font-bold text-white mb-2">Failed to load dashboard</h2>
           <p className="text-gray-400 mb-4">{error}</p>
-          <Button variant="outline" onClick={refresh}>
+          <Button variant="secondary" onClick={refresh}>
             Try Again
           </Button>
         </Card>
@@ -85,7 +84,7 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         <Link to="/scan">
-          <Button variant="cyber" size="lg">
+          <Button variant="primary" size="lg">
             <Target className="w-5 h-5" />
             Start New Scan
             <ArrowRight className="w-5 h-5" />
@@ -109,7 +108,7 @@ export const DashboardPage: React.FC = () => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <Card variant="gradient" padding="none" className="overflow-hidden">
+          <Card variant="gradient" className="overflow-hidden p-0">
             <div className="p-4 bg-neon-green/5 border-b border-neon-green/20">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 bg-neon-green rounded-full animate-pulse" />
@@ -129,7 +128,7 @@ export const DashboardPage: React.FC = () => {
         <div className="lg:col-span-2 space-y-6">
           {/* Terminal */}
           {isScanning && (
-            <Card variant="default" padding="none">
+            <Card variant="default" className="p-0">
               <Terminal maxHeight="300px" />
             </Card>
           )}
@@ -143,7 +142,7 @@ export const DashboardPage: React.FC = () => {
               maxHeight="400px"
             />
           ) : (
-            <Card variant="default" padding="lg">
+            <Card variant="default" className="p-6">
               <div className="flex items-center gap-3 mb-4">
                 <Shield className="w-5 h-5 text-neon-green" />
                 <h3 className="text-lg font-semibold text-white">Recent Findings</h3>
@@ -173,7 +172,7 @@ export const DashboardPage: React.FC = () => {
           )}
 
           {/* Recent Scans */}
-          <Card variant="default" padding="md">
+          <Card variant="default" className="p-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-white">Recent Scans</h3>
               <Link to="/reports" className="text-sm text-neon-cyan hover:underline">
@@ -196,7 +195,7 @@ export const DashboardPage: React.FC = () => {
           </Card>
 
           {/* Quick Actions */}
-          <Card variant="default" padding="md">
+          <Card variant="default" className="p-4">
             <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
             <div className="space-y-2">
               <QuickAction
@@ -239,14 +238,7 @@ interface RecentScanItemProps {
 const RecentScanItem: React.FC<RecentScanItemProps> = ({ scan }) => {
   const counts = countBySeverity(scan.findings);
   
-  const statusColors = {
-    running: 'text-neon-green',
-    completed: 'text-neon-cyan',
-    stopped: 'text-gray-400',
-    error: 'text-neon-red',
-    paused: 'text-neon-orange',
-    initializing: 'text-neon-purple',
-  };
+
 
   return (
     <Link
@@ -310,7 +302,7 @@ const QuickAction: React.FC<QuickActionProps> = ({
         className="w-10 h-10 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110"
         style={{ backgroundColor: `${color}20` }}
       >
-        <Icon className="w-5 h-5" style={{ color }} />
+        <Icon className="w-5 h-5" />
       </div>
       <div className="flex-1">
         <p className="text-white font-medium">{label}</p>

@@ -7,11 +7,9 @@ import {
   CheckCircle,
   XCircle,
   AlertTriangle,
-  Database,
   Globe,
   Zap,
   Book,
-  Filter,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { api } from '@/services/api';
@@ -23,7 +21,7 @@ import {
   Badge,
   Spinner,
 } from '@/components';
-import type { Tool, ToolCategory } from '@/types';
+import type { Tool } from '@/types';
 
 // ============================================
 // Tools Page
@@ -36,7 +34,7 @@ export const ToolsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [statistics, setStatistics] = useState<Record<string, number>>({});
+
 
   useEffect(() => {
     loadTools();
@@ -48,7 +46,6 @@ export const ToolsPage: React.FC = () => {
     try {
       const data = await api.tools.getInventory();
       setTools(data.tools);
-      setStatistics(data.statistics);
     } catch (err) {
       setError('Failed to load tools');
       console.error(err);
@@ -60,7 +57,7 @@ export const ToolsPage: React.FC = () => {
   const scanForTools = async () => {
     setIsScanning(true);
     try {
-      const result = await api.tools.scan();
+      await api.tools.scan();
       await loadTools();
     } catch (err) {
       console.error('Scan failed:', err);
@@ -123,7 +120,7 @@ export const ToolsPage: React.FC = () => {
         </div>
 
         <Button
-          variant="cyber"
+          variant="primary"
           onClick={scanForTools}
           isLoading={isScanning}
         >
@@ -161,7 +158,7 @@ export const ToolsPage: React.FC = () => {
       </div>
 
       {/* Search & Filters */}
-      <Card variant="default" padding="md">
+      <Card variant="default" className="p-4">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <Input
@@ -221,16 +218,16 @@ export const ToolsPage: React.FC = () => {
 
       {/* Tools Grid */}
       {error ? (
-        <Card variant="default" padding="lg" className="text-center">
+        <Card variant="default" className="p-6 text-center">
           <AlertTriangle className="w-12 h-12 text-neon-orange mx-auto mb-4" />
           <h2 className="text-xl font-bold text-white mb-2">Error</h2>
           <p className="text-gray-400 mb-4">{error}</p>
-          <Button variant="outline" onClick={loadTools}>
+          <Button variant="secondary" onClick={loadTools}>
             Try Again
           </Button>
         </Card>
       ) : filteredTools.length === 0 ? (
-        <Card variant="default" padding="lg" className="text-center">
+        <Card variant="default" className="p-6 text-center">
           <Wrench className="w-12 h-12 text-gray-600 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-white mb-2">No tools found</h2>
           <p className="text-gray-400">
@@ -294,13 +291,15 @@ const ToolStatCard: React.FC<ToolStatCardProps> = ({
   color,
 }) => {
   return (
-    <Card variant="default" padding="md">
+    <Card variant="default" className="p-4">
       <div className="flex items-center gap-3">
         <div
           className="w-10 h-10 rounded-lg flex items-center justify-center"
           style={{ backgroundColor: `${color}20` }}
         >
-          <Icon className="w-5 h-5" style={{ color }} />
+          <div className="w-5 h-5" style={{ color }}>
+            <Icon className="w-full h-full" />
+          </div>
         </div>
         <div>
           <p className="text-2xl font-bold text-white">{value}</p>
@@ -331,7 +330,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, color }) => {
   const SourceIcon = sourceIcons[tool.source] || Wrench;
 
   return (
-    <Card variant="default" padding="md" className="group hover:border-opacity-50">
+    <Card variant="default" className="p-4 group hover:border-opacity-50">
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2">
           <h3 className="text-white font-medium">{tool.name}</h3>
@@ -354,10 +353,9 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, color }) => {
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <SourceIcon
-            className="w-3 h-3"
-            style={{ color }}
-          />
+          <div className="w-3 h-3" style={{ color }}>
+            <SourceIcon className="w-full h-full" />
+          </div>
           <span className="text-xs text-gray-500 capitalize">
             {tool.source.replace(/_/g, ' ')}
           </span>

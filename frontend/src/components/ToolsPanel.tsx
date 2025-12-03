@@ -21,8 +21,8 @@ import {
 import { cn } from '@/lib/utils';
 import { api } from '@/services/api';
 import { toolCategories } from '@/config';
-import { Card, Badge, Button, Input, Spinner } from '@/components/ui';
-import type { Tool, ToolCategory, ToolResolution } from '@/types';
+import { Badge, Button, Input, Spinner } from '@/components/ui';
+import type { Tool, ToolResolution } from '@/types';
 
 // ============================================
 // Category Icon Map
@@ -213,16 +213,17 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({
             return (
               <div key={category}>
                 <div className="flex items-center gap-2 mb-2">
-                  <Icon
+                  <div
                     className="w-4 h-4"
                     style={{ color: config.color }}
-                  />
-                  <span
-                    className="text-sm font-medium"
-                    style={{ color: config.color }}
                   >
-                    {config.label}
-                  </span>
+                    <Icon className="w-full h-full" />
+                  </div>
+                  <div style={{ color: config.color }}>
+                    <span className="text-sm font-medium">
+                      {config.label}
+                    </span>
+                  </div>
                   <span className="text-xs text-gray-600">
                     ({categoryTools.length})
                   </span>
@@ -280,7 +281,6 @@ const ToolCard: React.FC<ToolCardProps> = ({
   tool,
   isSelected,
   onSelect,
-  onExecute,
   categoryColor,
 }) => {
   const sourceIcons = {
@@ -313,10 +313,12 @@ const ToolCard: React.FC<ToolCardProps> = ({
             <Lock className="w-3 h-3 text-neon-orange" />
           )}
         </div>
-        <SourceIcon
+        <div
           className="w-3 h-3"
           style={{ color: categoryColor }}
-        />
+        >
+          <SourceIcon className="w-full h-full" />
+        </div>
       </div>
 
       <p className="text-xs text-gray-500 line-clamp-2 mb-2">
@@ -459,7 +461,7 @@ const ToolDetails: React.FC<ToolDetailsProps> = ({
 
           {/* Execute Button */}
           <Button
-            variant="cyber"
+            variant="primary"
             size="sm"
             className="w-full"
             onClick={onExecute}

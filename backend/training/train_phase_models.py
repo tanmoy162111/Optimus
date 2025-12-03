@@ -1,6 +1,9 @@
 """Train all phase-specific models"""
 import sys
-sys.path.append('..')
+import os
+# Add the parent directory to the path so we can import from training
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from training.phase_specific_models import PhaseSpecificModelTrainer
 import json
 import random

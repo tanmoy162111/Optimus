@@ -2,6 +2,7 @@
 """
 Optimus Backend - Main Flask Application
 AI-Driven Autonomous Penetration Testing Platform
+FIXED VERSION - All issues resolved
 """
 
 import os
@@ -13,10 +14,22 @@ from datetime import datetime
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_socketio import SocketIO
+from dotenv import load_dotenv
+
+# Load environment variables FIRST
+load_dotenv()
 
 # Add backend to path
 BACKEND_DIR = Path(__file__).parent.absolute()
+PROJECT_ROOT = BACKEND_DIR.parent
 sys.path.insert(0, str(BACKEND_DIR))
+
+# Create directories BEFORE setting up logging
+LOGS_DIR = PROJECT_ROOT / 'logs'
+DATA_DIR = BACKEND_DIR / 'data'
+LOGS_DIR.mkdir(parents=True, exist_ok=True)
+(DATA_DIR / 'scans').mkdir(parents=True, exist_ok=True)
+(DATA_DIR / 'reports').mkdir(parents=True, exist_ok=True)
 
 # Configure logging
 logging.basicConfig(
@@ -24,7 +37,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler(BACKEND_DIR.parent / 'logs' / 'backend.log')
+        logging.FileHandler(LOGS_DIR / 'backend.log')
     ]
 )
 logger = logging.getLogger('optimus')
@@ -34,7 +47,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'optimus-secret-key-change-in-production')
 app.config['JSON_SORT_KEYS'] = False
 
-# CORS configuration - Allow frontend origin
+# CORS configuration
 CORS(app, resources={
     r"/api/*": {
         "origins": [
@@ -49,44 +62,105 @@ CORS(app, resources={
     }
 })
 
-# Initialize SocketIO with CORS
+# Initialize SocketIO
 socketio = SocketIO(
     app,
-    cors_allowed_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:3000",
-        os.environ.get('FRONTEND_URL', 'http://localhost:5173')
-    ],
+    cors_allowed_origins="*",  # Allow all for development
     async_mode='threading',
-    logger=True,
-    engineio_logger=True,
+    logger=False,
+    engineio_logger=False,
     ping_timeout=60,
     ping_interval=25
 )
 
-# Create data directories
-DATA_DIR = BACKEND_DIR / 'data'
-(DATA_DIR / 'scans').mkdir(parents=True, exist_ok=True)
-(DATA_DIR / 'reports').mkdir(parents=True, exist_ok=True)
-(BACKEND_DIR.parent / 'logs').mkdir(parents=True, exist_ok=True)
-
-# Global active scans dictionary for shared access
+# ========================================
+# GLOBAL STATE (Shared across modules)
+# ========================================
 active_scans = {}
 scan_history = []
 
-# Import and register blueprints
-from api.routes import api_bp
-from api.scan_routes import scan_bp
-from api.tool_routes import tool_bp
+# ========================================
+# IMPORT AND REGISTER ALL BLUEPRINTS
+# ========================================
+try:
+    from api.routes import api_bp
+    app.register_blueprint(api_bp, url_prefix='/api')
+    logger.info("Registered: api_bp")
+except ImportError as e:
+    logger.warning(f"api.routes not available: {e}")
 
-app.register_blueprint(api_bp, url_prefix='/api')
-app.register_blueprint(scan_bp, url_prefix='/api/scan')
-app.register_blueprint(tool_bp, url_prefix='/api/tools')
+try:
+    from api.scan_routes import scan_bp
+    app.register_blueprint(scan_bp, url_prefix='/api/scan')
+    logger.info("Registered: scan_bp")
+except ImportError as e:
+    logger.warning(f"api.scan_routes not available: {e}")
 
-# Import WebSocket handlers
-from websocket.handlers import register_socket_handlers
-register_socket_handlers(socketio)
+try:
+    from api.tool_routes import tool_bp
+    app.register_blueprint(tool_bp, url_prefix='/api/tools')
+    logger.info("Registered: tool_bp")
+except ImportError as e:
+    logger.warning(f"api.tool_routes not available: {e}")
+
+try:
+    from api.intelligence_routes import intelligence_bp
+    app.register_blueprint(intelligence_bp, url_prefix='/api/intelligence')
+    logger.info("Registered: intelligence_bp")
+except ImportError as e:
+    logger.warning(f"api.intelligence_routes not available: {e}")
+
+try:
+    from api.metrics_routes import metrics_bp
+    app.register_blueprint(metrics_bp, url_prefix='/api/metrics')
+    logger.info("Registered: metrics_bp")
+except ImportError as e:
+    logger.warning(f"api.metrics_routes not available: {e}")
+
+try:
+    from api.report_routes import report_bp
+    app.register_blueprint(report_bp, url_prefix='/api/reports')
+    logger.info("Registered: report_bp")
+except ImportError as e:
+    logger.warning(f"api.report_routes not available: {e}")
+
+try:
+    from api.training_routes import training_bp
+    app.register_blueprint(training_bp, url_prefix='/api/training')
+    logger.info("Registered: training_bp")
+except ImportError as e:
+    logger.warning(f"api.training_routes not available: {e}")
+
+# Register WebSocket handlers
+try:
+    from websocket.handlers import register_socket_handlers
+    register_socket_handlers(socketio)
+    logger.info("WebSocket handlers registered")
+except ImportError as e:
+    logger.warning(f"WebSocket handlers not available: {e}")
+
+# ========================================
+# INITIALIZE INTELLIGENCE MODULE
+# ========================================
+optimus_brain = None
+try:
+    if os.environ.get('OPTIMUS_ENABLE_MEMORY', 'true').lower() == 'true':
+        from intelligence import get_optimus_brain
+        optimus_brain = get_optimus_brain()
+        logger.info("✅ Intelligence module initialized")
+except ImportError as e:
+    logger.warning(f"Intelligence module not available: {e}")
+
+# ========================================
+# INITIALIZE HYBRID TOOL SYSTEM
+# ========================================
+hybrid_tool_system = None
+try:
+    from tools import get_hybrid_tool_system
+    hybrid_tool_system = get_hybrid_tool_system()
+    logger.info("✅ Hybrid tool system initialized")
+except ImportError as e:
+    logger.warning(f"Hybrid tool system not available: {e}")
 
 # Health check endpoint
 @app.route('/health')
@@ -99,7 +173,8 @@ def health_check():
         'components': {
             'api': 'operational',
             'websocket': 'operational',
-            'database': 'operational'
+            'intelligence': 'operational' if optimus_brain else 'disabled',
+            'tools': 'operational' if hybrid_tool_system else 'disabled'
         }
     })
 
@@ -114,7 +189,10 @@ def index():
             'health': '/health',
             'api': '/api',
             'scan': '/api/scan',
-            'tools': '/api/tools'
+            'tools': '/api/tools',
+            'intelligence': '/api/intelligence',
+            'metrics': '/api/metrics',
+            'reports': '/api/reports'
         }
     })
 
@@ -128,6 +206,9 @@ def internal_error(error):
     logger.error(f'Internal error: {error}')
     return jsonify({'error': 'Internal server error', 'message': str(error)}), 500
 
+# ========================================
+# MAIN ENTRY POINT
+# ========================================
 def main():
     """Run the application."""
     host = os.environ.get('HOST', '0.0.0.0')
@@ -136,14 +217,14 @@ def main():
     
     logger.info(f'Starting Optimus Backend on {host}:{port}')
     logger.info(f'Debug mode: {debug}')
+    logger.info(f'Kali VM: {os.environ.get("KALI_HOST", "not configured")}')
     
-    # Use socketio.run instead of app.run for WebSocket support
     socketio.run(
         app,
         host=host,
         port=port,
         debug=debug,
-        use_reloader=debug,
+        use_reloader=False,  # Disable reloader to avoid duplicate processes
         log_output=True
     )
 

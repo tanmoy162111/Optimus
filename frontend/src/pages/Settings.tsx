@@ -2,15 +2,10 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Settings,
-  User,
   Bell,
   Shield,
-  Palette,
-  Database,
-  Server,
   Key,
   Save,
-  RefreshCw,
   Check,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -58,7 +53,7 @@ export const SettingsPage: React.FC = () => {
         </div>
 
         <Button
-          variant={saved ? 'primary' : 'cyber'}
+          variant={saved ? 'primary' : 'primary'}
           onClick={handleSave}
           isLoading={isSaving}
         >
@@ -120,7 +115,7 @@ const GeneralSettings: React.FC = () => {
   const { theme, setTheme } = useUIStore();
 
   return (
-    <Card variant="default" padding="lg">
+    <Card variant="default" className="p-6">
       <h2 className="text-lg font-semibold text-white mb-6">General Settings</h2>
 
       <div className="space-y-6">
@@ -194,7 +189,7 @@ const GeneralSettings: React.FC = () => {
 
 const ScanningSettings: React.FC = () => {
   return (
-    <Card variant="default" padding="lg">
+    <Card variant="default" className="p-6">
       <h2 className="text-lg font-semibold text-white mb-6">Scanning Settings</h2>
 
       <div className="space-y-6">
@@ -262,7 +257,7 @@ const ScanningSettings: React.FC = () => {
 
 const NotificationSettings: React.FC = () => {
   return (
-    <Card variant="default" padding="lg">
+    <Card variant="default" className="p-6">
       <h2 className="text-lg font-semibold text-white mb-6">
         Notification Settings
       </h2>
@@ -324,7 +319,7 @@ const ApiSettings: React.FC = () => {
   const [showKey, setShowKey] = useState(false);
 
   return (
-    <Card variant="default" padding="lg">
+    <Card variant="default" className="p-6">
       <h2 className="text-lg font-semibold text-white mb-6">
         API & Integrations
       </h2>
