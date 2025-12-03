@@ -65,7 +65,7 @@ class ToolManager:
         # If already connected and alive, reuse it
         if self.ssh_client is not None:
             try:
-                if self.ssh_client.get_transport().is_active():
+                if self.ssh_client.get_transport() and self.ssh_client.get_transport().is_active():
                     print("[DEBUG] Reusing existing SSH connection")
                     return self.ssh_client
             except:
@@ -216,7 +216,14 @@ class ToolManager:
             for connection_attempt in range(1, max_connection_retries + 1):
                 try:
                     # Connect SSH if not already connected
-                    if not self.ssh_client or not self.ssh_client.get_transport().is_active():
+                    transport_active = False
+                    if self.ssh_client and self.ssh_client.get_transport():
+                        try:
+                            transport_active = self.ssh_client.get_transport().is_active()
+                        except:
+                            transport_active = False
+                    
+                    if not self.ssh_client or not transport_active:
                         print(f"[DEBUG] Establishing SSH connection (attempt {connection_attempt}/{max_connection_retries})")
                         self.ssh_client = self.connect_ssh()
                     break  # Success, exit retry loop
