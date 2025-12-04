@@ -875,15 +875,9 @@ class AutonomousPentestAgent:
 
     def _update_scan_state_real(self, scan_state: Dict, result: Dict):
         """Update scan state with REAL tool results - NO FAKE DATA"""
-        # Always add tool to executed list, regardless of success
-        tool_name = result.get('tool_name')
-        if tool_name:
-            scan_state['tools_executed'].append({
-                'tool': tool_name,
-                'timestamp': datetime.now().isoformat(),
-                'success': result.get('success', False),
-                'exit_code': result.get('exit_code', -1)
-            })
+        # NOTE: Tool is already recorded in _execute_tool_real
+        # DO NOT add it again here to prevent duplicate entries
+        # The duplicate recording was causing the infinite loop issue
         
         if not result.get('success'):
             logger.warning(f"Tool failed: {result.get('error')}")
@@ -893,7 +887,7 @@ class AutonomousPentestAgent:
         parsed_results = result.get('parsed_results', {})
         new_vulns = parsed_results.get('vulnerabilities', [])
         
-        print(f"[DEBUG] Tool {tool_name} found {len(new_vulns)} vulnerabilities")
+        print(f"[DEBUG] Tool execution found {len(new_vulns)} vulnerabilities")
         if new_vulns:
             for i, vuln in enumerate(new_vulns):
                 print(f"[DEBUG] Vulnerability {i+1}: {vuln}")
@@ -951,44 +945,88 @@ class AutonomousPentestAgent:
                 scan_state['phase_data']['shells_obtained'] = len(exploitable)
 
     def _get_strategy_aware_tools(self, scan_state: Dict) -> Dict[str, Any]:
-        """Get tool recommendations aware of current strategy"""
-        current_strategy = scan_state.get('strategy', 'active_scanning')
+        """Get tool recommendations aware of current strategy - FIXED for intelligent selection"""
+        current_strategy = scan_state.get('strategy', 'adaptive')
+        phase = scan_state.get('phase', 'reconnaissance')
+        findings = scan_state.get('findings', [])
         
-        # Get strategy-specific tools
-        strategy_tools = self.strategy_selector.get_strategy_tools(current_strategy)
-        
-        # Get phase-aware recommendations
-        phase_recommendation = self.tool_selector.recommend_tools(scan_state)
-        
-        # Merge: prioritize strategy tools, then phase tools
-        merged_tools = []
-        
-        # Add strategy tools not yet executed
+        # Get executed tool names
         tools_executed = [t['tool'] if isinstance(t, dict) else t
                           for t in scan_state.get('tools_executed', [])]
         blacklisted = scan_state.get('blacklisted_tools', [])
         
-        for tool in strategy_tools:
-            if tool not in tools_executed and tool not in blacklisted:
-                merged_tools.append(tool)
+        # CRITICAL FIX: Get tools from last 5 executions to prevent immediate repetition
+        recent_tools = tools_executed[-5:] if len(tools_executed) > 5 else tools_executed
         
-        # Add phase-recommended tools
-        for tool in phase_recommendation.get('tools', []):
-            if tool not in merged_tools and tool not in tools_executed and tool not in blacklisted:
-                merged_tools.append(tool)
+        # Count tool occurrences to identify overused tools
+        tool_counts = {}
+        for tool in tools_executed:
+            tool_counts[tool] = tool_counts.get(tool, 0) + 1
         
+        # Auto-blacklist tools used more than 2 times
+        for tool, count in tool_counts.items():
+            if count >= 2 and tool not in blacklisted:
+                blacklisted.append(tool)
+                scan_state['blacklisted_tools'] = blacklisted
+        
+        merged_tools = []
+        
+        # INTELLIGENT SELECTION: Prioritize tools based on FINDINGS
+        if findings:
+            vuln_types = [f.get('type', '') for f in findings]
+            
+            # SQL injection indicators → SQLMap
+            if any(vt in ['sql_injection', 'database_error', 'sql_error'] for vt in vuln_types):
+                if 'sqlmap' not in tools_executed and 'sqlmap' not in blacklisted:
+                    merged_tools.append('sqlmap')
+            
+            # XSS indicators → Dalfox
+            if any(vt in ['xss', 'dom_xss', 'reflected_xss'] for vt in vuln_types):
+                if 'dalfox' not in tools_executed and 'dalfox' not in blacklisted:
+                    merged_tools.append('dalfox')
+            
+            # Open ports found → Web scanners
+            if 'open_port' in vuln_types:
+                for tool in ['nikto', 'nuclei', 'whatweb']:
+                    if tool not in tools_executed and tool not in blacklisted:
+                        merged_tools.append(tool)
+            
+            # Technologies detected → CMS-specific tools
+            technologies = scan_state.get('technologies_detected', [])
+            if 'wordpress' in str(technologies).lower():
+                if 'wpscan' not in tools_executed and 'wpscan' not in blacklisted:
+                    merged_tools.insert(0, 'wpscan')
+        
+        # PHASE-BASED FALLBACK: Use phase-appropriate tools if no findings
+        if not merged_tools:
+            phase_tools = {
+                'reconnaissance': ['sublist3r', 'whatweb', 'dnsenum', 'theHarvester', 'amass'],
+                'scanning': ['nmap', 'nikto', 'nuclei', 'gobuster', 'sslscan', 'ffuf'],
+                'exploitation': ['sqlmap', 'dalfox', 'commix', 'hydra'],
+                'post_exploitation': [],  # EMPTY - requires active session
+                'covering_tracks': []      # EMPTY - requires access
+            }
+            
+            available_phase_tools = phase_tools.get(phase, [])
+            
+            for tool in available_phase_tools:
+                # CRITICAL: Skip if in recent tools OR blacklisted OR already executed
+                if tool not in recent_tools and tool not in blacklisted and tool not in tools_executed:
+                    merged_tools.append(tool)
+        
+        # If we've exhausted phase tools, return empty to trigger phase transition
         if not merged_tools:
             return {
                 'tools': [],
                 'method': 'exhausted',
-                'reasoning': 'All tools exhausted for current strategy and phase'
+                'reasoning': f'All {phase} tools exhausted - need phase transition'
             }
         
         return {
             'tools': merged_tools[:5],
-            'method': 'strategy_aware',
+            'method': 'intelligent_selection',
             'strategy': current_strategy,
-            'reasoning': f'Strategy: {current_strategy}, Phase: {scan_state["phase"]}'
+            'reasoning': f'Selected based on {len(findings)} findings in {phase} phase'
         }
     
     def _learn_from_execution(self, tool_name: str, result: Dict, scan_state: Dict):

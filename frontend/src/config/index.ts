@@ -13,8 +13,8 @@ interface Config {
 }
 
 export const config: Config = {
-  apiUrl: process.env.VITE_API_URL || 'http://localhost:5000',
-  wsUrl: process.env.VITE_WS_URL || 'http://localhost:5000',
+  apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+  wsUrl: import.meta.env.VITE_WS_URL || 'http://localhost:5000',
   appName: 'Optimus',
   version: '1.0.0',
   maxLogLines: 500,

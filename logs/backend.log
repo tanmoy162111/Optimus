@@ -1259,3 +1259,1759 @@ Traceback (most recent call last):
 ImportError: cannot import name 'Config' from 'config' (D:\Work\Ai Engineering\Git\Optimus\backend\config\__init__.py)
 2025-12-03 08:57:43,981 - optimus - ERROR - Internal error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
 2025-12-03 08:57:43,982 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 08:57:43] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 500 -
+2025-12-03 09:04:00,578 - optimus - INFO - Registered: api_bp
+2025-12-03 09:04:00,584 - optimus - INFO - Registered: scan_bp
+2025-12-03 09:04:00,589 - optimus - INFO - Registered: tool_bp
+2025-12-03 09:04:00,600 - optimus - INFO - Registered: intelligence_bp
+2025-12-03 09:04:00,604 - optimus - INFO - Registered: metrics_bp
+2025-12-03 09:04:00,612 - optimus - INFO - Registered: report_bp
+2025-12-03 09:04:00,616 - optimus - INFO - Registered: training_bp
+2025-12-03 09:04:00,618 - optimus - INFO - WebSocket handlers registered
+2025-12-03 09:04:00,832 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-03 09:04:00,845 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-03 09:04:00,845 - optimus - INFO - Debug mode: False
+2025-12-03 09:04:00,846 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-03 09:04:00,873 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.100:5000
+2025-12-03 09:04:00,873 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-03 09:04:31,681 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 09:04:31] "GET /health HTTP/1.1" 200 -
+2025-12-03 09:04:33,686 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 09:04:33] "GET / HTTP/1.1" 200 -
+2025-12-03 09:04:35,696 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 09:04:35] "[32mGET /api HTTP/1.1[0m" 308 -
+2025-12-03 09:04:37,702 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 09:04:37] "GET /api/ HTTP/1.1" 200 -
+2025-12-03 09:04:39,722 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 09:04:39] "GET /api/scan/list HTTP/1.1" 200 -
+2025-12-03 09:04:41,749 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 09:04:41] "GET /api/tools/categories HTTP/1.1" 200 -
+2025-12-03 09:04:46,134 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 09:04:46] "GET /socket.io/?transport=polling&EIO=4&t=1764731084.128661 HTTP/1.1" 200 -
+2025-12-03 09:04:48,180 - app - ERROR - Exception on /api/scan/start [POST]
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\temp_venv\test_env\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\Work\Ai Engineering\Git\Optimus\temp_venv\test_env\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\Work\Ai Engineering\Git\Optimus\temp_venv\test_env\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\temp_venv\test_env\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\Work\Ai Engineering\Git\Optimus\temp_venv\test_env\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\api\scan_routes.py", line 55, in start_scan
+    from core.scan_engine import get_scan_manager
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\core\scan_engine.py", line 15, in <module>
+    from inference.workflow_engine import WorkflowEngine
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\inference\workflow_engine.py", line 13, in <module>
+    from inference.autonomous_agent import AutonomousPentestAgent
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\inference\autonomous_agent.py", line 8, in <module>
+    from inference.tool_selector import PhaseAwareToolSelector
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\inference\tool_selector.py", line 10, in <module>
+    from config import Config
+ImportError: cannot import name 'Config' from 'config' (D:\Work\Ai Engineering\Git\Optimus\backend\config\__init__.py)
+2025-12-03 09:04:48,182 - optimus - ERROR - Internal error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2025-12-03 09:04:48,183 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 09:04:48] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 500 -
+2025-12-03 09:07:28,654 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 09:07:28] "GET /health HTTP/1.1" 200 -
+2025-12-03 09:07:30,672 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 09:07:30] "GET / HTTP/1.1" 200 -
+2025-12-03 09:07:32,690 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 09:07:32] "[32mGET /api HTTP/1.1[0m" 308 -
+2025-12-03 09:07:34,707 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 09:07:34] "GET /api/ HTTP/1.1" 200 -
+2025-12-03 09:07:36,715 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 09:07:36] "GET /api/scan/list HTTP/1.1" 200 -
+2025-12-03 09:07:38,733 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 09:07:38] "GET /api/tools/categories HTTP/1.1" 200 -
+2025-12-03 09:07:42,260 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 09:07:42] "GET /socket.io/?transport=polling&EIO=4&t=1764731260.2534761 HTTP/1.1" 200 -
+2025-12-03 09:07:44,277 - app - ERROR - Exception on /api/scan/start [POST]
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\temp_venv\test_env\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\Work\Ai Engineering\Git\Optimus\temp_venv\test_env\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\Work\Ai Engineering\Git\Optimus\temp_venv\test_env\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\temp_venv\test_env\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\Work\Ai Engineering\Git\Optimus\temp_venv\test_env\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\api\scan_routes.py", line 55, in start_scan
+    from core.scan_engine import get_scan_manager
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\core\scan_engine.py", line 15, in <module>
+    from inference.workflow_engine import WorkflowEngine
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\inference\workflow_engine.py", line 13, in <module>
+    from inference.autonomous_agent import AutonomousPentestAgent
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\inference\autonomous_agent.py", line 8, in <module>
+    from inference.tool_selector import PhaseAwareToolSelector
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\inference\tool_selector.py", line 10, in <module>
+    from config import Config
+ImportError: cannot import name 'Config' from 'config' (D:\Work\Ai Engineering\Git\Optimus\backend\config\__init__.py)
+2025-12-03 09:07:44,279 - optimus - ERROR - Internal error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2025-12-03 09:07:44,280 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 09:07:44] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 500 -
+2025-12-03 10:25:57,271 - optimus - INFO - Registered: api_bp
+2025-12-03 10:25:57,285 - optimus - INFO - Registered: scan_bp
+2025-12-03 10:25:57,290 - optimus - INFO - Registered: tool_bp
+2025-12-03 10:25:57,299 - optimus - INFO - Registered: intelligence_bp
+2025-12-03 10:25:57,303 - optimus - INFO - Registered: metrics_bp
+2025-12-03 10:25:57,312 - optimus - INFO - Registered: report_bp
+2025-12-03 10:25:57,315 - optimus - INFO - Registered: training_bp
+2025-12-03 10:25:57,317 - optimus - INFO - WebSocket handlers registered
+2025-12-03 10:25:57,581 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-03 10:26:01,188 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-03 10:26:47,189 - optimus - INFO - Registered: api_bp
+2025-12-03 10:26:47,195 - optimus - INFO - Registered: scan_bp
+2025-12-03 10:26:47,200 - optimus - INFO - Registered: tool_bp
+2025-12-03 10:26:47,208 - optimus - INFO - Registered: intelligence_bp
+2025-12-03 10:26:47,210 - optimus - INFO - Registered: metrics_bp
+2025-12-03 10:26:47,217 - optimus - INFO - Registered: report_bp
+2025-12-03 10:26:47,220 - optimus - INFO - Registered: training_bp
+2025-12-03 10:26:47,222 - optimus - INFO - WebSocket handlers registered
+2025-12-03 10:26:47,378 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-03 10:26:47,390 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-03 10:26:47,390 - optimus - INFO - Debug mode: False
+2025-12-03 10:26:47,390 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-03 10:26:47,424 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.100:5000
+2025-12-03 10:26:47,425 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-03 10:32:55,859 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:32:55] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-03 10:32:55,857 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:32:55] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-03 10:32:55,893 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:32:55] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-03 10:32:55,927 - websocket.handlers - INFO - Client connected: vK2Ntd5UG8OxsepOAAAE
+2025-12-03 10:32:56,145 - optimus - INFO - Registered: api_bp
+2025-12-03 10:32:56,154 - optimus - INFO - Registered: scan_bp
+2025-12-03 10:32:56,165 - optimus - INFO - Registered: tool_bp
+2025-12-03 10:32:56,180 - optimus - INFO - Registered: intelligence_bp
+2025-12-03 10:32:56,184 - optimus - INFO - Registered: metrics_bp
+2025-12-03 10:32:56,194 - optimus - INFO - Registered: report_bp
+2025-12-03 10:32:56,198 - optimus - INFO - Registered: training_bp
+2025-12-03 10:32:56,200 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:32:56] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-03 10:32:56,202 - optimus - INFO - WebSocket handlers registered
+2025-12-03 10:32:56,252 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:32:56] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-03 10:32:56,558 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:32:56] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-03 10:33:00,192 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:33:00] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-03 10:33:00,477 - websocket.handlers - INFO - Client connected: UXJ2X-f5H2ElaGl1AAAG
+2025-12-03 10:33:00,485 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:33:00] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-03 10:33:00,487 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:33:00] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-03 10:33:00,520 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:33:00] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-03 10:33:00,794 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:33:00] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-03 10:33:00,797 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:33:00] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-03 10:35:36,946 - optimus - INFO - Registered: api_bp
+2025-12-03 10:35:36,955 - optimus - INFO - Registered: scan_bp
+2025-12-03 10:35:36,962 - optimus - INFO - Registered: tool_bp
+2025-12-03 10:35:36,974 - optimus - INFO - Registered: intelligence_bp
+2025-12-03 10:35:36,979 - optimus - INFO - Registered: metrics_bp
+2025-12-03 10:35:36,989 - optimus - INFO - Registered: report_bp
+2025-12-03 10:35:36,993 - optimus - INFO - Registered: training_bp
+2025-12-03 10:35:36,996 - optimus - INFO - WebSocket handlers registered
+2025-12-03 10:35:37,292 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-03 10:35:37,309 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-03 10:35:37,310 - optimus - INFO - Debug mode: False
+2025-12-03 10:35:37,310 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-03 10:35:37,345 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.100:5000
+2025-12-03 10:35:37,345 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-03 10:41:19,404 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:41:19] "HEAD / HTTP/1.1" 200 -
+2025-12-03 10:41:43,256 - websocket.handlers - INFO - Client disconnected: UXJ2X-f5H2ElaGl1AAAG
+2025-12-03 10:41:44,080 - websocket.handlers - INFO - Client connected: Gx8Wu-rDwGBKbsugAAAI
+2025-12-03 10:41:44,094 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:41:44] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-03 10:41:44,099 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:41:44] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-03 10:41:44,103 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:41:44] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-03 10:41:44,345 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:41:44] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-03 10:41:44,403 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:41:44] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-03 10:41:44,413 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:41:44] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-03 10:42:40,887 - websocket.handlers - INFO - Client disconnected: vK2Ntd5UG8OxsepOAAAE
+2025-12-03 10:42:40,906 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:42:40] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-03 10:42:40,917 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\temp_venv\test_env\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\temp_venv\test_env\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\temp_venv\test_env\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-03 10:45:12,548 - optimus - INFO - Registered: api_bp
+2025-12-03 10:45:12,555 - optimus - INFO - Registered: scan_bp
+2025-12-03 10:45:12,561 - optimus - INFO - Registered: tool_bp
+2025-12-03 10:45:12,571 - optimus - INFO - Registered: intelligence_bp
+2025-12-03 10:45:12,574 - optimus - INFO - Registered: metrics_bp
+2025-12-03 10:45:12,581 - optimus - INFO - Registered: report_bp
+2025-12-03 10:45:12,584 - optimus - INFO - Registered: training_bp
+2025-12-03 10:45:12,586 - optimus - INFO - WebSocket handlers registered
+2025-12-03 10:45:12,743 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-03 10:45:12,754 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-03 10:45:12,754 - optimus - INFO - Debug mode: False
+2025-12-03 10:45:12,755 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-03 10:45:12,795 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.100:5000
+2025-12-03 10:45:12,795 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-03 10:45:32,768 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:45:32] "HEAD /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-03 10:48:04,999 - optimus - INFO - Registered: api_bp
+2025-12-03 10:48:05,005 - optimus - INFO - Registered: scan_bp
+2025-12-03 10:48:05,010 - optimus - INFO - Registered: tool_bp
+2025-12-03 10:48:05,016 - optimus - INFO - Registered: intelligence_bp
+2025-12-03 10:48:05,019 - optimus - INFO - Registered: metrics_bp
+2025-12-03 10:48:05,023 - optimus - INFO - Registered: report_bp
+2025-12-03 10:48:05,025 - optimus - INFO - Registered: training_bp
+2025-12-03 10:48:05,027 - optimus - INFO - WebSocket handlers registered
+2025-12-03 10:48:05,157 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-03 10:48:05,167 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-03 10:48:05,167 - optimus - INFO - Debug mode: False
+2025-12-03 10:48:05,167 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-03 10:48:05,188 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.100:5000
+2025-12-03 10:48:05,189 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-03 10:51:47,285 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:51:47] "HEAD /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-03 10:52:19,542 - websocket.handlers - INFO - Client disconnected: Gx8Wu-rDwGBKbsugAAAI
+2025-12-03 10:52:48,441 - websocket.handlers - INFO - Client connected: KBMNi-CHXREeI_8xAAAK
+2025-12-03 10:52:48,447 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:52:48] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-03 10:52:48,448 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:52:48] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-03 10:52:48,451 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:52:48] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-03 10:52:48,698 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:52:48] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-03 10:52:48,754 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:52:48] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-03 10:52:48,756 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:52:48] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-03 10:52:51,033 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:52:51] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-03 10:52:51,338 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 10:52:51] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-03 10:53:01,630 - websocket.handlers - INFO - Client KBMNi-CHXREeI_8xAAAK joined room scan_scan_1764737581580
+2025-12-03 10:56:19,980 - optimus - INFO - Registered: api_bp
+2025-12-03 10:56:19,986 - optimus - INFO - Registered: scan_bp
+2025-12-03 10:56:19,990 - optimus - INFO - Registered: tool_bp
+2025-12-03 10:56:19,997 - optimus - INFO - Registered: intelligence_bp
+2025-12-03 10:56:20,000 - optimus - INFO - Registered: metrics_bp
+2025-12-03 10:56:20,005 - optimus - INFO - Registered: report_bp
+2025-12-03 10:56:20,008 - optimus - INFO - Registered: training_bp
+2025-12-03 10:56:20,010 - optimus - INFO - WebSocket handlers registered
+2025-12-03 10:56:51,894 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-03 10:56:51,907 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-03 10:56:51,907 - optimus - INFO - Debug mode: False
+2025-12-03 10:56:51,907 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-03 10:56:51,939 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.100:5000
+2025-12-03 10:56:51,940 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-03 11:56:18,746 - websocket.handlers - INFO - Client disconnected: KBMNi-CHXREeI_8xAAAK
+2025-12-03 11:56:18,759 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 11:56:18] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-03 11:56:18,766 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\temp_venv\test_env\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\temp_venv\test_env\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\temp_venv\test_env\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-03 13:00:54,722 - websocket.handlers - INFO - Client connected: cM3ez-MISX40MJ90AAAM
+2025-12-03 13:01:25,777 - optimus - INFO - Registered: api_bp
+2025-12-03 13:01:25,785 - optimus - INFO - Registered: scan_bp
+2025-12-03 13:01:25,792 - optimus - INFO - Registered: tool_bp
+2025-12-03 13:01:25,803 - optimus - INFO - Registered: intelligence_bp
+2025-12-03 13:01:25,808 - optimus - INFO - Registered: metrics_bp
+2025-12-03 13:01:25,821 - optimus - INFO - Registered: report_bp
+2025-12-03 13:01:25,826 - optimus - INFO - Registered: training_bp
+2025-12-03 13:01:25,832 - optimus - INFO - WebSocket handlers registered
+2025-12-03 13:02:06,252 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-03 13:02:06,269 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-03 13:02:06,269 - optimus - INFO - Debug mode: False
+2025-12-03 13:02:06,269 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-03 13:02:06,290 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.100:5000
+2025-12-03 13:02:06,290 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-03 13:04:43,745 - websocket.handlers - INFO - Client disconnected: cM3ez-MISX40MJ90AAAM
+2025-12-03 13:04:43,781 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 13:04:43] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-03 13:04:43,810 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\temp_venv\test_env\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\temp_venv\test_env\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\temp_venv\test_env\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-03 13:22:28,986 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 13:22:28] "HEAD / HTTP/1.1" 200 -
+2025-12-03 13:23:46,793 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 13:23:46] "HEAD /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-03 13:23:54,430 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 13:23:54] "HEAD /api/scan/list HTTP/1.1" 200 -
+2025-12-03 13:24:32,131 - core.scan_engine - ERROR - Scan 3d31af13 not in active_scans
+2025-12-03 13:24:32,132 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 13:24:32] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-03 13:24:42,784 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 13:24:42] "GET /api/scan/status/3d31af13 HTTP/1.1" 200 -
+2025-12-03 13:26:28,413 - optimus - INFO - Registered: api_bp
+2025-12-03 13:26:28,419 - optimus - INFO - Registered: scan_bp
+2025-12-03 13:26:28,424 - optimus - INFO - Registered: tool_bp
+2025-12-03 13:26:28,433 - optimus - INFO - Registered: intelligence_bp
+2025-12-03 13:26:28,436 - optimus - INFO - Registered: metrics_bp
+2025-12-03 13:26:28,443 - optimus - INFO - Registered: report_bp
+2025-12-03 13:26:28,446 - optimus - INFO - Registered: training_bp
+2025-12-03 13:26:28,450 - optimus - INFO - WebSocket handlers registered
+2025-12-03 13:27:41,172 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-03 13:27:44,257 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-03 22:28:05,886 - optimus - INFO - Registered: api_bp
+2025-12-03 22:28:05,896 - optimus - INFO - Registered: scan_bp
+2025-12-03 22:28:05,903 - optimus - INFO - Registered: tool_bp
+2025-12-03 22:28:05,915 - optimus - INFO - Registered: intelligence_bp
+2025-12-03 22:28:05,919 - optimus - INFO - Registered: metrics_bp
+2025-12-03 22:28:05,928 - optimus - INFO - Registered: report_bp
+2025-12-03 22:28:05,932 - optimus - INFO - Registered: training_bp
+2025-12-03 22:28:05,937 - optimus - INFO - WebSocket handlers registered
+2025-12-03 22:28:07,257 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-03 22:28:07,323 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-03 22:28:07,324 - optimus - INFO - Debug mode: False
+2025-12-03 22:28:07,324 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-03 22:28:07,396 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.103:5000
+2025-12-03 22:28:07,397 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-03 22:28:25,969 - websocket.handlers - INFO - Client connected: eBwdfYGBkWpxorMvAAAB
+2025-12-03 22:28:25,971 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 22:28:25] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-03 22:28:25,990 - optimus - INFO - Registered: api_bp
+2025-12-03 22:28:26,174 - optimus - INFO - Registered: scan_bp
+2025-12-03 22:28:26,180 - optimus - INFO - Registered: tool_bp
+2025-12-03 22:28:26,191 - optimus - INFO - Registered: intelligence_bp
+2025-12-03 22:28:26,195 - optimus - INFO - Registered: metrics_bp
+2025-12-03 22:28:26,204 - optimus - INFO - Registered: report_bp
+2025-12-03 22:28:26,206 - optimus - INFO - Registered: training_bp
+2025-12-03 22:28:26,207 - optimus - INFO - WebSocket handlers registered
+2025-12-03 22:28:26,222 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 22:28:26] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-03 22:28:26,225 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 22:28:26] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-03 22:28:26,288 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 22:28:26] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-03 22:28:40,417 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-03 22:28:40,431 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 22:28:40] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-03 22:28:40,751 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 22:28:40] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-03 22:28:40,923 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 22:28:40] "HEAD /api/scan/list HTTP/1.1" 200 -
+2025-12-03 22:28:45,117 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 22:28:45] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-03 22:28:45,433 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 22:28:45] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-03 22:28:52,163 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 22:28:52] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-03 22:28:52,272 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-03 22:28:52,286 - inference.target_analyzer - INFO - [TargetAnalyzer] Analyzing target: http://testphp.vulnweb.com
+2025-12-03 22:28:52,286 - inference.target_analyzer - INFO - [TargetAnalyzer] Target profile: {'target': 'http://testphp.vulnweb.com', 'type': 'web', 'technologies': ['http_server', 'web_framework', 'php'], 'risk_level': 'medium', 'scan_strategy': 'web_application'}
+2025-12-03 22:28:52,287 - inference.autonomous_agent - INFO - === Iteration 1 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-03 22:28:52,288 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-03 22:28:52,297 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('shodan'), np.str_('fierce')]
+2025-12-03 22:28:59,929 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 22:28:59] "GET /api/scan/status/4122bd86 HTTP/1.1" 200 -
+2025-12-03 22:30:07,477 - inference.tool_manager - ERROR - Tool execution failed: Failed to connect to Kali VM after 3 attempts: 'NoneType' object has no attribute 'is_active'
+2025-12-03 22:30:07,484 - inference.autonomous_agent - WARNING - Tool failed: Failed to connect to Kali VM after 3 attempts: 'NoneType' object has no attribute 'is_active'
+2025-12-03 22:30:07,485 - inference.learning_module - INFO - [LearningModule] Learned from nmap execution: 0 findings
+2025-12-03 22:30:07,486 - inference.autonomous_agent - INFO - Learned: nmap - Success: False, Vulns: 0
+2025-12-03 22:30:07,988 - inference.autonomous_agent - INFO - === Iteration 2 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-03 22:30:07,989 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-03 22:30:07,992 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('theHarvester'), np.str_('shodan')]
+2025-12-03 22:30:22,994 - inference.tool_manager - ERROR - Tool execution failed: Failed to connect to Kali VM after 3 attempts: 'NoneType' object has no attribute 'is_active'
+2025-12-03 22:30:23,002 - inference.autonomous_agent - WARNING - Tool failed: Failed to connect to Kali VM after 3 attempts: 'NoneType' object has no attribute 'is_active'
+2025-12-03 22:30:23,003 - inference.learning_module - INFO - [LearningModule] Learned from nikto execution: 0 findings
+2025-12-03 22:30:23,004 - inference.autonomous_agent - INFO - Learned: nikto - Success: False, Vulns: 0
+2025-12-03 22:30:23,510 - inference.autonomous_agent - INFO - === Iteration 3 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-03 22:30:23,511 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-03 22:30:23,513 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('theHarvester'), np.str_('shodan')]
+2025-12-03 22:30:38,516 - inference.tool_manager - ERROR - Tool execution failed: Failed to connect to Kali VM after 3 attempts: 'NoneType' object has no attribute 'is_active'
+2025-12-03 22:30:38,520 - inference.autonomous_agent - WARNING - Tool failed: Failed to connect to Kali VM after 3 attempts: 'NoneType' object has no attribute 'is_active'
+2025-12-03 22:30:38,521 - inference.learning_module - INFO - [LearningModule] Learned from whatweb execution: 0 findings
+2025-12-03 22:30:38,521 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-03 22:30:38,521 - inference.autonomous_agent - INFO - Learned: whatweb - Success: False, Vulns: 0
+2025-12-03 22:30:38,526 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:30:39,027 - inference.autonomous_agent - INFO - === Iteration 4 | Phase: scanning | Strategy: adaptive ===
+2025-12-03 22:30:39,027 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:30:39,038 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-03 22:30:39,039 - inference.tool_manager - INFO - [API] nuclei missing optional keys: ['GITHUB_TOKEN'] (tool will work with reduced functionality)
+2025-12-03 22:30:54,042 - inference.tool_manager - ERROR - Tool execution failed: Failed to connect to Kali VM after 3 attempts: 'NoneType' object has no attribute 'is_active'
+2025-12-03 22:30:54,045 - inference.autonomous_agent - WARNING - Tool failed: Failed to connect to Kali VM after 3 attempts: 'NoneType' object has no attribute 'is_active'
+2025-12-03 22:30:54,046 - inference.learning_module - INFO - [LearningModule] Learned from nuclei execution: 0 findings
+2025-12-03 22:30:54,047 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:30:54,047 - inference.autonomous_agent - INFO - Learned: nuclei - Success: False, Vulns: 0
+2025-12-03 22:30:54,052 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-03 22:30:54,553 - inference.autonomous_agent - INFO - === Iteration 5 | Phase: exploitation | Strategy: aggressive ===
+2025-12-03 22:30:54,554 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-03 22:30:54,557 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-03 22:31:09,559 - inference.tool_manager - ERROR - Tool execution failed: Failed to connect to Kali VM after 3 attempts: 'NoneType' object has no attribute 'is_active'
+2025-12-03 22:31:09,562 - inference.autonomous_agent - WARNING - Tool failed: Failed to connect to Kali VM after 3 attempts: 'NoneType' object has no attribute 'is_active'
+2025-12-03 22:31:09,562 - inference.learning_module - INFO - [LearningModule] Learned from sqlmap execution: 0 findings
+2025-12-03 22:31:09,563 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-03 22:31:09,563 - inference.autonomous_agent - INFO - Learned: sqlmap - Success: False, Vulns: 0
+2025-12-03 22:31:09,566 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:31:10,067 - inference.autonomous_agent - INFO - === Iteration 6 | Phase: post_exploitation | Strategy: adaptive ===
+2025-12-03 22:31:10,067 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:31:10,074 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-03 22:31:13,987 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 22:31:13] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-03 22:31:14,160 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-03 22:31:14,171 - inference.target_analyzer - INFO - [TargetAnalyzer] Analyzing target: http://testphp.vulnweb.com
+2025-12-03 22:31:14,171 - inference.target_analyzer - INFO - [TargetAnalyzer] Target profile: {'target': 'http://testphp.vulnweb.com', 'type': 'web', 'technologies': ['http_server', 'web_framework', 'php'], 'risk_level': 'medium', 'scan_strategy': 'web_application'}
+2025-12-03 22:31:14,172 - inference.autonomous_agent - INFO - === Iteration 1 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-03 22:31:14,172 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-03 22:31:14,176 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('shodan'), np.str_('fierce')]
+2025-12-03 22:31:14,239 - paramiko.transport - INFO - Connected (version 2.0, client OpenSSH_10.2p1)
+2025-12-03 22:31:14,536 - paramiko.transport - INFO - Authentication (password) successful!
+2025-12-03 22:31:14,537 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for nmap: nmap testphp.vulnweb.com -sV -T2 -p 80,443 --max-retries 3...
+2025-12-03 22:31:21,775 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 22:31:21] "GET /api/scan/status/d2847e2d HTTP/1.1" 200 -
+2025-12-03 22:31:25,077 - inference.tool_manager - ERROR - Tool execution failed: Failed to connect to Kali VM after 3 attempts: 'NoneType' object has no attribute 'is_active'
+2025-12-03 22:31:25,081 - inference.autonomous_agent - WARNING - Tool failed: Failed to connect to Kali VM after 3 attempts: 'NoneType' object has no attribute 'is_active'
+2025-12-03 22:31:25,082 - inference.learning_module - INFO - [LearningModule] Learned from linpeas execution: 0 findings
+2025-12-03 22:31:25,082 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:31:25,082 - inference.autonomous_agent - INFO - Learned: linpeas - Success: False, Vulns: 0
+2025-12-03 22:31:25,088 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:31:25,589 - inference.autonomous_agent - INFO - === Iteration 7 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:31:25,590 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:31:25,592 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:31:40,594 - inference.tool_manager - ERROR - Tool execution failed: Failed to connect to Kali VM after 3 attempts: 'NoneType' object has no attribute 'is_active'
+2025-12-03 22:31:40,597 - inference.autonomous_agent - WARNING - Tool failed: Failed to connect to Kali VM after 3 attempts: 'NoneType' object has no attribute 'is_active'
+2025-12-03 22:31:40,598 - inference.learning_module - INFO - [LearningModule] Learned from clear_logs execution: 0 findings
+2025-12-03 22:31:40,598 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:31:40,598 - inference.autonomous_agent - INFO - Learned: clear_logs - Success: False, Vulns: 0
+2025-12-03 22:31:41,100 - inference.autonomous_agent - INFO - === Iteration 8 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:31:41,100 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:31:41,103 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:31:51,863 - inference.learning_module - INFO - [LearningModule] Learned from nmap execution: 1 findings
+2025-12-03 22:31:51,864 - inference.autonomous_agent - INFO - Learned: nmap - Success: True, Vulns: 1
+2025-12-03 22:31:52,365 - inference.autonomous_agent - INFO - === Iteration 2 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-03 22:31:52,366 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-03 22:31:52,369 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('theHarvester'), np.str_('shodan')]
+2025-12-03 22:31:52,369 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for nikto: nikto -h testphp.vulnweb.com 1 -nossl...
+2025-12-03 22:31:56,105 - inference.tool_manager - ERROR - Tool execution failed: Failed to connect to Kali VM after 3 attempts: 'NoneType' object has no attribute 'is_active'
+2025-12-03 22:31:56,108 - inference.autonomous_agent - WARNING - Tool failed: Failed to connect to Kali VM after 3 attempts: 'NoneType' object has no attribute 'is_active'
+2025-12-03 22:31:56,109 - inference.learning_module - INFO - [LearningModule] Learned from timestomp execution: 0 findings
+2025-12-03 22:31:56,109 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:31:56,111 - inference.autonomous_agent - INFO - Learned: timestomp - Success: False, Vulns: 0
+2025-12-03 22:31:56,613 - inference.autonomous_agent - INFO - === Iteration 9 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:31:56,613 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:31:56,616 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:11,618 - inference.tool_manager - ERROR - Tool execution failed: Failed to connect to Kali VM after 3 attempts: 'NoneType' object has no attribute 'is_active'
+2025-12-03 22:32:11,621 - inference.autonomous_agent - WARNING - Tool failed: Failed to connect to Kali VM after 3 attempts: 'NoneType' object has no attribute 'is_active'
+2025-12-03 22:32:11,622 - inference.learning_module - INFO - [LearningModule] Learned from shred execution: 0 findings
+2025-12-03 22:32:11,623 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:11,623 - inference.autonomous_agent - INFO - Learned: shred - Success: False, Vulns: 0
+2025-12-03 22:32:12,125 - inference.autonomous_agent - INFO - === Iteration 10 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,126 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,128 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,129 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,133 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,134 - inference.autonomous_agent - INFO - === Iteration 11 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,134 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,134 - inference.autonomous_agent - WARNING - Scan stalled for 5 iterations, forcing phase transition
+2025-12-03 22:32:12,135 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,135 - inference.autonomous_agent - INFO - === Iteration 12 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,135 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,137 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,138 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,142 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,142 - inference.autonomous_agent - INFO - === Iteration 13 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,142 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,145 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,146 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,150 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,150 - inference.autonomous_agent - INFO - === Iteration 14 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,151 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,153 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,154 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,158 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,159 - inference.autonomous_agent - INFO - === Iteration 15 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,159 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,161 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,162 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,166 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,167 - inference.autonomous_agent - INFO - === Iteration 16 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,167 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,168 - inference.autonomous_agent - WARNING - Scan stalled for 5 iterations, forcing phase transition
+2025-12-03 22:32:12,168 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,168 - inference.autonomous_agent - INFO - === Iteration 17 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,168 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,171 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,171 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,175 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,176 - inference.autonomous_agent - INFO - === Iteration 18 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,176 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,178 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,179 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,183 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,183 - inference.autonomous_agent - INFO - === Iteration 19 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,184 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,186 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,187 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,190 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,191 - inference.autonomous_agent - INFO - === Iteration 20 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,191 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,193 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,194 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,198 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,199 - inference.autonomous_agent - INFO - === Iteration 21 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,199 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,199 - inference.autonomous_agent - WARNING - Scan stalled for 5 iterations, forcing phase transition
+2025-12-03 22:32:12,200 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,200 - inference.autonomous_agent - INFO - === Iteration 22 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,200 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,203 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,203 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,207 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,207 - inference.autonomous_agent - INFO - === Iteration 23 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,208 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,210 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,211 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,215 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,215 - inference.autonomous_agent - INFO - === Iteration 24 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,216 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,218 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,218 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,223 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,223 - inference.autonomous_agent - INFO - === Iteration 25 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,223 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,226 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,226 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,230 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,231 - inference.autonomous_agent - INFO - === Iteration 26 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,231 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,232 - inference.autonomous_agent - WARNING - Scan stalled for 5 iterations, forcing phase transition
+2025-12-03 22:32:12,232 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,233 - inference.autonomous_agent - INFO - === Iteration 27 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,233 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,235 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,236 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,240 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,240 - inference.autonomous_agent - INFO - === Iteration 28 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,241 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,243 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,243 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,247 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,247 - inference.autonomous_agent - INFO - === Iteration 29 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,248 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,251 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,251 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,256 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,256 - inference.autonomous_agent - INFO - === Iteration 30 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,256 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,259 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,259 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,264 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,264 - inference.autonomous_agent - INFO - === Iteration 31 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,264 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,265 - inference.autonomous_agent - WARNING - Scan stalled for 5 iterations, forcing phase transition
+2025-12-03 22:32:12,265 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,266 - inference.autonomous_agent - INFO - === Iteration 32 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,266 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,269 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,270 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,276 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,277 - inference.autonomous_agent - INFO - === Iteration 33 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,277 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,280 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,281 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,287 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,287 - inference.autonomous_agent - INFO - === Iteration 34 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,288 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,291 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,293 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,298 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,299 - inference.autonomous_agent - INFO - === Iteration 35 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,299 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,301 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,302 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,307 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,307 - inference.autonomous_agent - INFO - === Iteration 36 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,307 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,308 - inference.autonomous_agent - WARNING - Scan stalled for 5 iterations, forcing phase transition
+2025-12-03 22:32:12,308 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,309 - inference.autonomous_agent - INFO - === Iteration 37 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,309 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,311 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,312 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,318 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,319 - inference.autonomous_agent - INFO - === Iteration 38 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,319 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,322 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,323 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,327 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,328 - inference.autonomous_agent - INFO - === Iteration 39 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,328 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,330 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,331 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,336 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,336 - inference.autonomous_agent - INFO - === Iteration 40 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,337 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,339 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,340 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,344 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,345 - inference.autonomous_agent - INFO - === Iteration 41 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,345 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,346 - inference.autonomous_agent - WARNING - Scan stalled for 5 iterations, forcing phase transition
+2025-12-03 22:32:12,346 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,347 - inference.autonomous_agent - INFO - === Iteration 42 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,347 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,349 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,350 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,354 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,355 - inference.autonomous_agent - INFO - === Iteration 43 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,355 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,358 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,358 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,363 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,363 - inference.autonomous_agent - INFO - === Iteration 44 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,363 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,366 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,366 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,370 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,371 - inference.autonomous_agent - INFO - === Iteration 45 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,371 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,374 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,374 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,378 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,379 - inference.autonomous_agent - INFO - === Iteration 46 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,379 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,380 - inference.autonomous_agent - WARNING - Scan stalled for 5 iterations, forcing phase transition
+2025-12-03 22:32:12,380 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,380 - inference.autonomous_agent - INFO - === Iteration 47 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,381 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,383 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,384 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,388 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,389 - inference.autonomous_agent - INFO - === Iteration 48 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,389 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,392 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,392 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,396 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,397 - inference.autonomous_agent - INFO - === Iteration 49 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,397 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,400 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,400 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,405 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,405 - inference.autonomous_agent - INFO - === Iteration 50 | Phase: covering_tracks | Strategy: adaptive ===
+2025-12-03 22:32:12,405 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:12,407 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-03 22:32:12,408 - inference.autonomous_agent - INFO - Tool selector exhausted, checking phase transition
+2025-12-03 22:32:12,413 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:32:52,825 - optimus - INFO - Registered: api_bp
+2025-12-03 22:32:52,833 - optimus - INFO - Registered: scan_bp
+2025-12-03 22:32:52,840 - optimus - INFO - Registered: tool_bp
+2025-12-03 22:32:52,854 - optimus - INFO - Registered: intelligence_bp
+2025-12-03 22:32:52,860 - optimus - INFO - Registered: metrics_bp
+2025-12-03 22:32:52,869 - optimus - INFO - Registered: report_bp
+2025-12-03 22:32:52,874 - optimus - INFO - Registered: training_bp
+2025-12-03 22:32:52,878 - optimus - INFO - WebSocket handlers registered
+2025-12-03 22:32:53,148 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-03 22:32:53,167 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-03 22:32:53,168 - optimus - INFO - Debug mode: False
+2025-12-03 22:32:53,168 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-03 22:32:53,208 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.103:5000
+2025-12-03 22:32:53,209 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-03 22:33:13,422 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 22:33:13] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-03 22:33:13,527 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-03 22:33:13,537 - inference.target_analyzer - INFO - [TargetAnalyzer] Analyzing target: http://testphp.vulnweb.com
+2025-12-03 22:33:13,538 - inference.target_analyzer - INFO - [TargetAnalyzer] Target profile: {'target': 'http://testphp.vulnweb.com', 'type': 'web', 'technologies': ['http_server', 'web_framework', 'php'], 'risk_level': 'medium', 'scan_strategy': 'web_application'}
+2025-12-03 22:33:13,538 - inference.autonomous_agent - INFO - === Iteration 1 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-03 22:33:13,538 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-03 22:33:13,541 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('shodan'), np.str_('fierce')]
+2025-12-03 22:33:13,574 - paramiko.transport - INFO - Connected (version 2.0, client OpenSSH_10.2p1)
+2025-12-03 22:33:13,813 - paramiko.transport - INFO - Authentication (password) successful!
+2025-12-03 22:33:13,814 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for nmap: nmap testphp.vulnweb.com -sV -T2 -p 80,443 --max-retries 3...
+2025-12-03 22:33:22,613 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 22:33:22] "GET /api/scan/status/955e2a94 HTTP/1.1" 200 -
+2025-12-03 22:33:43,680 - inference.learning_module - INFO - [LearningModule] Learned from nmap execution: 1 findings
+2025-12-03 22:33:43,681 - inference.autonomous_agent - INFO - Learned: nmap - Success: True, Vulns: 1
+2025-12-03 22:33:44,182 - inference.autonomous_agent - INFO - === Iteration 2 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-03 22:33:44,182 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-03 22:33:44,185 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('theHarvester'), np.str_('shodan')]
+2025-12-03 22:33:44,186 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for nikto: nikto -h testphp.vulnweb.com 1 -nossl...
+2025-12-03 22:33:56,633 - inference.autonomous_agent - WARNING - Tool failed: None
+2025-12-03 22:33:56,634 - inference.learning_module - INFO - [LearningModule] Learned from nikto execution: 1 findings
+2025-12-03 22:33:56,634 - inference.autonomous_agent - INFO - Learned: nikto - Success: False, Vulns: 1
+2025-12-03 22:33:57,135 - inference.autonomous_agent - INFO - === Iteration 3 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-03 22:33:57,136 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-03 22:33:57,139 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('theHarvester'), np.str_('shodan')]
+2025-12-03 22:33:57,139 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for whatweb: whatweb http://testphp.vulnweb.com -a 1...
+2025-12-03 22:34:10,952 - inference.learning_module - INFO - [LearningModule] Learned from whatweb execution: 0 findings
+2025-12-03 22:34:10,952 - inference.autonomous_agent - INFO - Learned: whatweb - Success: True, Vulns: 0
+2025-12-03 22:34:10,956 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:34:11,457 - inference.autonomous_agent - INFO - === Iteration 4 | Phase: scanning | Strategy: adaptive ===
+2025-12-03 22:34:11,457 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:34:11,462 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-03 22:34:11,463 - inference.tool_manager - INFO - [API] nuclei missing optional keys: ['GITHUB_TOKEN'] (tool will work with reduced functionality)
+2025-12-03 22:34:11,463 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for nikto: nikto -h http://testphp.vulnweb.com 123456789 -ssl...
+2025-12-03 22:34:13,514 - inference.learning_module - INFO - [LearningModule] Learned from nuclei execution: 0 findings
+2025-12-03 22:34:13,514 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:34:13,515 - inference.autonomous_agent - INFO - Learned: nuclei - Success: True, Vulns: 0
+2025-12-03 22:34:13,519 - inference.strategy_selector - INFO - Strategy selection: targeted (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 13.0})
+2025-12-03 22:34:14,019 - inference.autonomous_agent - INFO - === Iteration 5 | Phase: exploitation | Strategy: targeted ===
+2025-12-03 22:34:14,020 - inference.strategy_selector - INFO - Strategy selection: targeted (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 13.0})
+2025-12-03 22:34:14,022 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-03 22:34:14,023 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for sqlmap: sqlmap -u "http://testphp.vulnweb.com" --batch 5 3 --technique=BEUSTQ...
+2025-12-03 22:34:20,182 - inference.learning_module - INFO - [LearningModule] Learned from sqlmap execution: 0 findings
+2025-12-03 22:34:20,182 - inference.strategy_selector - INFO - Strategy selection: targeted (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 13.0})
+2025-12-03 22:34:20,183 - inference.autonomous_agent - INFO - Learned: sqlmap - Success: True, Vulns: 0
+2025-12-03 22:34:20,186 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:34:20,687 - inference.autonomous_agent - INFO - === Iteration 6 | Phase: post_exploitation | Strategy: adaptive ===
+2025-12-03 22:34:20,688 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:34:20,694 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-03 22:34:20,695 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for linpeas: /usr/share/peass/linpeas/linpeas.sh...
+2025-12-03 22:35:15,999 - websocket.handlers - INFO - Client disconnected: eBwdfYGBkWpxorMvAAAB
+2025-12-03 22:35:16,012 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 22:35:16] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-03 22:35:16,016 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-03 22:35:47,837 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 22:35:47] "GET /api/scan/status/955e2a94 HTTP/1.1" 200 -
+2025-12-03 22:35:51,604 - inference.autonomous_agent - WARNING - Tool failed: None
+2025-12-03 22:35:51,605 - inference.learning_module - INFO - [LearningModule] Learned from nikto execution: 1 findings
+2025-12-03 22:35:51,605 - inference.autonomous_agent - INFO - Learned: nikto - Success: False, Vulns: 1
+2025-12-03 22:35:52,106 - inference.autonomous_agent - INFO - === Iteration 3 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-03 22:35:52,107 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-03 22:35:52,110 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('theHarvester'), np.str_('shodan')]
+2025-12-03 22:35:52,111 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for whatweb: whatweb http://testphp.vulnweb.com -a 1...
+2025-12-03 22:36:02,096 - inference.learning_module - INFO - [LearningModule] Learned from whatweb execution: 0 findings
+2025-12-03 22:36:02,096 - inference.autonomous_agent - INFO - Learned: whatweb - Success: True, Vulns: 0
+2025-12-03 22:36:02,100 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:36:02,602 - inference.autonomous_agent - INFO - === Iteration 4 | Phase: scanning | Strategy: adaptive ===
+2025-12-03 22:36:02,602 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:36:02,609 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-03 22:36:02,609 - inference.tool_manager - INFO - [API] nuclei missing optional keys: ['GITHUB_TOKEN'] (tool will work with reduced functionality)
+2025-12-03 22:36:02,610 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for nikto: nikto -h http://testphp.vulnweb.com 123456789 -ssl...
+2025-12-03 22:36:05,155 - inference.learning_module - INFO - [LearningModule] Learned from nuclei execution: 0 findings
+2025-12-03 22:36:05,155 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:36:05,156 - inference.autonomous_agent - INFO - Learned: nuclei - Success: True, Vulns: 0
+2025-12-03 22:36:05,160 - inference.strategy_selector - INFO - Strategy selection: targeted (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 13.0})
+2025-12-03 22:36:05,661 - inference.autonomous_agent - INFO - === Iteration 5 | Phase: exploitation | Strategy: targeted ===
+2025-12-03 22:36:05,661 - inference.strategy_selector - INFO - Strategy selection: targeted (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 13.0})
+2025-12-03 22:36:05,663 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-03 22:36:05,663 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for sqlmap: sqlmap -u "http://testphp.vulnweb.com" --batch 5 3 --technique=BEUSTQ...
+2025-12-03 22:36:13,534 - inference.learning_module - INFO - [LearningModule] Learned from sqlmap execution: 0 findings
+2025-12-03 22:36:13,535 - inference.strategy_selector - INFO - Strategy selection: targeted (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 13.0})
+2025-12-03 22:36:13,536 - inference.autonomous_agent - INFO - Learned: sqlmap - Success: True, Vulns: 0
+2025-12-03 22:36:13,551 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:36:14,052 - inference.autonomous_agent - INFO - === Iteration 6 | Phase: post_exploitation | Strategy: adaptive ===
+2025-12-03 22:36:14,052 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:36:14,060 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-03 22:36:14,061 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for linpeas: /usr/share/peass/linpeas/linpeas.sh...
+2025-12-03 22:41:42,807 - optimus - INFO - Registered: api_bp
+2025-12-03 22:41:42,812 - optimus - INFO - Registered: scan_bp
+2025-12-03 22:41:42,818 - optimus - INFO - Registered: tool_bp
+2025-12-03 22:41:42,829 - optimus - INFO - Registered: intelligence_bp
+2025-12-03 22:41:42,833 - optimus - INFO - Registered: metrics_bp
+2025-12-03 22:41:42,841 - optimus - INFO - Registered: report_bp
+2025-12-03 22:41:42,845 - optimus - INFO - Registered: training_bp
+2025-12-03 22:41:42,849 - optimus - INFO - WebSocket handlers registered
+2025-12-03 22:41:43,048 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-03 22:41:43,063 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-03 22:41:43,063 - optimus - INFO - Debug mode: False
+2025-12-03 22:41:43,064 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-03 22:41:43,115 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.103:5000
+2025-12-03 22:41:43,117 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-03 22:42:01,720 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 22:42:01] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-03 22:42:01,832 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-03 22:42:01,841 - inference.target_analyzer - INFO - [TargetAnalyzer] Analyzing target: http://testphp.vulnweb.com
+2025-12-03 22:42:01,841 - inference.target_analyzer - INFO - [TargetAnalyzer] Target profile: {'target': 'http://testphp.vulnweb.com', 'type': 'web', 'technologies': ['http_server', 'web_framework', 'php'], 'risk_level': 'medium', 'scan_strategy': 'web_application'}
+2025-12-03 22:42:01,841 - inference.autonomous_agent - INFO - === Iteration 1 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-03 22:42:01,842 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-03 22:42:01,846 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('shodan'), np.str_('fierce')]
+2025-12-03 22:42:03,360 - paramiko.transport - INFO - Connected (version 2.0, client OpenSSH_10.2p1)
+2025-12-03 22:42:04,039 - paramiko.transport - INFO - Authentication (password) successful!
+2025-12-03 22:42:04,040 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for nmap: nmap testphp.vulnweb.com -sV -T2 -p 80,443 --max-retries 3...
+2025-12-03 22:42:34,851 - inference.learning_module - INFO - [LearningModule] Learned from nmap execution: 1 findings
+2025-12-03 22:42:34,851 - inference.autonomous_agent - INFO - Learned: nmap - Success: True, Vulns: 1
+2025-12-03 22:42:35,357 - inference.autonomous_agent - INFO - === Iteration 2 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-03 22:42:35,375 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-03 22:42:35,397 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('theHarvester'), np.str_('shodan')]
+2025-12-03 22:42:35,398 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for nikto: nikto -h testphp.vulnweb.com 1 -nossl...
+2025-12-03 22:42:40,846 - inference.learning_module - INFO - [LearningModule] Learned from linpeas execution: 1 findings
+2025-12-03 22:42:40,846 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:42:40,846 - inference.autonomous_agent - INFO - Learned: linpeas - Success: True, Vulns: 1
+2025-12-03 22:42:40,850 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:42:40,913 - inference.learning_module - INFO - [LearningModule] Learned from linpeas execution: 1 findings
+2025-12-03 22:42:40,913 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:42:40,913 - inference.autonomous_agent - INFO - Learned: linpeas - Success: True, Vulns: 1
+2025-12-03 22:42:40,918 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:45:01,050 - websocket.handlers - INFO - Client connected: i8w3peApK-TNvZ02AAAD
+2025-12-03 22:45:06,345 - inference.autonomous_agent - WARNING - Tool failed: None
+2025-12-03 22:45:06,347 - inference.learning_module - INFO - [LearningModule] Learned from nikto execution: 1 findings
+2025-12-03 22:45:06,350 - inference.autonomous_agent - INFO - Learned: nikto - Success: False, Vulns: 1
+2025-12-03 22:45:06,852 - inference.autonomous_agent - INFO - === Iteration 3 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-03 22:45:06,853 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-03 22:45:06,856 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('theHarvester'), np.str_('shodan')]
+2025-12-03 22:45:06,856 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for whatweb: whatweb http://testphp.vulnweb.com -a 1...
+2025-12-03 22:45:28,189 - inference.learning_module - INFO - [LearningModule] Learned from whatweb execution: 0 findings
+2025-12-03 22:45:28,190 - inference.autonomous_agent - INFO - Learned: whatweb - Success: True, Vulns: 0
+2025-12-03 22:45:28,193 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:45:28,695 - inference.autonomous_agent - INFO - === Iteration 4 | Phase: scanning | Strategy: adaptive ===
+2025-12-03 22:45:28,695 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:45:28,702 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-03 22:45:28,703 - inference.tool_manager - INFO - [API] nuclei missing optional keys: ['GITHUB_TOKEN'] (tool will work with reduced functionality)
+2025-12-03 22:45:28,703 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for nikto: nikto -h http://testphp.vulnweb.com 123456789 -ssl...
+2025-12-03 22:45:31,040 - inference.learning_module - INFO - [LearningModule] Learned from nuclei execution: 0 findings
+2025-12-03 22:45:31,041 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:45:31,041 - inference.autonomous_agent - INFO - Learned: nuclei - Success: True, Vulns: 0
+2025-12-03 22:45:31,047 - inference.strategy_selector - INFO - Strategy selection: targeted (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 13.0})
+2025-12-03 22:45:31,547 - inference.autonomous_agent - INFO - === Iteration 5 | Phase: exploitation | Strategy: targeted ===
+2025-12-03 22:45:31,548 - inference.strategy_selector - INFO - Strategy selection: targeted (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 13.0})
+2025-12-03 22:45:31,555 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-03 22:45:31,556 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for sqlmap: sqlmap -u "http://testphp.vulnweb.com" --batch 5 3 --technique=BEUSTQ...
+2025-12-03 22:45:39,215 - inference.learning_module - INFO - [LearningModule] Learned from sqlmap execution: 0 findings
+2025-12-03 22:45:39,216 - inference.strategy_selector - INFO - Strategy selection: targeted (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 13.0})
+2025-12-03 22:45:39,216 - inference.autonomous_agent - INFO - Learned: sqlmap - Success: True, Vulns: 0
+2025-12-03 22:45:39,222 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:45:39,723 - inference.autonomous_agent - INFO - === Iteration 6 | Phase: post_exploitation | Strategy: adaptive ===
+2025-12-03 22:45:39,723 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:45:39,734 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-03 22:45:39,735 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for linpeas: /usr/share/peass/linpeas/linpeas.sh...
+2025-12-03 22:50:11,070 - websocket.handlers - INFO - Client disconnected: i8w3peApK-TNvZ02AAAD
+2025-12-03 22:50:11,081 - werkzeug - INFO - 127.0.0.1 - - [03/Dec/2025 22:50:11] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-03 22:50:11,086 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-03 22:52:20,738 - inference.learning_module - INFO - [LearningModule] Learned from linpeas execution: 1 findings
+2025-12-03 22:52:20,739 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-03 22:52:20,739 - inference.autonomous_agent - INFO - Learned: linpeas - Success: True, Vulns: 1
+2025-12-03 22:52:20,743 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-04 00:08:04,449 - optimus - INFO - Registered: api_bp
+2025-12-04 00:08:04,457 - optimus - INFO - Registered: scan_bp
+2025-12-04 00:08:04,463 - optimus - INFO - Registered: tool_bp
+2025-12-04 00:08:04,474 - optimus - INFO - Registered: intelligence_bp
+2025-12-04 00:08:04,477 - optimus - INFO - Registered: metrics_bp
+2025-12-04 00:08:04,492 - optimus - INFO - Registered: report_bp
+2025-12-04 00:08:04,496 - optimus - INFO - Registered: training_bp
+2025-12-04 00:08:04,500 - optimus - INFO - WebSocket handlers registered
+2025-12-04 00:08:04,864 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-04 00:08:04,916 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-04 00:08:04,916 - optimus - INFO - Debug mode: False
+2025-12-04 00:08:04,917 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-04 00:08:04,978 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.103:5000
+2025-12-04 00:08:04,979 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-04 00:09:18,814 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:09:18] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 00:09:18,837 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:09:18] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 00:09:18,882 - websocket.handlers - INFO - Client connected: eyMI022QV7ZZdZ7kAAAF
+2025-12-04 00:10:09,240 - websocket.handlers - INFO - Client disconnected: eyMI022QV7ZZdZ7kAAAF
+2025-12-04 00:10:09,708 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:10:09] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 00:10:09,728 - websocket.handlers - INFO - Client connected: hwcBljbHYIkODas_AAAH
+2025-12-04 00:10:09,956 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:10:09] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 00:10:43,925 - websocket.handlers - INFO - Client hwcBljbHYIkODas_AAAH joined room scan_scan_1764785443855
+2025-12-04 00:21:26,038 - websocket.handlers - INFO - Client disconnected: hwcBljbHYIkODas_AAAH
+2025-12-04 00:21:26,062 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:21:26] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-04 00:21:26,090 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-04 00:21:26,603 - optimus - INFO - Registered: api_bp
+2025-12-04 00:21:26,608 - optimus - INFO - Registered: scan_bp
+2025-12-04 00:21:26,613 - optimus - INFO - Registered: tool_bp
+2025-12-04 00:21:26,620 - optimus - INFO - Registered: intelligence_bp
+2025-12-04 00:21:26,624 - optimus - INFO - Registered: metrics_bp
+2025-12-04 00:21:26,637 - optimus - INFO - Registered: report_bp
+2025-12-04 00:21:26,640 - optimus - INFO - Registered: training_bp
+2025-12-04 00:21:26,643 - optimus - INFO - WebSocket handlers registered
+2025-12-04 00:21:26,828 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-04 00:21:26,841 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-04 00:21:26,842 - optimus - INFO - Debug mode: False
+2025-12-04 00:21:26,842 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-04 00:21:26,869 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.103:5000
+2025-12-04 00:21:26,870 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-04 00:22:00,765 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:22:00] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 00:22:00,772 - websocket.handlers - INFO - Client connected: SS2z5EvcLTtH3OeZAAAJ
+2025-12-04 00:22:01,012 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:22:01] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 00:22:14,858 - websocket.handlers - INFO - Client SS2z5EvcLTtH3OeZAAAJ joined room scan_scan_1764786134830
+2025-12-04 00:23:37,663 - websocket.handlers - INFO - Client SS2z5EvcLTtH3OeZAAAJ left room scan_scan_1764786134830
+2025-12-04 00:23:37,994 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:23:37] "GET /api/scan/list?limit=20 HTTP/1.1" 200 -
+2025-12-04 00:23:38,224 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:23:38] "GET /api/scan/list?limit=20 HTTP/1.1" 200 -
+2025-12-04 00:23:58,387 - websocket.handlers - INFO - Client disconnected: SS2z5EvcLTtH3OeZAAAJ
+2025-12-04 00:23:58,792 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:23:58] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-04 00:23:58,795 - websocket.handlers - INFO - Client connected: oK-K0n-IRWt1pn0BAAAL
+2025-12-04 00:23:58,800 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:23:58] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-04 00:23:58,803 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:23:58] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 00:23:59,037 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:23:59] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-04 00:23:59,099 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:23:59] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-04 00:23:59,107 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:23:59] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 00:24:00,529 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:00] "GET /api/tools/inventory HTTP/1.1" 200 -
+2025-12-04 00:24:00,836 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:00] "GET /api/tools/inventory HTTP/1.1" 200 -
+2025-12-04 00:24:02,021 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:02] "GET /api/scan/list?limit=50 HTTP/1.1" 200 -
+2025-12-04 00:24:02,328 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:02] "GET /api/scan/list?limit=50 HTTP/1.1" 200 -
+2025-12-04 00:24:05,558 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:05] "GET /api/scan/results/4122bd86 HTTP/1.1" 200 -
+2025-12-04 00:24:05,804 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:05] "GET /api/scan/results/4122bd86 HTTP/1.1" 200 -
+2025-12-04 00:24:07,915 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:07] "GET /api/scan/list?limit=50 HTTP/1.1" 200 -
+2025-12-04 00:24:08,221 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:08] "GET /api/scan/list?limit=50 HTTP/1.1" 200 -
+2025-12-04 00:24:09,512 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:09] "GET /api/scan/results/955e2a94 HTTP/1.1" 200 -
+2025-12-04 00:24:09,761 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:09] "GET /api/scan/results/955e2a94 HTTP/1.1" 200 -
+2025-12-04 00:24:29,859 - websocket.handlers - INFO - Client disconnected: oK-K0n-IRWt1pn0BAAAL
+2025-12-04 00:24:30,256 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:30] "GET /api/scan/results/955e2a94 HTTP/1.1" 200 -
+2025-12-04 00:24:30,508 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:30] "GET /api/scan/results/955e2a94 HTTP/1.1" 200 -
+2025-12-04 00:24:35,476 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:35] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-04 00:24:35,479 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:35] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-04 00:24:35,483 - websocket.handlers - INFO - Client connected: 8RpmwYpkU50q-BUeAAAN
+2025-12-04 00:24:35,486 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:35] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 00:24:35,726 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:35] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-04 00:24:35,785 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:35] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-04 00:24:35,831 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:35] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 00:24:42,534 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:42] "GET /api/scan/list?limit=50 HTTP/1.1" 200 -
+2025-12-04 00:24:42,839 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:24:42] "GET /api/scan/list?limit=50 HTTP/1.1" 200 -
+2025-12-04 00:29:41,700 - optimus - INFO - Registered: api_bp
+2025-12-04 00:29:41,705 - optimus - INFO - Registered: scan_bp
+2025-12-04 00:29:41,711 - optimus - INFO - Registered: tool_bp
+2025-12-04 00:29:41,719 - optimus - INFO - Registered: intelligence_bp
+2025-12-04 00:29:41,722 - optimus - INFO - Registered: metrics_bp
+2025-12-04 00:29:41,732 - optimus - INFO - Registered: report_bp
+2025-12-04 00:29:41,735 - optimus - INFO - Registered: training_bp
+2025-12-04 00:29:41,738 - optimus - INFO - WebSocket handlers registered
+2025-12-04 00:29:41,918 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-04 00:29:41,931 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-04 00:29:41,932 - optimus - INFO - Debug mode: False
+2025-12-04 00:29:41,932 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-04 00:29:41,958 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.103:5000
+2025-12-04 00:29:41,959 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-04 00:30:28,856 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:30:28] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 00:30:29,109 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:30:29] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 00:30:30,675 - websocket.handlers - INFO - Client disconnected: 8RpmwYpkU50q-BUeAAAN
+2025-12-04 00:30:30,874 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:30:30] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 00:30:31,178 - websocket.handlers - INFO - Client connected: f-E7GjI8pbxPZBPoAAAP
+2025-12-04 00:30:31,180 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:30:31] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 00:30:36,498 - websocket.handlers - INFO - Client f-E7GjI8pbxPZBPoAAAP joined room scan_scan_1764786636471
+2025-12-04 00:34:38,760 - optimus - INFO - Registered: api_bp
+2025-12-04 00:34:38,765 - optimus - INFO - Registered: scan_bp
+2025-12-04 00:34:38,770 - optimus - INFO - Registered: tool_bp
+2025-12-04 00:34:38,777 - optimus - INFO - Registered: intelligence_bp
+2025-12-04 00:34:38,780 - optimus - INFO - Registered: metrics_bp
+2025-12-04 00:34:38,785 - optimus - INFO - Registered: report_bp
+2025-12-04 00:34:38,788 - optimus - INFO - Registered: training_bp
+2025-12-04 00:34:38,790 - optimus - INFO - WebSocket handlers registered
+2025-12-04 00:34:39,541 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-04 00:34:39,551 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-04 00:34:39,551 - optimus - INFO - Debug mode: False
+2025-12-04 00:34:39,552 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-04 00:34:39,601 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.103:5000
+2025-12-04 00:34:39,602 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-04 00:35:07,571 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:35:07] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 00:35:07,572 - websocket.handlers - INFO - Client connected: JYLJn2vZKKDrNHEaAAAB
+2025-12-04 00:35:07,823 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:35:07] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 00:35:15,099 - websocket.handlers - INFO - Client JYLJn2vZKKDrNHEaAAAB joined room scan_scan_1764786915072
+2025-12-04 00:38:52,141 - optimus - INFO - Registered: api_bp
+2025-12-04 00:38:52,146 - optimus - INFO - Registered: scan_bp
+2025-12-04 00:38:52,152 - optimus - INFO - Registered: tool_bp
+2025-12-04 00:38:52,160 - optimus - INFO - Registered: intelligence_bp
+2025-12-04 00:38:52,162 - optimus - INFO - Registered: metrics_bp
+2025-12-04 00:38:52,168 - optimus - INFO - Registered: report_bp
+2025-12-04 00:38:52,171 - optimus - INFO - Registered: training_bp
+2025-12-04 00:38:52,173 - optimus - INFO - WebSocket handlers registered
+2025-12-04 00:38:52,309 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-04 00:38:52,320 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-04 00:38:52,321 - optimus - INFO - Debug mode: False
+2025-12-04 00:38:52,321 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-04 00:38:52,338 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.103:5000
+2025-12-04 00:38:52,338 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-04 00:39:19,934 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:39:19] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 00:39:19,935 - websocket.handlers - INFO - Client connected: AwOSeecurOMIwin0AAAB
+2025-12-04 00:39:20,185 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 00:39:20] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 00:39:23,692 - websocket.handlers - INFO - Client AwOSeecurOMIwin0AAAB joined room scan_scan_1764787163664
+2025-12-04 01:01:12,161 - optimus - INFO - Registered: api_bp
+2025-12-04 01:01:12,166 - optimus - INFO - Registered: scan_bp
+2025-12-04 01:01:12,172 - optimus - INFO - Registered: tool_bp
+2025-12-04 01:01:12,180 - optimus - INFO - Registered: intelligence_bp
+2025-12-04 01:01:12,182 - optimus - INFO - Registered: metrics_bp
+2025-12-04 01:01:12,188 - optimus - INFO - Registered: report_bp
+2025-12-04 01:01:12,191 - optimus - INFO - Registered: training_bp
+2025-12-04 01:01:12,194 - optimus - INFO - WebSocket handlers registered
+2025-12-04 01:01:12,339 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-04 01:01:12,351 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-04 01:01:12,351 - optimus - INFO - Debug mode: False
+2025-12-04 01:01:12,351 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-04 01:01:12,370 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.103:5000
+2025-12-04 01:01:12,371 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-04 01:01:16,994 - websocket.handlers - INFO - Client connected: x3In1Di9ElFi_rZLAAAB
+2025-12-04 01:01:58,663 - websocket.handlers - INFO - Client disconnected: x3In1Di9ElFi_rZLAAAB
+2025-12-04 01:01:59,236 - websocket.handlers - INFO - Client connected: egGlJvo6Vp0muE0MAAAD
+2025-12-04 01:01:59,239 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:01:59] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:01:59,488 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:01:59] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:02:02,656 - optimus - INFO - Registered: api_bp
+2025-12-04 01:02:02,660 - optimus - INFO - Registered: scan_bp
+2025-12-04 01:02:02,665 - optimus - INFO - Registered: tool_bp
+2025-12-04 01:02:02,671 - optimus - INFO - Registered: intelligence_bp
+2025-12-04 01:02:02,676 - optimus - INFO - Registered: metrics_bp
+2025-12-04 01:02:02,680 - optimus - INFO - Registered: report_bp
+2025-12-04 01:02:02,681 - optimus - INFO - Registered: training_bp
+2025-12-04 01:02:02,682 - optimus - INFO - WebSocket handlers registered
+2025-12-04 01:02:02,833 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:02:02] "GET /api/scan/list?limit=20 HTTP/1.1" 200 -
+2025-12-04 01:02:03,139 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:02:03] "GET /api/scan/list?limit=20 HTTP/1.1" 200 -
+2025-12-04 01:02:05,579 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:02:05] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-04 01:02:05,581 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:02:05] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:02:05,908 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:02:05] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-04 01:02:05,913 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:02:05] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:02:06,191 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:02:06] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:02:06,509 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:02:06] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:02:08,096 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:02:08] "GET /api/scan/list?limit=50 HTTP/1.1" 200 -
+2025-12-04 01:02:08,402 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:02:08] "GET /api/scan/list?limit=50 HTTP/1.1" 200 -
+2025-12-04 01:02:09,340 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:02:09] "GET /api/tools/inventory HTTP/1.1" 200 -
+2025-12-04 01:02:09,647 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:02:09] "GET /api/tools/inventory HTTP/1.1" 200 -
+2025-12-04 01:02:13,901 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:02:13] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:02:14,208 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:02:14] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:02:17,081 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-04 01:02:17,091 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:02:17] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-04 01:02:17,398 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:02:17] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-04 01:02:20,541 - websocket.handlers - INFO - Client egGlJvo6Vp0muE0MAAAD joined room scan_scan_1764788540511
+2025-12-04 01:07:59,257 - websocket.handlers - INFO - Client disconnected: egGlJvo6Vp0muE0MAAAD
+2025-12-04 01:07:59,268 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:07:59] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-04 01:07:59,272 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-04 01:08:06,686 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:08:06] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-04 01:08:06,758 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-04 01:08:06,767 - inference.target_analyzer - INFO - [TargetAnalyzer] Analyzing target: http://example.com
+2025-12-04 01:08:06,767 - inference.target_analyzer - INFO - [TargetAnalyzer] Target profile: {'target': 'http://example.com', 'type': 'web', 'technologies': ['http_server', 'web_framework'], 'risk_level': 'medium', 'scan_strategy': 'web_application'}
+2025-12-04 01:08:06,768 - inference.autonomous_agent - INFO - === Iteration 1 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-04 01:08:06,769 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-04 01:08:06,792 - paramiko.transport - INFO - Connected (version 2.0, client OpenSSH_10.2p1)
+2025-12-04 01:08:06,939 - paramiko.transport - INFO - Authentication (password) successful!
+2025-12-04 01:08:06,940 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for amass: amass enum -d example.com -passive...
+2025-12-04 01:10:07,270 - inference.autonomous_agent - WARNING - Tool failed: None
+2025-12-04 01:10:07,270 - inference.learning_module - INFO - [LearningModule] Learned from sublist3r execution: 0 findings
+2025-12-04 01:10:07,271 - inference.autonomous_agent - INFO - Learned: sublist3r - Success: False, Vulns: 0
+2025-12-04 01:10:07,772 - inference.autonomous_agent - INFO - === Iteration 2 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-04 01:10:07,773 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-04 01:10:07,773 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for whatweb: whatweb http://example.com -a 1...
+2025-12-04 01:15:27,999 - websocket.handlers - INFO - Client connected: ICSPFMUmOi5lAo1-AAAF
+2025-12-04 01:20:26,796 - optimus - INFO - Registered: api_bp
+2025-12-04 01:20:26,802 - optimus - INFO - Registered: scan_bp
+2025-12-04 01:20:26,807 - optimus - INFO - Registered: tool_bp
+2025-12-04 01:20:26,818 - optimus - INFO - Registered: intelligence_bp
+2025-12-04 01:20:26,822 - optimus - INFO - Registered: metrics_bp
+2025-12-04 01:20:26,831 - optimus - INFO - Registered: report_bp
+2025-12-04 01:20:26,834 - optimus - INFO - Registered: training_bp
+2025-12-04 01:20:26,837 - optimus - INFO - WebSocket handlers registered
+2025-12-04 01:20:27,017 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-04 01:20:27,030 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-04 01:20:27,030 - optimus - INFO - Debug mode: False
+2025-12-04 01:20:27,030 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-04 01:20:27,057 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.103:5000
+2025-12-04 01:20:27,057 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-04 01:20:29,993 - websocket.handlers - INFO - Client connected: VaEkVuz_LtxaoGPiAAAB
+2025-12-04 01:23:09,997 - websocket.handlers - INFO - Client disconnected: VaEkVuz_LtxaoGPiAAAB
+2025-12-04 01:23:10,009 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:23:10] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-04 01:23:10,013 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-04 01:23:39,090 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:23:39] "GET /health HTTP/1.1" 200 -
+2025-12-04 01:23:52,214 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:23:52] "GET /socket.io/?transport=polling&EIO=4&t=1764789830.194404 HTTP/1.1" 200 -
+2025-12-04 01:25:29,261 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:25:29] "[33mGET /api/health HTTP/1.1[0m" 404 -
+2025-12-04 01:25:39,521 - engineio.server - ERROR - The client is using an unsupported version of the Socket.IO or Engine.IO protocols (further occurrences of this error will be logged with level INFO)
+2025-12-04 01:25:39,521 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:25:39] "[31m[1mGET /socket.io/ HTTP/1.1[0m" 400 -
+2025-12-04 01:25:51,344 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:25:51] "GET /socket.io/?EIO=4&transport=polling HTTP/1.1" 200 -
+2025-12-04 01:28:21,502 - optimus - INFO - Registered: api_bp
+2025-12-04 01:28:21,508 - optimus - INFO - Registered: scan_bp
+2025-12-04 01:28:21,513 - optimus - INFO - Registered: tool_bp
+2025-12-04 01:28:21,521 - optimus - INFO - Registered: intelligence_bp
+2025-12-04 01:28:21,524 - optimus - INFO - Registered: metrics_bp
+2025-12-04 01:28:21,531 - optimus - INFO - Registered: report_bp
+2025-12-04 01:28:21,535 - optimus - INFO - Registered: training_bp
+2025-12-04 01:28:21,538 - optimus - INFO - WebSocket handlers registered
+2025-12-04 01:28:21,724 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-04 01:28:21,737 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-04 01:28:21,737 - optimus - INFO - Debug mode: False
+2025-12-04 01:28:21,738 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-04 01:28:21,758 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.103:5000
+2025-12-04 01:28:21,758 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-04 01:34:24,050 - optimus - INFO - Registered: api_bp
+2025-12-04 01:34:24,055 - optimus - INFO - Registered: scan_bp
+2025-12-04 01:34:24,060 - optimus - INFO - Registered: tool_bp
+2025-12-04 01:34:24,067 - optimus - INFO - Registered: intelligence_bp
+2025-12-04 01:34:24,071 - optimus - INFO - Registered: metrics_bp
+2025-12-04 01:34:24,077 - optimus - INFO - Registered: report_bp
+2025-12-04 01:34:24,080 - optimus - INFO - Registered: training_bp
+2025-12-04 01:34:24,086 - optimus - INFO - WebSocket handlers registered
+2025-12-04 01:34:24,260 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-04 01:34:24,273 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-04 01:34:24,274 - optimus - INFO - Debug mode: False
+2025-12-04 01:34:24,274 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-04 01:34:24,298 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.103:5000
+2025-12-04 01:34:24,298 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-04 01:39:48,100 - websocket.handlers - INFO - Client connected: XELiwRYrqDfwO-xzAAAF
+2025-12-04 01:39:48,106 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:39:48] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:39:48,144 - websocket.handlers - INFO - Client connected: 37UyrgA-t4za0sycAAAH
+2025-12-04 01:39:48,355 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:39:48] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:39:49,938 - websocket.handlers - INFO - Client disconnected: 37UyrgA-t4za0sycAAAH
+2025-12-04 01:39:49,939 - websocket.handlers - INFO - Client disconnected: XELiwRYrqDfwO-xzAAAF
+2025-12-04 01:39:51,047 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:39:51] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:39:51,048 - websocket.handlers - INFO - Client connected: M58jrzgCPHbBHpv_AAAJ
+2025-12-04 01:39:51,067 - websocket.handlers - INFO - Client connected: U_Kr0vZQbbhe8HHaAAAL
+2025-12-04 01:39:51,300 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:39:51] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:40:51,561 - websocket.handlers - INFO - Client disconnected: M58jrzgCPHbBHpv_AAAJ
+2025-12-04 01:40:51,561 - websocket.handlers - INFO - Client disconnected: U_Kr0vZQbbhe8HHaAAAL
+2025-12-04 01:40:52,578 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:40:52] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:40:52,580 - websocket.handlers - INFO - Client connected: LSGRCeRNKxJdaalcAAAN
+2025-12-04 01:40:52,598 - websocket.handlers - INFO - Client connected: ZGIqzhs7VaSu4aQLAAAP
+2025-12-04 01:40:52,831 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:40:52] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:41:06,163 - websocket.handlers - INFO - Client disconnected: LSGRCeRNKxJdaalcAAAN
+2025-12-04 01:41:06,165 - websocket.handlers - INFO - Client disconnected: ZGIqzhs7VaSu4aQLAAAP
+2025-12-04 01:41:06,170 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:41:06] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-04 01:41:06,181 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-04 01:41:06,588 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:41:06] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:41:06,589 - websocket.handlers - INFO - Client connected: k5Y0C2aqFPWhJYtxAAAR
+2025-12-04 01:41:06,605 - websocket.handlers - INFO - Client connected: tS5Q2Lm-NOYwEz9KAAAT
+2025-12-04 01:41:06,840 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:41:06] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:41:23,628 - websocket.handlers - INFO - Client tS5Q2Lm-NOYwEz9KAAAT joined room scan_scan_1764790883597
+2025-12-04 01:43:46,766 - optimus - INFO - Registered: api_bp
+2025-12-04 01:43:46,771 - optimus - INFO - Registered: scan_bp
+2025-12-04 01:43:46,776 - optimus - INFO - Registered: tool_bp
+2025-12-04 01:43:46,782 - optimus - INFO - Registered: intelligence_bp
+2025-12-04 01:43:46,785 - optimus - INFO - Registered: metrics_bp
+2025-12-04 01:43:46,791 - optimus - INFO - Registered: report_bp
+2025-12-04 01:43:46,794 - optimus - INFO - Registered: training_bp
+2025-12-04 01:43:46,797 - optimus - INFO - WebSocket handlers registered
+2025-12-04 01:43:46,986 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-04 01:43:46,998 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-04 01:43:46,999 - optimus - INFO - Debug mode: False
+2025-12-04 01:43:46,999 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-04 01:43:47,028 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.103:5000
+2025-12-04 01:43:47,029 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-04 01:45:27,153 - optimus - INFO - Registered: api_bp
+2025-12-04 01:45:27,158 - optimus - INFO - Registered: scan_bp
+2025-12-04 01:45:27,164 - optimus - INFO - Registered: tool_bp
+2025-12-04 01:45:27,171 - optimus - INFO - Registered: intelligence_bp
+2025-12-04 01:45:27,173 - optimus - INFO - Registered: metrics_bp
+2025-12-04 01:45:27,179 - optimus - INFO - Registered: report_bp
+2025-12-04 01:45:27,183 - optimus - INFO - Registered: training_bp
+2025-12-04 01:45:27,185 - optimus - INFO - WebSocket handlers registered
+2025-12-04 01:45:27,351 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-04 01:45:27,363 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-04 01:45:27,363 - optimus - INFO - Debug mode: False
+2025-12-04 01:45:27,364 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-04 01:45:27,387 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.103:5000
+2025-12-04 01:45:27,388 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-04 01:48:00,011 - websocket.handlers - INFO - Client disconnected: tS5Q2Lm-NOYwEz9KAAAT
+2025-12-04 01:48:00,023 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:48:00] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-04 01:48:00,027 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-04 01:48:21,614 - websocket.handlers - INFO - Client disconnected: k5Y0C2aqFPWhJYtxAAAR
+2025-12-04 01:48:21,624 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:48:21] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-04 01:48:21,627 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-04 01:48:30,528 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:48:30] "[31m[1mHEAD /socket.io/?EIO=4&transport=polling HTTP/1.1[0m" 405 -
+2025-12-04 01:50:49,704 - optimus - INFO - Registered: api_bp
+2025-12-04 01:50:49,709 - optimus - INFO - Registered: scan_bp
+2025-12-04 01:50:49,713 - optimus - INFO - Registered: tool_bp
+2025-12-04 01:50:49,721 - optimus - INFO - Registered: intelligence_bp
+2025-12-04 01:50:49,724 - optimus - INFO - Registered: metrics_bp
+2025-12-04 01:50:49,732 - optimus - INFO - Registered: report_bp
+2025-12-04 01:50:49,736 - optimus - INFO - Registered: training_bp
+2025-12-04 01:50:49,738 - optimus - INFO - WebSocket handlers registered
+2025-12-04 01:50:49,876 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-04 01:50:49,888 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-04 01:50:49,888 - optimus - INFO - Debug mode: False
+2025-12-04 01:50:49,888 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-04 01:50:49,907 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.103:5000
+2025-12-04 01:50:49,907 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-04 01:51:56,717 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:51:56] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-04 01:51:56,728 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-04 01:52:45,211 - websocket.handlers - INFO - Client connected: sNaHWoNLfdLhcuU2AAAW
+2025-12-04 01:52:45,397 - websocket.handlers - INFO - Client disconnected: sNaHWoNLfdLhcuU2AAAW
+2025-12-04 01:52:46,040 - websocket.handlers - INFO - Client connected: Z-PExsSoQLTdZprwAAAY
+2025-12-04 01:52:46,047 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:52:46] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:52:46,064 - websocket.handlers - INFO - Client connected: iKv7LoGlF72f_53tAAAa
+2025-12-04 01:52:46,300 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:52:46] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:52:54,643 - websocket.handlers - INFO - Client iKv7LoGlF72f_53tAAAa joined room scan_scan_1764791574605
+2025-12-04 01:56:03,691 - optimus - INFO - Registered: api_bp
+2025-12-04 01:56:03,696 - optimus - INFO - Registered: scan_bp
+2025-12-04 01:56:03,700 - optimus - INFO - Registered: tool_bp
+2025-12-04 01:56:03,708 - optimus - INFO - Registered: intelligence_bp
+2025-12-04 01:56:03,711 - optimus - INFO - Registered: metrics_bp
+2025-12-04 01:56:03,717 - optimus - INFO - Registered: report_bp
+2025-12-04 01:56:03,719 - optimus - INFO - Registered: training_bp
+2025-12-04 01:56:03,722 - optimus - INFO - WebSocket handlers registered
+2025-12-04 01:56:03,893 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-04 01:56:03,907 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-04 01:56:03,907 - optimus - INFO - Debug mode: False
+2025-12-04 01:56:03,907 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-04 01:56:03,929 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.103:5000
+2025-12-04 01:56:03,930 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-04 01:57:29,089 - websocket.handlers - INFO - Client disconnected: Z-PExsSoQLTdZprwAAAY
+2025-12-04 01:57:29,089 - websocket.handlers - INFO - Client disconnected: iKv7LoGlF72f_53tAAAa
+2025-12-04 01:57:30,093 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:57:30] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-04 01:57:31,095 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:57:31] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-04 01:57:33,099 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+MemoryError
+2025-12-04 01:57:33,101 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 355, in execute
+    data = self.rfile.read(10_000_000)
+MemoryError
+2025-12-04 01:58:59,919 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:58:59] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-04 01:58:59,932 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-04 01:59:21,767 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:59:21] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:59:21,782 - websocket.handlers - INFO - Client connected: xEEol52owuT7D24AAAAd
+2025-12-04 01:59:21,957 - websocket.handlers - INFO - Client connected: Drt1NyDj2N07ZGtUAAAf
+2025-12-04 01:59:21,991 - werkzeug - INFO - 127.0.0.1 - - [04/Dec/2025 01:59:21] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-04 01:59:37,122 - websocket.handlers - INFO - Client Drt1NyDj2N07ZGtUAAAf joined room scan_scan_1764791977090
+2025-12-05 00:48:36,173 - optimus - INFO - Registered: api_bp
+2025-12-05 00:48:36,182 - optimus - INFO - Registered: scan_bp
+2025-12-05 00:48:36,188 - optimus - INFO - Registered: tool_bp
+2025-12-05 00:48:36,196 - optimus - INFO - Registered: intelligence_bp
+2025-12-05 00:48:36,199 - optimus - INFO - Registered: metrics_bp
+2025-12-05 00:48:36,207 - optimus - INFO - Registered: report_bp
+2025-12-05 00:48:36,210 - optimus - INFO - Registered: training_bp
+2025-12-05 00:48:36,213 - optimus - INFO - WebSocket handlers registered
+2025-12-05 00:48:36,507 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-05 00:48:36,523 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-05 00:48:36,523 - optimus - INFO - Debug mode: False
+2025-12-05 00:48:36,524 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-05 00:48:36,554 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.107:5000
+2025-12-05 00:48:36,554 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-05 00:49:12,439 - websocket.handlers - INFO - Client connected: 8tmDDPt2jnv_SDebAAAB
+2025-12-05 00:49:12,446 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 00:49:12] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-05 00:49:12,464 - websocket.handlers - INFO - Client connected: KfrEMzr1965-nPtTAAAD
+2025-12-05 00:49:12,476 - optimus - INFO - Registered: api_bp
+2025-12-05 00:49:12,501 - optimus - INFO - Registered: scan_bp
+2025-12-05 00:49:12,509 - optimus - INFO - Registered: tool_bp
+2025-12-05 00:49:12,521 - optimus - INFO - Registered: intelligence_bp
+2025-12-05 00:49:12,525 - optimus - INFO - Registered: metrics_bp
+2025-12-05 00:49:12,532 - optimus - INFO - Registered: report_bp
+2025-12-05 00:49:12,535 - optimus - INFO - Registered: training_bp
+2025-12-05 00:49:12,536 - optimus - INFO - WebSocket handlers registered
+2025-12-05 00:49:12,551 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 00:49:12] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-05 00:49:12,684 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 00:49:12] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-05 00:49:12,755 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 00:49:12] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-05 00:49:18,472 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-05 00:49:18,483 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 00:49:18] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-05 00:49:18,491 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 00:49:18] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-05 00:50:11,966 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 00:50:11] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-05 00:50:12,217 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 00:50:12] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-05 00:50:29,754 - websocket.handlers - INFO - Client KfrEMzr1965-nPtTAAAD joined room scan_scan_1764874229670
+2025-12-05 00:58:18,300 - websocket.handlers - INFO - Client disconnected: 8tmDDPt2jnv_SDebAAAB
+2025-12-05 00:58:18,304 - websocket.handlers - INFO - Client disconnected: KfrEMzr1965-nPtTAAAD
+2025-12-05 00:58:19,237 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 00:58:19] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-05 00:58:19,249 - websocket.handlers - INFO - Client connected: JkRfkPBMHjD5ACeOAAAF
+2025-12-05 00:58:19,308 - websocket.handlers - INFO - Client connected: kKzAMBORSe6eIHeAAAAH
+2025-12-05 00:58:19,468 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 00:58:19] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-05 01:02:59,507 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:02:59] "GET /api/scan/list HTTP/1.1" 200 -
+2025-12-05 01:03:08,501 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:03:08] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-05 01:03:17,060 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:03:17] "[33mGET /api/tools/status HTTP/1.1[0m" 404 -
+2025-12-05 01:06:59,325 - optimus - INFO - Registered: api_bp
+2025-12-05 01:06:59,333 - optimus - INFO - Registered: scan_bp
+2025-12-05 01:06:59,339 - optimus - INFO - Registered: tool_bp
+2025-12-05 01:06:59,347 - optimus - INFO - Registered: intelligence_bp
+2025-12-05 01:06:59,351 - optimus - INFO - Registered: metrics_bp
+2025-12-05 01:06:59,358 - optimus - INFO - Registered: report_bp
+2025-12-05 01:06:59,361 - optimus - INFO - Registered: training_bp
+2025-12-05 01:06:59,370 - optimus - INFO - WebSocket handlers registered
+2025-12-05 01:07:00,399 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-05 01:07:00,490 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-05 01:07:00,490 - optimus - INFO - Debug mode: False
+2025-12-05 01:07:00,491 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-05 01:07:00,632 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.107:5000
+2025-12-05 01:07:00,633 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-05 01:08:01,744 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:08:01] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-05 01:08:01,905 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-05 01:08:01,922 - inference.target_analyzer - INFO - [TargetAnalyzer] Analyzing target: http://testphp.vulnweb.com
+2025-12-05 01:08:01,923 - inference.target_analyzer - INFO - [TargetAnalyzer] Target profile: {'target': 'http://testphp.vulnweb.com', 'type': 'web', 'technologies': ['http_server', 'web_framework', 'php'], 'risk_level': 'medium', 'scan_strategy': 'web_application'}
+2025-12-05 01:08:01,925 - inference.autonomous_agent - INFO - === Iteration 1 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-05 01:08:01,925 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-05 01:08:08,537 - paramiko.transport - INFO - Connected (version 2.0, client OpenSSH_10.2p1)
+2025-12-05 01:08:09,084 - paramiko.transport - INFO - Authentication (password) successful!
+2025-12-05 01:08:09,093 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for amass: amass enum -d testphp.vulnweb.com -passive...
+2025-12-05 01:09:14,053 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:09:14] "GET /api/scan/list HTTP/1.1" 200 -
+2025-12-05 01:09:35,322 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:09:35] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-05 01:10:17,098 - inference.autonomous_agent - WARNING - Tool failed: None
+2025-12-05 01:10:17,101 - inference.learning_module - INFO - [LearningModule] Learned from sublist3r execution: 5 findings
+2025-12-05 01:10:17,102 - inference.autonomous_agent - INFO - Learned: sublist3r - Success: False, Vulns: 5
+2025-12-05 01:10:17,605 - inference.autonomous_agent - INFO - === Iteration 2 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-05 01:10:17,605 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-05 01:10:17,606 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for whatweb: whatweb http://testphp.vulnweb.com -a 1...
+2025-12-05 01:13:12,554 - websocket.handlers - INFO - Client disconnected: JkRfkPBMHjD5ACeOAAAF
+2025-12-05 01:13:12,629 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:13:12] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-05 01:13:12,664 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-05 01:13:29,954 - websocket.handlers - INFO - Client disconnected: kKzAMBORSe6eIHeAAAAH
+2025-12-05 01:13:29,966 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:13:29] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-05 01:13:29,973 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-05 01:16:05,312 - optimus - INFO - Registered: api_bp
+2025-12-05 01:16:05,576 - optimus - INFO - Registered: scan_bp
+2025-12-05 01:16:05,630 - optimus - INFO - Registered: tool_bp
+2025-12-05 01:16:05,658 - optimus - INFO - Registered: intelligence_bp
+2025-12-05 01:16:05,680 - optimus - INFO - Registered: metrics_bp
+2025-12-05 01:16:05,735 - optimus - INFO - Registered: report_bp
+2025-12-05 01:16:05,745 - optimus - INFO - Registered: training_bp
+2025-12-05 01:16:05,771 - optimus - INFO - WebSocket handlers registered
+2025-12-05 01:16:07,620 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-05 01:16:07,638 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-05 01:16:07,638 - optimus - INFO - Debug mode: False
+2025-12-05 01:16:07,638 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-05 01:16:07,767 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.107:5000
+2025-12-05 01:16:07,768 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-05 01:16:37,518 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:16:37] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-05 01:16:37,736 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-05 01:16:37,754 - inference.target_analyzer - INFO - [TargetAnalyzer] Analyzing target: http://testphp.vulnweb.com
+2025-12-05 01:16:37,754 - inference.target_analyzer - INFO - [TargetAnalyzer] Target profile: {'target': 'http://testphp.vulnweb.com', 'type': 'web', 'technologies': ['http_server', 'web_framework', 'php'], 'risk_level': 'medium', 'scan_strategy': 'web_application'}
+2025-12-05 01:16:37,757 - inference.autonomous_agent - INFO - === Iteration 1 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-05 01:16:37,757 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-05 01:16:37,790 - paramiko.transport - INFO - Connected (version 2.0, client OpenSSH_10.2p1)
+2025-12-05 01:16:37,989 - paramiko.transport - INFO - Authentication (password) successful!
+2025-12-05 01:16:37,991 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for amass: amass enum -d testphp.vulnweb.com -passive...
+2025-12-05 01:17:19,394 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:17:19] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-05 01:17:27,667 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:17:27] "[33mGET /api/tools/discover HTTP/1.1[0m" 404 -
+2025-12-05 01:18:20,625 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:18:20] "[33mGET /api/tools HTTP/1.1[0m" 404 -
+2025-12-05 01:18:32,237 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:18:32] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-05 01:21:38,250 - inference.autonomous_agent - WARNING - Tool failed: None
+2025-12-05 01:21:38,251 - inference.learning_module - INFO - [LearningModule] Learned from sublist3r execution: 0 findings
+2025-12-05 01:21:38,252 - inference.autonomous_agent - INFO - Learned: sublist3r - Success: False, Vulns: 0
+2025-12-05 01:21:38,753 - inference.autonomous_agent - INFO - === Iteration 2 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-05 01:21:38,753 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-05 01:21:38,754 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for whatweb: whatweb http://testphp.vulnweb.com -a 1...
+2025-12-05 01:22:16,147 - optimus - INFO - Registered: api_bp
+2025-12-05 01:22:16,156 - optimus - INFO - Registered: scan_bp
+2025-12-05 01:22:16,164 - optimus - INFO - Registered: tool_bp
+2025-12-05 01:22:16,176 - optimus - INFO - Registered: intelligence_bp
+2025-12-05 01:22:16,180 - optimus - INFO - Registered: metrics_bp
+2025-12-05 01:22:16,189 - optimus - INFO - Registered: report_bp
+2025-12-05 01:22:16,192 - optimus - INFO - Registered: training_bp
+2025-12-05 01:22:16,196 - optimus - INFO - WebSocket handlers registered
+2025-12-05 01:22:16,399 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-05 01:22:16,450 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-05 01:22:16,450 - optimus - INFO - Debug mode: False
+2025-12-05 01:22:16,451 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-05 01:22:16,477 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.107:5000
+2025-12-05 01:22:16,477 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-05 01:22:39,863 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:22:39] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-05 01:23:41,971 - optimus - INFO - Registered: api_bp
+2025-12-05 01:27:15,371 - optimus - INFO - Registered: api_bp
+2025-12-05 01:27:43,110 - optimus - INFO - Registered: api_bp
+2025-12-05 01:27:43,141 - optimus - INFO - Registered: api_bp
+2025-12-05 01:27:56,409 - websocket.handlers - INFO - Client connected: 9Y3qvEpc6hk9m5v1AAAJ
+2025-12-05 01:27:57,305 - websocket.handlers - INFO - Client connected: P9fvFq2s2AczchuuAAAL
+2025-12-05 01:27:58,174 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-05 01:28:22,999 - optimus - INFO - Registered: api_bp
+2025-12-05 01:28:23,013 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-05 01:28:26,544 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-05 01:29:11,533 - optimus - INFO - Registered: api_bp
+2025-12-05 01:29:11,541 - optimus - INFO - Registered: tool_bp
+2025-12-05 01:29:11,550 - optimus - INFO - Registered: intelligence_bp
+2025-12-05 01:29:11,555 - optimus - INFO - Registered: metrics_bp
+2025-12-05 01:29:11,563 - optimus - INFO - Registered: report_bp
+2025-12-05 01:29:11,567 - optimus - INFO - Registered: training_bp
+2025-12-05 01:29:11,570 - optimus - INFO - WebSocket handlers registered
+2025-12-05 01:29:11,747 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-05 01:29:11,747 - optimus - INFO - Intelligence module initialized
+2025-12-05 01:29:11,762 - optimus - INFO - Hybrid tool system initialized
+2025-12-05 01:29:11,769 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-05 01:29:14,289 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-05 01:29:14,289 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-05 01:29:14,289 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-05 01:29:14,289 - tools.hybrid_tool_system - INFO - Updated SSH client for hybrid tool system
+2025-12-05 01:29:14,296 - optimus - INFO - Registered: scan_bp
+2025-12-05 01:29:14,297 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-05 01:29:14,297 - optimus - INFO - Debug mode: False
+2025-12-05 01:29:14,298 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-05 01:29:14,350 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.107:5000
+2025-12-05 01:29:14,350 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-05 01:32:27,017 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:32:27] "GET /health HTTP/1.1" 200 -
+2025-12-05 01:32:48,315 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:32:48] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-05 01:34:11,156 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:34:11] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-05 01:34:25,830 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:34:25] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-05 01:34:42,616 - websocket.handlers - INFO - Client disconnected: P9fvFq2s2AczchuuAAAL
+2025-12-05 01:34:42,664 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:34:42] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-05 01:34:42,710 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-05 01:34:46,404 - websocket.handlers - INFO - Client disconnected: 9Y3qvEpc6hk9m5v1AAAJ
+2025-12-05 01:34:46,416 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:34:46] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-05 01:34:46,422 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-05 01:34:57,600 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:34:57] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-05 01:34:57,811 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-05 01:34:57,831 - inference.target_analyzer - INFO - [TargetAnalyzer] Analyzing target: http://testphp.vulnweb.com
+2025-12-05 01:34:57,833 - inference.target_analyzer - INFO - [TargetAnalyzer] Target profile: {'target': 'http://testphp.vulnweb.com', 'type': 'web', 'technologies': ['http_server', 'web_framework', 'php'], 'risk_level': 'medium', 'scan_strategy': 'web_application'}
+2025-12-05 01:34:57,835 - inference.autonomous_agent - INFO - === Iteration 1 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-05 01:34:57,835 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-05 01:34:57,950 - paramiko.transport - INFO - Connected (version 2.0, client OpenSSH_10.2p1)
+2025-12-05 01:34:58,196 - paramiko.transport - INFO - Authentication (password) successful!
+2025-12-05 01:34:58,200 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for amass: amass enum -d testphp.vulnweb.com -passive...
+2025-12-05 01:35:09,144 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:35:09] "GET /api/scan/status/1899e7ee HTTP/1.1" 200 -
+2025-12-05 01:35:32,422 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:35:32] "GET /api/scan/status/1899e7ee HTTP/1.1" 200 -
+2025-12-05 01:36:48,807 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:36:48] "GET /api/scan/status/1899e7ee HTTP/1.1" 200 -
+2025-12-05 01:37:09,227 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:37:09] "GET /api/scan/list HTTP/1.1" 200 -
+2025-12-05 01:38:21,486 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:38:21] "GET /api/scan/status/1899e7ee HTTP/1.1" 200 -
+2025-12-05 01:38:36,560 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:38:36] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-05 01:38:47,997 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:38:47] "[33mGET /api/tools/discover HTTP/1.1[0m" 404 -
+2025-12-05 01:39:08,894 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:39:08] "[33mGET /api/tools/ HTTP/1.1[0m" 404 -
+2025-12-05 01:39:24,395 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:39:24] "POST /api/tools/scan HTTP/1.1" 200 -
+2025-12-05 01:43:56,241 - optimus - INFO - Registered: api_bp
+2025-12-05 01:43:56,249 - optimus - INFO - Registered: tool_bp
+2025-12-05 01:43:56,266 - optimus - INFO - Registered: intelligence_bp
+2025-12-05 01:43:56,272 - optimus - INFO - Registered: metrics_bp
+2025-12-05 01:43:56,284 - optimus - INFO - Registered: report_bp
+2025-12-05 01:43:56,290 - optimus - INFO - Registered: training_bp
+2025-12-05 01:43:56,294 - optimus - INFO - WebSocket handlers registered
+2025-12-05 01:43:56,681 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-05 01:43:56,682 - optimus - INFO - Intelligence module initialized
+2025-12-05 01:43:56,707 - optimus - INFO - Hybrid tool system initialized
+2025-12-05 01:43:56,723 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-05 01:44:01,253 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-05 01:44:01,254 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-05 01:44:01,255 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-05 01:44:01,256 - tools.hybrid_tool_system - INFO - Updated SSH client for hybrid tool system
+2025-12-05 01:44:01,266 - optimus - INFO - Registered: scan_bp
+2025-12-05 01:44:01,270 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-05 01:44:01,270 - optimus - INFO - Debug mode: False
+2025-12-05 01:44:01,271 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-05 01:44:01,361 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.107:5000
+2025-12-05 01:44:01,362 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-05 01:44:23,628 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:44:23] "POST /api/tools/scan HTTP/1.1" 200 -
+2025-12-05 01:44:34,825 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:44:34] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-05 01:44:58,317 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:44:58] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-05 01:44:58,542 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-05 01:44:58,564 - inference.target_analyzer - INFO - [TargetAnalyzer] Analyzing target: http://testphp.vulnweb.com
+2025-12-05 01:44:58,566 - inference.target_analyzer - INFO - [TargetAnalyzer] Target profile: {'target': 'http://testphp.vulnweb.com', 'type': 'web', 'technologies': ['http_server', 'web_framework', 'php'], 'risk_level': 'medium', 'scan_strategy': 'web_application'}
+2025-12-05 01:44:58,569 - inference.autonomous_agent - INFO - === Iteration 1 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-05 01:44:58,570 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-05 01:44:58,672 - paramiko.transport - INFO - Connected (version 2.0, client OpenSSH_10.2p1)
+2025-12-05 01:44:58,941 - paramiko.transport - INFO - Authentication (password) successful!
+2025-12-05 01:44:58,944 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for amass: amass enum -d testphp.vulnweb.com -passive...
+2025-12-05 01:45:13,032 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:45:13] "GET /api/scan/status/89230d47 HTTP/1.1" 200 -
+2025-12-05 01:45:35,021 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:45:35] "GET /api/scan/status/89230d47 HTTP/1.1" 200 -
+2025-12-05 01:46:29,719 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:46:29] "GET /api/scan/status/89230d47 HTTP/1.1" 200 -
+2025-12-05 01:46:44,108 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:46:44] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-05 01:46:54,933 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:46:54] "POST /api/tools/scan HTTP/1.1" 200 -
+2025-12-05 01:47:05,361 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:47:05] "GET /api/tools/knowledge-base HTTP/1.1" 200 -
+2025-12-05 01:47:23,292 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:47:23] "GET /api/tools/statistics HTTP/1.1" 200 -
+2025-12-05 01:47:40,125 - app - ERROR - Exception on /api/tools/resolve [POST]
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\flask\app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\flask\app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\api\tool_routes.py", line 87, in resolve_tool
+    'help_text': resolution.help_text,
+                 ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'ToolResolution' object has no attribute 'help_text'
+2025-12-05 01:47:40,168 - optimus - ERROR - Internal error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2025-12-05 01:47:40,170 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:47:40] "[35m[1mPOST /api/tools/resolve HTTP/1.1[0m" 500 -
+2025-12-05 01:48:23,942 - optimus - INFO - Registered: api_bp
+2025-12-05 01:48:23,957 - optimus - INFO - Registered: tool_bp
+2025-12-05 01:48:23,973 - optimus - INFO - Registered: intelligence_bp
+2025-12-05 01:48:23,979 - optimus - INFO - Registered: metrics_bp
+2025-12-05 01:48:23,992 - optimus - INFO - Registered: report_bp
+2025-12-05 01:48:23,997 - optimus - INFO - Registered: training_bp
+2025-12-05 01:48:24,000 - optimus - INFO - WebSocket handlers registered
+2025-12-05 01:48:24,322 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-05 01:48:24,322 - optimus - INFO - Intelligence module initialized
+2025-12-05 01:48:24,341 - optimus - INFO - Hybrid tool system initialized
+2025-12-05 01:48:24,347 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-05 01:48:29,273 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-05 01:48:29,273 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-05 01:48:29,274 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-05 01:48:29,274 - tools.hybrid_tool_system - INFO - Updated SSH client for hybrid tool system
+2025-12-05 01:48:29,283 - optimus - INFO - Registered: scan_bp
+2025-12-05 01:48:29,285 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-05 01:48:29,286 - optimus - INFO - Debug mode: False
+2025-12-05 01:48:29,286 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-05 01:48:29,339 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.107:5000
+2025-12-05 01:48:29,340 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-05 01:48:50,157 - app - ERROR - Exception on /api/tools/resolve [POST]
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\flask\app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\flask\app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\api\tool_routes.py", line 87, in resolve_tool
+    'help_text': getattr(resolution, 'help_text', ''),  # Use getattr to avoid AttributeError
+                 ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'ToolResolution' object has no attribute 'help_text'
+2025-12-05 01:48:50,173 - optimus - ERROR - Internal error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2025-12-05 01:48:50,182 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:48:50] "[35m[1mPOST /api/tools/resolve HTTP/1.1[0m" 500 -
+2025-12-05 01:49:23,032 - optimus - INFO - Registered: api_bp
+2025-12-05 01:49:23,047 - optimus - INFO - Registered: tool_bp
+2025-12-05 01:49:23,059 - optimus - INFO - Registered: intelligence_bp
+2025-12-05 01:49:23,065 - optimus - INFO - Registered: metrics_bp
+2025-12-05 01:49:23,078 - optimus - INFO - Registered: report_bp
+2025-12-05 01:49:23,081 - optimus - INFO - Registered: training_bp
+2025-12-05 01:49:23,085 - optimus - INFO - WebSocket handlers registered
+2025-12-05 01:49:23,389 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-05 01:49:23,389 - optimus - INFO - Intelligence module initialized
+2025-12-05 01:49:23,400 - optimus - INFO - Hybrid tool system initialized
+2025-12-05 01:49:23,406 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-05 01:49:26,514 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-05 01:49:26,515 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-05 01:49:26,515 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-05 01:49:26,515 - tools.hybrid_tool_system - INFO - Updated SSH client for hybrid tool system
+2025-12-05 01:49:26,526 - optimus - INFO - Registered: scan_bp
+2025-12-05 01:49:26,527 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-05 01:49:26,528 - optimus - INFO - Debug mode: False
+2025-12-05 01:49:26,528 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-05 01:49:26,549 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.107:5000
+2025-12-05 01:49:26,549 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-05 01:49:39,431 - app - ERROR - Exception on /api/tools/resolve [POST]
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\flask\app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\flask\app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ~^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\api\tool_routes.py", line 87, in resolve_tool
+    'help_text': getattr(resolution, 'help_text', '') if hasattr(resolution, 'help_text') else '',
+                 ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'ToolResolution' object has no attribute 'help_text'
+2025-12-05 01:49:39,435 - optimus - ERROR - Internal error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2025-12-05 01:49:39,437 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:49:39] "[35m[1mPOST /api/tools/resolve HTTP/1.1[0m" 500 -
+2025-12-05 01:50:09,782 - optimus - INFO - Registered: api_bp
+2025-12-05 01:50:09,794 - optimus - INFO - Registered: tool_bp
+2025-12-05 01:50:09,807 - optimus - INFO - Registered: intelligence_bp
+2025-12-05 01:50:09,811 - optimus - INFO - Registered: metrics_bp
+2025-12-05 01:50:09,822 - optimus - INFO - Registered: report_bp
+2025-12-05 01:50:09,828 - optimus - INFO - Registered: training_bp
+2025-12-05 01:50:09,831 - optimus - INFO - WebSocket handlers registered
+2025-12-05 01:50:24,559 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-05 01:50:24,561 - optimus - INFO - Intelligence module initialized
+2025-12-05 01:50:24,579 - optimus - INFO - Hybrid tool system initialized
+2025-12-05 01:50:24,597 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-05 01:50:27,809 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-05 01:50:27,809 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-05 01:50:27,810 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-05 01:50:27,810 - tools.hybrid_tool_system - INFO - Updated SSH client for hybrid tool system
+2025-12-05 01:50:27,815 - optimus - INFO - Registered: scan_bp
+2025-12-05 01:50:27,816 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-05 01:50:27,816 - optimus - INFO - Debug mode: False
+2025-12-05 01:50:27,816 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-05 01:50:27,836 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.107:5000
+2025-12-05 01:50:27,836 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-05 01:52:29,067 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:52:29] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-05 01:52:29,188 - websocket.handlers - INFO - Client connected: 0MFUJKP5pWowpSmCAAAP
+2025-12-05 01:52:29,189 - websocket.handlers - INFO - Client connected: WKIE333bFS3OdfUxAAAO
+2025-12-05 01:52:29,191 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 01:52:29] "GET /api/tools/available HTTP/1.1" 200 -

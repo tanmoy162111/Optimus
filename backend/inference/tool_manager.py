@@ -34,9 +34,9 @@ class ToolManager:
         self.ssh_client = None
         self.current_execution = None
         self.output_buffer = []
-        self.connection_retries = 5
-        self.connection_timeout = 60  # Increased from 30
-        self.keepalive_interval = 30
+        self.connection_retries = Config.KALI_CONNECT_RETRIES  # Updated to use config
+        self.connection_timeout = Config.KALI_CONNECT_TIMEOUT   # Updated to use config
+        self.keepalive_interval = Config.KALI_KEEPALIVE_SECONDS  # Updated to use config
         # Initialize the tool knowledge base
         self.tool_kb = ToolKnowledgeBase()
         # Tool execution history for dynamic timeout adjustment
@@ -65,10 +65,13 @@ class ToolManager:
         # If already connected and alive, reuse it
         if self.ssh_client is not None:
             try:
-                if self.ssh_client.get_transport() and self.ssh_client.get_transport().is_active():
+                # Check if transport exists and is active
+                transport = self.ssh_client.get_transport()
+                if transport is not None and transport.is_active():
                     print("[DEBUG] Reusing existing SSH connection")
                     return self.ssh_client
-            except:
+            except Exception as e:
+                print(f"[DEBUG] Error checking existing SSH connection: {e}")
                 print("[DEBUG] Existing SSH connection is dead, reconnecting...")
                 self.ssh_client = None
         
@@ -93,7 +96,8 @@ class ToolManager:
                 
                 # Enable keepalive
                 transport = self.ssh_client.get_transport()
-                transport.set_keepalive(self.keepalive_interval)
+                if transport is not None:
+                    transport.set_keepalive(self.keepalive_interval)
                 
                 print("✅ SSH connection established successfully")
                 return self.ssh_client
@@ -139,22 +143,49 @@ class ToolManager:
         """
         start_time = datetime.now()
         
-        # Special handling for linpeas - should only run in post-exploitation with active session
-        # But allow it to run if specifically requested in post-exploitation phase
-        if tool_name in ['linpeas', 'linpeas.sh'] and phase != 'post_exploitation':
-            logger.warning(f"[ToolManager] linpeas should only run in post-exploitation phase, not {phase}")
-            # Check if this is a legitimate post-exploitation scenario
-            # Look for indicators that we have an active session
-            if 'session_id' in parameters or 'active_session' in parameters:
-                logger.info("[ToolManager] linpeas execution authorized with active session")
-            else:
+        # CRITICAL SAFETY: linpeas/winpeas are LOCAL privilege escalation tools
+        # They should ONLY run on COMPROMISED REMOTE targets, NEVER on the scanning system
+        post_exploitation_tools = ['linpeas', 'linpeas.sh', 'winpeas', 'winpeas.exe', 'mimikatz', 'lazagne']
+        
+        if tool_name in post_exploitation_tools:
+            # Block execution unless we have verified remote access
+            has_active_session = parameters.get('session_id') or parameters.get('active_session')
+            shells_obtained = parameters.get('shells_obtained', 0)
+            
+            if phase != 'post_exploitation':
+                logger.error(f"[ToolManager] BLOCKED: {tool_name} requires post_exploitation phase, not {phase}")
                 return {
                     'tool_name': tool_name,
                     'target': target,
                     'phase': phase,
-                    'error': 'linpeas should only run in post-exploitation phase with active session',
+                    'error': f'{tool_name} blocked - requires post_exploitation phase with active shell',
                     'success': False
                 }
+            
+            if not has_active_session and shells_obtained == 0:
+                logger.error(f"[ToolManager] BLOCKED: {tool_name} requires active session on remote target")
+                logger.error(f"[ToolManager] These tools run on COMPROMISED systems, not the scanner!")
+                return {
+                    'tool_name': tool_name,
+                    'target': target,
+                    'phase': phase,
+                    'error': f'{tool_name} blocked - requires confirmed shell access to remote target',
+                    'success': False
+                }
+            
+            # Also check target is not local
+            local_indicators = ['127.0.0.1', 'localhost', '0.0.0.0', '::1']
+            if any(ind in target.lower() for ind in local_indicators):
+                logger.error(f"[ToolManager] BLOCKED: Cannot run {tool_name} on local system!")
+                return {
+                    'tool_name': tool_name,
+                    'target': target,
+                    'phase': phase,
+                    'error': f'{tool_name} blocked - cannot run on local/scanning system',
+                    'success': False
+                }
+            
+            logger.info(f"[ToolManager] {tool_name} authorized for remote target with active session")
         
         # Try to resolve tool using hybrid system first
         resolved_command = None
@@ -217,10 +248,13 @@ class ToolManager:
                 try:
                     # Connect SSH if not already connected
                     transport_active = False
-                    if self.ssh_client and self.ssh_client.get_transport():
+                    if self.ssh_client is not None:
                         try:
-                            transport_active = self.ssh_client.get_transport().is_active()
-                        except:
+                            transport = self.ssh_client.get_transport()
+                            if transport is not None:
+                                transport_active = transport.is_active()
+                        except Exception as e:
+                            print(f"[DEBUG] Error checking transport status: {e}")
                             transport_active = False
                     
                     if not self.ssh_client or not transport_active:
@@ -368,6 +402,13 @@ class ToolManager:
                 print(f"[DEBUG] SSH connection dead, reconnecting...")
                 self.connect_ssh()
                 transport = self.ssh_client.get_transport()
+            
+            # Check if command requires sudo and modify it to auto-provide password
+            if command.strip().startswith('sudo ') or ' sudo ' in command:
+                # Modify command to automatically provide password using expect
+                wrapped_command = f"python3 -c \"import pty; import subprocess; import sys; pty.spawn(['bash', '-c', 'echo kali | sudo -S {command.replace('\"', '\\\"')}'])\""
+                print(f"[DEBUG] Wrapped sudo command: {wrapped_command[:200]}...")
+                command = wrapped_command
             
             # Open channel with PTY
             channel = transport.open_session()

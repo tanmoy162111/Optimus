@@ -84,7 +84,7 @@ def resolve_tool():
             'command': resolution.command,
             'explanation': resolution.explanation,
             'confidence': resolution.confidence,
-            'help_text': resolution.help_text,
+            'help_text': getattr(resolution, 'help_text', ''),  # Use getattr to avoid AttributeError
             'examples': resolution.examples,
             'warnings': resolution.warnings,
             'alternatives': resolution.alternatives

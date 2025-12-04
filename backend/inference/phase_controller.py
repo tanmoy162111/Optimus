@@ -28,6 +28,7 @@ class PhaseController:
     def should_transition(self, current_state: Dict[str, Any]) -> str:
         """
         Determine if phase should transition based on progress metrics
+        IMPROVED: Better loop prevention and forced transitions
         
         Args:
             current_state: Current scan state
@@ -46,60 +47,42 @@ class PhaseController:
         else:
             tool_names = tools_executed
         
+        # Count UNIQUE tools executed (not total executions)
+        unique_tools = list(set(tool_names))
+        
         print(f"[PhaseController] Checking transition for {phase}")
-        print(f"  Tools executed: {len(tool_names)}")
+        print(f"  Total executions: {len(tool_names)}")
+        print(f"  Unique tools: {len(unique_tools)}")
         print(f"  Findings: {len(findings)}")
         print(f"  Coverage: {coverage:.2f}")
         
-        # NEW: Check if all tools in current phase have been tried without findings
-        if self._should_change_approach_or_phase(current_state):
-            print(f"[PhaseController] All tools in {phase} tried without sufficient findings")
-            # Decide whether to change approach or move to next phase
-            if self._should_change_approach(current_state):
-                # Stay in current phase but change approach
-                print(f"[PhaseController] Changing approach in {phase}")
-                # We'll return current phase but the agent should change its approach
-                return phase
-            else:
-                # Move to next phase
-                print(f"[PhaseController] Moving to next phase")
-                next_phase = self.get_next_phase(phase, current_state)
-                return next_phase
+        # CRITICAL FIX: Force transition after too many executions
+        # This prevents infinite loops
+        MAX_EXECUTIONS_PER_PHASE = 15
+        if len(tool_names) >= MAX_EXECUTIONS_PER_PHASE:
+            print(f"[PhaseController] FORCING TRANSITION - {len(tool_names)} executions in {phase}")
+            return self.get_next_phase(phase, current_state)
         
-        # NEW: Check for tool repetition that indicates stuck state
-        if len(tool_names) >= 5:
-            # Look at last 10 tool executions
-            recent_tools = tool_names[-10:] if len(tool_names) >= 10 else tool_names
+        # Force transition if we've used many unique tools without findings
+        if len(unique_tools) >= 5 and len(findings) == 0:
+            print(f"[PhaseController] FORCING TRANSITION - {len(unique_tools)} unique tools, 0 findings")
+            return self.get_next_phase(phase, current_state)
+        
+        # Check for tool repetition indicating stuck state
+        if len(tool_names) >= 3:
+            recent_tools = tool_names[-6:] if len(tool_names) >= 6 else tool_names
             tool_counts = {}
             for tool in recent_tools:
                 tool_counts[tool] = tool_counts.get(tool, 0) + 1
             
-            # Check if any tool has been executed 4+ times in recent history
-            repetition_count = 0
-            most_common = ""
-            if tool_counts:
-                most_common = max(tool_counts.keys(), key=lambda x: tool_counts[x])
-                repetition_count = tool_counts[most_common]
-            
-            print(f"  Recent tool usage: {tool_counts}")
-            
-            # If same tool repeated 4+ times in last 10 executions, force transition
-            if repetition_count >= 4:
-                print(f"[PhaseController] FORCING TRANSITION - {most_common} repeated {repetition_count} times")
-                next_phase = self.get_next_phase(phase, current_state)
-                return next_phase
+            # If any tool appears 2+ times in last 6, we're likely stuck
+            max_count = max(tool_counts.values()) if tool_counts else 0
+            if max_count >= 2:
+                most_repeated = [k for k, v in tool_counts.items() if v == max_count][0]
+                print(f"[PhaseController] FORCING TRANSITION - {most_repeated} repeated {max_count} times")
+                return self.get_next_phase(phase, current_state)
         
-        # NEW: Check if no progress (0 findings after 10+ tools)
-        if len(findings) == 0 and len(tool_names) >= 10:
-            print(f"[PhaseController] FORCING TRANSITION - No findings after {len(tool_names)} tools")
-            next_phase = self.get_next_phase(phase, current_state)
-            return next_phase
-        
-        # NEW: Track iterations in same phase for stall detection
-        # This would require storing phase start time in the state
-        # For now, we'll use the length of tools executed as a proxy
-        
-        # Original transition criteria
+        # Check phase-specific completion criteria
         transition_criteria = {
             'reconnaissance': self._check_recon_complete(current_state),
             'scanning': self._check_scanning_complete(current_state),
@@ -112,10 +95,9 @@ class PhaseController:
         
         if should_transition:
             print(f"[PhaseController] Natural transition triggered for {phase}")
-            next_phase = self.get_next_phase(phase, current_state)
-            return next_phase
-        else:
-            return phase
+            return self.get_next_phase(phase, current_state)
+        
+        return phase
     
     def _should_change_approach_or_phase(self, state: Dict[str, Any]) -> bool:
         """

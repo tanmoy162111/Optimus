@@ -11,7 +11,8 @@ export default defineConfig({
     },
   },
   server: {
-    port: 5173,
+    port: 5173,  // Force using port 5173
+    strictPort: true,  // Fail if port is not available
     host: '0.0.0.0',
     // Proxy API requests to backend
     proxy: {

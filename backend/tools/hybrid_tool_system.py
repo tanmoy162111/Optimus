@@ -87,6 +87,12 @@ class HybridToolSystem:
             'tools_researched': 0
         }
     
+    def update_ssh_client(self, ssh_client):
+        """Update SSH client and recreate tool scanner"""
+        self.ssh_client = ssh_client
+        self.tool_scanner = self._init_tool_scanner()
+        logger.info("Updated SSH client for hybrid tool system")
+    
     @classmethod
     def get_instance(cls, ssh_client=None, llm_client=None, memory_system=None):
         """Get singleton instance"""
@@ -387,6 +393,18 @@ def get_hybrid_tool_system(ssh_client=None, llm_client=None, memory_system=None)
     """Get the hybrid tool system instance"""
     return HybridToolSystem.get_instance(ssh_client, llm_client, memory_system)
 
+def get_tool_scanner(ssh_client=None):
+    """Get the tool scanner instance"""
+    return ToolScanner(ssh_client)
+
+def get_research_engine():
+    """Get the web research engine instance"""
+    return WebToolResearch()
+
+def get_tool_inventory():
+    """Get the tool inventory instance"""
+    return ToolInventory()
+
 # Supporting classes (simplified implementations)
 class KnowledgeBase:
     """Tool knowledge base"""
@@ -481,23 +499,36 @@ class ToolScanner:
     
     def __init__(self, ssh_client=None):
         self.ssh_client = ssh_client
+        # Import the real tool discovery implementation
+        from .tool_discovery import ToolDiscovery
+        self.discovery = ToolDiscovery(ssh_client)
     
     def scan_system(self) -> List[Dict[str, Any]]:
         """Scan system for available tools"""
-        # Simulate tool discovery
-        # In a real implementation, this would scan the system
-        common_tools = [
-            {"name": "nmap", "path": "/usr/bin/nmap", "category": "scanner"},
-            {"name": "nc", "path": "/bin/nc", "category": "network"},
-            {"name": "curl", "path": "/usr/bin/curl", "category": "web"},
-        ]
-        
-        return common_tools
+        try:
+            # Use the real tool discovery implementation
+            tools = self.discovery.scan_for_tools()
+            
+            # Enrich tool information
+            enriched_tools = []
+            for tool in tools:
+                enriched_tool = self.discovery.enrich_tool_info(tool)
+                enriched_tools.append(enriched_tool)
+            
+            return enriched_tools
+        except Exception as e:
+            logger.error(f"Tool scanning failed: {e}")
+            # Return empty list instead of simulated tools
+            return []
     
     def verify_tool(self, tool_name: str) -> bool:
         """Verify a tool is available"""
-        # Simulate tool verification
-        return True
+        try:
+            # Use the real tool discovery implementation
+            return self.discovery.verify_tool(tool_name)
+        except Exception as e:
+            logger.error(f"Tool verification failed: {e}")
+            return False
 
 class LLMCommandGenerator:
     """LLM-powered command generation"""

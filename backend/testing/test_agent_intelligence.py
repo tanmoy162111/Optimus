@@ -1,7 +1,8 @@
 """Test suite for autonomous agent intelligence"""
 
 import sys
-sys.path.insert(0, '..')
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from inference.autonomous_agent import AutonomousPentestAgent
 from datetime import datetime
@@ -46,8 +47,8 @@ def test_phase_transition():
     print("\n[TEST 2] Automatic Phase Transition")
     print("=" * 60)
     
-    from inference.phase_controller import PhaseTransitionController
-    controller = PhaseTransitionController()
+    from inference.phase_controller import PhaseController
+    controller = PhaseController()
     
     # Create state stuck in reconnaissance
     stuck_state = {

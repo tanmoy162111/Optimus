@@ -99,14 +99,8 @@ def register_socket_handlers(socketio):
         recommendation = manager.get_tool_recommendation(scan_id, phase, context)
         emit('tool_recommendation', recommendation)
     
-    # Helper functions to emit events to scan rooms
-    def emit_to_scan(scan_id: str, event: str, data: dict):
-        """Emit event to all clients in a scan room."""
-        room = f'scan_{scan_id}'
-        socketio.emit(event, data, room=room)
-    
-    # Make emit function available globally
-    socketio.emit_to_scan = emit_to_scan
+    # Store socketio instance for global access
+    register_socket_handlers.socketio = socketio
     
     return socketio
 
@@ -114,83 +108,83 @@ def register_socket_handlers(socketio):
 # Event emitter functions for use by other modules
 def emit_scan_started(socketio, scan_id: str, target: str, config: dict = None):
     """Emit scan started event."""
-    socketio.emit_to_scan(scan_id, 'scan_started', {
+    socketio.emit('scan_started', {
         'scan_id': scan_id,
         'target': target,
         'config': config or {}
-    })
+    }, room=f'scan_{scan_id}')
 
 def emit_scan_update(socketio, scan_id: str, phase: str, status: str, coverage: float, time_elapsed: float):
     """Emit scan update event."""
-    socketio.emit_to_scan(scan_id, 'scan_update', {
+    socketio.emit('scan_update', {
         'phase': phase,
         'status': status,
         'coverage': coverage,
         'time_elapsed': time_elapsed
-    })
+    }, room=f'scan_{scan_id}')
 
 def emit_phase_transition(socketio, scan_id: str, from_phase: str, to_phase: str, reason: str = None):
     """Emit phase transition event."""
-    socketio.emit_to_scan(scan_id, 'phase_transition', {
+    socketio.emit('phase_transition', {
         'from': from_phase,
         'to': to_phase,
         'reason': reason
-    })
+    }, room=f'scan_{scan_id}')
 
 def emit_tool_execution_start(socketio, scan_id: str, tool: str, target: str = None):
     """Emit tool execution start event."""
-    socketio.emit_to_scan(scan_id, 'tool_execution_start', {
+    socketio.emit('tool_execution_start', {
         'tool': tool,
         'target': target,
         'status': 'start'
-    })
+    }, room=f'scan_{scan_id}')
 
 def emit_tool_output(socketio, scan_id: str, tool: str, output: str, stream: str = 'stdout'):
     """Emit tool output event."""
-    socketio.emit_to_scan(scan_id, 'tool_output', {
+    socketio.emit('tool_output', {
         'tool': tool,
         'output': output,
         'stream': stream
-    })
+    }, room=f'scan_{scan_id}')
 
 def emit_tool_execution_complete(socketio, scan_id: str, tool: str, success: bool, findings_count: int = 0, execution_time: float = 0):
     """Emit tool execution complete event."""
-    socketio.emit_to_scan(scan_id, 'tool_execution_complete', {
+    socketio.emit('tool_execution_complete', {
         'tool': tool,
         'status': 'complete',
         'success': success,
         'findings_count': findings_count,
         'execution_time': execution_time
-    })
+    }, room=f'scan_{scan_id}')
 
 def emit_finding_discovered(socketio, scan_id: str, finding: dict, total_count: int):
     """Emit finding discovered event."""
-    socketio.emit_to_scan(scan_id, 'finding_discovered', {
+    socketio.emit('finding_discovered', {
         'finding': finding,
         'total_count': total_count
-    })
+    }, room=f'scan_{scan_id}')
 
 def emit_scan_complete(socketio, scan_id: str, findings_count: int, time_elapsed: float):
     """Emit scan complete event."""
-    socketio.emit_to_scan(scan_id, 'scan_complete', {
+    socketio.emit('scan_complete', {
         'scan_id': scan_id,
         'findings_count': findings_count,
         'time_elapsed': time_elapsed
-    })
+    }, room=f'scan_{scan_id}')
 
 def emit_scan_error(socketio, scan_id: str, error: str):
     """Emit scan error event."""
-    socketio.emit_to_scan(scan_id, 'scan_error', {
+    socketio.emit('scan_error', {
         'scan_id': scan_id,
         'error': error
-    })
+    }, room=f'scan_{scan_id}')
 
 def emit_tool_resolution(socketio, scan_id: str, tool: str, source: str, confidence: float, status: str, explanation: str):
     """Emit tool resolution event (hybrid system)."""
-    socketio.emit_to_scan(scan_id, 'tool_resolution', {
+    socketio.emit('tool_resolution', {
         'tool': tool,
         'source': source,
         'confidence': confidence,
         'status': status,
         'explanation': explanation
-    })
+    }, room=f'scan_{scan_id}')

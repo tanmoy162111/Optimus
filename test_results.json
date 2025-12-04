@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-03T09:04:29.666461",
+  "timestamp": "2025-12-03T09:07:26.638863",
   "tests": [
     {
       "name": "Health Endpoint",
@@ -23,7 +23,7 @@
       "name": "Scan Routes",
       "passed": true,
       "warning": false,
-      "message": "Active scans: 1"
+      "message": "Active scans: 2"
     },
     {
       "name": "Tool Routes",
