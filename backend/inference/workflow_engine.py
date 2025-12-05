@@ -51,7 +51,7 @@ class WorkflowEngine:
                 'scan_id': scan_id,
                 'target': target,
                 'timestamp': scan_state['start_time']
-            })
+            }, room=f'scan_{scan_id}')
             
             logger.info(f"🚀 Starting autonomous scan for {target}")
             
@@ -89,7 +89,7 @@ class WorkflowEngine:
                 'findings_count': len(scan_state['findings']),
                 'time_elapsed': self._calculate_elapsed_time(scan_state),
                 'report': report
-            })
+            }, room=f'scan_{scan_id}')
             
         except Exception as e:
             logger.error(f"Scan orchestration error: {e}")
@@ -100,7 +100,7 @@ class WorkflowEngine:
             self.socketio.emit('scan_error', {
                 'scan_id': scan_state['scan_id'],
                 'error': str(e)
-            })
+            }, room=f'scan_{scan_id}')
     
     def _detect_target_type(self, target: str) -> str:
         """Detect target type based on target string"""

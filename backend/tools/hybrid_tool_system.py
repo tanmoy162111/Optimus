@@ -86,12 +86,23 @@ class HybridToolSystem:
             'tools_generated': 0,
             'tools_researched': 0
         }
+        
+        # Reference to tool_manager for lazy SSH client access
+        self.tool_manager_ref = None
     
     def update_ssh_client(self, ssh_client):
         """Update SSH client and recreate tool scanner"""
         self.ssh_client = ssh_client
         self.tool_scanner = self._init_tool_scanner()
         logger.info("Updated SSH client for hybrid tool system")
+    
+    def get_ssh_client(self):
+        """Get SSH client, using tool_manager_ref if direct client not available"""
+        if self.ssh_client:
+            return self.ssh_client
+        if self.tool_manager_ref and hasattr(self.tool_manager_ref, 'ssh_client'):
+            return self.tool_manager_ref.ssh_client
+        return None
     
     @classmethod
     def get_instance(cls, ssh_client=None, llm_client=None, memory_system=None):

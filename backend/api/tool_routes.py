@@ -77,17 +77,17 @@ def resolve_tool():
         system = get_hybrid_tool_system()
         resolution = system.resolve_tool(tool_name, task, target, context)
         
+        # Safely extract attributes with defaults
         return jsonify({
             'tool_name': resolution.tool_name,
             'source': resolution.source.value if hasattr(resolution.source, 'value') else str(resolution.source),
             'status': resolution.status.value if hasattr(resolution.status, 'value') else str(resolution.status),
-            'command': resolution.command,
-            'explanation': resolution.explanation,
-            'confidence': resolution.confidence,
-            'help_text': getattr(resolution, 'help_text', ''),  # Use getattr to avoid AttributeError
-            'examples': resolution.examples,
-            'warnings': resolution.warnings,
-            'alternatives': resolution.alternatives
+            'command': resolution.command or '',
+            'explanation': resolution.explanation or '',
+            'confidence': resolution.confidence or 0.0,
+            'examples': resolution.examples or [],
+            'warnings': resolution.warnings or [],
+            'alternatives': resolution.alternatives or []
         })
     except ImportError:
         # Fallback response
@@ -107,19 +107,65 @@ def resolve_tool():
 def scan_tools():
     """Scan system for available tools."""
     try:
+        # Try to get SSH client from the tool manager if available
+        ssh_client = None
+        try:
+            # Try to get the tool manager directly
+            from core.scan_engine import get_tool_manager
+            tool_manager = get_tool_manager()
+            print(f"[DEBUG] tool_manager: {tool_manager}")
+            if tool_manager:
+                ssh_client = getattr(tool_manager, 'ssh_client', None)
+                print(f"[DEBUG] ssh_client: {ssh_client}")
+        except Exception as e:
+            print(f"[DEBUG] Error getting tool manager: {e}")
+            # If we can't get the SSH client from tool manager, that's fine
+            # The tool scanner will fall back to local scanning
+            pass
+        
         from tools import get_tool_scanner
-        scanner = get_tool_scanner()
-        result = scanner.scan()
+        # Pass the SSH client to the tool scanner if available
+        scanner = get_tool_scanner(ssh_client)
+        print(f"[DEBUG] scanner: {scanner}")
+        result = scanner.scan_system()
+        print(f"[DEBUG] scan result: {result}")
+        
+        # Process the result to match expected format
+        tools_found = len(result) if isinstance(result, list) else 0
+        
+        # Categorize tools by category for statistics
+        by_category = {}
+        if isinstance(result, list):
+            for tool in result:
+                category = tool.get('category', 'unknown')
+                if category in by_category:
+                    by_category[category] += 1
+                else:
+                    by_category[category] = 1
         
         return jsonify({
-            'tools_found': result.get('total', 0),
-            'statistics': result.get('by_category', {})
+            'tools_found': tools_found,
+            'by_category': by_category,
+            'tools': result if isinstance(result, list) else []
         })
-    except ImportError:
+    except ImportError as e:
+        print(f"[DEBUG] ImportError: {e}")
         return jsonify({
             'tools_found': 0,
-            'statistics': {},
+            'by_category': {},
+            'tools': [],
             'message': 'Tool scanner not available'
+        })
+    except Exception as e:
+        print(f"[DEBUG] Exception: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            'tools_found': 0,
+            'by_category': {},
+            'tools': [],
+            'error': str(e),
+            'message': 'Tool scan failed'
         })
 
 @tool_bp.route('/research/<tool_name>')

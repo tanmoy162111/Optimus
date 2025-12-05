@@ -22,6 +22,9 @@ scan_bp = Blueprint('scan', __name__)
 def get_active_scans():
     """Lazy load active_scans to avoid circular import"""
     from app import active_scans
+    print(f"[scan_routes] get_active_scans() called")
+    print(f"  active_scans id: {id(active_scans)}")
+    print(f"  active_scans keys: {list(active_scans.keys())}")
     return active_scans
 
 def get_scan_history():
@@ -73,14 +76,23 @@ def start_scan():
         
         # Add to active scans
         active_scans = get_active_scans()
+        print(f"[scan_routes] Before adding scan - active_scans keys: {list(active_scans.keys())}")
         active_scans[scan_id] = scan
+        logger.info(f"Added scan {scan_id} to active_scans. Active scans count: {len(active_scans)}")
+        print(f"[scan_routes] Added scan {scan_id} to active_scans")
+        print(f"  active_scans keys: {list(active_scans.keys())}")
         
-        logger.info(f"📝 Created scan {scan_id} for target {target}")
+        logger.info(f"Created scan {scan_id} for target {target}")
         
         # Start scan in background
         try:
             from core.scan_engine import get_scan_manager
-            manager = get_scan_manager()
+            # Pass the active_scans reference to ensure the scan manager has access to the same dictionary
+            from app import socketio
+            print(f"[scan_routes] Calling get_scan_manager with socketio and active_scans")
+            manager = get_scan_manager(socketio, active_scans)
+            print(f"[scan_routes] Got scan manager: {manager}")
+            print(f"  manager.active_scans keys: {list(manager.active_scans.keys()) if hasattr(manager, 'active_scans') and manager.active_scans else 'None'}")
             
             if manager is None:
                 raise Exception("Scan manager not initialized")
@@ -88,12 +100,12 @@ def start_scan():
             result = manager.start_scan(scan_id, target, options)
             
             if result:
-                logger.info(f"✅ Scan {scan_id} started successfully")
+                logger.info(f"Scan {scan_id} started successfully")
             else:
-                logger.warning(f"⚠️ Scan {scan_id} start returned False")
+                logger.warning(f"Scan {scan_id} start returned False")
                 
         except Exception as e:
-            logger.error(f"❌ Failed to start scan: {e}")
+            logger.error(f"Failed to start scan: {e}")
             import traceback
             traceback.print_exc()
             scan['status'] = 'error'
@@ -103,7 +115,7 @@ def start_scan():
         return jsonify(scan), 201
         
     except Exception as e:
-        logger.error(f"❌ Error in start_scan route: {e}")
+        logger.error(f"Error in start_scan route: {e}")
         import traceback
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
@@ -137,7 +149,9 @@ def stop_scan(scan_id):
     
     try:
         from core.scan_engine import get_scan_manager
-        manager = get_scan_manager()
+        # Pass the active_scans reference to ensure the scan manager has access to the same dictionary
+        from app import socketio, active_scans
+        manager = get_scan_manager(socketio, active_scans)
         if manager:
             manager.stop_scan(scan_id)
     except Exception as e:
@@ -163,7 +177,9 @@ def pause_scan(scan_id):
     
     try:
         from core.scan_engine import get_scan_manager
-        manager = get_scan_manager()
+        # Pass the active_scans reference to ensure the scan manager has access to the same dictionary
+        from app import socketio, active_scans
+        manager = get_scan_manager(socketio, active_scans)
         if manager:
             manager.pause_scan(scan_id)
     except Exception as e:
@@ -184,7 +200,9 @@ def resume_scan(scan_id):
     
     try:
         from core.scan_engine import get_scan_manager
-        manager = get_scan_manager()
+        # Pass the active_scans reference to ensure the scan manager has access to the same dictionary
+        from app import socketio, active_scans
+        manager = get_scan_manager(socketio, active_scans)
         if manager:
             manager.resume_scan(scan_id)
     except Exception as e:

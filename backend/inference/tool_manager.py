@@ -16,14 +16,22 @@ from .tool_knowledge_base import ToolKnowledgeBase
 # Import Config from the backend root
 from config import Config
 
-# Try to import hybrid tool system
+# Try to import hybrid tool system - FIXED IMPORT PATH
 HYBRID_SYSTEM_AVAILABLE = False
+ResolutionStatus = None  # Will be set if import succeeds
+ToolSource = None  # Will be set if import succeeds
 try:
-    from hybrid.hybrid_tool_system import get_hybrid_tool_system
+    from tools.hybrid_tool_system import (
+        get_hybrid_tool_system,
+        ResolutionStatus as _ResolutionStatus,
+        ToolSource as _ToolSource
+    )
+    ResolutionStatus = _ResolutionStatus
+    ToolSource = _ToolSource
     HYBRID_SYSTEM_AVAILABLE = True
-    print("Hybrid tool system available")
-except ImportError:
-    print("Warning: Hybrid tool system not available")
+    print(" Hybrid tool system available")
+except ImportError as e:
+    print(f" Warning: Hybrid tool system not available: {e}")
 
 logger = logging.getLogger(__name__)
 
@@ -62,17 +70,22 @@ class ToolManager:
         Returns:
             paramiko.SSHClient: Connected SSH client
         """
+        print(f"\n{'='*60}")
+        print(f"[SSH] Connecting to Kali VM: {Config.KALI_HOST}:{Config.KALI_PORT}")
+        print(f"[SSH] User: {Config.KALI_USER}, Timeout: {self.connection_timeout}s, Retries: {self.connection_retries}")
+        print(f"{'='*60}")
+        
         # If already connected and alive, reuse it
         if self.ssh_client is not None:
             try:
                 # Check if transport exists and is active
                 transport = self.ssh_client.get_transport()
                 if transport is not None and transport.is_active():
-                    print("[DEBUG] Reusing existing SSH connection")
+                    print("[SSH] Reusing existing SSH connection")
                     return self.ssh_client
             except Exception as e:
-                print(f"[DEBUG] Error checking existing SSH connection: {e}")
-                print("[DEBUG] Existing SSH connection is dead, reconnecting...")
+                print(f"[SSH] Error checking existing SSH connection: {e}")
+                print("[SSH] Existing SSH connection is dead, reconnecting...")
                 self.ssh_client = None
         
         # Create new connection
@@ -82,7 +95,7 @@ class ToolManager:
         # Retry connection
         for attempt in range(1, self.connection_retries + 1):
             try:
-                print(f"[DEBUG] SSH connection attempt {attempt}/{self.connection_retries}")
+                print(f"[SSH] Connection attempt {attempt}/{self.connection_retries}...")
                 self.ssh_client.connect(
                     hostname=Config.KALI_HOST,
                     port=Config.KALI_PORT,
@@ -99,24 +112,33 @@ class ToolManager:
                 if transport is not None:
                     transport.set_keepalive(self.keepalive_interval)
                 
-                print("✅ SSH connection established successfully")
+                print(f"[SSH]  Connection established successfully!")
+                
+                # Update hybrid tool system with the new SSH client if available
+                if self.hybrid_system:
+                    try:
+                        self.hybrid_system.update_ssh_client(self.ssh_client)
+                        print("[SSH] Updated hybrid tool system with new SSH client")
+                    except Exception as e:
+                        print(f"[SSH] Warning: Failed to update hybrid tool system with SSH client: {e}")
+                
                 return self.ssh_client
                 
             except socket.timeout as e:
-                print(f"⚠️ SSH connection timeout (attempt {attempt}/{self.connection_retries})")
+                print(f"[SSH]  Connection TIMEOUT (attempt {attempt}/{self.connection_retries})")
                 if attempt < self.connection_retries:
-                    wait_time = 5 * attempt
-                    print(f"   Retrying in {wait_time} seconds...")
+                    wait_time = 2 * attempt  # Reduced wait time
+                    print(f"[SSH] Retrying in {wait_time} seconds...")
                     time.sleep(wait_time)
                 else:
-                    print(f"❌ SSH connection failed after {self.connection_retries} attempts")
+                    print(f"[SSH]  Connection FAILED after {self.connection_retries} attempts")
                     raise Exception(f"SSH connection timeout: {e}")
                     
             except Exception as e:
-                print(f"❌ SSH connection error (attempt {attempt}/{self.connection_retries}): {e}")
+                print(f"[SSH]  Connection ERROR (attempt {attempt}/{self.connection_retries}): {e}")
                 if attempt < self.connection_retries:
-                    wait_time = 5 * attempt
-                    print(f"   Retrying in {wait_time} seconds...")
+                    wait_time = 2 * attempt  # Reduced wait time
+                    print(f"[SSH] Retrying in {wait_time} seconds...")
                     time.sleep(wait_time)
                 else:
                     raise
@@ -204,7 +226,13 @@ class ToolManager:
                 )
                 
                 # If resolution was successful, use the generated command
-                if resolution.status in ['resolved', 'partial']:
+                # Check both enum and string values for compatibility
+                status_resolved = (
+                    (ResolutionStatus and resolution.status in [ResolutionStatus.RESOLVED, ResolutionStatus.PARTIAL]) or
+                    (hasattr(resolution.status, 'value') and resolution.status.value in ['resolved', 'partial']) or
+                    (str(resolution.status).lower() in ['resolved', 'partial', 'resolutionstatus.resolved', 'resolutionstatus.partial'])
+                )
+                if status_resolved:
                     resolved_command = resolution.command
                     logger.info(f"Using hybrid system resolved command for {tool_name}: {resolved_command}")
                     
@@ -263,7 +291,7 @@ class ToolManager:
                     break  # Success, exit retry loop
                     
                 except Exception as conn_error:
-                    print(f"❌ SSH connection failed (attempt {connection_attempt}/{max_connection_retries}): {conn_error}")
+                    print(f" SSH connection failed (attempt {connection_attempt}/{max_connection_retries}): {conn_error}")
                     if connection_attempt < max_connection_retries:
                         wait_time = 5 * connection_attempt
                         print(f"   Retrying in {wait_time} seconds...")
@@ -286,7 +314,7 @@ class ToolManager:
                     'phase': phase,
                     'command': command[:200],  # Truncate for safety
                     'timestamp': start_time.isoformat()
-                })
+                }, room=f'scan_{scan_id}')
             
             # Execute with streaming
             exit_code, stdout, stderr = self.execute_with_streaming(
@@ -333,7 +361,7 @@ class ToolManager:
                     'findings_count': findings_count,
                     'execution_time': execution_time,
                     'success': (exit_code == 0)
-                })
+                }, room=f'scan_{scan_id}')
             
             return {
                 'tool_name': tool_name,
@@ -361,7 +389,7 @@ class ToolManager:
                     'tool': tool_name,
                     'phase': phase,
                     'error': str(e)
-                })
+                }, room=f'scan_{scan_id}')
             
             return {
                 'tool_name': tool_name,
@@ -495,7 +523,7 @@ class ToolManager:
                                 'tool': tool_name,
                                 'output': chunk,
                                 'timestamp': datetime.now().isoformat()
-                            })
+                            }, room=f'scan_{scan_id}')
                         
                         # Print to console (truncated)
                         print(chunk[:200], end='', flush=True)
@@ -513,7 +541,7 @@ class ToolManager:
                                 'scan_id': scan_id,
                                 'tool': tool_name,
                                 'error': chunk
-                            })
+                            }, room=f'scan_{scan_id}')
                 
                 # Small delay to prevent CPU spinning
                 time.sleep(0.1)
@@ -550,11 +578,11 @@ class ToolManager:
             return exit_code, stdout_str, stderr_str
             
         except socket.timeout as e:
-            print(f"❌ Socket timeout during command execution: {e}")
+            print(f" Socket timeout during command execution: {e}")
             return -1, '', f'Socket timeout: {e}'
             
         except Exception as e:
-            print(f"❌ Error during command execution: {e}")
+            print(f" Error during command execution: {e}")
             import traceback
             traceback.print_exc()
             return -1, '', f'Execution error: {e}'
@@ -1043,4 +1071,4 @@ class ToolManager:
         """Close SSH connection"""
         if self.ssh_client:
             self.ssh_client.close()
-            print("✅ SSH connection closed")
+            print(" SSH connection closed")

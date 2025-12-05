@@ -66,13 +66,15 @@ class ToolDiscovery:
             # Check which tools are available
             for tool in self.SECURITY_TOOLS:
                 result = self.ssh_client.execute_command(f"which {tool}")
-                if result and result.strip():
-                    tools.append({
-                        "name": tool,
-                        "path": result.strip(),
-                        "available": True,
-                        "source": "remote"
-                    })
+                if result and result.get('success', False):
+                    path = result.get('stdout', '').strip()
+                    if path:
+                        tools.append({
+                            "name": tool,
+                            "path": path,
+                            "available": True,
+                            "source": "remote"
+                        })
         except Exception as e:
             logger.error(f"Remote tool scan failed: {e}")
         
@@ -142,8 +144,8 @@ class ToolDiscovery:
                     else:
                         # For remote tools
                         result = self.ssh_client.execute_command(f"{tool_name} {flag}")
-                        if result:
-                            return result
+                        if result and result.get('success', False):
+                            return result.get('stdout', '')
                 except Exception:
                     continue
             
@@ -173,8 +175,8 @@ class ToolDiscovery:
                     else:
                         # For remote tools
                         result = self.ssh_client.execute_command(f"{tool_name} {flag}")
-                        if result:
-                            return result.split('\n')[0]
+                        if result and result.get('success', False):
+                            return result.get('stdout', '').split('\n')[0]
                 except Exception:
                     continue
             

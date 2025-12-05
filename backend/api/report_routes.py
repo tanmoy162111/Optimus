@@ -7,24 +7,36 @@ from reporting.report_generator import VulnerabilityReportGenerator
 import os
 import json
 
-# Global variable to store active scans (in production, this would be a database)
-active_scans = {}
+# Lazy load global scan storage from app.py
+def get_active_scans():
+    """Lazy load active_scans to avoid circular import"""
+    from app import active_scans
+    return active_scans
 
-report_bp = Blueprint('report', __name__)
+def get_scan_history():
+    """Lazy load scan_history to avoid circular import"""
+    from app import scan_history
+    return scan_history
 
 def get_from_history(scan_id):
     """
     Get scan from history storage
     """
     # In a real implementation, this would query a database
-    # For now, we'll just return None
+    # For now, we'll check the scan_history
+    scan_history = get_scan_history()
+    for scan in scan_history:
+        if scan.get('scan_id') == scan_id:
+            return scan
     return None
+
+report_bp = Blueprint('report', __name__)
 
 @report_bp.route('/generate/<scan_id>', methods=['GET'])
 def generate_report(scan_id):
     """Generate comprehensive report for scan"""
     # Get scan data
-    scan = active_scans.get(scan_id) or get_from_history(scan_id)
+    scan = get_active_scans().get(scan_id) or get_from_history(scan_id)
     
     if not scan:
         return jsonify({'error': 'Scan not found'}), 404
@@ -38,7 +50,7 @@ def generate_report(scan_id):
 @report_bp.route('/download/<scan_id>/<format>', methods=['GET'])
 def download_report(scan_id, format):
     """Download report in specified format (json)"""
-    scan = active_scans.get(scan_id) or get_from_history(scan_id)
+    scan = get_active_scans().get(scan_id) or get_from_history(scan_id)
     
     if not scan:
         return jsonify({'error': 'Scan not found'}), 404
@@ -70,7 +82,7 @@ def download_report(scan_id, format):
 @report_bp.route('/vulnerability/<scan_id>/<vuln_id>', methods=['GET'])
 def get_vulnerability_details(scan_id, vuln_id):
     """Get detailed information about specific vulnerability"""
-    scan = active_scans.get(scan_id) or get_from_history(scan_id)
+    scan = get_active_scans().get(scan_id) or get_from_history(scan_id)
     
     if not scan:
         return jsonify({'error': 'Scan not found'}), 404
@@ -88,7 +100,7 @@ def get_vulnerability_details(scan_id, vuln_id):
 @report_bp.route('/executive-summary/<scan_id>', methods=['GET'])
 def get_executive_summary(scan_id):
     """Get high-level executive summary for a scan"""
-    scan = active_scans.get(scan_id) or get_from_history(scan_id)
+    scan = get_active_scans().get(scan_id) or get_from_history(scan_id)
     
     if not scan:
         return jsonify({'error': 'Scan not found'}), 404
@@ -101,7 +113,7 @@ def get_executive_summary(scan_id):
 @report_bp.route('/remediation-plan/<scan_id>', methods=['GET'])
 def get_remediation_plan(scan_id):
     """Get prioritized remediation roadmap"""
-    scan = active_scans.get(scan_id) or get_from_history(scan_id)
+    scan = get_active_scans().get(scan_id) or get_from_history(scan_id)
     
     if not scan:
         return jsonify({'error': 'Scan not found'}), 404

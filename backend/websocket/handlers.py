@@ -12,8 +12,16 @@ logger = logging.getLogger(__name__)
 # Store connected clients
 connected_clients = {}
 
-# Import global scan storage from globals.py
-from globals import active_scans, scan_history
+# Lazy load global scan storage from app.py
+def get_active_scans():
+    """Lazy load active_scans to avoid circular import"""
+    from app import active_scans
+    return active_scans
+
+def get_scan_history():
+    """Lazy load scan_history to avoid circular import"""
+    from app import scan_history
+    return scan_history
 
 def register_socket_handlers(socketio):
     """Register all WebSocket event handlers."""
@@ -50,6 +58,10 @@ def register_socket_handlers(socketio):
             if request.sid in connected_clients:
                 connected_clients[request.sid]['rooms'].append(room)
             logger.info(f'Client {request.sid} joined room {room}')
+            # Update scan status to show client joined
+            active_scans = get_active_scans()
+            if scan_id in active_scans:
+                active_scans[scan_id]['clients'] = active_scans[scan_id].get('clients', 0) + 1
             emit('system_status', {'status': 'joined', 'message': f'Joined scan {scan_id}'})
     
     @socketio.on('leave_scan')

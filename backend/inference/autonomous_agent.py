@@ -20,26 +20,51 @@ class AutonomousPentestAgent:
     """Main autonomous pentesting orchestration engine"""
     
     def __init__(self, socketio=None):
+        print(f"\n[AutonomousPentestAgent] Initializing...")
+        
+        print("[AutonomousPentestAgent] Creating PhaseAwareToolSelector...")
         self.tool_selector = PhaseAwareToolSelector()
+        
+        print("[AutonomousPentestAgent] Creating PhaseController...")
         self.phase_controller = PhaseController()
+        
+        print("[AutonomousPentestAgent] Creating ToolManager...")
         self.tool_manager = ToolManager(socketio)  # Pass socketio to ToolManager
+        
+        print("[AutonomousPentestAgent] Creating VulnerabilityKnowledgeBase...")
         self.knowledge_base = VulnerabilityKnowledgeBase()
+        
+        print("[AutonomousPentestAgent] Creating DynamicToolDatabase...")
         self.tool_db = DynamicToolDatabase()
+        
+        print("[AutonomousPentestAgent] Creating StrategySelector...")
         self.strategy_selector = StrategySelector()  # NEW
+        
+        print("[AutonomousPentestAgent] Creating RealTimeLearningModule...")
         self.learning_module = RealTimeLearningModule()  # NEW
+        
         self.socketio = socketio  # Store socketio reference
+        print("[AutonomousPentestAgent]  Initialization complete!")
         logger.info("🤖 Autonomous Pentest Agent initialized")
     
     def run_autonomous_scan(self, target: str, scan_config: Dict = None) -> Dict[str, Any]:
         """Main autonomous scanning loop - FULLY INTELLIGENT"""
+        print(f"\n{'='*60}")
+        print(f"[AutonomousPentestAgent] run_autonomous_scan starting!")
+        print(f"  target: {target}")
+        print(f"  config: {scan_config}")
+        print(f"{'='*60}")
+        
         if scan_config is None:
             scan_config = {}
             
         # Check if this is fully autonomous mode
         if scan_config.get('self_directed', False):
             return self._run_fully_autonomous_scan(target, scan_config)
-            
+        
+        print("[AutonomousPentestAgent] Initializing scan state...")
         scan_state = self._initialize_scan_state(target, scan_config)
+        print(f"[AutonomousPentestAgent] Scan state initialized: {scan_state.get('scan_id')}")
         
         max_iterations = 50
         iteration = 0
@@ -125,6 +150,7 @@ class AutonomousPentestAgent:
             # Execute tool with attempt tracking
             if recommended_tools:
                 tool_to_execute = recommended_tools[0]
+                print(f"\n[AutonomousPentestAgent] Tool to execute: {tool_to_execute}")
                 
                 # Prevent infinite attempts
                 tool_execution_attempts[tool_to_execute] = tool_execution_attempts.get(tool_to_execute, 0) + 1
@@ -149,6 +175,7 @@ class AutonomousPentestAgent:
                             scan_state['blacklisted_tools'].append(tool_to_execute)
                         continue
                 
+                print(f"[AutonomousPentestAgent] Calling _execute_tool_real for {tool_to_execute}...")
                 result = self._execute_tool_real(
                     tool_to_execute, 
                     target,

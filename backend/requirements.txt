@@ -45,3 +45,4 @@ pytest-cov==4.1.0
 
 # Tools Module Dependencies
 aiohttp>=3.8.0
+threadpoolctl>=3.0.0

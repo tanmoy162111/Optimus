@@ -69,7 +69,7 @@ class HybridScanEngine:
                 'scan_id': scan_id,
                 'target': target,
                 'timestamp': scan_state['start_time']
-            })
+            }, room=f'scan_{scan_id}')
             
             logger.info(f"🚀 Starting hybrid autonomous scan for {target}")
             
@@ -108,7 +108,7 @@ class HybridScanEngine:
                 'findings_count': len(scan_state['findings']),
                 'time_elapsed': self._calculate_elapsed_time(scan_state),
                 'report': report
-            })
+            }, room=f'scan_{scan_id}')
             
         except Exception as e:
             logger.error(f"Scan orchestration error: {e}")
@@ -119,7 +119,7 @@ class HybridScanEngine:
             self.socketio.emit('scan_error', {
                 'scan_id': scan_state['scan_id'],
                 'error': str(e)
-            })
+            }, room=f'scan_{scan_id}')
     
     def _run_hybrid_scan(self, agent: AutonomousPentestAgent, target: str, 
                         scan_config: Dict, scan_state: Dict) -> Dict[str, Any]:
@@ -235,7 +235,7 @@ class HybridToolManager:
                         'confidence': resolution.confidence,
                         'status': resolution.status.value,
                         'explanation': resolution.explanation
-                    })
+                    }, room=f'scan_{scan_id}')
                 
                 # If resolution was successful, use the generated command
                 if resolution.status in [ResolutionStatus.RESOLVED, ResolutionStatus.PARTIAL]:
@@ -286,7 +286,7 @@ class HybridToolManager:
                     'tool': tool_name,
                     'command': command,
                     'source': resolution.source.value
-                })
+                }, room=f'scan_{scan_id}')
             
             # Execute using original tool manager but with resolved command
             # We'll need to modify the parameters to use the resolved command
@@ -316,7 +316,7 @@ class HybridToolManager:
                     'tool': tool_name,
                     'findings_count': findings_count,
                     'source_used': resolution.source.value
-                })
+                }, room=f'scan_{scan_id}')
             
             return result
             
@@ -327,7 +327,7 @@ class HybridToolManager:
                     'scan_id': scan_id,
                     'tool': tool_name,
                     'message': str(e)
-                })
+                }, room=f'scan_{scan_id}')
             
             return {
                 'success': False,

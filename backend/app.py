@@ -94,6 +94,9 @@ socketio = SocketIO(
 active_scans = {}
 scan_history = []
 
+print(f"[app.py] Initialized active_scans: {active_scans}")
+print(f"[app.py] active_scans id: {id(active_scans)}")
+
 # ========================================
 # IMPORT AND REGISTER ALL BLUEPRINTS
 # ========================================
@@ -180,8 +183,12 @@ try:
         scan_manager = get_scan_manager(socketio, active_scans)
         
         # Update hybrid tool system with SSH client from tool manager
-        if hybrid_tool_system and hasattr(scan_manager, 'tool_manager'):
-            hybrid_tool_system.update_ssh_client(scan_manager.tool_manager)
+        # Note: SSH client may not be connected yet, it connects on first tool execution
+        if hybrid_tool_system and hasattr(scan_manager, 'tool_manager') and scan_manager.tool_manager:
+            # Store reference to tool_manager so hybrid system can get ssh_client when needed
+            # The ssh_client is created lazily on first connect_ssh() call
+            hybrid_tool_system.tool_manager_ref = scan_manager.tool_manager
+            logger.info("Hybrid tool system linked to tool manager")
         
         app.register_blueprint(scan_bp, url_prefix='/api/scan')
         logger.info("Registered: scan_bp")
@@ -241,7 +248,7 @@ def main():
     """Run the application."""
     host = os.environ.get('HOST', '0.0.0.0')
     port = int(os.environ.get('PORT', 5000))
-    debug = os.environ.get('DEBUG', 'false').lower() == 'true'
+    debug = True  # os.environ.get('DEBUG', 'false').lower() == 'true'
     
     logger.info(f'Starting Optimus Backend on {host}:{port}')
     logger.info(f'Debug mode: {debug}')

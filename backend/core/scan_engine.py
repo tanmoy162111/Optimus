@@ -41,15 +41,39 @@ class ScanManager:
     
     def _init_components(self):
         """Initialize scan components"""
+        print(f"\n{'='*60}")
+        print("[ScanManager] Initializing components...")
+        print(f"{'='*60}")
+        
         try:
+            print("[ScanManager] Importing AutonomousPentestAgent...")
             from inference.autonomous_agent import AutonomousPentestAgent
-            from inference.tool_manager import ToolManager
+            print("[ScanManager]  AutonomousPentestAgent imported")
             
+            print("[ScanManager] Importing ToolManager...")
+            from inference.tool_manager import ToolManager
+            print("[ScanManager]  ToolManager imported")
+            
+            print("[ScanManager] Creating ToolManager instance...")
             self.tool_manager = ToolManager(self.socketio)
+            print("[ScanManager]  ToolManager created")
+            
             self.agent_class = AutonomousPentestAgent
             logger.info("Loaded: AutonomousPentestAgent, ToolManager")
+            print("[ScanManager]  All components initialized successfully!")
+            
         except ImportError as e:
             logger.error(f"Failed to import components: {e}")
+            print(f"\n[ScanManager]  IMPORT ERROR: {e}")
+            print("[ScanManager] This means scans will NOT work!")
+            print("[ScanManager] Check that all dependencies are installed:")
+            print("  pip install paramiko flask-socketio")
+            import traceback
+            traceback.print_exc()
+            
+        except Exception as e:
+            logger.error(f"Failed to initialize components: {e}")
+            print(f"\n[ScanManager]  INIT ERROR: {e}")
             import traceback
             traceback.print_exc()
     
@@ -58,10 +82,22 @@ class ScanManager:
         Start a new scan - THIS ACTUALLY WORKS!
         Creates agent and runs scan in background thread.
         """
-        logger.info(f"📥 start_scan called: scan_id={scan_id}, target={target}")
+        print(f"\n{'='*60}")
+        print(f"[ScanManager] start_scan called!")
+        print(f"  scan_id: {scan_id}")
+        print(f"  target: {target}")
+        print(f"  options: {options}")
+        print(f"  agent_class: {self.agent_class}")
+        print(f"  tool_manager: {self.tool_manager}")
+        print(f"  self.active_scans keys: {list(self.active_scans.keys()) if self.active_scans else 'None'}")
+        print(f"{'='*60}")
+        
+        logger.info(f"start_scan called: scan_id={scan_id}, target={target}")
         
         if scan_id not in self.active_scans:
             logger.error(f"Scan {scan_id} not in active_scans")
+            print(f"[ScanManager] ERROR: Scan {scan_id} not in active_scans!")
+            print(f"  Available scan IDs: {list(self.active_scans.keys()) if self.active_scans else 'None'}")
             return False
         
         options = options or {}
@@ -80,7 +116,7 @@ class ScanManager:
         thread.start()
         self.scan_threads[scan_id] = thread
         
-        logger.info(f"🚀 Started scan thread for {scan_id}")
+        logger.info(f"Started scan thread for {scan_id}")
         
         # Emit WebSocket event
         if self.socketio:
@@ -89,8 +125,8 @@ class ScanManager:
                     'scan_id': scan_id,
                     'target': target,
                     'timestamp': datetime.utcnow().isoformat()
-                })
-                logger.info(f"📡 Emitted scan_started event")
+                }, room=f'scan_{scan_id}')
+                logger.info(f"Emitted scan_started event")
             except Exception as e:
                 logger.warning(f"WebSocket emit failed: {e}")
         
@@ -98,24 +134,31 @@ class ScanManager:
     
     def _run_scan_thread(self, scan_id: str, target: str, options: Dict[str, Any]):
         """Execute scan in background thread"""
-        logger.info(f"🔄 Scan thread started for {scan_id}")
+        logger.info(f"Scan thread started for {scan_id}")
+        print(f"\n{'='*60}")
+        print(f"[SCAN THREAD] Starting scan {scan_id} for target: {target}")
+        print(f"{'='*60}\n")
         
         try:
             scan_state = self.active_scans.get(scan_id)
             if not scan_state:
                 logger.error(f"Scan state not found for {scan_id}")
+                print(f"[SCAN THREAD] ERROR: Scan state not found for {scan_id}")
                 return
             
             if not self.agent_class:
                 logger.error("Agent class not initialized!")
+                print(f"[SCAN THREAD] ERROR: Agent class not initialized!")
                 scan_state['status'] = 'error'
                 scan_state['error'] = 'Scan agent not initialized'
                 self._emit_error(scan_id, 'Scan agent not initialized')
                 return
             
             # Create the autonomous agent
-            logger.info(f"🤖 Creating AutonomousPentestAgent for scan {scan_id}")
+            logger.info(f"Creating AutonomousPentestAgent for scan {scan_id}")
+            print(f"[SCAN THREAD] Creating AutonomousPentestAgent...")
             agent = self.agent_class(socketio=self.socketio)
+            print(f"[SCAN THREAD] Agent created successfully!")
             
             # Prepare config
             scan_config = {
@@ -126,27 +169,31 @@ class ScanManager:
                 'scan_id': scan_id,
             }
             
-            logger.info(f"⚙️ Scan config: {scan_config}")
+            logger.info(f" Scan config: {scan_config}")
+            print(f"[SCAN THREAD] Config: {scan_config}")
             
             # Emit phase transition
             self._emit_phase_transition(scan_id, 'initializing', 'reconnaissance')
             
             # RUN THE ACTUAL SCAN
-            logger.info(f"▶️ Calling agent.run_autonomous_scan()")
+            logger.info(f"Calling agent.run_autonomous_scan()")
+            print(f"[SCAN THREAD] Starting autonomous scan loop...")
+            print(f"[SCAN THREAD] This will attempt to connect to Kali VM at {self._get_kali_info()}")
             result = agent.run_autonomous_scan(target, scan_config)
-            logger.info(f"✅ Scan execution completed")
+            logger.info(f" Scan execution completed")
+            print(f"[SCAN THREAD] Scan loop completed!")
             
             # Check if stopped
             if self._stop_flags.get(scan_id):
                 scan_state['status'] = 'stopped'
-                logger.info(f"⏹️ Scan {scan_id} was stopped by user")
+                logger.info(f"Scan {scan_id} was stopped by user")
             else:
                 # Update with results
                 scan_state['findings'] = result.get('findings', [])
                 scan_state['tools_executed'] = result.get('tools_executed', [])
                 scan_state['coverage'] = result.get('coverage', 0.0)
                 scan_state['status'] = 'completed'
-                logger.info(f"✅ Scan {scan_id} completed successfully!")
+                logger.info(f" Scan {scan_id} completed successfully!")
             
             scan_state['end_time'] = datetime.utcnow().isoformat()
             
@@ -162,11 +209,11 @@ class ScanManager:
             # Emit completion
             self._emit_complete(scan_id, scan_state)
             
-            logger.info(f"📊 Scan {scan_id} results: {len(scan_state.get('findings', []))} findings, "
+            logger.info(f"Scan {scan_id} results: {len(scan_state.get('findings', []))} findings, "
                        f"{len(scan_state.get('tools_executed', []))} tools executed")
             
         except Exception as e:
-            logger.error(f"❌ Scan error: {e}")
+            logger.error(f" Scan error: {e}")
             import traceback
             traceback.print_exc()
             
@@ -184,7 +231,7 @@ class ScanManager:
                     'scan_id': scan_id,
                     'from': from_phase,
                     'to': to_phase
-                })
+                }, room=f'scan_{scan_id}')
             except Exception as e:
                 logger.warning(f"Failed to emit phase_transition: {e}")
     
@@ -197,7 +244,7 @@ class ScanManager:
                     'findings_count': len(scan_state.get('findings', [])),
                     'time_elapsed': scan_state.get('time_elapsed', 0),
                     'status': scan_state['status']
-                })
+                }, room=f'scan_{scan_id}')
             except Exception as e:
                 logger.warning(f"Failed to emit scan_complete: {e}")
     
@@ -208,28 +255,36 @@ class ScanManager:
                 self.socketio.emit('scan_error', {
                     'scan_id': scan_id,
                     'error': error
-                })
+                }, room=f'scan_{scan_id}')
             except Exception as e:
                 logger.warning(f"Failed to emit scan_error: {e}")
+    
+    def _get_kali_info(self):
+        """Get Kali VM connection info for logging"""
+        try:
+            from config import Config
+            return f"{Config.KALI_HOST}:{Config.KALI_PORT}"
+        except:
+            return "unknown"
     
     def stop_scan(self, scan_id: str):
         """Stop a running scan"""
         self._stop_flags[scan_id] = True
-        logger.info(f"⏹️ Stop signal sent for {scan_id}")
+        logger.info(f"Stop signal sent for {scan_id}")
     
     def pause_scan(self, scan_id: str):
         """Pause a scan"""
         self._pause_flags[scan_id] = True
         if scan_id in self.active_scans:
             self.active_scans[scan_id]['status'] = 'paused'
-        logger.info(f"⏸️ Paused scan {scan_id}")
+        logger.info(f"Paused scan {scan_id}")
     
     def resume_scan(self, scan_id: str):
         """Resume a scan"""
         self._pause_flags[scan_id] = False
         if scan_id in self.active_scans:
             self.active_scans[scan_id]['status'] = 'running'
-        logger.info(f"▶️ Resumed scan {scan_id}")
+        logger.info(f"Resumed scan {scan_id}")
     
     def execute_tool(self, scan_id: str, tool: str, target: str, options: Dict = None):
         """Execute a specific tool"""
@@ -285,20 +340,42 @@ def get_scan_manager(socketio=None, active_scans_ref=None) -> ScanManager:
     """Get or create scan manager singleton"""
     global _scan_manager
     
-    if _scan_manager is None:
+    print(f"[get_scan_manager] Called with:")
+    print(f"  socketio: {socketio}")
+    print(f"  active_scans_ref: {active_scans_ref}")
+    print(f"  _scan_manager exists: {_scan_manager is not None}")
+    
+    # Always update the scan manager with the latest references if provided
+    if _scan_manager is not None and socketio is not None and active_scans_ref is not None:
+        # Update the existing scan manager with new references
+        print(f"[get_scan_manager] Updating existing ScanManager instance")
+        _scan_manager.socketio = socketio
+        _scan_manager.active_scans = active_scans_ref
+        print(f"[ScanManager] Updated existing instance with new references")
+        print(f"  socketio: {socketio}")
+        print(f"  active_scans_ref keys: {list(active_scans_ref.keys()) if active_scans_ref else 'None'}")
+    elif _scan_manager is None:
         logger.info("Creating new ScanManager instance")
         # If parameters are provided, use them
         if socketio is not None and active_scans_ref is not None:
             _scan_manager = ScanManager(socketio, active_scans_ref)
+            print(f"[ScanManager] Created new instance with references")
+            print(f"  socketio: {socketio}")
+            print(f"  active_scans_ref keys: {list(active_scans_ref.keys()) if active_scans_ref else 'None'}")
         else:
             # Fallback to importing from app (may cause circular import)
             try:
                 from app import socketio, active_scans
                 _scan_manager = ScanManager(socketio, active_scans)
+                print(f"[ScanManager] Created new instance with app imports")
+                print(f"  socketio: {socketio}")
+                print(f"  active_scans keys: {list(active_scans.keys()) if active_scans else 'None'}")
             except ImportError:
                 # Create with None values if import fails
                 _scan_manager = ScanManager(None, {})
+                print(f"[ScanManager] Created new instance with empty references")
     
+    print(f"[get_scan_manager] Returning _scan_manager: {_scan_manager}")
     return _scan_manager
 
 
@@ -309,4 +386,10 @@ def get_workflow_engine():
 
 def get_tool_manager():
     """Get the tool manager from scan manager"""
-    return get_scan_manager().tool_manager
+    # Try to get socketio and active_scans from app module
+    try:
+        from app import socketio, active_scans
+        return get_scan_manager(socketio, active_scans).tool_manager
+    except ImportError:
+        # Fallback to calling without parameters
+        return get_scan_manager().tool_manager
