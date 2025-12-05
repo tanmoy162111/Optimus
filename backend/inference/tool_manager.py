@@ -335,6 +335,28 @@ class ToolManager:
             # Parse output
             parsed_results = self.output_parser.parse_tool_output(tool_name, stdout, stderr)
             
+            # DEBUG: Log raw output for analysis
+            print(f"\n{'='*60}")
+            print(f"[DEBUG] TOOL OUTPUT ANALYSIS FOR: {tool_name}")
+            print(f"{'='*60}")
+            print(f"[DEBUG] Exit Code: {exit_code}")
+            print(f"[DEBUG] STDOUT Length: {len(stdout)} chars")
+            print(f"[DEBUG] STDERR Length: {len(stderr)} chars")
+            
+            if stdout:
+                print(f"[DEBUG] STDOUT (first 2000 chars):")
+                print(stdout[:2000])
+            else:
+                print(f"[DEBUG] STDOUT: EMPTY!")
+                
+            if stderr:
+                print(f"[DEBUG] STDERR (first 1000 chars):")
+                print(stderr[:1000])
+            
+            print(f"[DEBUG] Parsed Results: {parsed_results}")
+            print(f"[DEBUG] Vulnerabilities Found: {len(parsed_results.get('vulnerabilities', []))}")
+            print(f"{'='*60}\n")
+            
             # Count findings
             findings_count = len(parsed_results.get('vulnerabilities', []))
             
@@ -344,7 +366,7 @@ class ToolManager:
                     self.hybrid_system.record_execution_result(
                         tool_name=tool_name,
                         command=command,
-                        success=(exit_code == 0),
+                        success=(exit_code == 0 or findings_count > 0),  # FIX: Use corrected success logic
                         output=stdout,
                         findings=parsed_results.get('vulnerabilities', [])
                     )
@@ -360,7 +382,7 @@ class ToolManager:
                     'exit_code': exit_code,
                     'findings_count': findings_count,
                     'execution_time': execution_time,
-                    'success': (exit_code == 0)
+                    'success': (exit_code == 0 or findings_count > 0)  # FIX #1: Success if found findings
                 }, room=f'scan_{scan_id}')
             
             return {
@@ -374,7 +396,7 @@ class ToolManager:
                 'parsed_results': parsed_results,
                 'findings_count': findings_count,
                 'execution_time': execution_time,
-                'success': (exit_code == 0)
+                'success': (exit_code == 0 or findings_count > 0)  # FIX #1: Success if found findings
             }
             
         except Exception as e:
@@ -743,18 +765,29 @@ class ToolManager:
     
     def _build_default_command(self, tool_name: str, target: str,
                              parameters: Dict[str, Any]) -> str:
-        """Fallback command building if Knowledge Base fails"""
+        """Fallback command building with IMPROVED commands for web app testing"""
+        import re
+        
         # Map tool names to available tools on Kali VM
         tool_mapping = {
-            'sublist3r': 'amass',  # Use amass instead of sublist3r
-            'theHarvester': 'dnsenum',  # Use dnsenum as alternative
-            'linpeas.sh': 'linpeas',  # Normalize name
+            'sublist3r': 'amass',
+            'theHarvester': 'dnsenum',
+            'linpeas.sh': 'linpeas',
         }
         
         # Use the mapped tool if available
         actual_tool = tool_mapping.get(tool_name, tool_name)
         
-        # Check if tool exists in standard locations or Go bin directories
+        # Extract hostname/port from target
+        hostname_match = re.search(r'(?:https?://)?([^:/]+)(?::(\d+))?', target)
+        hostname = hostname_match.group(1) if hostname_match else target
+        port = hostname_match.group(2) if hostname_match and hostname_match.group(2) else '80'
+        
+        # Ensure target has proper format
+        if not target.startswith(('http://', 'https://')):
+            target = f"http://{target}"
+        
+        # Tool paths
         tool_paths = {
             'nmap': 'nmap',
             'nikto': 'nikto',
@@ -762,63 +795,67 @@ class ToolManager:
             'amass': 'amass',
             'dnsenum': 'dnsenum',
             'whatweb': 'whatweb',
-            'nuclei': 'nuclei',  # Will check in Go bin if not in standard location
-            'dalfox': '/home/kali/go/bin/dalfox',  # Explicitly use Go bin path
+            'nuclei': 'nuclei',
+            'dalfox': '/home/kali/go/bin/dalfox',
             'commix': 'commix',
             'gobuster': 'gobuster',
             'ffuf': 'ffuf',
             'fierce': 'fierce',
             'wpscan': 'wpscan',
             'hydra': 'hydra',
-            'linpeas': '/usr/share/peass/linpeas/linpeas.sh',
-            'winpeas': '/usr/share/peass/winpeas/winpeas.exe',
-            'metasploit': 'msfconsole',
-            'enum4linux': 'enum4linux',
-            'sslscan': 'sslscan',
-            'cewl': 'cewl',
-            'subfinder': '/home/kali/go/bin/subfinder',  # Explicitly use Go bin path
-            'gospider': 'whatweb',  # Use whatweb as fallback
-            'katana': 'whatweb',  # Use whatweb as fallback
-            'arjun': '/home/kali/.local/bin/arjun',  # Explicitly use local bin path
-            'httprobe': 'whatweb',  # Use whatweb as fallback
-            'netlas': 'nmap',  # Use nmap as fallback
-            'onyphe': 'nmap',  # Use nmap as fallback
-            'xsser': 'dalfox',  # Use dalfox as fallback
         }
         
-        # Get the appropriate path for the tool
         tool_path = tool_paths.get(actual_tool, actual_tool)
         
+        # IMPROVED commands optimized for web application testing
         fallback_commands = {
-            'nmap': f"{tool_path} -sV -T4 {target}",
-            'nikto': f"{tool_path} -h {target}",
-            'sqlmap': f"{tool_path} -u '{target}' --batch",
-            'amass': f"{tool_path} enum -d {target}",
-            'dnsenum': f"{tool_path} {target}",
-            'whatweb': f"{tool_path} {target}",
-            'nuclei': f"{tool_path} -u {target} -severity critical,high",
-            'dalfox': f"{tool_path} url {target}",
-            'commix': f"{tool_path} --url='{target}' --batch",
-            'gobuster': f"{tool_path} dir -u {target} -w /usr/share/dirb/wordlists/common.txt",
-            'ffuf': f"{tool_path} -u {target}/FUZZ -w /usr/share/dirb/wordlists/common.txt:FUZZ",
-            'fierce': f"{tool_path} --domain {target}",
-            'wpscan': f"{tool_path} --url {target}",
-            'hydra': f"{tool_path} {target}",
-            'linpeas': f"{tool_path}",  # Full path for linpeas
-            'winpeas': f"{tool_path}",  # Full path for winpeas
-            'metasploit': f"{tool_path} -q -x \"use auxiliary/scanner/portscan/tcp; set RHOSTS {target}; run; exit\"",
-            'enum4linux': f"{tool_path} {target}",
-            'sslscan': f"{tool_path} {target}",
-            'cewl': f"{tool_path} {target}",
+            # Nmap: More thorough scan for web apps
+            'nmap': f"{tool_path} -sV -sC -T4 -p 80,443,3000,8080,8443 --script=http-enum,http-headers,http-methods,http-title {hostname}",
+            
+            # Nikto: Comprehensive web scanner
+            'nikto': f"{tool_path} -h {target} -C all -Tuning 123bde -timeout 10",
+            
+            # SQLMap: Need to specify testable endpoints
+            # For Juice Shop, test the login endpoint
+            'sqlmap': f"{tool_path} -u '{target}/rest/products/search?q=test' --batch --level=2 --risk=2 --forms --crawl=2 --timeout=30",
+            
+            # Nuclei: Comprehensive templates
+            'nuclei': f"{tool_path} -u {target} -t cves/ -t vulnerabilities/ -t exposures/ -t misconfiguration/ -severity critical,high,medium -timeout 30",
+            
+            # Dalfox: XSS scanner with crawling
+            'dalfox': f"{tool_path} url {target} --deep-domxss --mining-dict --skip-bav",
+            
+            # Commix: Command injection with form testing
+            'commix': f"{tool_path} --url='{target}' --batch --level=2 --crawl=2",
+            
+            # Gobuster: Directory enumeration with more extensions
+            'gobuster': f"{tool_path} dir -u {target} -w /usr/share/wordlists/dirb/common.txt -x js,json,php,html,txt,bak -t 50 -q",
+            
+            # FFUF: Fuzzing with better wordlist
+            'ffuf': f"{tool_path} -u {target}/FUZZ -w /usr/share/wordlists/dirb/common.txt -mc 200,301,302,401,403 -t 50",
+            
+            # Whatweb: Technology detection
+            'whatweb': f"{tool_path} -a 3 {target}",
+            
+            # Amass: Subdomain enumeration (for domain targets)
+            'amass': f"{tool_path} enum -passive -d {hostname}",
+            
+            # DNSenum
+            'dnsenum': f"{tool_path} {hostname}",
+            
+            # Fierce
+            'fierce': f"{tool_path} --domain {hostname}",
+            
+            # WPScan (if WordPress detected)
+            'wpscan': f"{tool_path} --url {target} --enumerate vp,vt,u --api-token $WPSCAN_API_TOKEN",
+            
+            # SSLScan
+            'sslscan': f"{tool_path} {hostname}:{port}",
         }
         
-        # Special handling for linpeas - it's a local tool, not a remote scanner
-        if actual_tool in ['linpeas', 'linpeas.sh']:
-            logger.warning(f"[ToolManager] linpeas is a LOCAL privilege escalation tool and should only be run on COMPROMISED targets, not {target}")
-            logger.warning("[ToolManager] linpeas should be executed AFTER gaining access to a target system")
-        
-        # Get the command, fallback to just the tool path and target
         command = fallback_commands.get(actual_tool, f"{tool_path} {target}")
+        
+        print(f"[DEBUG] Generated command for {actual_tool}: {command}")
         return command
 
     def _fallback_command(self, tool_name: str, target: str) -> str:

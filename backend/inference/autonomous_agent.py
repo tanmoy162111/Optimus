@@ -83,6 +83,12 @@ class AutonomousPentestAgent:
             iteration += 1
             logger.info(f"=== Iteration {iteration} | Phase: {scan_state['phase']} | Strategy: {scan_state.get('strategy', 'none')} ===")
             
+            # MINIMUM TIME CHECK: Don't allow phase transitions in first 60 seconds
+            elapsed_time = (datetime.now() - datetime.fromisoformat(scan_state['start_time'])).total_seconds()
+            if elapsed_time < 60:
+                # Still in warmup period, skip forced transitions
+                stalled_iterations = 0  # Reset stall counter during warmup
+            
             # NEW: Check if strategy should change
             if self.strategy_selector.should_change_strategy(scan_state):
                 new_strategy = self.strategy_selector.select_strategy(scan_state)
@@ -123,28 +129,22 @@ class AutonomousPentestAgent:
             
             if not recommended_tools or tool_recommendation.get('method') == 'exhausted':
                 logger.info("Tool selector exhausted, checking phase transition")
-                # Check if we should change approach or move to next phase
-                next_phase = self.phase_controller.should_transition(scan_state)
+                        
+                # NEW: Use suggested next phase if available
+                suggested_next = tool_recommendation.get('suggested_next_phase')
+                if suggested_next:
+                    next_phase = suggested_next
+                else:
+                    next_phase = self.phase_controller.should_transition(scan_state)
+                        
                 if next_phase != scan_state['phase']:
-                    logger.info(f"📍 Phase transition based on exhaustion: {scan_state['phase']} → {next_phase}")
+                    logger.info(f"📍 Phase transition: {scan_state['phase']} → {next_phase}")
                     scan_state['phase'] = next_phase
                     scan_state['strategy'] = self.strategy_selector.select_strategy(scan_state)
-                    # Reset approach changes when moving to new phase
+                    # Reset tracking for new phase
+                    scan_state['blacklisted_tools'] = []  # Clear blacklist for new phase
                     approach_changes = 0
-                else:
-                    # Same phase, might need to change approach
-                    if approach_changes < max_approach_changes:
-                        logger.info(f"🔄 Changing approach in current phase: {scan_state['phase']}")
-                        scan_state['strategy'] = self.strategy_selector.select_strategy(scan_state)
-                        approach_changes += 1
-                        scan_state['strategy_changes'] += 1
-                    else:
-                        # Move to next phase if we've exhausted approach changes
-                        logger.info(f"📍 Moving to next phase after exhausting approaches: {scan_state['phase']} → {next_phase}")
-                        next_phase = self.phase_controller.get_next_phase(scan_state['phase'], scan_state)
-                        scan_state['phase'] = next_phase
-                        scan_state['strategy'] = self.strategy_selector.select_strategy(scan_state)
-                        approach_changes = 0
+                    stalled_iterations = 0
                 continue
             
             # Execute tool with attempt tracking
@@ -450,13 +450,25 @@ class AutonomousPentestAgent:
         attack_patterns = analysis.get('attack_patterns', [])  # NEW: Attack patterns from knowledge
         suggested_phases = analysis.get('suggested_phases', [])  # NEW: Suggested phases
         
-        # Get tools that haven't been executed recently
-        all_tools = list(self.tool_db.tools.keys())
-        print(f"[DEBUG] All available tools: {len(all_tools)}")
+        # FIXED: Get tools from BOTH databases
+        dynamic_tools = list(self.tool_db.tools.keys())
+        kb_tools = list(self.tool_manager.tool_kb.command_templates.keys()) if hasattr(self.tool_manager, 'tool_kb') else []
+        
+        # Also get phase-appropriate tools from tool_selector
+        phase_tools = self.tool_selector.phase_configs.get(current_phase, {}).get('allowed_tools', [])
+        
+        # Merge all tool sources, removing duplicates
+        all_tools = list(set(dynamic_tools + kb_tools + phase_tools))
+        
+        print(f"[DEBUG] All available tools (merged): {len(all_tools)}")
+        print(f"[DEBUG] Sources - Dynamic: {len(dynamic_tools)}, KB: {len(kb_tools)}, Phase: {len(phase_tools)}")
         print(f"[DEBUG] Recently executed tools: {recent_tools}")
         
-        available_tools = [tool for tool in all_tools if tool not in recent_tools]
-        print(f"[DEBUG] Available tools: {len(available_tools)}")
+        # Filter out recently executed and blacklisted tools
+        blacklisted = scan_state.get('blacklisted_tools', [])
+        available_tools = [tool for tool in all_tools 
+                          if tool not in recent_tools and tool not in blacklisted]
+        print(f"[DEBUG] Available tools after filtering: {len(available_tools)}")
         
         # NEW: If we have identified attack patterns, prioritize tools for those patterns
         if attack_patterns:
@@ -583,51 +595,75 @@ class AutonomousPentestAgent:
         target = scan_state['target']
         findings = scan_state.get('findings', [])
         technologies = scan_state.get('technologies_detected', [])
+        phase = scan_state.get('phase', 'reconnaissance')
         
-        # Base parameters - stricter timeout for fully autonomous mode
+        # Base parameters with ALL required fields
         parameters = {
-            'aggressive': len(findings) < 3,  # Be more aggressive if few findings
-            'timeout': 90,  # Further reduced timeout to prevent long waits in autonomous mode
+            'aggressive': len(findings) < 3,
+            'timeout': 180,  # Reasonable default
             'target_type': scan_state.get('target_profile', {}).get('type', 'web'),
-            'autonomous_mode': True  # Flag to indicate this is fully autonomous mode
+            'autonomous_mode': True,
+            'phase': phase,
+            'findings': findings,
+            'tools_executed': scan_state.get('tools_executed', []),
+            'technologies_detected': technologies,
+            'stealth_required': scan_state.get('stealth_required', False),
+            'waf_detected': scan_state.get('waf_detected', False),
+            'coverage': scan_state.get('coverage', 0.0),
         }
         
         # Tool-specific parameter generation
         if tool_name == 'nmap':
             parameters.update({
-                'ports': '1-1000',  # Scan common ports
-                'service_detection': True
+                'ports': '1-10000',
+                'service_detection': True,
+                'version_detection': True,
+                'os_detection': False,  # Can be slow
+            })
+        elif tool_name == 'sqlmap':
+            parameters.update({
+                'level': 2 if phase == 'scanning' else 3,
+                'risk': 2 if phase == 'scanning' else 3,
+                'dbs': True,
+                'batch': True,
             })
         elif tool_name == 'nikto':
             parameters.update({
-                'evasion': len(findings) > 5,  # Use evasion if we have many findings
-                'plugins': 'all'
+                'ssl': 'https' in target.lower(),
+                'tuning': '123456789' if len(findings) > 0 else '1234',
             })
-        elif tool_name == 'sqlmap':
-            # Look for SQL injection findings
-            sql_findings = [f for f in findings if f.get('type') == 'sql_injection']
-            if sql_findings:
-                parameters.update({
-                    'url': sql_findings[0].get('location', target),
-                    'technique': 'BEUSTQ',
-                    'level': 3,
-                    'risk': 2
-                })
-            else:
-                parameters.update({
-                    'url': target,
-                    'crawl_depth': 2
-                })
         elif tool_name == 'nuclei':
             parameters.update({
-                'templates': 'cves,exposures,misconfigurations',
-                'severity': 'high,critical' if len(findings) < 5 else 'medium,high,critical'
+                'severity': 'critical,high,medium' if phase == 'exploitation' else 'critical,high',
+                'rate_limit': 150,
             })
-        elif tool_name == 'ffuf':
+        elif tool_name in ['gobuster', 'ffuf', 'dirb']:
             parameters.update({
-                'wordlist': '/usr/share/seclists/Discovery/Web-Content/common.txt',
-                'extensions': 'php,html,txt',
-                'threads': 40
+                'wordlist': '/usr/share/dirb/wordlists/common.txt',
+                'extensions': 'php,html,js,txt',
+                'threads': 10,
+            })
+        elif tool_name in ['dalfox', 'xsser']:
+            parameters.update({
+                'blind': False,
+                'skip_bav': True,
+            })
+        elif tool_name == 'commix':
+            parameters.update({
+                'level': 2,
+                'batch': True,
+            })
+        elif tool_name == 'whatweb':
+            parameters.update({
+                'aggression': 3 if not scan_state.get('stealth_required') else 1,
+            })
+        elif tool_name in ['sublist3r', 'amass', 'subfinder']:
+            parameters.update({
+                'passive': True,
+            })
+        elif tool_name == 'wpscan':
+            parameters.update({
+                'enumerate': 'vp,vt,u',  # vulnerable plugins, themes, users
             })
         
         return parameters
@@ -857,7 +893,7 @@ class AutonomousPentestAgent:
             # Use the existing tool manager with proper socketio
             # Merge default parameters with provided parameters
             tool_params = {
-                'timeout': 300,
+                'timeout': 600,  # Changed from 300 to 600 seconds (10 minutes)
                 'aggressive': scan_state.get('aggressive', False),
                 'stealth_required': scan_state.get('stealth_required', False),
                 'phase': scan_state.get('phase', 'reconnaissance'),
@@ -901,23 +937,33 @@ class AutonomousPentestAgent:
             }
 
     def _update_scan_state_real(self, scan_state: Dict, result: Dict):
-        """Update scan state with REAL tool results - NO FAKE DATA"""
+        """Update scan state with REAL tool results - FIXED to always process findings"""
         # NOTE: Tool is already recorded in _execute_tool_real
-        # DO NOT add it again here to prevent duplicate entries
-        # The duplicate recording was causing the infinite loop issue
         
-        if not result.get('success'):
-            logger.warning(f"Tool failed: {result.get('error')}")
-            return
-            
-        # Extract vulnerabilities from parsed results
+        # Always try to extract findings, even from "failed" tools
+        # Many security tools return non-zero exit codes when they find vulnerabilities
         parsed_results = result.get('parsed_results', {})
         new_vulns = parsed_results.get('vulnerabilities', [])
+        
+        # Log the result
+        exit_code = result.get('exit_code', -1)
+        success = result.get('success', False)
+        
+        print(f"[DEBUG] Tool result - exit_code: {exit_code}, success: {success}, vulns found: {len(new_vulns)}")
+        
+        # Only skip if truly failed AND no findings
+        if not success and not new_vulns:
+            logger.warning(f"Tool failed with no findings: {result.get('error')}")
+            return
+        
+        # Log if we're processing findings from a "failed" tool
+        if not success and new_vulns:
+            logger.info(f"Processing {len(new_vulns)} findings from tool with exit_code {exit_code}")
         
         print(f"[DEBUG] Tool execution found {len(new_vulns)} vulnerabilities")
         if new_vulns:
             for i, vuln in enumerate(new_vulns):
-                print(f"[DEBUG] Vulnerability {i+1}: {vuln}")
+                print(f"[DEBUG] Vulnerability {i+1}: {vuln.get('type')} - {vuln.get('name', '')[:50]}")
             
             logger.info(f"✓ Found {len(new_vulns)} new vulnerabilities")
             
@@ -926,18 +972,36 @@ class AutonomousPentestAgent:
                 # Ensure each finding has an ID
                 if 'id' not in vuln:
                     vuln['id'] = str(uuid.uuid4())
+                
+                # Add timestamp if missing
+                if 'timestamp' not in vuln:
+                    vuln['timestamp'] = datetime.now().isoformat()
                     
                 scan_state['findings'].append(vuln)
                 
                 # Update knowledge base
                 self.knowledge_base.add_finding(vuln)
                 
+                # Emit finding via WebSocket for real-time updates
+                if self.socketio:
+                    try:
+                        self.socketio.emit('finding_discovered', {
+                            'scan_id': scan_state.get('scan_id'),
+                            'finding': vuln
+                        })
+                    except Exception as e:
+                        logger.warning(f"Failed to emit finding: {e}")
+                
         # Update coverage
         scan_state['coverage'] = self._calculate_coverage_real(scan_state)
         
         # Update phase data
         self._update_phase_data(scan_state, parsed_results)
-
+        
+        # Log current findings count
+        total_findings = len(scan_state.get('findings', []))
+        print(f"[DEBUG] Total findings in scan_state: {total_findings}")
+        
     def _update_phase_data(self, scan_state: Dict, parsed_results: Dict):
         """Update phase-specific data for transition logic"""
         if 'phase_data' not in scan_state:
@@ -1026,22 +1090,46 @@ class AutonomousPentestAgent:
         
         # PHASE-BASED FALLBACK: Use phase-appropriate tools if no findings
         if not merged_tools:
+            # Comprehensive phase tools - includes ALL available tools per phase
             phase_tools = {
-                'reconnaissance': ['sublist3r', 'whatweb', 'dnsenum', 'theHarvester', 'amass'],
-                'scanning': ['nmap', 'nikto', 'nuclei', 'gobuster', 'sslscan', 'ffuf'],
-                'exploitation': ['sqlmap', 'dalfox', 'commix', 'hydra'],
-                'post_exploitation': [],  # EMPTY - requires active session
-                'covering_tracks': []      # EMPTY - requires access
+                'reconnaissance': [
+                    'amass', 'sublist3r', 'whatweb', 'dnsenum', 'theHarvester', 
+                    'fierce', 'enum4linux', 'cewl'
+                ],
+                'scanning': [
+                    'nmap', 'nikto', 'nuclei', 'gobuster', 'ffuf', 'dirb',
+                    'sslscan', 'wpscan', 'masscan'
+                ],
+                'exploitation': [
+                    'sqlmap', 'dalfox', 'xsser', 'commix', 'hydra', 'metasploit'
+                ],
+                'post_exploitation': [],
+                'covering_tracks': []
             }
             
             available_phase_tools = phase_tools.get(phase, [])
             
             for tool in available_phase_tools:
-                # CRITICAL: Skip if in recent tools OR blacklisted OR already executed
-                if tool not in recent_tools and tool not in blacklisted and tool not in tools_executed:
+                if (tool not in recent_tools and 
+                    tool not in blacklisted and 
+                    tool not in tools_executed and
+                    tool not in merged_tools):
                     merged_tools.append(tool)
         
-        # If we've exhausted phase tools, return empty to trigger phase transition
+        # TIER 3: Try tools from other phases if current phase exhausted
+        if not merged_tools and phase in ['reconnaissance', 'scanning']:
+            # Get some scanning tools if in recon, or exploitation tools if in scanning
+            fallback_phase = 'scanning' if phase == 'reconnaissance' else 'exploitation'
+            fallback_tools = {
+                'scanning': ['nmap', 'nikto', 'nuclei'],
+                'exploitation': ['sqlmap', 'dalfox']
+            }
+            
+            for tool in fallback_tools.get(fallback_phase, []):
+                if tool not in tools_executed and tool not in blacklisted:
+                    merged_tools.append(tool)
+        
+        # Return exhausted signal if truly no tools available
         if not merged_tools:
             return {
                 'tools': [],

@@ -180,6 +180,17 @@ class ScanManager:
             print(f"[SCAN THREAD] Starting autonomous scan loop...")
             print(f"[SCAN THREAD] This will attempt to connect to Kali VM at {self._get_kali_info()}")
             result = agent.run_autonomous_scan(target, scan_config)
+            
+            # Debug: Log what the agent returned
+            print(f"[SCAN THREAD] Agent returned:")
+            print(f"  - findings count: {len(result.get('findings', []))}")
+            print(f"  - tools_executed count: {len(result.get('tools_executed', []))}")
+            print(f"  - coverage: {result.get('coverage', 0)}")
+            if result.get('findings'):
+                print(f"  - First 3 findings:")
+                for f in result.get('findings', [])[:3]:
+                    print(f"    * {f.get('type')}: {f.get('name', '')[:50]}")
+            
             logger.info(f" Scan execution completed")
             print(f"[SCAN THREAD] Scan loop completed!")
             
