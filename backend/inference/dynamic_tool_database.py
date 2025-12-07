@@ -286,6 +286,95 @@ class DynamicToolDatabase:
                 'api_keys': ['ONYPHE_API_KEY'],
                 'api_optional': False,
                 'fallback_tools': ['nmap'],
+            },
+            
+            # ADD THESE MISSING TOOLS:
+            'fierce': {
+                'category': 'dns_enumeration',
+                'capabilities': ['dns_bruteforce', 'subdomain_discovery'],
+                'detects': ['subdomains', 'dns_records'],
+                'platform': 'any',
+                'speed': 'medium',
+                'stealth': 'medium',
+                'prerequisites': ['domain_target'],
+                'output_parser': 'fierce',
+            },
+            
+            'dnsenum': {
+                'category': 'dns_enumeration',
+                'capabilities': ['dns_enumeration', 'zone_transfer'],
+                'detects': ['subdomains', 'dns_records', 'mx_records'],
+                'platform': 'any',
+                'speed': 'medium',
+                'stealth': 'high',
+                'prerequisites': ['domain_target'],
+                'output_parser': 'dnsenum',
+            },
+            
+            'sslscan': {
+                'category': 'ssl_scanner',
+                'capabilities': ['ssl_analysis', 'cipher_detection', 'certificate_analysis'],
+                'detects': ['weak_ciphers', 'expired_certs', 'ssl_vulnerabilities'],
+                'platform': 'any',
+                'speed': 'fast',
+                'stealth': 'high',
+                'prerequisites': ['https_service'],
+                'output_parser': 'sslscan',
+            },
+            
+            'hydra': {
+                'category': 'password_cracker',
+                'capabilities': ['brute_force', 'password_spraying'],
+                'detects': ['weak_credentials'],
+                'platform': 'any',
+                'speed': 'slow',
+                'stealth': 'low',
+                'prerequisites': ['authentication_service'],
+                'output_parser': 'hydra',
+            },
+            
+            'enum4linux': {
+                'category': 'smb_enumeration',
+                'capabilities': ['smb_enumeration', 'user_enumeration', 'share_enumeration'],
+                'detects': ['smb_shares', 'users', 'groups'],
+                'platform': 'any',
+                'speed': 'medium',
+                'stealth': 'medium',
+                'prerequisites': ['smb_service'],
+                'output_parser': 'enum4linux',
+            },
+            
+            'dirb': {
+                'category': 'directory_scanner',
+                'capabilities': ['directory_bruteforce', 'file_discovery'],
+                'detects': ['hidden_directories', 'backup_files'],
+                'platform': 'any',
+                'speed': 'medium',
+                'stealth': 'medium',
+                'prerequisites': ['http_service'],
+                'output_parser': 'dirb',
+            },
+            
+            'xsser': {
+                'category': 'xss_scanner',
+                'capabilities': ['xss_detection', 'payload_generation'],
+                'detects': ['xss', 'reflected_xss', 'stored_xss'],
+                'platform': 'any',
+                'speed': 'medium',
+                'stealth': 'medium',
+                'prerequisites': ['http_service'],
+                'output_parser': 'xsser',
+            },
+            
+            'metasploit': {
+                'category': 'exploitation_framework',
+                'capabilities': ['exploitation', 'payload_delivery', 'post_exploitation'],
+                'detects': ['exploitable_services'],
+                'platform': 'any',
+                'speed': 'variable',
+                'stealth': 'low',
+                'prerequisites': ['network_access'],
+                'output_parser': 'metasploit',
             }
         }
 

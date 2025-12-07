@@ -394,6 +394,27 @@ class HybridToolSystem:
         """Record result of tool execution for learning"""
         # In a real implementation, this would store results for future learning
         pass
+
+    def record_resolution(self, tool_name: str, source: str, command: str):
+        """Record how a tool was resolved for learning."""
+        if not hasattr(self, 'resolution_history'):
+            self.resolution_history = []
+        
+        self.resolution_history.append({
+            'tool': tool_name,
+            'source': source,
+            'command_hash': hash(command),
+            'timestamp': datetime.now().isoformat()
+        })
+        
+        # Update stats
+        self.stats['tools_resolved'] += 1
+        if source.startswith('hybrid_'):
+            actual_source = source.replace('hybrid_', '')
+            if actual_source == 'llm_generated':
+                self.stats['tools_generated'] += 1
+            elif actual_source == 'web_research':
+                self.stats['tools_researched'] += 1
     
     def get_statistics(self) -> Dict[str, Any]:
         """Get tool system statistics"""

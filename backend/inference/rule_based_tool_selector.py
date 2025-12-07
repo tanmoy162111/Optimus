@@ -15,11 +15,21 @@ class RuleBasedToolSelector:
         self.phase_tools = self._initialize_phase_tools()
         self.attack_response_tools = self._initialize_attack_responses()
         self.tool_effectiveness = {}  # Track tool performance
-        self.vulnerability_patterns = {}  # Track successful attack patterns
+        self.vulnerability_patterns = {}
+        
+        # Tool name mappings for unavailable tools
+        self.tool_mappings = {
+            'sublist3r': ['amass', 'subfinder'],  # Alternatives
+            'theHarvester': ['dnsenum', 'fierce'],
+            'linpeas.sh': ['linpeas'],
+            'gospider': ['katana', 'hakrawler'],
+            'httprobe': ['httpx', 'nmap'],
+        }  # Track successful attack patterns
     
     def learn_from_execution(self, tool: str, findings: List[Dict], execution_time: float):
         """
-        Learn from tool execution results to improve future recommendations
+        Learn from tool execution results to improve future recommendations.
+        This actually affects the tool ordering in recommendations.
         """
         if tool not in self.tool_effectiveness:
             self.tool_effectiveness[tool] = {
@@ -27,7 +37,8 @@ class RuleBasedToolSelector:
                 'total_findings': 0,
                 'total_time': 0.0,
                 'avg_findings_per_execution': 0.0,
-                'avg_time_per_execution': 0.0
+                'avg_time_per_execution': 0.0,
+                'effectiveness_score': 0.5  # Base score
             }
         
         stats = self.tool_effectiveness[tool]
@@ -37,12 +48,29 @@ class RuleBasedToolSelector:
         stats['avg_findings_per_execution'] = stats['total_findings'] / stats['executions']
         stats['avg_time_per_execution'] = stats['total_time'] / stats['executions']
         
+        # Calculate effectiveness score (0-1)
+        # High findings + reasonable time = high score
+        findings_factor = min(1.0, stats['avg_findings_per_execution'] / 5.0)  # 5+ findings/exec = 1.0
+        time_factor = max(0.0, 1.0 - (stats['avg_time_per_execution'] / 300.0))  # <5min = 1.0
+        stats['effectiveness_score'] = 0.7 * findings_factor + 0.3 * time_factor
+        
         # Track vulnerability patterns
         for finding in findings:
             vuln_type = finding.get('type', 'unknown')
             if vuln_type not in self.vulnerability_patterns:
                 self.vulnerability_patterns[vuln_type] = 0
             self.vulnerability_patterns[vuln_type] += 1
+        
+        logger.info(f"[RuleSelector] Updated {tool} effectiveness: {stats['effectiveness_score']:.2f}")
+
+    def _sort_by_effectiveness(self, tools: List[str]) -> List[str]:
+        """Sort tools by learned effectiveness score."""
+        def get_score(tool):
+            if tool in self.tool_effectiveness:
+                return self.tool_effectiveness[tool]['effectiveness_score']
+            return 0.5  # Default score for untried tools
+        
+        return sorted(tools, key=get_score, reverse=True)
     
     def _initialize_phase_tools(self) -> Dict[str, List[str]]:
         """
@@ -191,37 +219,28 @@ class RuleBasedToolSelector:
             # Mix in some category-relevant tools for learning
             recommended = category_tools[:2] + recommended
         
-        # Remove already-executed tools
-        recommended = [tool for tool in recommended if tool not in tools_executed]
-        
-        # NEW: Additional check to prevent recommending tools that have been executed multiple times
-        # Count tool executions
-        tool_execution_counts = {}
-        for tool in tools_executed:
-            # Handle case where tool might be a dictionary
-            if isinstance(tool, dict):
-                tool_name = tool.get('tool', '')
-                if tool_name:
-                    tool_execution_counts[tool_name] = tool_execution_counts.get(tool_name, 0) + 1
-            else:
-                tool_execution_counts[tool] = tool_execution_counts.get(tool, 0) + 1
-        
-        # Filter out tools that have been executed 3+ times
-        filtered_recommended = []
+        # Apply tool mappings to recommendations
+        final_recommendations = []
         for tool in recommended:
-            # Handle case where tool might be a dictionary
-            tool_name = tool
-            if isinstance(tool, dict):
-                tool_name = tool.get('tool', '')
-            
-            # Check if tool has been executed less than 3 times
-            execution_count = tool_execution_counts.get(tool_name, 0)
-            if execution_count < 3:
-                filtered_recommended.append(tool)
-        recommended = filtered_recommended
+            available = self._get_available_tool(tool, tools_executed)
+            if available and available not in final_recommendations:
+                final_recommendations.append(available)
         
-        # Limit to top 5
-        return recommended[:5]
+        # Sort by effectiveness and limit to top 5
+        return self._sort_by_effectiveness(final_recommendations)[:5]
+    
+    def _get_available_tool(self, tool_name: str, tools_executed: List[str]) -> str:
+        """Get an available tool, using alternatives if needed"""
+        if tool_name not in tools_executed:
+            return tool_name
+        
+        # Try alternatives
+        alternatives = self.tool_mappings.get(tool_name, [])
+        for alt in alternatives:
+            if alt not in tools_executed:
+                return alt
+        
+        return None
     
     def _recommend_reconnaissance(self, context: Dict, tools_executed: List[str]) -> List[str]:
         """Reconnaissance phase logic"""
@@ -238,7 +257,8 @@ class RuleBasedToolSelector:
             active_tools = ['whatweb', 'dnsenum']
             recommended.extend([t for t in active_tools if t not in tools_executed])
         
-        return recommended
+        # Sort by effectiveness
+        return self._sort_by_effectiveness(recommended)
     
     def _recommend_scanning(self, context: Dict, tools_executed: List[str],
                         technologies: List[str]) -> List[str]:
@@ -285,7 +305,8 @@ class RuleBasedToolSelector:
             if 'sslscan' not in tools_executed and 'sslscan' not in recommended:
                 recommended.append('sslscan')
         
-        return recommended
+        # Sort by effectiveness
+        return self._sort_by_effectiveness(recommended)
     
     def _recommend_exploitation(self, context: Dict, findings: List[Dict],
                              tools_executed: List[str]) -> List[str]:
@@ -329,7 +350,8 @@ class RuleBasedToolSelector:
                 general_tools = ['sqlmap', 'metasploit']
                 recommended = [t for t in general_tools if t not in tools_executed and t not in recommended]
         
-        return recommended
+        # Sort by effectiveness
+        return self._sort_by_effectiveness(recommended)
     
     def _recommend_post_exploitation(self, context: Dict,
                                   tools_executed: List[str]) -> List[str]:
@@ -354,7 +376,8 @@ class RuleBasedToolSelector:
         # Lateral movement
         recommended.append('crackmapexec')
         
-        return recommended
+        # Sort by effectiveness
+        return self._sort_by_effectiveness(recommended)
     
     def _recommend_covering_tracks(self, context: Dict,
                                 tools_executed: List[str]) -> List[str]:
@@ -368,7 +391,8 @@ class RuleBasedToolSelector:
             if tool not in tools_executed:
                 recommended.append(tool)
         
-        return recommended
+        # Sort by effectiveness
+        return self._sort_by_effectiveness(recommended)
     
     def get_reasoning(self, context: Dict, recommended_tools: List[str]) -> str:
         """

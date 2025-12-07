@@ -5,6 +5,14 @@ import time
 from datetime import datetime
 from typing import Dict, List, Any
 
+# Add intelligence import
+try:
+    from intelligence import get_optimus_brain
+    INTELLIGENCE_AVAILABLE = True
+except ImportError:
+    INTELLIGENCE_AVAILABLE = False
+    logger.warning("Intelligence module not available")
+
 from inference.tool_selector import PhaseAwareToolSelector
 from inference.phase_controller import PhaseController
 from inference.tool_manager import ToolManager
@@ -43,6 +51,15 @@ class AutonomousPentestAgent:
         print("[AutonomousPentestAgent] Creating RealTimeLearningModule...")
         self.learning_module = RealTimeLearningModule()  # NEW
         
+        # Initialize intelligence layer (optional but enhances decisions)
+        self.optimus_brain = None
+        if INTELLIGENCE_AVAILABLE:
+            try:
+                self.optimus_brain = get_optimus_brain()
+                print("[AutonomousPentestAgent] OptimusBrain initialized")
+            except Exception as e:
+                logger.warning(f"Could not initialize OptimusBrain: {e}")
+        
         self.socketio = socketio  # Store socketio reference
         print("[AutonomousPentestAgent]  Initialization complete!")
         logger.info("🤖 Autonomous Pentest Agent initialized")
@@ -66,14 +83,14 @@ class AutonomousPentestAgent:
         scan_state = self._initialize_scan_state(target, scan_config)
         print(f"[AutonomousPentestAgent] Scan state initialized: {scan_state.get('scan_id')}")
         
-        max_iterations = 50
+        max_iterations = 100
         iteration = 0
         stalled_iterations = 0
         last_findings_count = 0
         
         # Track tool execution attempts
         tool_execution_attempts = {}
-        max_tool_attempts = 3  # Reduced from 5
+        max_tool_attempts = 5
         
         # Track approach changes
         approach_changes = 0
@@ -115,16 +132,17 @@ class AutonomousPentestAgent:
             last_findings_count = current_findings_count
             
             # Force phase change if stalled too long
-            if stalled_iterations >= 5:
+            if stalled_iterations >= 15:
                 logger.warning(f"Scan stalled for {stalled_iterations} iterations, forcing phase transition")
                 next_phase = self.phase_controller.get_next_phase(scan_state['phase'], scan_state)
                 scan_state['phase'] = next_phase
+                scan_state['phase_start_time'] = datetime.now().isoformat()
                 scan_state['strategy'] = self.strategy_selector.select_strategy(scan_state)
                 stalled_iterations = 0
                 continue
             
             # Tool recommendation with strategy awareness
-            tool_recommendation = self._get_strategy_aware_tools(scan_state)
+            tool_recommendation = self._get_tool_recommendation(scan_state)
             recommended_tools = tool_recommendation['tools']
             
             if not recommended_tools or tool_recommendation.get('method') == 'exhausted':
@@ -140,6 +158,7 @@ class AutonomousPentestAgent:
                 if next_phase != scan_state['phase']:
                     logger.info(f"📍 Phase transition: {scan_state['phase']} → {next_phase}")
                     scan_state['phase'] = next_phase
+                    scan_state['phase_start_time'] = datetime.now().isoformat()
                     scan_state['strategy'] = self.strategy_selector.select_strategy(scan_state)
                     # Reset tracking for new phase
                     scan_state['blacklisted_tools'] = []  # Clear blacklist for new phase
@@ -158,6 +177,7 @@ class AutonomousPentestAgent:
                     logger.warning(f"Tool {tool_to_execute} attempted {max_tool_attempts} times, skipping")
                     next_phase = self.phase_controller.get_next_phase(scan_state['phase'], scan_state)
                     scan_state['phase'] = next_phase
+                    scan_state['phase_start_time'] = datetime.now().isoformat()
                     continue
                 
                 # NEW: Check if tool has already been executed recently to prevent looping
@@ -175,11 +195,28 @@ class AutonomousPentestAgent:
                             scan_state['blacklisted_tools'].append(tool_to_execute)
                         continue
                 
+                # Generate tool parameters - BUG FIX 2: Tool Parameters Not Being Passed Correctly
+                # Analyze current situation to generate appropriate parameters
+                analysis = {
+                    'total_findings': len(scan_state.get('findings', [])),
+                    'unique_tools_executed': len(list(set(tools_executed))),
+                    'finding_types': self._get_finding_types(scan_state.get('findings', [])),
+                    'average_severity': self._calculate_average_severity(scan_state.get('findings', [])),
+                    'technologies_detected': scan_state.get('technologies_detected', []),
+                    'coverage_estimate': scan_state.get('coverage', 0.0),
+                    'tools_executed_recently': tools_executed[-5:] if len(tools_executed) > 5 else tools_executed,
+                }
+                
+                # Generate parameters for the tool
+                tool_parameters = self._generate_tool_parameters(tool_to_execute, scan_state, analysis)
+                print(f"[AutonomousPentestAgent] Generated parameters for {tool_to_execute}: {tool_parameters}")
+                
                 print(f"[AutonomousPentestAgent] Calling _execute_tool_real for {tool_to_execute}...")
                 result = self._execute_tool_real(
                     tool_to_execute, 
                     target,
-                    scan_state
+                    scan_state,
+                    tool_parameters  # Pass the generated parameters
                 )
                 
                 # Update scan state
@@ -193,6 +230,7 @@ class AutonomousPentestAgent:
             if next_phase != scan_state['phase']:
                 logger.info(f"📍 Phase transition: {scan_state['phase']} → {next_phase}")
                 scan_state['phase'] = next_phase
+                scan_state['phase_start_time'] = datetime.now().isoformat()
                 scan_state['strategy'] = self.strategy_selector.select_strategy(scan_state)
                 stalled_iterations = 0
                 approach_changes = 0  # Reset approach changes when moving to new phase
@@ -259,6 +297,7 @@ class AutonomousPentestAgent:
                 new_phase = decision['new_phase']
                 print(f"[AutonomousAgent] Changing phase to: {new_phase}")
                 scan_state['phase'] = new_phase
+                scan_state['phase_start_time'] = datetime.now().isoformat()
                 scan_state['adaptive_choices'].append({
                     'type': 'phase_change',
                     'from': scan_state.get('phase', 'reconnaissance'),
@@ -699,6 +738,7 @@ class AutonomousPentestAgent:
             'strategy': 'adaptive',  # NEW: Current strategy
             'strategy_changes': 0,   # NEW: Track strategy changes
             'last_finding_iteration': 0,  # NEW: Track when we last found something
+            'phase_start_time': datetime.now().isoformat(),
         }
         
         return scan_state
@@ -1035,148 +1075,169 @@ class AutonomousPentestAgent:
                 scan_state['phase_data']['access_gained'] = True
                 scan_state['phase_data']['shells_obtained'] = len(exploitable)
 
-    def _get_strategy_aware_tools(self, scan_state: Dict) -> Dict[str, Any]:
-        """Get tool recommendations aware of current strategy - FIXED for intelligent selection"""
-        current_strategy = scan_state.get('strategy', 'adaptive')
+    def _get_tool_recommendation(self, scan_state: Dict) -> Dict[str, Any]:
+        """
+        Get unified tool recommendation using all available intelligence.
+        
+        Priority order:
+        1. OptimusBrain (if available and confident)
+        2. PhaseAwareToolSelector (main recommendation engine)
+        3. Strategy-based enhancements
+        
+        Returns:
+            Dict with 'tools', 'method', 'reasoning', 'confidence'
+        """
         phase = scan_state.get('phase', 'reconnaissance')
         findings = scan_state.get('findings', [])
-        
-        # Get executed tool names
         tools_executed = [t['tool'] if isinstance(t, dict) else t
                           for t in scan_state.get('tools_executed', [])]
-        blacklisted = scan_state.get('blacklisted_tools', [])
         
-        # CRITICAL FIX: Get tools from last 5 executions to prevent immediate repetition
-        recent_tools = tools_executed[-5:] if len(tools_executed) > 5 else tools_executed
+        # LAYER 1: Try OptimusBrain for intelligent selection
+        if self.optimus_brain:
+            try:
+                # Prepare context for intelligence layer
+                context = {
+                    'target': scan_state.get('target', ''),
+                    'phase': phase,
+                    'findings': findings,
+                    'tools_executed': tools_executed,
+                    'strategy': scan_state.get('strategy', 'adaptive'),
+                    'target_type': scan_state.get('target_type', 'web'),
+                }
+                
+                # Get available tools from tool_selector first
+                base_recommendation = self.tool_selector.recommend_tools(scan_state)
+                available_tools = base_recommendation.get('tools', [])
+                
+                if available_tools:
+                    # Let OptimusBrain select the best from available tools
+                    brain_result = self.optimus_brain.select_tool(available_tools, context)
+                    
+                    if brain_result.get('confidence', 0) >= 0.6:
+                        # Use brain's recommendation
+                        selected = brain_result.get('selected_tool')
+                        alternatives = [a['tool'] for a in brain_result.get('alternatives', [])]
+                        
+                        # Put selected tool first, then alternatives, then rest
+                        final_tools = [selected] if selected else []
+                        final_tools.extend([t for t in alternatives if t not in final_tools])
+                        final_tools.extend([t for t in available_tools if t not in final_tools])
+                        
+                        return {
+                            'tools': final_tools[:5],
+                            'method': 'optimus_brain',
+                            'confidence': brain_result.get('confidence', 0.6),
+                            'reasoning': brain_result.get('reasoning', [])
+                        }
+            except Exception as e:
+                logger.warning(f"OptimusBrain selection failed: {e}")
         
-        # Count tool occurrences to identify overused tools
-        tool_counts = {}
-        for tool in tools_executed:
-            tool_counts[tool] = tool_counts.get(tool, 0) + 1
+        # LAYER 2: Use PhaseAwareToolSelector (primary recommendation)
+        recommendation = self.tool_selector.recommend_tools(scan_state)
         
-        # Auto-blacklist tools used more than 2 times
-        for tool, count in tool_counts.items():
-            if count >= 2 and tool not in blacklisted:
-                blacklisted.append(tool)
-                scan_state['blacklisted_tools'] = blacklisted
+        # LAYER 3: Strategy enhancements
+        current_strategy = scan_state.get('strategy', 'adaptive')
+        strategy_tools = self.strategy_selector.strategies.get(current_strategy, {}).get('tools', [])
         
-        merged_tools = []
+        # Boost strategy-relevant tools to front of list
+        if strategy_tools and recommendation.get('tools'):
+            tools = recommendation['tools']
+            strategy_boost = [t for t in tools if t in strategy_tools]
+            other_tools = [t for t in tools if t not in strategy_tools]
+            recommendation['tools'] = (strategy_boost + other_tools)[:5]
+            recommendation['strategy_applied'] = current_strategy
         
-        # INTELLIGENT SELECTION: Prioritize tools based on FINDINGS
-        if findings:
-            vuln_types = [f.get('type', '') for f in findings]
-            
-            # SQL injection indicators → SQLMap
-            if any(vt in ['sql_injection', 'database_error', 'sql_error'] for vt in vuln_types):
-                if 'sqlmap' not in tools_executed and 'sqlmap' not in blacklisted:
-                    merged_tools.append('sqlmap')
-            
-            # XSS indicators → Dalfox
-            if any(vt in ['xss', 'dom_xss', 'reflected_xss'] for vt in vuln_types):
-                if 'dalfox' not in tools_executed and 'dalfox' not in blacklisted:
-                    merged_tools.append('dalfox')
-            
-            # Open ports found → Web scanners
-            if 'open_port' in vuln_types:
-                for tool in ['nikto', 'nuclei', 'whatweb']:
-                    if tool not in tools_executed and tool not in blacklisted:
-                        merged_tools.append(tool)
-            
-            # Technologies detected → CMS-specific tools
-            technologies = scan_state.get('technologies_detected', [])
-            if 'wordpress' in str(technologies).lower():
-                if 'wpscan' not in tools_executed and 'wpscan' not in blacklisted:
-                    merged_tools.insert(0, 'wpscan')
-        
-        # PHASE-BASED FALLBACK: Use phase-appropriate tools if no findings
-        if not merged_tools:
-            # Comprehensive phase tools - includes ALL available tools per phase
-            phase_tools = {
-                'reconnaissance': [
-                    'amass', 'sublist3r', 'whatweb', 'dnsenum', 'theHarvester', 
-                    'fierce', 'enum4linux', 'cewl'
-                ],
-                'scanning': [
-                    'nmap', 'nikto', 'nuclei', 'gobuster', 'ffuf', 'dirb',
-                    'sslscan', 'wpscan', 'masscan'
-                ],
-                'exploitation': [
-                    'sqlmap', 'dalfox', 'xsser', 'commix', 'hydra', 'metasploit'
-                ],
-                'post_exploitation': [],
-                'covering_tracks': []
-            }
-            
-            available_phase_tools = phase_tools.get(phase, [])
-            
-            for tool in available_phase_tools:
-                if (tool not in recent_tools and 
-                    tool not in blacklisted and 
-                    tool not in tools_executed and
-                    tool not in merged_tools):
-                    merged_tools.append(tool)
-        
-        # TIER 3: Try tools from other phases if current phase exhausted
-        if not merged_tools and phase in ['reconnaissance', 'scanning']:
-            # Get some scanning tools if in recon, or exploitation tools if in scanning
-            fallback_phase = 'scanning' if phase == 'reconnaissance' else 'exploitation'
-            fallback_tools = {
-                'scanning': ['nmap', 'nikto', 'nuclei'],
-                'exploitation': ['sqlmap', 'dalfox']
-            }
-            
-            for tool in fallback_tools.get(fallback_phase, []):
-                if tool not in tools_executed and tool not in blacklisted:
-                    merged_tools.append(tool)
-        
-        # Return exhausted signal if truly no tools available
-        if not merged_tools:
-            return {
-                'tools': [],
-                'method': 'exhausted',
-                'reasoning': f'All {phase} tools exhausted - need phase transition'
-            }
-        
-        return {
-            'tools': merged_tools[:5],
-            'method': 'intelligent_selection',
-            'strategy': current_strategy,
-            'reasoning': f'Selected based on {len(findings)} findings in {phase} phase'
-        }
-    
+        return recommendation
+
     def _learn_from_execution(self, tool_name: str, result: Dict, scan_state: Dict):
-        """Learn from tool execution for future decisions - ENHANCED"""
+        """Learn from tool execution and update all learning systems."""
         success = result.get('success', False)
-        vulns_found = len(result.get('parsed_results', {}).get('vulnerabilities', []))
+        findings = result.get('parsed_results', {}).get('vulnerabilities', [])
+        execution_time = result.get('execution_time', 0)
         
-        # Record in knowledge base
-        self.knowledge_base.record_tool_result(tool_name, success, vulns_found)
+        # 1. Update local learning module
+        insights = self.learning_module.learn_from_execution(tool_name, result, scan_state)
         
-        # Update tool database success rates
-        self.tool_db.record_tool_success(tool_name, success and vulns_found > 0)
+        # 2. Update rule-based selector's effectiveness tracking
+        if hasattr(self.tool_selector, 'rule_selector'):
+            self.tool_selector.rule_selector.learn_from_execution(tool_name, findings, execution_time)
         
-        # NEW: Real-time learning
-        context = {
-            'phase': scan_state.get('phase'),
-            'target_type': scan_state.get('target_profile', {}).get('type', 'web'),
-            'findings': scan_state.get('findings', []),
-        }
+        # 3. Update strategy selector's performance tracking
+        current_strategy = scan_state.get('strategy', 'adaptive')
+        self.strategy_selector.update_strategy_performance(
+            current_strategy, 
+            len(findings) > 0, 
+            len(findings)
+        )
         
-        insights = self.learning_module.learn_from_execution(tool_name, result, context)
+        # 4. Update OptimusBrain if available
+        if self.optimus_brain:
+            try:
+                context = {
+                    'target': scan_state.get('target', ''),
+                    'phase': scan_state.get('phase', ''),
+                    'target_type': scan_state.get('target_type', 'web'),
+                }
+                self.optimus_brain.process_tool_result(
+                    tool_name, context, 
+                    result.get('raw_output', ''), 
+                    findings
+                )
+            except Exception as e:
+                logger.warning(f"OptimusBrain learning failed: {e}")
         
-        # Apply learning insights
+        # 5. Check if tool should be blacklisted
+        self._update_blacklist(scan_state, tool_name)
+        
+        # 6. Log learning insights
         if insights.get('recommendations'):
-            logger.info(f"[Learning] Recommendations: {insights['recommendations']}")
+            logger.info(f"Learning insights: {insights['recommendations']}")
+
+    def _should_blacklist_tool(self, tool: str, scan_state: Dict) -> bool:
+        """
+        Centralized blacklist decision.
+        A tool should be blacklisted if:
+        1. Executed 5+ times with 0 findings from it
+        2. Consistently fails (3+ failures)
+        3. Not appropriate for current phase
+        """
+        tools_executed = scan_state.get('tools_executed', [])
         
-        # Check if we should change approach
-        if self.learning_module.should_try_different_approach(scan_state):
-            # Force strategy re-evaluation
-            new_strategy = self.strategy_selector.select_strategy(scan_state)
-            if new_strategy != scan_state.get('strategy'):
-                logger.info(f"[Learning] Triggering strategy change based on learning")
-                scan_state['strategy'] = new_strategy
+        # Count executions of this tool
+        execution_count = sum(1 for t in tools_executed 
+                             if (t.get('tool') if isinstance(t, dict) else t) == tool)
         
-        logger.info(f"Learned: {tool_name} - Success: {success}, Vulns: {vulns_found}")
+        if execution_count < 5:
+            return False  # Not enough data
+        
+        # Count findings from this tool
+        tool_findings = sum(1 for t in tools_executed 
+                           if isinstance(t, dict) and t.get('tool') == tool 
+                           and t.get('findings_count', 0) > 0)
+        
+        # Blacklist if 5+ executions with 0 findings
+        if execution_count >= 5 and tool_findings == 0:
+            return True
+        
+        # Count failures
+        tool_failures = sum(1 for t in tools_executed 
+                           if isinstance(t, dict) and t.get('tool') == tool 
+                           and not t.get('success', False))
+        
+        # Blacklist if 3+ consecutive failures
+        if tool_failures >= 3:
+            return True
+        
+        return False
+
+    def _update_blacklist(self, scan_state: Dict, tool: str):
+        """Update blacklist after tool execution"""
+        if self._should_blacklist_tool(tool, scan_state):
+            blacklist = scan_state.get('blacklisted_tools', [])
+            if tool not in blacklist:
+                blacklist.append(tool)
+                scan_state['blacklisted_tools'] = blacklist
+                logger.info(f"Blacklisted {tool} due to ineffectiveness")
 
     def _generate_final_report(self, scan_state: Dict) -> Dict[str, Any]:
         """
@@ -1212,3 +1273,18 @@ class AutonomousPentestAgent:
             'adaptive_choices': scan_state.get('adaptive_choices', []),
             'mode': 'fully_autonomous'
         }
+
+    def _get_finding_types(self, findings: List[Dict]) -> Dict[str, int]:
+        """Get count of findings by type"""
+        finding_types = {}
+        for finding in findings:
+            ftype = finding.get('type', 'unknown')
+            finding_types[ftype] = finding_types.get(ftype, 0) + 1
+        return finding_types
+
+    def _calculate_average_severity(self, findings: List[Dict]) -> float:
+        """Calculate average severity of findings"""
+        if not findings:
+            return 0.0
+        severity_levels = [f.get('severity', 0) for f in findings]
+        return sum(severity_levels) / len(severity_levels) if severity_levels else 0.0

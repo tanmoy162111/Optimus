@@ -1,0 +1,53 @@
+{
+  "tool_weights": {
+    "sublist3r": {
+      "target_web": 0.495,
+      "phase_reconnaissance": 0.495
+    },
+    "theHarvester": {},
+    "builtwith": {},
+    "shodan": {},
+    "nmap": {
+      "target_web": 0.495,
+      "phase_scanning": 0.495
+    },
+    "nuclei": {
+      "target_web": 0.495,
+      "phase_scanning": 0.495
+    },
+    "nikto": {
+      "target_web": 0.507,
+      "phase_scanning": 0.507
+    },
+    "sslscan": {},
+    "sqlmap": {
+      "target_web": 0.495,
+      "phase_exploitation": 0.495
+    },
+    "metasploit": {
+      "target_web": 0.495,
+      "phase_exploitation": 0.495
+    },
+    "linpeas": {
+      "target_web": 0.495,
+      "phase_post_exploitation": 0.495
+    },
+    "lazagne": {},
+    "crackmapexec": {},
+    "clear_logs": {
+      "target_web": 0.495,
+      "phase_covering_tracks": 0.495
+    },
+    "timestomp": {
+      "target_web": 0.495,
+      "phase_covering_tracks": 0.495
+    },
+    "shred": {
+      "target_web": 0.506,
+      "phase_covering_tracks": 0.506
+    }
+  },
+  "pattern_weights": {},
+  "update_count": 10,
+  "last_updated": "2025-12-08T00:12:40.392744"
+}

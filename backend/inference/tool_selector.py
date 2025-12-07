@@ -67,26 +67,8 @@ class PhaseAwareToolSelector:
         scan_state['target_type'] = scan_state.get('target_type', 'web')
         scan_state['recently_used_tools'] = tools_executed[-3:] if len(tools_executed) > 3 else tools_executed
 
-        # NEW: Enhanced tool repetition prevention
-        # Count how many times each tool has been executed
-        tool_counts = {}
-        for tool in tools_executed:
-            tool_counts[tool] = tool_counts.get(tool, 0) + 1
-        
-        # Identify tools that have been executed too many times
-        problematic_tools = []
-        for tool, count in tool_counts.items():
-            # If a tool has been executed 3+ times, consider it problematic
-            if count >= 3:
-                problematic_tools.append(tool)
-                print(f"[ToolSelector] Tool {tool} executed {count} times, marking as problematic")
-        
-        # Update blacklisted tools in scan state
+        # Get blacklisted tools
         blacklisted = scan_state.get('blacklisted_tools', [])
-        for tool in problematic_tools:
-            if tool not in blacklisted:
-                blacklisted.append(tool)
-        scan_state['blacklisted_tools'] = blacklisted
 
         # Ensure tools_executed is properly formatted in scan_state
         # This prevents issues where tools_executed might be a mix of strings and dicts
@@ -97,39 +79,6 @@ class PhaseAwareToolSelector:
             else:
                 formatted_tools_executed.append(tool_entry)
         tools_executed = formatted_tools_executed
-
-        # NEW: Check if last tool was ineffective (no findings)
-        if len(tools_executed) > 0:
-            last_tool = tools_executed[-1]
-            
-            # Count how many times this tool was used recently
-            recent_tools = tools_executed[-5:] if len(tools_executed) >= 5 else tools_executed
-            tool_usage_count = recent_tools.count(last_tool)
-            
-            # If tool used 3+ times recently with no findings, blacklist it temporarily
-            if tool_usage_count >= 3:
-                # Check if there were findings from this tool
-                last_tool_findings = 0
-                for execution in reversed(scan_state.get('tools_executed', [])):
-                    if isinstance(execution, dict) and execution.get('tool') == last_tool:
-                        # We don't have detailed findings per execution, so we'll assume
-                        # if no overall findings, this tool likely didn't find anything
-                        if len(findings) == 0:
-                            last_tool_findings = 0
-                            break
-                        else:
-                            # If there are findings, we assume this tool contributed
-                            last_tool_findings = 1
-                            break
-                
-                if last_tool_findings == 0:
-                    print(f"[ToolSelector] Blacklisting {last_tool} - used {tool_usage_count} times with no results")
-                    if last_tool not in blacklisted:
-                        blacklisted.append(last_tool)
-                        scan_state['blacklisted_tools'] = blacklisted
-        
-        # Get blacklisted tools
-        blacklisted = scan_state.get('blacklisted_tools', [])
 
         # Use phase-specific models first (Tier 1)
         if self.use_phase_specific and self.phase_specific_selector:
@@ -148,17 +97,20 @@ class PhaseAwareToolSelector:
                     
                     final_tools = rule_tools + [t for t in ps_result['tools'] if t not in rule_tools and t not in blacklisted]
                     
-                    # Ensure we don't recommend already executed tools
-                    final_tools = [t for t in final_tools if t not in tools_executed]
+                    # Ensure we don't recommend recently executed tools
+                    recent_tools = tools_executed[-3:] if len(tools_executed) > 3 else tools_executed
+                    final_tools = [t for t in final_tools if t not in recent_tools]
                     
                     if not final_tools:
-                        print(f"[ToolSelector] No effective tools left in {phase}, forcing transition")
+                        next_phase = self._get_next_phase(phase)
+                        print(f"[ToolSelector] No effective tools left in {phase}, suggesting transition to {next_phase}")
                         return {
                             'tools': [],  # Empty list signals phase transition needed
                             'phase': phase,
                             'method': 'exhausted',
                             'ml_confidence': 0.0,
-                            'reasoning': 'All tools exhausted, need phase transition'
+                            'reasoning': 'All tools exhausted, need phase transition',
+                            'suggested_next_phase': next_phase  # NEW: Explicit next phase
                         }
                     
                     return {
@@ -177,21 +129,24 @@ class PhaseAwareToolSelector:
             rule_tools = self.rule_selector.recommend_tools(scan_state)
             reasoning = self.rule_selector.get_reasoning(scan_state, rule_tools)
             
-            # Filter out blacklisted tools AND already executed tools
+            # Filter out blacklisted tools AND recently executed tools
+            recent_tools = tools_executed[-3:] if len(tools_executed) > 3 else tools_executed
             filtered_tools = []
             for tool in rule_tools:
-                if tool not in blacklisted and tool not in tools_executed:
+                if tool not in blacklisted and tool not in recent_tools:
                     filtered_tools.append(tool)
             
-            # If no rule tools left, force phase transition
+            # If no rule tools left, force phase transition with NEXT PHASE SUGGESTION
             if not filtered_tools:
-                print(f"[ToolSelector] No effective tools left in {phase}, forcing transition")
+                next_phase = self._get_next_phase(phase)
+                print(f"[ToolSelector] No effective tools left in {phase}, suggesting transition to {next_phase}")
                 return {
                     'tools': [],  # Empty list signals phase transition needed
                     'phase': phase,
                     'method': 'exhausted',
                     'ml_confidence': 0.0,
-                    'reasoning': 'All tools exhausted, need phase transition'
+                    'reasoning': 'All tools exhausted, need phase transition',
+                    'suggested_next_phase': next_phase  # NEW: Explicit next phase
                 }
             
             return {
@@ -199,7 +154,7 @@ class PhaseAwareToolSelector:
                 'phase': phase,
                 'method': 'rule_based',
                 'ml_confidence': 0.8,  # High confidence in rules
-                'reasoning': f'Recommended tools excluding {len(blacklisted)} blacklisted and {len(tools_executed)} already executed tools'
+                'reasoning': f'Recommended tools excluding {len(blacklisted)} blacklisted and {len(tools_executed)} recently executed tools'
             }
 
     def _prepare_context_for_model(self, scan_state: Dict[str, Any]) -> Dict[str, Any]:
@@ -531,3 +486,14 @@ class PhaseAwareToolSelector:
         """Set RL agent and state encoder"""
         self.rl_agent = agent
         self.rl_state_encoder = state_encoder
+    
+    def _get_next_phase(self, current_phase: str) -> str:
+        """Get the next logical phase"""
+        phase_order = ['reconnaissance', 'scanning', 'exploitation', 'post_exploitation', 'covering_tracks']
+        try:
+            current_idx = phase_order.index(current_phase)
+            if current_idx < len(phase_order) - 1:
+                return phase_order[current_idx + 1]
+        except ValueError:
+            pass
+        return 'scanning'  # Default fallback

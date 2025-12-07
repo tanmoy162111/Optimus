@@ -28,7 +28,7 @@ class PhaseController:
     def should_transition(self, current_state: Dict[str, Any]) -> str:
         """
         Determine if phase should transition based on progress metrics
-        IMPROVED: Better loop prevention and forced transitions
+        IMPROVED: More lenient criteria to allow tools time to find vulnerabilities
         
         Args:
             current_state: Current scan state
@@ -56,48 +56,78 @@ class PhaseController:
         print(f"  Findings: {len(findings)}")
         print(f"  Coverage: {coverage:.2f}")
         
-        # CRITICAL FIX: Force transition after too many executions
-        # This prevents infinite loops
-        MAX_EXECUTIONS_PER_PHASE = 15
+        # Don't force transitions in first 2 minutes of phase
+        phase_start_time = current_state.get('phase_start_time')
+        if phase_start_time:
+            from datetime import datetime
+            time_in_phase = (datetime.now() - datetime.fromisoformat(phase_start_time)).total_seconds()
+            if time_in_phase < 120:  # 2 minutes minimum
+                # Only allow natural transitions, not forced ones
+                print(f"[PhaseController] In warmup period ({time_in_phase:.1f}s), only allowing natural transitions")
+                should_transition = self._check_phase_completion(current_state)
+                if should_transition:
+                    return self.get_next_phase(phase, current_state)
+                return phase
+        
+        # RELAXED: Force transition only after MANY more executions
+        # This gives tools time to actually complete and find things
+        MAX_EXECUTIONS_PER_PHASE = 50  # Increased from 30
         if len(tool_names) >= MAX_EXECUTIONS_PER_PHASE:
             print(f"[PhaseController] FORCING TRANSITION - {len(tool_names)} executions in {phase}")
             return self.get_next_phase(phase, current_state)
         
-        # Force transition if we've used many unique tools without findings
-        if len(unique_tools) >= 5 and len(findings) == 0:
+        # RELAXED: Only force transition if we've tried MANY unique tools
+        # Changed from 5 to 15 tools minimum before forcing transition
+        if len(unique_tools) >= 15 and len(findings) == 0:
             print(f"[PhaseController] FORCING TRANSITION - {len(unique_tools)} unique tools, 0 findings")
             return self.get_next_phase(phase, current_state)
         
-        # Check for tool repetition indicating stuck state
-        if len(tool_names) >= 3:
-            recent_tools = tool_names[-6:] if len(tool_names) >= 6 else tool_names
+        # REMOVED: The aggressive "tool repeated 2+ times" check
+        # This was causing premature transitions
+        # Tools often need to run multiple times with different parameters
+        
+        # Check for SEVERE tool repetition only (same tool 5+ times)
+        if len(tool_names) >= 5:
+            recent_tools = tool_names[-10:] if len(tool_names) >= 10 else tool_names
             tool_counts = {}
             for tool in recent_tools:
                 tool_counts[tool] = tool_counts.get(tool, 0) + 1
             
-            # If any tool appears 2+ times in last 6, we're likely stuck
+            # Only transition if a tool appears 5+ times (severe stuck)
             max_count = max(tool_counts.values()) if tool_counts else 0
-            if max_count >= 2:
+            if max_count >= 5:
                 most_repeated = [k for k, v in tool_counts.items() if v == max_count][0]
-                print(f"[PhaseController] FORCING TRANSITION - {most_repeated} repeated {max_count} times")
+                print(f"[PhaseController] FORCING TRANSITION - {most_repeated} repeated {max_count} times (SEVERE)")
                 return self.get_next_phase(phase, current_state)
         
         # Check phase-specific completion criteria
-        transition_criteria = {
-            'reconnaissance': self._check_recon_complete(current_state),
-            'scanning': self._check_scanning_complete(current_state),
-            'exploitation': self._check_exploitation_complete(current_state),
-            'post_exploitation': self._check_post_exploit_complete(current_state),
-            'covering_tracks': self._check_cleanup_complete(current_state)
-        }
-        
-        should_transition = transition_criteria.get(phase, False)
+        should_transition = self._check_phase_completion(current_state)
         
         if should_transition:
             print(f"[PhaseController] Natural transition triggered for {phase}")
             return self.get_next_phase(phase, current_state)
         
         return phase
+
+    def should_transition_intelligent(self, current_state: Dict, learning_module=None) -> str:
+        """
+        Make intelligent transition decision using learning data.
+        """
+        phase = current_state['phase']
+        
+        # Check basic transition criteria first
+        basic_result = self.should_transition(current_state)
+        
+        # If basic says transition, check if learning agrees
+        if basic_result != phase and learning_module:
+            phase_effectiveness = learning_module.get_phase_effectiveness(phase)
+            
+            # If this phase is still finding things, stay longer
+            if phase_effectiveness.get('recent_findings_rate', 0) > 0.2:
+                logger.info(f"Learning suggests staying in {phase} - still effective")
+                return phase
+        
+        return basic_result
     
     def _should_change_approach_or_phase(self, state: Dict[str, Any]) -> bool:
         """
@@ -285,6 +315,27 @@ class PhaseController:
             return True
             
         return False
+    
+    def _check_phase_completion(self, state: Dict[str, Any]) -> bool:
+        """
+        Check if the current phase is complete based on specific criteria
+        
+        Args:
+            state: Current scan state
+            
+        Returns:
+            True if the phase is complete, False otherwise
+        """
+        phase = state['phase']
+        transition_criteria = {
+            'reconnaissance': self._check_recon_complete(state),
+            'scanning': self._check_scanning_complete(state),
+            'exploitation': self._check_exploitation_complete(state),
+            'post_exploitation': self._check_post_exploit_complete(state),
+            'covering_tracks': self._check_cleanup_complete(state)
+        }
+        
+        return transition_criteria.get(phase, False)
     
     def get_next_phase(self, current_phase: str, state: Dict[str, Any]) -> str:
         """Get the next phase in the sequence"""

@@ -731,6 +731,109 @@ class ToolKnowledgeBase:
                         'options': 'weevely {target}/weevely.php {password}',
                     }
                 }
+            },
+            
+            # ADD THESE MISSING TOOLS:
+            'sublist3r': {
+                'base': 'sublist3r -d {domain}',
+                'parameters': {
+                    'reconnaissance': {
+                        'options': ['-o /tmp/sublist3r_output.txt'],
+                    }
+                }
+            },
+            
+            'theHarvester': {
+                'base': 'theHarvester -d {domain} -b all',
+                'parameters': {
+                    'reconnaissance': {
+                        'options': ['-l 500'],
+                    }
+                }
+            },
+            
+            'fierce': {
+                'base': 'fierce --domain {domain}',
+                'parameters': {
+                    'reconnaissance': {
+                        'options': ['--subdomains'],
+                    }
+                }
+            },
+            
+            'enum4linux': {
+                'base': 'enum4linux -a {target}',
+                'parameters': {
+                    'reconnaissance': {
+                        'options': [],
+                    },
+                    'scanning': {
+                        'options': ['-U', '-S', '-P'],
+                    }
+                }
+            },
+            
+            'sslscan': {
+                'base': 'sslscan {target}',
+                'parameters': {
+                    'scanning': {
+                        'options': ['--no-colour'],
+                    }
+                }
+            },
+            
+            'wpscan': {
+                'base': 'wpscan --url {target}',
+                'parameters': {
+                    'scanning': {
+                        'options': ['--enumerate vp,vt,u', '--random-user-agent'],
+                    }
+                }
+            },
+            
+            'hydra': {
+                'base': 'hydra -L /usr/share/wordlists/metasploit/http_default_users.txt -P /usr/share/wordlists/metasploit/http_default_pass.txt {target}',
+                'parameters': {
+                    'exploitation': {
+                        'options': ['-t 4', '-f'],
+                    }
+                }
+            },
+            
+            'metasploit': {
+                'base': 'msfconsole -q -x "{commands}"',
+                'parameters': {
+                    'exploitation': {
+                        'commands': ['use auxiliary/scanner/portscan/tcp', 'set RHOSTS {target}', 'run', 'exit'],
+                    }
+                }
+            },
+            
+            'xsser': {
+                'base': 'xsser -u {target}',
+                'parameters': {
+                    'exploitation': {
+                        'options': ['--auto', '--reverse-check'],
+                    }
+                }
+            },
+            
+            'dirb': {
+                'base': 'dirb {target}',
+                'parameters': {
+                    'scanning': {
+                        'options': ['/usr/share/dirb/wordlists/common.txt'],
+                    }
+                }
+            },
+            
+            'masscan': {
+                'base': 'masscan {target}',
+                'parameters': {
+                    'scanning': {
+                        'options': ['-p1-65535', '--rate=1000'],
+                    }
+                }
             }
         }
 

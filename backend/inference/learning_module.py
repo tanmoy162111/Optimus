@@ -4,6 +4,7 @@ Real-time Learning Module - Learns from scan executions to improve future perfor
 import logging
 from typing import Dict, Any, List
 from collections import defaultdict
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +17,28 @@ class RealTimeLearningModule:
         self.patterns = {}
         # Add context-aware effectiveness tracking
         self.context_effectiveness = defaultdict(dict)
+        # Add phase effectiveness tracking
+        self.phase_stats = defaultdict(lambda: {
+            'total_executions': 0,
+            'total_findings': 0,
+            'recent_findings': [],  # Last 10 findings timestamps
+        })
     
+    def get_phase_effectiveness(self, phase: str) -> Dict:
+        """Get effectiveness metrics for a phase."""
+        stats = self.phase_stats[phase]
+        
+        # Calculate recent findings rate (findings in last 5 executions)
+        recent_count = len([f for f in stats['recent_findings'][-5:]])
+        recent_rate = recent_count / 5.0 if stats['total_executions'] >= 5 else 0.5
+        
+        return {
+            'total_executions': stats['total_executions'],
+            'total_findings': stats['total_findings'],
+            'recent_findings_rate': recent_rate,
+            'avg_findings': stats['total_findings'] / max(1, stats['total_executions'])
+        }
+
     def learn_from_execution(self, tool_name: str, result: Dict[str, Any], scan_state: Dict[str, Any]) -> Dict[str, Any]:
         """
         Learn from a tool execution result
@@ -52,6 +74,18 @@ class RealTimeLearningModule:
             if result.get('success', False) if result else False:
                 self.tool_effectiveness[tool_name]['success_count'] += 1
             self.tool_effectiveness[tool_name]['findings'] += execution_record['findings_count']
+            
+            # Track phase stats
+            phase = scan_state.get('phase', 'unknown')
+            findings_count = execution_record['findings_count']
+            
+            self.phase_stats[phase]['total_executions'] += 1
+            self.phase_stats[phase]['total_findings'] += findings_count
+            
+            if findings_count > 0:
+                self.phase_stats[phase]['recent_findings'].append(datetime.now().isoformat())
+                # Keep only last 20
+                self.phase_stats[phase]['recent_findings'] = self.phase_stats[phase]['recent_findings'][-20:]
             
             # Keep only last 50 executions to prevent memory bloat
             if len(self.execution_history[tool_name]) > 50:

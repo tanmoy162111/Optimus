@@ -611,18 +611,22 @@ class ToolManager:
     
     def build_command(self, tool_name: str, target: str,
                   parameters: Dict[str, Any]) -> str:
-        """Build tool-specific commands using Knowledge Base - DYNAMIC"""
+        """
+        Build tool command using multiple resolution strategies.
         
-        # Normalize target URL
+        Priority:
+        1. HybridToolSystem (LLM + memory + discovery)
+        2. ToolKnowledgeBase (expert rules)
+        3. Default fallback commands
+        """
+        # Normalize target
         if not target.startswith(('http://', 'https://')):
             target = f"http://{target}"
         
-        # Extract hostname/IP for tools that need it
         import re
         hostname_match = re.search(r'(?:https?://)?([^:/]+)', target)
         hostname = hostname_match.group(1) if hostname_match else target
         
-        # Build context for command generation
         context = {
             'phase': parameters.get('phase', 'reconnaissance'),
             'target_type': parameters.get('target_type', 'web'),
@@ -634,135 +638,141 @@ class ToolManager:
             'technologies_detected': parameters.get('technologies_detected', []),
         }
         
+        command = None
+        resolution_source = 'unknown'
+        
         # Enhanced dynamic timeout calculation with learning-based adjustments
         base_timeout = parameters.get('timeout', 300)
         
-        # Check if we're in autonomous mode - if so, respect the timeout strictly
-        if parameters.get('autonomous_mode', False):
-            # In autonomous mode, use the provided timeout without modification
-            final_timeout = base_timeout
-            parameters['timeout'] = final_timeout
-            print(f"[DEBUG] Autonomous mode: Using strict timeout of {final_timeout}s")
-            # Use Knowledge Base for adaptive command generation
+        # Define timeout multipliers for different tool categories with more granularity
+        timeout_multipliers = {
+            # Long-running enumeration tools
+            'long_enumeration': {
+                'tools': ['linpeas', 'linpeas.sh', 'winpeas', 'gobuster', 'ffuf', 'cewl', 'crunch'],
+                'multiplier': 3.0,  # 3x base timeout (up to 45 minutes)
+                'progressive_extension': True  # Allow progressive timeout extension
+            },
+            # Exploitation frameworks that can take significant time
+            'exploitation_frameworks': {
+                'tools': ['metasploit', 'burpsuite'],
+                'multiplier': 5.0,  # 5x base timeout (up to 75 minutes) - increased for Metasploit
+                'progressive_extension': True
+            },
+            # Network scanning tools
+            'network_scanners': {
+                'tools': ['nmap', 'masscan', 'ike-scan'],
+                'multiplier': 3.0,  # 3x base timeout (up to 45 minutes) - increased for nMap
+                'progressive_extension': True
+            },
+            # Web application scanners
+            'web_scanners': {
+                'tools': ['nikto', 'nuclei', 'wpscan', 'sqlmap'],
+                'multiplier': 3.5,  # 3.5x base timeout (up to 52.5 minutes) - increased for Nikto
+                'progressive_extension': True
+            },
+            # Brute force tools
+            'brute_force': {
+                'tools': ['hydra', 'medusa', 'john', 'hashcat'],
+                'multiplier': 4.0,  # 4x base timeout (up to 60 minutes)
+                'progressive_extension': True
+            }
+        }
+        
+        # Determine appropriate timeout multiplier based on tool category
+        multiplier = 1.0
+        tool_category = None
+        progressive_extension = False
+        
+        for category, config in timeout_multipliers.items():
+            if tool_name in config['tools']:
+                tool_category = category
+                multiplier = config['multiplier']
+                progressive_extension = config.get('progressive_extension', False)
+                break
+        
+        # Adjust timeout based on scan context
+        context_adjustment = 1.0
+        if parameters.get('aggressive', False):
+            context_adjustment = 1.5  # Increase timeout for aggressive scans
+        if parameters.get('stealth_required', False):
+            context_adjustment = 2.0  # Double timeout for stealth mode
+        if parameters.get('phase') == 'post_exploitation':
+            context_adjustment = 1.5  # Increase timeout for post-exploitation
+        
+        # Progressive timeout extension for tools that may need more time
+        if progressive_extension:
+            # Check if this tool has been executed before and how long it took
+            execution_history = self._get_tool_execution_history(tool_name)
+            if execution_history:
+                avg_execution_time = sum(execution_history) / len(execution_history)
+                # If average execution time is close to current timeout, increase it
+                if avg_execution_time > (base_timeout * multiplier * context_adjustment * 0.8):
+                    context_adjustment *= 1.5  # Increase by 50%
+        
+        # Additional context-based adjustments
+        time_remaining = context.get('time_remaining', 1.0)
+        coverage = context.get('coverage', 0.0)
+        
+        # If we're running low on time, give more time to tools likely to find vulnerabilities
+        if time_remaining < 0.3 and coverage < 0.7:  # Less than 30% time remaining and low coverage
+            if tool_category in ['exploitation_frameworks', 'web_scanners']:
+                context_adjustment *= 1.3  # Give more time to exploitation tools
+        
+        # If we have high coverage, reduce timeout for exploratory tools
+        if coverage > 0.8:
+            if tool_category in ['long_enumeration', 'network_scanners']:
+                context_adjustment *= 0.7  # Reduce time for exploratory tools when we have enough coverage
+        
+        # Calculate final timeout
+        calculated_timeout = int(base_timeout * multiplier * context_adjustment)
+        
+        # Ensure reasonable bounds (minimum 5 minutes, maximum 180 minutes for long-running tools)
+        max_timeout = 10800 if progressive_extension else 7200  # 180 mins vs 120 mins
+        final_timeout = max(300, min(calculated_timeout, max_timeout))
+        
+        # Update parameters with calculated timeout
+        parameters['timeout'] = final_timeout
+        
+        if multiplier > 1.0 or context_adjustment > 1.0:
+            print(f"[DEBUG] Dynamic timeout for {tool_name} ({tool_category}): {final_timeout}s (base: {base_timeout}s, mult: {multiplier}x, context: {context_adjustment}x, progressive: {progressive_extension})")
+        
+        # TIER 1: Try HybridToolSystem
+        if self.hybrid_system:
+            try:
+                resolution = self.hybrid_system.resolve_tool(tool_name, target, context)
+                if resolution and resolution.status.value == 'resolved':
+                    command = resolution.command
+                    resolution_source = f'hybrid_{resolution.source.value}'
+                    logger.info(f"[ToolManager] Hybrid resolution: {resolution_source}")
+            except Exception as e:
+                logger.warning(f"Hybrid tool resolution failed: {e}")
+        
+        # TIER 2: Try ToolKnowledgeBase
+        if not command:
             try:
                 command_target = hostname if tool_name in ['nmap', 'nikto', 'fierce', 'enum4linux', 'sslscan'] else target
-                # Use the correct method name
                 command = self.tool_kb.build_command(tool_name, command_target, context)
                 if command:
-                    print(f"[DEBUG] Using KB-generated command: {command}")
-                    return command
+                    resolution_source = 'knowledge_base'
+                    logger.info(f"[ToolManager] KB resolution for {tool_name}")
             except Exception as e:
                 logger.warning(f"KB command generation failed: {e}")
-            
-            # Fallback to default command building
-            return self._build_default_command(tool_name, target, parameters)
-        else:
-            # Define timeout multipliers for different tool categories with more granularity
-            timeout_multipliers = {
-                # Long-running enumeration tools
-                'long_enumeration': {
-                    'tools': ['linpeas', 'linpeas.sh', 'winpeas', 'gobuster', 'ffuf', 'cewl', 'crunch'],
-                    'multiplier': 3.0,  # 3x base timeout (up to 45 minutes)
-                    'progressive_extension': True  # Allow progressive timeout extension
-                },
-                # Exploitation frameworks that can take significant time
-                'exploitation_frameworks': {
-                    'tools': ['metasploit', 'burpsuite'],
-                    'multiplier': 5.0,  # 5x base timeout (up to 75 minutes) - increased for Metasploit
-                    'progressive_extension': True
-                },
-                # Network scanning tools
-                'network_scanners': {
-                    'tools': ['nmap', 'masscan', 'ike-scan'],
-                    'multiplier': 3.0,  # 3x base timeout (up to 45 minutes) - increased for nMap
-                    'progressive_extension': True
-                },
-                # Web application scanners
-                'web_scanners': {
-                    'tools': ['nikto', 'nuclei', 'wpscan', 'sqlmap'],
-                    'multiplier': 3.5,  # 3.5x base timeout (up to 52.5 minutes) - increased for Nikto
-                    'progressive_extension': True
-                },
-                # Brute force tools
-                'brute_force': {
-                    'tools': ['hydra', 'medusa', 'john', 'hashcat'],
-                    'multiplier': 4.0,  # 4x base timeout (up to 60 minutes)
-                    'progressive_extension': True
-                }
-            }
-            
-            # Determine appropriate timeout multiplier based on tool category
-            multiplier = 1.0
-            tool_category = None
-            progressive_extension = False
-            
-            for category, config in timeout_multipliers.items():
-                if tool_name in config['tools']:
-                    tool_category = category
-                    multiplier = config['multiplier']
-                    progressive_extension = config.get('progressive_extension', False)
-                    break
-            
-            # Adjust timeout based on scan context
-            context_adjustment = 1.0
-            if parameters.get('aggressive', False):
-                context_adjustment = 1.5  # Increase timeout for aggressive scans
-            if parameters.get('stealth_required', False):
-                context_adjustment = 2.0  # Double timeout for stealth mode
-            if parameters.get('phase') == 'post_exploitation':
-                context_adjustment = 1.5  # Increase timeout for post-exploitation
-            
-            # Progressive timeout extension for tools that may need more time
-            if progressive_extension:
-                # Check if this tool has been executed before and how long it took
-                execution_history = self._get_tool_execution_history(tool_name)
-                if execution_history:
-                    avg_execution_time = sum(execution_history) / len(execution_history)
-                    # If average execution time is close to current timeout, increase it
-                    if avg_execution_time > (base_timeout * multiplier * context_adjustment * 0.8):
-                        context_adjustment *= 1.5  # Increase by 50%
-            
-            # Additional context-based adjustments
-            time_remaining = context.get('time_remaining', 1.0)
-            coverage = context.get('coverage', 0.0)
-            
-            # If we're running low on time, give more time to tools likely to find vulnerabilities
-            if time_remaining < 0.3 and coverage < 0.7:  # Less than 30% time remaining and low coverage
-                if tool_category in ['exploitation_frameworks', 'web_scanners']:
-                    context_adjustment *= 1.3  # Give more time to exploitation tools
-            
-            # If we have high coverage, reduce timeout for exploratory tools
-            if coverage > 0.8:
-                if tool_category in ['long_enumeration', 'network_scanners']:
-                    context_adjustment *= 0.7  # Reduce time for exploratory tools when we have enough coverage
-            
-            # Calculate final timeout
-            calculated_timeout = int(base_timeout * multiplier * context_adjustment)
-            
-            # Ensure reasonable bounds (minimum 5 minutes, maximum 180 minutes for long-running tools)
-            max_timeout = 10800 if progressive_extension else 7200  # 180 mins vs 120 mins
-            final_timeout = max(300, min(calculated_timeout, max_timeout))
-            
-            # Update parameters with calculated timeout
-            parameters['timeout'] = final_timeout
-            
-            if multiplier > 1.0 or context_adjustment > 1.0:
-                print(f"[DEBUG] Dynamic timeout for {tool_name} ({tool_category}): {final_timeout}s (base: {base_timeout}s, mult: {multiplier}x, context: {context_adjustment}x, progressive: {progressive_extension})")
         
-        # Use Knowledge Base for adaptive command generation
-        try:
-            command_target = hostname if tool_name in ['nmap', 'nikto', 'fierce', 'enum4linux', 'sslscan'] else target
-            # Use the correct method name
-            command = self.tool_kb.build_command(tool_name, command_target, context)
-            if command:
-                print(f"[DEBUG] Using KB-generated command: {command}")
-                return command
-        except Exception as e:
-            logger.warning(f"KB command generation failed: {e}")
+        # TIER 3: Default fallback
+        if not command:
+            command = self._build_default_command(tool_name, target, parameters)
+            resolution_source = 'default_fallback'
         
-        # Fallback to default command building
-        return self._build_default_command(tool_name, target, parameters)
-    
+        # Record resolution for learning
+        if self.hybrid_system:
+            try:
+                self.hybrid_system.record_resolution(tool_name, resolution_source, command)
+            except:
+                pass
+        
+        print(f"[ToolManager] Command ({resolution_source}): {command[:100]}...")
+        return command
+
     def _build_default_command(self, tool_name: str, target: str,
                              parameters: Dict[str, Any]) -> str:
         """Fallback command building with IMPROVED commands for web app testing"""

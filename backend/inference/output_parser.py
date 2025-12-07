@@ -42,6 +42,23 @@ class OutputParser:
                 return self._parse_commix(stdout, stderr)
             elif tool_name in ['gobuster', 'ffuf', 'dirb']:
                 return self._parse_directory_scanner(stdout, stderr)
+            # ADD THESE:
+            elif tool_name == 'fierce':
+                return self._parse_fierce(stdout, stderr)
+            elif tool_name == 'dnsenum':
+                return self._parse_dnsenum(stdout, stderr)
+            elif tool_name == 'sslscan':
+                return self._parse_sslscan(stdout, stderr)
+            elif tool_name == 'hydra':
+                return self._parse_hydra(stdout, stderr)
+            elif tool_name == 'enum4linux':
+                return self._parse_enum4linux(stdout, stderr)
+            elif tool_name == 'wpscan':
+                return self._parse_wpscan(stdout, stderr)
+            elif tool_name == 'amass':
+                return self._parse_amass(stdout, stderr)
+            elif tool_name == 'xsser':
+                return self._parse_xsser(stdout, stderr)
             else:
                 # Generic parser for unhandled tools
                 return self._parse_generic(stdout, stderr)
@@ -156,82 +173,84 @@ class OutputParser:
             }
 
     def _parse_nikto(self, stdout: str, stderr: str) -> Dict:
-        """Parse Nikto web scanner output"""
+        """Enhanced Nikto parser with better pattern matching"""
         try:
             vulnerabilities = []
             
-            # Nikto output patterns
-            # + OSVDB-XXXX: /path: Description
-            # + /path: Description
-            nikto_pattern = r'\+\s*(?:OSVDB-(\d+):\s*)?(/[^\s:]*)?:?\s*(.+)'
+            # Nikto output patterns - multiple formats
+            patterns = [
+                # Standard format: + OSVDB-XXXX: /path: Description
+                r'\+\s*(?:OSVDB-(\d+):\s*)?(/[^\s:]*)?:?\s*(.+)',
+                # Alternative format: + Server may be vulnerable to...
+                r'\+\s*(Server [^.]+\.)',
+                # Another format: + /path: Description
+                r'\+\s*(/[^\s]+):\s*(.+)',
+                # Generic interesting finding
+                r'\+\s*([A-Z][^:]+):\s*(.+)',
+            ]
+            
+            # Severity keywords
+            critical_keywords = ['remote code', 'rce', 'command execution', 'file upload', 'arbitrary file']
+            high_keywords = ['sql injection', 'sqli', 'xss', 'cross-site', 'authentication bypass', 'directory traversal']
+            medium_keywords = ['information disclosure', 'sensitive', 'backup', 'config', 'debug', 'error message']
             
             for line in stdout.split('\n'):
-                if line.strip().startswith('+'):
-                    match = re.match(nikto_pattern, line.strip())
-                    if match:
-                        osvdb = match.group(1)
-                        path = match.group(2) or ''
-                        description = match.group(3) or ''
-                        
-                        # Determine severity based on content
-                        severity = 4.0  # Default medium-low
-                        vuln_type = 'web_vulnerability'
-                        
-                        desc_lower = description.lower()
-                        if any(w in desc_lower for w in ['remote code', 'rce', 'command execution']):
-                            severity = 9.0
-                            vuln_type = 'rce'
-                        elif any(w in desc_lower for w in ['sql injection', 'sqli']):
-                            severity = 9.0
-                            vuln_type = 'sql_injection'
-                        elif any(w in desc_lower for w in ['xss', 'cross-site scripting']):
-                            severity = 7.0
-                            vuln_type = 'xss'
-                        elif any(w in desc_lower for w in ['directory listing', 'index of']):
-                            severity = 5.0
-                            vuln_type = 'directory_listing'
-                        elif any(w in desc_lower for w in ['outdated', 'old version', 'vulnerable version']):
-                            severity = 6.0
-                            vuln_type = 'outdated_software'
-                        elif any(w in desc_lower for w in ['backup', '.bak', 'source code']):
-                            severity = 6.5
-                            vuln_type = 'information_disclosure'
-                        elif osvdb:
-                            severity = 5.5
-                            vuln_type = f'osvdb_{osvdb}'
-                        
-                        vulnerabilities.append({
-                            'id': str(uuid.uuid4()),
-                            'type': vuln_type,
-                            'severity': severity,
-                            'confidence': 0.85,
-                            'name': f'Nikto: {description[:60]}...' if len(description) > 60 else f'Nikto: {description}',
-                            'location': path or 'Web application',
-                            'evidence': line.strip()[:300],
-                            'exploitable': severity >= 6.0,
-                            'osvdb': osvdb
-                        })
-            
-            # Also capture server info
-            server_match = re.search(r'Server:\s*(.+)', stdout)
-            if server_match:
+                line = line.strip()
+                if not line.startswith('+'):
+                    continue
+                
+                # Skip informational lines
+                if any(skip in line.lower() for skip in ['target ip', 'target hostname', 'target port', 'start time', 'end time', 'host(s) tested']):
+                    continue
+                
+                # Extract information from the line
+                description = line[1:].strip()  # Remove leading +
+                path = ''
+                osvdb = None
+                
+                # Try to extract OSVDB
+                osvdb_match = re.search(r'OSVDB-(\d+)', line)
+                if osvdb_match:
+                    osvdb = osvdb_match.group(1)
+                
+                # Try to extract path
+                path_match = re.search(r'(/[^\s:]+)', line)
+                if path_match:
+                    path = path_match.group(1)
+                
+                # Determine severity
+                desc_lower = description.lower()
+                if any(kw in desc_lower for kw in critical_keywords):
+                    severity = 9.0
+                    vuln_type = 'critical_vulnerability'
+                elif any(kw in desc_lower for kw in high_keywords):
+                    severity = 7.5
+                    vuln_type = 'high_vulnerability'
+                elif any(kw in desc_lower for kw in medium_keywords):
+                    severity = 5.0
+                    vuln_type = 'medium_vulnerability'
+                else:
+                    severity = 3.0
+                    vuln_type = 'informational'
+                
                 vulnerabilities.append({
                     'id': str(uuid.uuid4()),
-                    'type': 'server_info',
-                    'severity': 2.0,
-                    'confidence': 0.95,
-                    'name': f'Server Banner: {server_match.group(1)}',
-                    'location': 'HTTP Headers',
-                    'evidence': server_match.group(0),
-                    'exploitable': False
+                    'type': vuln_type,
+                    'severity': severity,
+                    'confidence': 0.85 if osvdb else 0.7,
+                    'name': description[:100],
+                    'location': path or 'Web Application',
+                    'evidence': line,
+                    'osvdb': osvdb,
+                    'exploitable': severity >= 6.0
                 })
             
             print(f"[Parser] Nikto found {len(vulnerabilities)} findings")
-            
             return {
                 'vulnerabilities': vulnerabilities,
                 'raw_output': stdout
             }
+            
         except Exception as e:
             print(f"[Parser] Nikto parsing error: {e}")
             return {
@@ -727,3 +746,315 @@ class OutputParser:
                 'raw_output': stdout + '\n' + stderr,
                 'parse_error': str(e)
             }
+    
+    def _parse_fierce(self, stdout: str, stderr: str) -> Dict:
+        """Parse fierce DNS enumeration output"""
+        vulnerabilities = []
+        hosts = []
+            
+        # Fierce outputs discovered hosts
+        for line in stdout.split('\n'):
+            if 'Found:' in line or re.match(r'\d+\.\d+\.\d+\.\d+', line):
+                ip_match = re.search(r'(\d+\.\d+\.\d+\.\d+)', line)
+                host_match = re.search(r'([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})', line)
+                    
+                if ip_match:
+                    hosts.append(ip_match.group(1))
+                if host_match:
+                    vulnerabilities.append({
+                        'id': str(uuid.uuid4()),
+                        'type': 'subdomain',
+                        'severity': 3.0,
+                        'confidence': 0.9,
+                        'name': f'Subdomain discovered: {host_match.group(1)}',
+                        'location': host_match.group(1),
+                        'evidence': line.strip(),
+                        'exploitable': False
+                    })
+            
+        return {
+            'vulnerabilities': vulnerabilities,
+            'hosts': list(set(hosts)),
+            'services': [],
+            'raw_output': stdout
+        }
+        
+    def _parse_dnsenum(self, stdout: str, stderr: str) -> Dict:
+        """Parse dnsenum output"""
+        vulnerabilities = []
+        hosts = []
+            
+        for line in stdout.split('\n'):
+            # Look for IP addresses and hostnames
+            ip_match = re.search(r'(\d+\.\d+\.\d+\.\d+)', line)
+            if ip_match:
+                hosts.append(ip_match.group(1))
+                
+            # Zone transfer vulnerability
+            if 'zone transfer' in line.lower() and 'failed' not in line.lower():
+                vulnerabilities.append({
+                    'id': str(uuid.uuid4()),
+                    'type': 'zone_transfer',
+                    'severity': 7.0,
+                    'confidence': 0.95,
+                    'name': 'DNS Zone Transfer Allowed',
+                    'location': 'DNS Server',
+                    'evidence': line.strip(),
+                    'exploitable': True
+                })
+            
+        return {
+            'vulnerabilities': vulnerabilities,
+            'hosts': list(set(hosts)),
+            'services': [],
+            'raw_output': stdout
+        }
+        
+    def _parse_sslscan(self, stdout: str, stderr: str) -> Dict:
+        """Parse sslscan output"""
+        vulnerabilities = []
+            
+        weak_ciphers = ['RC4', 'DES', '3DES', 'NULL', 'EXPORT', 'MD5']
+            
+        for line in stdout.split('\n'):
+            line_lower = line.lower()
+                
+            # Check for weak ciphers
+            for cipher in weak_ciphers:
+                if cipher.lower() in line_lower and 'accepted' in line_lower:
+                    vulnerabilities.append({
+                        'id': str(uuid.uuid4()),
+                        'type': 'weak_cipher',
+                        'severity': 5.0,
+                        'confidence': 0.95,
+                        'name': f'Weak Cipher Supported: {cipher}',
+                        'location': 'SSL/TLS Configuration',
+                        'evidence': line.strip(),
+                        'exploitable': False
+                    })
+                
+            # SSLv2/SSLv3
+            if ('sslv2' in line_lower or 'sslv3' in line_lower) and 'enabled' in line_lower:
+                vulnerabilities.append({
+                    'id': str(uuid.uuid4()),
+                    'type': 'deprecated_ssl',
+                    'severity': 7.0,
+                    'confidence': 0.95,
+                    'name': 'Deprecated SSL Version Enabled',
+                    'location': 'SSL/TLS Configuration',
+                    'evidence': line.strip(),
+                    'exploitable': True
+                })
+                
+            # Certificate issues
+            if 'expired' in line_lower:
+                vulnerabilities.append({
+                    'id': str(uuid.uuid4()),
+                    'type': 'expired_certificate',
+                    'severity': 5.0,
+                    'confidence': 0.95,
+                    'name': 'Expired SSL Certificate',
+                    'location': 'SSL Certificate',
+                    'evidence': line.strip(),
+                    'exploitable': False
+                })
+            
+        return {
+            'vulnerabilities': vulnerabilities,
+            'hosts': [],
+            'services': [],
+            'raw_output': stdout
+        }
+        
+    def _parse_hydra(self, stdout: str, stderr: str) -> Dict:
+        """Parse hydra password cracking output"""
+        vulnerabilities = []
+            
+        # Look for successful logins
+        # Pattern: [PORT][SERVICE] host: HOST   login: USER   password: PASS
+        login_pattern = r'\[(\d+)\]\[([^\]]+)\]\s+host:\s+(\S+)\s+login:\s+(\S+)\s+password:\s+(\S+)'
+            
+        for match in re.finditer(login_pattern, stdout):
+            port, service, host, username, password = match.groups()
+            vulnerabilities.append({
+                'id': str(uuid.uuid4()),
+                'type': 'weak_credentials',
+                'severity': 9.0,
+                'confidence': 0.99,
+                'name': f'Weak Credentials Found: {service}',
+                'location': f'{host}:{port}',
+                'evidence': f'Username: {username}, Password: {password}',
+                'exploitable': True,
+                'credentials': {'username': username, 'password': password}
+            })
+            
+        return {
+            'vulnerabilities': vulnerabilities,
+            'hosts': [],
+            'services': [],
+            'raw_output': stdout
+        }
+        
+    def _parse_enum4linux(self, stdout: str, stderr: str) -> Dict:
+        """Parse enum4linux SMB enumeration output"""
+        vulnerabilities = []
+        services = []
+            
+        # Look for shares
+        share_pattern = r'//([^/]+)/(\S+)'
+        for match in re.finditer(share_pattern, stdout):
+            host, share = match.groups()
+            vulnerabilities.append({
+                'id': str(uuid.uuid4()),
+                'type': 'smb_share',
+                'severity': 4.0,
+                'confidence': 0.9,
+                'name': f'SMB Share Found: {share}',
+                'location': f'//{host}/{share}',
+                'evidence': match.group(0),
+                'exploitable': 'IPC$' not in share
+            })
+            
+        # Look for users
+        user_pattern = r'user:\[([^\]]+)\]'
+        for match in re.finditer(user_pattern, stdout):
+            vulnerabilities.append({
+                'id': str(uuid.uuid4()),
+                'type': 'user_enumeration',
+                'severity': 3.0,
+                'confidence': 0.9,
+                'name': f'User Found: {match.group(1)}',
+                'location': 'SMB',
+                'evidence': match.group(0),
+                'exploitable': False
+            })
+            
+        # Null session
+        if 'null session' in stdout.lower() and 'allowed' in stdout.lower():
+            vulnerabilities.append({
+                'id': str(uuid.uuid4()),
+                'type': 'null_session',
+                'severity': 6.0,
+                'confidence': 0.95,
+                'name': 'SMB Null Session Allowed',
+                'location': 'SMB Service',
+                'evidence': 'Null session enumeration successful',
+                'exploitable': True
+            })
+            
+        return {
+            'vulnerabilities': vulnerabilities,
+            'hosts': [],
+            'services': services,
+            'raw_output': stdout
+        }
+        
+    def _parse_wpscan(self, stdout: str, stderr: str) -> Dict:
+        """Parse wpscan WordPress scanner output"""
+        vulnerabilities = []
+            
+        # Look for vulnerabilities
+        vuln_pattern = r'\[!\]\s*Title:\s*(.+)'
+        for match in re.finditer(vuln_pattern, stdout):
+            title = match.group(1)
+            vulnerabilities.append({
+                'id': str(uuid.uuid4()),
+                'type': 'wordpress_vulnerability',
+                'severity': 7.0,
+                'confidence': 0.85,
+                'name': title,
+                'location': 'WordPress',
+                'evidence': match.group(0),
+                'exploitable': True
+            })
+            
+        # Look for outdated versions
+        if 'outdated' in stdout.lower() or 'old version' in stdout.lower():
+            vulnerabilities.append({
+                'id': str(uuid.uuid4()),
+                'type': 'outdated_software',
+                'severity': 5.0,
+                'confidence': 0.9,
+                'name': 'Outdated WordPress Version',
+                'location': 'WordPress Core',
+                'evidence': 'WordPress version is outdated',
+                'exploitable': True
+            })
+            
+        # Look for users
+        user_pattern = r'User\(s\) Identified:[\s\S]*?\[i\]\s*(\w+)'
+        for match in re.finditer(user_pattern, stdout):
+            vulnerabilities.append({
+                'id': str(uuid.uuid4()),
+                'type': 'user_enumeration',
+                'severity': 3.0,
+                'confidence': 0.9,
+                'name': f'WordPress User Found: {match.group(1)}',
+                'location': 'WordPress',
+                'evidence': match.group(0),
+                'exploitable': False
+            })
+            
+        return {
+            'vulnerabilities': vulnerabilities,
+            'hosts': [],
+            'services': [],
+            'raw_output': stdout
+        }
+        
+    def _parse_amass(self, stdout: str, stderr: str) -> Dict:
+        """Parse amass subdomain enumeration output"""
+        vulnerabilities = []
+        hosts = []
+            
+        for line in stdout.split('\n'):
+            line = line.strip()
+            if line and '.' in line:
+                # Check if it looks like a hostname
+                if re.match(r'^[a-zA-Z0-9]([a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}$', line):
+                    hosts.append(line)
+                    vulnerabilities.append({
+                        'id': str(uuid.uuid4()),
+                        'type': 'subdomain',
+                        'severity': 3.0,
+                        'confidence': 0.9,
+                        'name': f'Subdomain: {line}',
+                        'location': line,
+                        'evidence': line,
+                        'exploitable': False
+                    })
+            
+        return {
+            'vulnerabilities': vulnerabilities,
+            'hosts': hosts,
+            'services': [],
+            'raw_output': stdout
+        }
+        
+    def _parse_xsser(self, stdout: str, stderr: str) -> Dict:
+        """Parse xsser XSS scanner output"""
+        vulnerabilities = []
+            
+        # Look for XSS findings
+        if 'XSS FOUND' in stdout.upper() or 'VULNERABLE' in stdout.upper():
+            # Extract URL if possible
+            url_match = re.search(r'(https?://[^\s]+)', stdout)
+            location = url_match.group(1) if url_match else 'Unknown'
+                
+            vulnerabilities.append({
+                'id': str(uuid.uuid4()),
+                'type': 'xss',
+                'severity': 7.0,
+                'confidence': 0.85,
+                'name': 'Cross-Site Scripting (XSS) Vulnerability',
+                'location': location,
+                'evidence': stdout[:500],
+                'exploitable': True
+            })
+            
+        return {
+            'vulnerabilities': vulnerabilities,
+            'hosts': [],
+            'services': [],
+            'raw_output': stdout
+        }

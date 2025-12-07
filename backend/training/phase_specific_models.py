@@ -486,6 +486,17 @@ class PhaseSpecificToolSelector:
         top_tools = [tool for tool, prob in available_tools[:3]]
         top_probas = [prob for tool, prob in available_tools[:3]]
         
+        # If no tools available, indicate that all tools are exhausted
+        if not top_tools and tool_probas:
+            return {
+                'tools': [],
+                'probabilities': [],
+                'phase': phase,
+                'model_type': model_data['model_type'],
+                'confidence': 0.0,
+                'all_tools_exhausted': True
+            }
+        
         return {
             'tools': top_tools,
             'probabilities': top_probas,

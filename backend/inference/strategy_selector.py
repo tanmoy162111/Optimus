@@ -2,7 +2,7 @@
 Strategy Selector - Selects optimal scanning strategies based on target profile and findings
 """
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, List
 from collections import defaultdict
 from datetime import datetime
 
@@ -148,55 +148,46 @@ class StrategySelector:
         """
         return self.strategies.get(strategy, {}).get('tools', ['nmap'])
     
-    def update_strategy_performance(self, strategy: str, scan_results: Dict):
-        """
-        Update strategy performance based on actual scan results
-        
-        Args:
-            strategy: Strategy used
-            scan_results: Results from scan execution including:
-                - findings_count: Number of vulnerabilities found
-                - execution_time: Time taken
-                - coverage: Scan coverage achieved
-                - tools_used: Tools executed
-                - success_rate: Tool success rate
-        """
+    def update_strategy_performance(self, strategy: str, success: bool, findings_count: int):
+        """Update strategy performance based on execution results."""
         if strategy not in self.strategies:
             return
-            
-        # Extract metrics
-        findings = scan_results.get('findings_count', 0)
-        tools_used = len(scan_results.get('tools_used', []))
-        success_rate = scan_results.get('success_rate', 0.0)
         
-        # Update strategy stats
-        strat = self.strategies[strategy]
-        strat['executions'] += 1
+        stats = self.strategies[strategy]
+        stats['executions'] += 1
+        
+        if success:
+            stats['success_rate'] = (
+                (stats['success_rate'] * (stats['executions'] - 1) + 1.0) / stats['executions']
+            )
+        else:
+            stats['success_rate'] = (
+                (stats['success_rate'] * (stats['executions'] - 1)) / stats['executions']
+            )
         
         # Update average findings
-        strat['avg_findings'] = (
-            (strat['avg_findings'] * (strat['executions'] - 1) + findings) 
-            / strat['executions']
-        )
-        
-        # Update success rate
-        strat['success_rate'] = (
-            (strat['success_rate'] * (strat['executions'] - 1) + success_rate)
-            / strat['executions']
-        )
+        total_findings = stats['avg_findings'] * (stats['executions'] - 1) + findings_count
+        stats['avg_findings'] = total_findings / stats['executions']
         
         # Record in history
         self.strategy_performance_history[strategy].append({
-            'timestamp': datetime.now().isoformat(),
-            'findings': findings,
-            'tools_used': tools_used,
-            'success_rate': success_rate
+            'success': success,
+            'findings': findings_count,
+            'timestamp': datetime.now().isoformat()
         })
+
+    def get_strategy_tool_boost(self, strategy: str, available_tools: List[str]) -> List[str]:
+        """
+        Return tools that should be prioritized for the current strategy.
+        """
+        if strategy not in self.strategies:
+            return []
         
-        logger.info(f"Updated {strategy} strategy: "
-                   f"avg_findings={strat['avg_findings']:.2f}, "
-                   f"success_rate={strat['success_rate']:.2f}")
-    
+        strategy_tools = self.strategies[strategy].get('tools', [])
+        boosted = [t for t in strategy_tools if t in available_tools]
+        
+        return boosted
+
     def get_strategy_report(self) -> Dict[str, Any]:
         """Generate performance report for all strategies"""
         report = {
