@@ -2,16 +2,27 @@
 Supports 50+ pentesting tools with dynamic command generation
 """
 
-import paramiko
-import time
 import logging
+import re
+import time
+import paramiko
 import socket
 from datetime import datetime
-from typing import Dict, Any, Tuple, Optional, List
+from typing import Dict, Any, List, Optional
 import subprocess
 
+# Set up logger first
+logger = logging.getLogger(__name__)
+
 # Import the output parser
-from .output_parser import OutputParser
+# Try enhanced parser first, fall back to basic
+try:
+    from .enhanced_output_parser import EnhancedOutputParser
+    logger.info("[ToolManager] Using EnhancedOutputParser")
+except ImportError:
+    from .output_parser import OutputParser
+    logger.info("[ToolManager] Using basic OutputParser")
+
 from .tool_knowledge_base import ToolKnowledgeBase
 # Import Config from the backend root
 from config import Config
@@ -33,8 +44,6 @@ try:
 except ImportError as e:
     print(f" Warning: Hybrid tool system not available: {e}")
 
-logger = logging.getLogger(__name__)
-
 
 class ToolManager:
     def __init__(self, socketio):
@@ -50,7 +59,15 @@ class ToolManager:
         # Tool execution history for dynamic timeout adjustment
         self.tool_execution_history = {}
         # Initialize the output parser
-        self.output_parser = OutputParser()
+        # Try enhanced parser first, fall back to basic
+        try:
+            from .enhanced_output_parser import EnhancedOutputParser
+            self.output_parser = EnhancedOutputParser(llm_client=None)
+            logger.info("[ToolManager] Using EnhancedOutputParser")
+        except ImportError:
+            from .output_parser import OutputParser
+            self.output_parser = OutputParser()
+            logger.info("[ToolManager] Using basic OutputParser")
         
         # Try to initialize hybrid tool system
         self.hybrid_system = None
@@ -770,9 +787,12 @@ class ToolManager:
             except:
                 pass
         
+        # At the end, before returning, substitute all parameters
+        if command:
+            command = self._substitute_parameters(command, target, parameters)
+        
         print(f"[ToolManager] Command ({resolution_source}): {command[:100]}...")
         return command
-
     def _build_default_command(self, tool_name: str, target: str,
                              parameters: Dict[str, Any]) -> str:
         """Fallback command building with IMPROVED commands for web app testing"""
@@ -1113,6 +1133,71 @@ class ToolManager:
             'xsser': 'dalfox',
         }
         return fallbacks.get(tool_name)
+
+    def _substitute_parameters(self, command: str, target: str, parameters: Dict[str, Any]) -> str:
+        """
+        Substitute all placeholders in a command with actual values.
+        Handles: {target}, {host}, {domain}, {url}, {port}, {ip}, etc.
+        """
+        import re
+        
+        # Normalize target
+        if not target.startswith(('http://', 'https://')):
+            url_target = f"http://{target}"
+        else:
+            url_target = target
+        
+        # Extract components from target
+        hostname_match = re.search(r'(?:https?://)?([^:/]+)', target)
+        hostname = hostname_match.group(1) if hostname_match else target
+        
+        # Extract port if present
+        port_match = re.search(r':(\d+)', target)
+        port = port_match.group(1) if port_match else '80'
+        
+        # Extract domain (for DNS tools)
+        domain = hostname
+        
+        # Extract IP if target is an IP
+        ip_pattern = r'^(\d{1,3}\.){3}\d{1,3}$'
+        is_ip = re.match(ip_pattern, hostname)
+        ip = hostname if is_ip else hostname  # Use hostname as fallback
+        
+        # Define all substitutions
+        substitutions = {
+            '{target}': target,
+            '{TARGET}': target,
+            '{host}': hostname,
+            '{HOST}': hostname,
+            '{hostname}': hostname,
+            '{HOSTNAME}': hostname,
+            '{domain}': domain,
+            '{DOMAIN}': domain,
+            '{url}': url_target,
+            '{URL}': url_target,
+            '{port}': port,
+            '{PORT}': port,
+            '{ip}': ip,
+            '{IP}': ip,
+            '{RHOSTS}': hostname,
+            '{RHOST}': hostname,
+            '{specific_port}': parameters.get('port', port),
+        }
+        
+        # Apply substitutions
+        result = command
+        for placeholder, value in substitutions.items():
+            result = result.replace(placeholder, str(value))
+        
+        # Handle any remaining placeholders with a warning
+        remaining = re.findall(r'\{[^}]+\}', result)
+        if remaining:
+            logger.warning(f"[ToolManager] Unsubstituted placeholders in command: {remaining}")
+            # Replace remaining placeholders with empty string or sensible default
+            for placeholder in remaining:
+                result = result.replace(placeholder, '')
+        
+        return result.strip()
 
     def cleanup(self):
         """Close SSH connection"""

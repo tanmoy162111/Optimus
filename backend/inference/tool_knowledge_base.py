@@ -877,7 +877,7 @@ class ToolKnowledgeBase:
         phase = context.get('phase', 'reconnaissance')
 
         # Start with base command
-        # Create format dictionary with target, domain, and all context variables
+        # Create format dictionary with target, domain and all context variables
         format_dict = {'target': target, 'domain': self._extract_domain(target)}
         format_dict.update(context)  # Add all context variables
         command = template['base'].format(**format_dict)
@@ -895,6 +895,9 @@ class ToolKnowledgeBase:
         command = self._apply_learned_parameters(command, actual_tool, context)
 
         logger.info(f"[ToolKB] Generated command for {actual_tool}: {command[:100]}...")
+
+        # After building the command template, substitute all placeholders
+        command = self._substitute_all_placeholders(command, target, context)
 
         return command
 
@@ -1186,6 +1189,46 @@ class ToolKnowledgeBase:
 
         # Return everything after tool name and target
         return ' '.join(parts[2:])
+
+    def _substitute_all_placeholders(self, command: str, target: str, context: Dict[str, Any]) -> str:
+        """Replace all placeholders with actual values"""
+        import re
+        
+        # Normalize target
+        if not target.startswith(('http://', 'https://')):
+            url_target = f"http://{target}"
+        else:
+            url_target = target
+        
+        # Extract hostname
+        hostname_match = re.search(r'(?:https?://)?([^:/]+)', target)
+        hostname = hostname_match.group(1) if hostname_match else target
+        
+        # Extract port
+        port_match = re.search(r':(\d+)', target)
+        port = port_match.group(1) if port_match else '80'
+        
+        # Substitutions
+        substitutions = {
+            '{target}': target,
+            '{host}': hostname,
+            '{hostname}': hostname,
+            '{domain}': hostname,
+            '{url}': url_target,
+            '{port}': port,
+            '{ip}': hostname,
+            '{specific_port}': context.get('port', port),
+            '{tool}': context.get('tool_path', ''),
+        }
+        
+        result = command
+        for placeholder, value in substitutions.items():
+            result = result.replace(placeholder, str(value))
+        
+        # Clean up any remaining placeholders
+        result = re.sub(r'\{[^}]+\}', '', result)
+        
+        return result.strip()
 
     def get_effectiveness_report(self, tool: str) -> Dict:
         """Get effectiveness statistics for a tool"""

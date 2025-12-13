@@ -92,6 +92,10 @@ class ScanManager:
         print(f"  self.active_scans keys: {list(self.active_scans.keys()) if self.active_scans else 'None'}")
         print(f"{'='*60}")
         
+        # DEBUG: Check if agent_class is None
+        if self.agent_class is None:
+            print("[ScanManager] DEBUG: agent_class is None at start of start_scan!")
+        
         logger.info(f"start_scan called: scan_id={scan_id}, target={target}")
         
         if scan_id not in self.active_scans:
@@ -137,6 +141,7 @@ class ScanManager:
         logger.info(f"Scan thread started for {scan_id}")
         print(f"\n{'='*60}")
         print(f"[SCAN THREAD] Starting scan {scan_id} for target: {target}")
+        print(f"[SCAN THREAD] DEBUG: This is the UPDATED version of _run_scan_thread")
         print(f"{'='*60}\n")
         
         try:
@@ -146,13 +151,20 @@ class ScanManager:
                 print(f"[SCAN THREAD] ERROR: Scan state not found for {scan_id}")
                 return
             
+            # Ensure agent_class is initialized
             if not self.agent_class:
-                logger.error("Agent class not initialized!")
-                print(f"[SCAN THREAD] ERROR: Agent class not initialized!")
-                scan_state['status'] = 'error'
-                scan_state['error'] = 'Scan agent not initialized'
-                self._emit_error(scan_id, 'Scan agent not initialized')
-                return
+                logger.warning("Agent class not initialized, attempting to re-initialize components")
+                print(f"[SCAN THREAD] WARNING: Agent class not initialized, re-initializing...")
+                self._init_components()
+                
+                # Check again
+                if not self.agent_class:
+                    logger.error("Agent class still not initialized after re-initialization!")
+                    print(f"[SCAN THREAD] ERROR: Agent class still not initialized after re-initialization!")
+                    scan_state['status'] = 'error'
+                    scan_state['error'] = 'Scan agent not initialized'
+                    self._emit_error(scan_id, 'Scan agent not initialized')
+                    return
             
             # Create the autonomous agent
             logger.info(f"Creating AutonomousPentestAgent for scan {scan_id}")
@@ -365,6 +377,10 @@ def get_scan_manager(socketio=None, active_scans_ref=None) -> ScanManager:
         print(f"[ScanManager] Updated existing instance with new references")
         print(f"  socketio: {socketio}")
         print(f"  active_scans_ref keys: {list(active_scans_ref.keys()) if active_scans_ref else 'None'}")
+        
+        # Re-initialize components to ensure agent_class is set
+        print(f"[get_scan_manager] Re-initializing components...")
+        _scan_manager._init_components()
     elif _scan_manager is None:
         logger.info("Creating new ScanManager instance")
         # If parameters are provided, use them

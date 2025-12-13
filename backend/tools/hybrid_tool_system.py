@@ -442,15 +442,16 @@ class KnowledgeBase:
     """Tool knowledge base"""
     
     def __init__(self):
-        # Sample knowledge base data
+        # Updated templates with consistent {target} placeholder
         self.tools = {
             "nmap": {
                 "description": "Network exploration tool and security scanner",
                 "category": "scanner",
                 "commands": {
-                    "default": "{tool} {target}",
-                    "stealth": "{tool} -sS {target}",
-                    "comprehensive": "{tool} -sV -sC -A -p- {target}"
+                    "default": "nmap -sV -sC {target}",
+                    "stealth": "nmap -sS -T2 {target}",
+                    "comprehensive": "nmap -sV -sC -A -p- --host-timeout 30m {target}",
+                    "quick": "nmap -sV --top-ports 100 {target}",
                 },
                 "examples": [
                     "nmap 192.168.1.1",
@@ -462,21 +463,105 @@ class KnowledgeBase:
                 "description": "Fast and customizable vulnerability scanner",
                 "category": "vulnerability",
                 "commands": {
-                    "default": "{tool} -u {target}",
-                    "tech_detect": "{tool} -u {target} -td",
-                    "templates": "{tool} -u {target} -t cves/"
+                    "default": "nuclei -u {target} -severity critical,high",
+                    "tech_detect": "nuclei -u {target} -td",
+                    "templates": "nuclei -u {target} -t cves/",
+                    "comprehensive": "nuclei -u {target} -severity critical,high,medium -silent",
                 },
                 "examples": [
                     "nuclei -u https://example.com",
                     "nuclei -u https://example.com -t cves/"
                 ],
                 "requires_root": False
-            }
+            },
+            "nikto": {
+                "description": "Web server vulnerability scanner",
+                "category": "web",
+                "commands": {
+                    "default": "nikto -h {target}",
+                    "comprehensive": "nikto -h {target} -Tuning 123456789",
+                    "ssl": "nikto -h {target} -ssl",
+                },
+                "requires_root": False
+            },
+            "sqlmap": {
+                "description": "SQL injection detection and exploitation tool",
+                "category": "exploitation",
+                "commands": {
+                    "default": "sqlmap -u {target} --batch --random-agent",
+                    "aggressive": "sqlmap -u {target} --batch --level=3 --risk=3 --dbs",
+                    "forms": "sqlmap -u {target} --batch --forms --crawl=2",
+                },
+                "requires_root": False
+            },
+            "gobuster": {
+                "description": "Directory/file brute-forcer",
+                "category": "web",
+                "commands": {
+                    "default": "gobuster dir -u {target} -w /usr/share/dirb/wordlists/common.txt",
+                    "comprehensive": "gobuster dir -u {target} -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt",
+                },
+                "requires_root": False
+            },
+            "ffuf": {
+                "description": "Fast web fuzzer",
+                "category": "web", 
+                "commands": {
+                    "default": "ffuf -u {target}/FUZZ -w /usr/share/dirb/wordlists/common.txt",
+                },
+                "requires_root": False
+            },
+            "whatweb": {
+                "description": "Web technology fingerprinting",
+                "category": "reconnaissance",
+                "commands": {
+                    "default": "whatweb {target}",
+                    "aggressive": "whatweb -a 3 {target}",
+                },
+                "requires_root": False
+            },
+            "dnsenum": {
+                "description": "DNS enumeration tool",
+                "category": "reconnaissance",
+                "commands": {
+                    "default": "dnsenum {target}",
+                },
+                "requires_root": False
+            },
+            "wpscan": {
+                "description": "WordPress vulnerability scanner",
+                "category": "web",
+                "commands": {
+                    "default": "wpscan --url {target}",
+                    "enumerate": "wpscan --url {target} -e vp,vt,u",
+                },
+                "requires_root": False
+            },
+            "sslscan": {
+                "description": "SSL/TLS vulnerability scanner",
+                "category": "scanning",
+                "commands": {
+                    "default": "sslscan {target}",
+                },
+                "requires_root": False
+            },
+            "dalfox": {
+                "description": "XSS scanner",
+                "category": "exploitation",
+                "commands": {
+                    "default": "dalfox url {target}",
+                },
+                "requires_root": False
+            },
+            "commix": {
+                "description": "Command injection exploitation tool",
+                "category": "exploitation",
+                "commands": {
+                    "default": "commix --url={target} --batch",
+                },
+                "requires_root": False
+            },
         }
-    
-    def get_tool(self, tool_name: str) -> Optional[Dict[str, Any]]:
-        """Get tool information"""
-        return self.tools.get(tool_name.lower())
     
     def get_command_template(self, tool_name: str, task: str) -> Optional[str]:
         """Get command template for tool and task"""
@@ -489,15 +574,40 @@ class KnowledgeBase:
         # Match task to command template
         task_lower = task.lower()
         if "stealth" in task_lower:
-            return commands.get("stealth")
+            return commands.get("stealth", commands.get("default"))
         elif "comprehensive" in task_lower or "full" in task_lower:
-            return commands.get("comprehensive")
-        elif "tech" in task_lower:
-            return commands.get("tech_detect")
-        elif "template" in task_lower:
-            return commands.get("templates")
+            return commands.get("comprehensive", commands.get("default"))
+        elif "aggressive" in task_lower:
+            return commands.get("aggressive", commands.get("default"))
+        elif "quick" in task_lower or "fast" in task_lower:
+            return commands.get("quick", commands.get("default"))
         
         return commands.get("default")
+    
+    def build_command(self, tool_name: str, target: str, task: str = "default") -> Optional[str]:
+        """Build a complete command with target substituted"""
+        template = self.get_command_template(tool_name, task)
+        if not template:
+            return None
+        
+        # Substitute target placeholder
+        import re
+        
+        # Normalize target for URL-based tools
+        if tool_name in ['nikto', 'nuclei', 'sqlmap', 'gobuster', 'ffuf', 'wpscan', 'whatweb', 'dalfox', 'commix']:
+            if not target.startswith(('http://', 'https://')):
+                target = f"http://{target}"
+        
+        # Extract hostname for DNS tools
+        hostname_match = re.search(r'(?:https?://)?([^:/]+)', target)
+        hostname = hostname_match.group(1) if hostname_match else target
+        
+        # Substitute placeholders
+        command = template.replace('{target}', target)
+        command = command.replace('{host}', hostname)
+        command = command.replace('{domain}', hostname)
+        
+        return command
 
 class ToolInventory:
     """Tool inventory management"""

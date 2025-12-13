@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -14,10 +14,12 @@ import {
   Lock,
   ChevronDown,
   ChevronUp,
+  AlertCircle,
 } from 'lucide-react';
 import { cn, extractHost } from '@/lib/utils';
 import { useSocket, useScanSocket } from '@/hooks';
 import { useScanStore } from '@/stores';
+import { api } from '@/services';
 import {
   Card,
   Button,
@@ -27,9 +29,7 @@ import {
   Terminal,
   FindingsPanel,
   ToolsPanel,
-} from '@/components';
-
-// ============================================
+} from '@/components';// ============================================
 // Scan Page
 // ============================================
 
@@ -51,13 +51,13 @@ export const ScanPage: React.FC = () => {
 
   const { currentScan, isScanning, setCurrentScan, setIsScanning } = useScanStore();
   const [isStarting, setIsStarting] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
   
   // Initialize WebSocket
   useSocket();
   
   // Subscribe to scan events
   useScanSocket(currentScan?.scan_id || null);
-
 
 
 
@@ -81,36 +81,78 @@ export const ScanPage: React.FC = () => {
     return true;
   };
 
-  // Handle scan start
+  // Handle scan start - CALLS THE ACTUAL API
   const handleStartScan = async () => {
     if (!validateTarget(target)) return;
 
     try {
       setIsStarting(true);
-      // Simulate starting a scan - in a real app, this would call the API
+      setApiError(null);
+      
+      // ACTUALLY CALL THE BACKEND API
+      const scanResponse = await api.scan.start(target, {
+        mode: scanOptions.mode,
+        enableExploitation: scanOptions.enableExploitation,
+        useAI: scanOptions.useAI,
+        maxDuration: scanOptions.maxDuration,
+        excludePaths: scanOptions.excludePaths,
+      });
+      
+      // Update state with the response from the backend
       const newScan = {
-        scan_id: `scan_${Date.now()}`,
-        target,
-        status: 'running' as const,
-        phase: 'reconnaissance' as const,
-        start_time: new Date().toISOString(),
-        time_elapsed: 0,
-        coverage: 0,
-        risk_score: 0,
-        tools_executed: [],
-        findings: [],
+        scan_id: scanResponse.scan_id,
+        target: scanResponse.target,
+        status: scanResponse.status as 'initializing' | 'running' | 'paused' | 'completed' | 'error',
+        phase: (scanResponse.phase || 'reconnaissance') as 'reconnaissance' | 'scanning' | 'exploitation' | 'post_exploitation' | 'reporting',
+        start_time: scanResponse.start_time,
+        time_elapsed: scanResponse.time_elapsed || 0,
+        coverage: scanResponse.coverage || 0,
+        risk_score: scanResponse.risk_score || 0,
+        tools_executed: scanResponse.tools_executed || [],
+        findings: scanResponse.findings || [],
         options: scanOptions
       };
+      
       setCurrentScan(newScan);
       setIsScanning(true);
-      // Navigation is handled by the scan manager
-    } catch (error) {
+      
+      console.log('[Scan] Started scan:', newScan.scan_id);
+      
+    } catch (error: any) {
       console.error('Failed to start scan:', error);
+      setApiError(error?.response?.data?.error || error?.message || 'Failed to start scan');
+      setIsScanning(false);
     } finally {
       setIsStarting(false);
     }
   };
 
+  // Poll for scan status updates
+  useEffect(() => {
+    if (!currentScan?.scan_id || !isScanning) return;
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const status = await api.scan.getStatus(currentScan.scan_id);
+        if (status) {
+          setCurrentScan({
+            ...currentScan,
+            ...status,
+            status: status.status as any,
+            phase: status.phase as any,
+          });
+
+          if (status.status === 'completed' || status.status === 'error') {
+            setIsScanning(false);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to poll scan status:', err);
+      }
+    }, 2000);
+
+    return () => clearInterval(pollInterval);
+  }, [currentScan?.scan_id, isScanning]);
   // Handle stop
   const handleStopScan = async () => {
     // Simulate stopping a scan
@@ -177,6 +219,18 @@ export const ScanPage: React.FC = () => {
                 )}
               </div>
             </Card>
+
+            {apiError && (
+              <Card variant="default" className="p-4 border-red-500/50 bg-red-500/10">
+                <div className="flex items-center gap-3 text-red-400">
+                  <AlertCircle className="w-5 h-5" />
+                  <div>
+                    <p className="font-medium">Scan Error</p>
+                    <p className="text-sm text-red-300">{apiError}</p>
+                  </div>
+                </div>
+              </Card>
+            )}
 
             {/* Scan Mode */}
             <Card variant="default" className="p-6">

@@ -6512,3 +6512,446 @@ AttributeError: 'ToolScanner' object has no attribute 'scan'
 2025-12-08 00:12:40,917 - core.scan_engine - INFO - Scan baab3bcd results: 3 findings, 10 tools executed
 2025-12-08 00:12:47,165 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 00:12:47] "GET /api/scan/status/baab3bcd HTTP/1.1" 200 -
 2025-12-08 00:13:01,131 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 00:13:01] "GET /api/scan/status/baab3bcd HTTP/1.1" 200 -
+2025-12-08 00:43:34,966 - websocket.handlers - INFO - Client disconnected: r0CAkhfBbGILaL4rAAAB
+2025-12-08 00:43:35,003 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 00:43:35] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-08 00:43:35,070 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-08 00:43:35,361 - websocket.handlers - INFO - Client disconnected: xCUO2jVysYh_AF7oAAAD
+2025-12-08 00:43:35,372 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 00:43:35] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-08 00:43:35,377 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-08 15:59:25,508 - optimus - INFO - Registered: api_bp
+2025-12-08 15:59:25,514 - optimus - INFO - Registered: tool_bp
+2025-12-08 15:59:25,523 - optimus - INFO - Registered: intelligence_bp
+2025-12-08 15:59:25,526 - optimus - INFO - Registered: metrics_bp
+2025-12-08 15:59:25,534 - optimus - INFO - Registered: report_bp
+2025-12-08 15:59:25,537 - optimus - INFO - Registered: training_bp
+2025-12-08 15:59:25,539 - optimus - INFO - WebSocket handlers registered
+2025-12-08 15:59:26,602 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-08 15:59:26,602 - optimus - INFO - Intelligence module initialized
+2025-12-08 15:59:26,617 - optimus - INFO - Hybrid tool system initialized
+2025-12-08 15:59:26,623 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-08 15:59:33,838 - inference.tool_selector - WARNING - Phase-specific models not available: No module named 'threadpoolctl'
+2025-12-08 15:59:34,456 - core.scan_engine - ERROR - Failed to initialize components: name 'logger' is not defined
+2025-12-08 16:00:11,083 - optimus - INFO - Registered: api_bp
+2025-12-08 16:00:11,089 - optimus - INFO - Registered: tool_bp
+2025-12-08 16:00:11,097 - optimus - INFO - Registered: intelligence_bp
+2025-12-08 16:00:11,100 - optimus - INFO - Registered: metrics_bp
+2025-12-08 16:00:11,107 - optimus - INFO - Registered: report_bp
+2025-12-08 16:00:11,110 - optimus - INFO - Registered: training_bp
+2025-12-08 16:00:11,112 - optimus - INFO - WebSocket handlers registered
+2025-12-08 16:00:11,974 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-08 16:00:11,974 - optimus - INFO - Intelligence module initialized
+2025-12-08 16:00:11,980 - optimus - INFO - Hybrid tool system initialized
+2025-12-08 16:00:11,985 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-08 16:00:24,512 - core.scan_engine - ERROR - Failed to initialize components: name 'logger' is not defined
+2025-12-08 16:00:24,516 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-08 16:00:24,525 - optimus - INFO - Registered: scan_bp
+2025-12-08 16:00:24,527 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-08 16:00:24,530 - optimus - INFO - Debug mode: True
+2025-12-08 16:00:24,531 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-08 16:00:24,626 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.112:5000
+2025-12-08 16:00:24,626 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-08 16:01:50,251 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 16:01:50] "[33mGET /api/health HTTP/1.1[0m" 404 -
+2025-12-08 16:02:08,598 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 16:02:08] "GET / HTTP/1.1" 200 -
+2025-12-08 16:02:32,819 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 16:02:32] "[33mGET /api/scan HTTP/1.1[0m" 404 -
+2025-12-08 16:02:52,128 - optimus - INFO - Registered: api_bp
+2025-12-08 16:02:52,134 - optimus - INFO - Registered: tool_bp
+2025-12-08 16:02:52,146 - optimus - INFO - Registered: intelligence_bp
+2025-12-08 16:02:52,149 - optimus - INFO - Registered: metrics_bp
+2025-12-08 16:02:52,155 - optimus - INFO - Registered: report_bp
+2025-12-08 16:02:52,159 - optimus - INFO - Registered: training_bp
+2025-12-08 16:02:52,160 - optimus - INFO - WebSocket handlers registered
+2025-12-08 16:02:52,161 - optimus - INFO - Intelligence module initialized
+2025-12-08 16:02:52,161 - optimus - INFO - Hybrid tool system initialized
+2025-12-08 16:02:52,171 - optimus - INFO - Registered: scan_bp
+2025-12-08 16:02:52,174 - api.scan_routes - INFO - Added scan 17ff7baa to active_scans. Active scans count: 1
+2025-12-08 16:02:52,175 - api.scan_routes - INFO - Created scan 17ff7baa for target https://demo.owasp-juice.shop/#/
+2025-12-08 16:02:52,178 - core.scan_engine - INFO - start_scan called: scan_id=17ff7baa, target=https://demo.owasp-juice.shop/#/
+2025-12-08 16:02:52,180 - core.scan_engine - INFO - Scan thread started for 17ff7baa
+2025-12-08 16:02:52,180 - core.scan_engine - INFO - Started scan thread for 17ff7baa
+2025-12-08 16:02:52,181 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-08 16:02:52,182 - api.scan_routes - INFO - Scan 17ff7baa started successfully
+2025-12-08 16:02:52,183 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 16:02:52] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-08 16:02:52,183 - core.scan_engine - ERROR - Agent class not initialized!
+2025-12-08 16:03:15,815 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 16:03:15] "GET /api/scan/status/17ff7baa HTTP/1.1" 200 -
+2025-12-08 16:03:34,177 - api.scan_routes - INFO - Added scan c7c8607e to active_scans. Active scans count: 2
+2025-12-08 16:03:34,178 - api.scan_routes - INFO - Created scan c7c8607e for target https://demo.owasp-juice.shop/#/
+2025-12-08 16:03:34,182 - core.scan_engine - INFO - start_scan called: scan_id=c7c8607e, target=https://demo.owasp-juice.shop/#/
+2025-12-08 16:03:34,183 - core.scan_engine - INFO - Scan thread started for c7c8607e
+2025-12-08 16:03:34,183 - core.scan_engine - INFO - Started scan thread for c7c8607e
+2025-12-08 16:03:34,184 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-08 16:03:34,184 - api.scan_routes - INFO - Scan c7c8607e started successfully
+2025-12-08 16:03:34,185 - core.scan_engine - ERROR - Agent class not initialized!
+2025-12-08 16:03:34,185 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 16:03:34] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-08 16:03:50,637 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 16:03:50] "GET /api/scan/status/c7c8607e HTTP/1.1" 200 -
+2025-12-08 16:08:33,731 - optimus - INFO - Registered: api_bp
+2025-12-08 16:08:33,736 - optimus - INFO - Registered: tool_bp
+2025-12-08 16:08:33,745 - optimus - INFO - Registered: intelligence_bp
+2025-12-08 16:08:33,749 - optimus - INFO - Registered: metrics_bp
+2025-12-08 16:08:33,756 - optimus - INFO - Registered: report_bp
+2025-12-08 16:08:33,759 - optimus - INFO - Registered: training_bp
+2025-12-08 16:08:33,761 - optimus - INFO - WebSocket handlers registered
+2025-12-08 16:08:33,931 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-08 16:08:33,931 - optimus - INFO - Intelligence module initialized
+2025-12-08 16:08:33,939 - optimus - INFO - Hybrid tool system initialized
+2025-12-08 16:08:33,944 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-08 16:08:35,119 - inference.tool_selector - WARNING - Phase-specific models not available: No module named 'threadpoolctl'
+2025-12-08 16:08:35,282 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-08 16:08:35,291 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-08 16:08:35,291 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-08 16:08:35,291 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-08 16:08:35,291 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-08 16:08:35,292 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-08 16:08:35,292 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-08 16:08:35,298 - optimus - INFO - Registered: scan_bp
+2025-12-08 16:08:35,300 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-08 16:08:35,300 - optimus - INFO - Debug mode: True
+2025-12-08 16:08:35,300 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-08 16:08:35,356 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.112:5000
+2025-12-08 16:08:35,356 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-08 16:09:15,189 - api.scan_routes - INFO - Added scan a8f8a556 to active_scans. Active scans count: 3
+2025-12-08 16:09:15,202 - api.scan_routes - INFO - Created scan a8f8a556 for target https://demo.owasp-juice.shop/#/
+2025-12-08 16:09:15,221 - core.scan_engine - INFO - start_scan called: scan_id=a8f8a556, target=https://demo.owasp-juice.shop/#/
+2025-12-08 16:09:15,227 - core.scan_engine - INFO - Scan thread started for a8f8a556
+2025-12-08 16:09:15,227 - core.scan_engine - INFO - Started scan thread for a8f8a556
+2025-12-08 16:09:15,228 - core.scan_engine - ERROR - Agent class not initialized!
+2025-12-08 16:09:15,233 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-08 16:09:15,234 - api.scan_routes - INFO - Scan a8f8a556 started successfully
+2025-12-08 16:09:15,251 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 16:09:15] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-08 16:16:08,945 - optimus - INFO - Registered: api_bp
+2025-12-08 16:16:08,952 - optimus - INFO - Registered: tool_bp
+2025-12-08 16:16:08,961 - optimus - INFO - Registered: intelligence_bp
+2025-12-08 16:16:08,965 - optimus - INFO - Registered: metrics_bp
+2025-12-08 16:16:08,973 - optimus - INFO - Registered: report_bp
+2025-12-08 16:16:08,976 - optimus - INFO - Registered: training_bp
+2025-12-08 16:16:08,978 - optimus - INFO - WebSocket handlers registered
+2025-12-08 16:16:09,237 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-08 16:16:09,237 - optimus - INFO - Intelligence module initialized
+2025-12-08 16:16:09,244 - optimus - INFO - Hybrid tool system initialized
+2025-12-08 16:16:09,256 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-08 16:16:11,009 - inference.tool_selector - WARNING - Phase-specific models not available: No module named 'threadpoolctl'
+2025-12-08 16:16:11,274 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-08 16:16:11,289 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-08 16:16:11,289 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-08 16:16:11,289 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-08 16:16:11,290 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-08 16:16:11,290 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-08 16:16:11,291 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-08 16:16:11,297 - optimus - INFO - Registered: scan_bp
+2025-12-08 16:16:11,299 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-08 16:16:11,300 - optimus - INFO - Debug mode: True
+2025-12-08 16:16:11,300 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-08 16:16:11,346 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.112:5000
+2025-12-08 16:16:11,347 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-08 16:17:11,244 - api.scan_routes - INFO - Added scan 3f5567b9 to active_scans. Active scans count: 4
+2025-12-08 16:17:11,256 - api.scan_routes - INFO - Created scan 3f5567b9 for target https://demo.owasp-juice.shop/#/
+2025-12-08 16:17:11,268 - core.scan_engine - INFO - start_scan called: scan_id=3f5567b9, target=https://demo.owasp-juice.shop/#/
+2025-12-08 16:17:11,271 - core.scan_engine - INFO - Scan thread started for 3f5567b9
+2025-12-08 16:17:11,271 - core.scan_engine - INFO - Started scan thread for 3f5567b9
+2025-12-08 16:17:11,275 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-08 16:17:11,275 - api.scan_routes - INFO - Scan 3f5567b9 started successfully
+2025-12-08 16:17:11,276 - core.scan_engine - ERROR - Agent class not initialized!
+2025-12-08 16:17:11,291 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 16:17:11] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-08 16:19:30,158 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 16:19:30] "GET /api/scan/status/3f5567b9 HTTP/1.1" 200 -
+2025-12-08 16:23:46,505 - optimus - INFO - Registered: api_bp
+2025-12-08 16:23:46,513 - optimus - INFO - Registered: tool_bp
+2025-12-08 16:23:46,524 - optimus - INFO - Registered: intelligence_bp
+2025-12-08 16:23:46,547 - optimus - INFO - Registered: metrics_bp
+2025-12-08 16:23:46,558 - optimus - INFO - Registered: report_bp
+2025-12-08 16:23:46,561 - optimus - INFO - Registered: training_bp
+2025-12-08 16:23:46,570 - optimus - INFO - WebSocket handlers registered
+2025-12-08 16:23:46,804 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-08 16:23:46,804 - optimus - INFO - Intelligence module initialized
+2025-12-08 16:23:46,823 - optimus - INFO - Hybrid tool system initialized
+2025-12-08 16:23:46,843 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-08 16:23:48,172 - inference.tool_selector - WARNING - Phase-specific models not available: No module named 'threadpoolctl'
+2025-12-08 16:23:48,381 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-08 16:23:48,405 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-08 16:23:48,405 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-08 16:23:48,405 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-08 16:23:48,406 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-08 16:23:48,406 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-08 16:23:48,407 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-08 16:23:48,411 - optimus - INFO - Registered: scan_bp
+2025-12-08 16:23:48,412 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-08 16:23:48,413 - optimus - INFO - Debug mode: True
+2025-12-08 16:23:48,413 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-08 16:23:48,439 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.112:5000
+2025-12-08 16:23:48,440 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-08 16:24:48,561 - api.scan_routes - INFO - Added scan 5820db18 to active_scans. Active scans count: 5
+2025-12-08 16:24:48,562 - api.scan_routes - INFO - Created scan 5820db18 for target https://demo.owasp-juice.shop/#/
+2025-12-08 16:24:48,566 - core.scan_engine - INFO - start_scan called: scan_id=5820db18, target=https://demo.owasp-juice.shop/#/
+2025-12-08 16:24:48,567 - core.scan_engine - INFO - Scan thread started for 5820db18
+2025-12-08 16:24:48,568 - core.scan_engine - INFO - Started scan thread for 5820db18
+2025-12-08 16:24:48,568 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-08 16:24:48,569 - api.scan_routes - INFO - Scan 5820db18 started successfully
+2025-12-08 16:24:48,569 - core.scan_engine - ERROR - Agent class not initialized!
+2025-12-08 16:24:48,570 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 16:24:48] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-08 16:25:25,731 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 16:25:25] "GET /api/scan/status/5820db18 HTTP/1.1" 200 -
+2025-12-08 16:26:33,014 - optimus - INFO - Registered: api_bp
+2025-12-08 16:26:33,022 - optimus - INFO - Registered: tool_bp
+2025-12-08 16:26:33,033 - optimus - INFO - Registered: intelligence_bp
+2025-12-08 16:26:33,036 - optimus - INFO - Registered: metrics_bp
+2025-12-08 16:26:33,043 - optimus - INFO - Registered: report_bp
+2025-12-08 16:26:33,047 - optimus - INFO - Registered: training_bp
+2025-12-08 16:26:33,048 - optimus - INFO - WebSocket handlers registered
+2025-12-08 16:26:33,276 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-08 16:26:33,276 - optimus - INFO - Intelligence module initialized
+2025-12-08 16:26:33,283 - optimus - INFO - Hybrid tool system initialized
+2025-12-08 16:26:33,296 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-08 16:26:34,514 - inference.tool_selector - WARNING - Phase-specific models not available: No module named 'threadpoolctl'
+2025-12-08 16:26:34,686 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-08 16:26:34,696 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-08 16:26:34,696 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-08 16:26:34,697 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-08 16:26:34,697 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-08 16:26:34,697 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-08 16:26:34,698 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-08 16:26:34,702 - optimus - INFO - Registered: scan_bp
+2025-12-08 16:26:34,704 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-08 16:26:34,704 - optimus - INFO - Debug mode: True
+2025-12-08 16:26:34,704 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-08 16:26:34,735 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.112:5000
+2025-12-08 16:26:34,735 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-08 16:27:27,021 - api.scan_routes - INFO - Added scan 33729439 to active_scans. Active scans count: 6
+2025-12-08 16:27:27,022 - api.scan_routes - INFO - Created scan 33729439 for target https://demo.owasp-juice.shop/#/
+2025-12-08 16:27:27,031 - core.scan_engine - INFO - start_scan called: scan_id=33729439, target=https://demo.owasp-juice.shop/#/
+2025-12-08 16:27:27,032 - core.scan_engine - INFO - Scan thread started for 33729439
+2025-12-08 16:27:27,032 - core.scan_engine - INFO - Started scan thread for 33729439
+2025-12-08 16:27:27,033 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-08 16:27:27,034 - api.scan_routes - INFO - Scan 33729439 started successfully
+2025-12-08 16:27:27,034 - core.scan_engine - ERROR - Agent class not initialized!
+2025-12-08 16:27:27,035 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 16:27:27] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-08 16:32:16,530 - optimus - INFO - Registered: api_bp
+2025-12-08 16:32:16,536 - optimus - INFO - Registered: tool_bp
+2025-12-08 16:32:16,546 - optimus - INFO - Registered: intelligence_bp
+2025-12-08 16:32:16,549 - optimus - INFO - Registered: metrics_bp
+2025-12-08 16:32:16,555 - optimus - INFO - Registered: report_bp
+2025-12-08 16:32:16,558 - optimus - INFO - Registered: training_bp
+2025-12-08 16:32:16,560 - optimus - INFO - WebSocket handlers registered
+2025-12-08 16:32:16,744 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-08 16:32:16,744 - optimus - INFO - Intelligence module initialized
+2025-12-08 16:32:16,749 - optimus - INFO - Hybrid tool system initialized
+2025-12-08 16:32:16,760 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-08 16:32:17,961 - inference.tool_selector - WARNING - Phase-specific models not available: No module named 'threadpoolctl'
+2025-12-08 16:32:18,129 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-08 16:32:18,135 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-08 16:32:18,136 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-08 16:32:18,136 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-08 16:32:18,136 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-08 16:32:18,136 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-08 16:32:18,137 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-08 16:32:18,144 - optimus - INFO - Registered: scan_bp
+2025-12-08 16:32:18,145 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-08 16:32:18,146 - optimus - INFO - Debug mode: True
+2025-12-08 16:32:18,146 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-08 16:32:18,170 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.112:5000
+2025-12-08 16:32:18,170 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-08 16:41:17,593 - api.scan_routes - INFO - Added scan 77f719f0 to active_scans. Active scans count: 7
+2025-12-08 16:41:17,611 - api.scan_routes - INFO - Created scan 77f719f0 for target https://demo.owasp-juice.shop/#/
+2025-12-08 16:41:17,632 - core.scan_engine - INFO - start_scan called: scan_id=77f719f0, target=https://demo.owasp-juice.shop/#/
+2025-12-08 16:41:17,636 - core.scan_engine - INFO - Scan thread started for 77f719f0
+2025-12-08 16:41:17,636 - core.scan_engine - INFO - Started scan thread for 77f719f0
+2025-12-08 16:41:17,642 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-08 16:41:17,643 - api.scan_routes - INFO - Scan 77f719f0 started successfully
+2025-12-08 16:41:17,644 - core.scan_engine - ERROR - Agent class not initialized!
+2025-12-08 16:41:17,666 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 16:41:17] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-08 16:44:49,892 - optimus - INFO - Registered: api_bp
+2025-12-08 16:44:49,900 - optimus - INFO - Registered: tool_bp
+2025-12-08 16:44:49,909 - optimus - INFO - Registered: intelligence_bp
+2025-12-08 16:44:49,912 - optimus - INFO - Registered: metrics_bp
+2025-12-08 16:44:49,917 - optimus - INFO - Registered: report_bp
+2025-12-08 16:44:49,920 - optimus - INFO - Registered: training_bp
+2025-12-08 16:44:49,923 - optimus - INFO - WebSocket handlers registered
+2025-12-08 16:44:50,211 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-08 16:44:50,211 - optimus - INFO - Intelligence module initialized
+2025-12-08 16:44:50,217 - optimus - INFO - Hybrid tool system initialized
+2025-12-08 16:44:50,227 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-08 16:44:52,473 - inference.tool_selector - WARNING - Phase-specific models not available: No module named 'threadpoolctl'
+2025-12-08 16:44:52,840 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-08 16:44:52,849 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-08 16:44:52,850 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-08 16:44:52,850 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-08 16:44:52,850 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-08 16:44:52,851 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-08 16:44:52,852 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-08 16:44:52,859 - optimus - INFO - Registered: scan_bp
+2025-12-08 16:44:52,862 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-08 16:44:52,862 - optimus - INFO - Debug mode: True
+2025-12-08 16:44:52,863 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-08 16:44:52,908 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.112:5000
+2025-12-08 16:44:52,908 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-08 16:45:59,323 - api.scan_routes - INFO - Added scan db0133c0 to active_scans. Active scans count: 8
+2025-12-08 16:45:59,332 - api.scan_routes - INFO - Created scan db0133c0 for target https://demo.owasp-juice.shop/#/
+2025-12-08 16:45:59,347 - core.scan_engine - INFO - start_scan called: scan_id=db0133c0, target=https://demo.owasp-juice.shop/#/
+2025-12-08 16:45:59,376 - core.scan_engine - INFO - Scan thread started for db0133c0
+2025-12-08 16:45:59,376 - core.scan_engine - INFO - Started scan thread for db0133c0
+2025-12-08 16:45:59,379 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-08 16:45:59,380 - api.scan_routes - INFO - Scan db0133c0 started successfully
+2025-12-08 16:45:59,380 - core.scan_engine - ERROR - Agent class not initialized!
+2025-12-08 16:45:59,388 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 16:45:59] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-08 16:46:14,639 - api.scan_routes - INFO - Added scan ca395836 to active_scans. Active scans count: 9
+2025-12-08 16:46:14,640 - api.scan_routes - INFO - Created scan ca395836 for target https://demo.owasp-juice.shop/#/
+2025-12-08 16:46:14,645 - core.scan_engine - INFO - start_scan called: scan_id=ca395836, target=https://demo.owasp-juice.shop/#/
+2025-12-08 16:46:14,646 - core.scan_engine - INFO - Scan thread started for ca395836
+2025-12-08 16:46:14,646 - core.scan_engine - INFO - Started scan thread for ca395836
+2025-12-08 16:46:14,647 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-08 16:46:14,647 - api.scan_routes - INFO - Scan ca395836 started successfully
+2025-12-08 16:46:14,647 - core.scan_engine - ERROR - Agent class not initialized!
+2025-12-08 16:46:14,648 - werkzeug - INFO - 127.0.0.1 - - [08/Dec/2025 16:46:14] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-13 07:37:15,064 - optimus - INFO - Registered: api_bp
+2025-12-13 07:37:15,072 - optimus - INFO - Registered: tool_bp
+2025-12-13 07:37:15,085 - optimus - INFO - Registered: intelligence_bp
+2025-12-13 07:37:15,090 - optimus - INFO - Registered: metrics_bp
+2025-12-13 07:37:15,100 - optimus - INFO - Registered: report_bp
+2025-12-13 07:37:15,104 - optimus - INFO - Registered: training_bp
+2025-12-13 07:37:15,106 - optimus - INFO - WebSocket handlers registered
+2025-12-13 07:37:18,422 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-13 07:37:18,422 - optimus - INFO - Intelligence module initialized
+2025-12-13 07:37:18,432 - optimus - INFO - Hybrid tool system initialized
+2025-12-13 07:37:18,438 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-13 07:38:04,853 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-13 07:38:04,866 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-13 07:38:04,867 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-13 07:38:04,868 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-13 07:38:04,868 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-13 07:38:04,868 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-13 07:38:04,869 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-13 07:38:04,874 - optimus - INFO - Registered: scan_bp
+2025-12-13 07:38:04,876 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-13 07:38:04,876 - optimus - INFO - Debug mode: True
+2025-12-13 07:38:04,877 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-13 07:38:04,941 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.112:5000
+2025-12-13 07:38:04,941 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-13 07:38:23,901 - optimus - INFO - Registered: api_bp
+2025-12-13 07:38:23,905 - optimus - INFO - Registered: tool_bp
+2025-12-13 07:38:23,914 - optimus - INFO - Registered: intelligence_bp
+2025-12-13 07:38:23,917 - optimus - INFO - Registered: metrics_bp
+2025-12-13 07:38:23,921 - optimus - INFO - Registered: report_bp
+2025-12-13 07:38:23,923 - optimus - INFO - Registered: training_bp
+2025-12-13 07:38:23,923 - optimus - INFO - WebSocket handlers registered
+2025-12-13 07:38:23,924 - optimus - INFO - Intelligence module initialized
+2025-12-13 07:38:23,924 - optimus - INFO - Hybrid tool system initialized
+2025-12-13 07:38:23,926 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-13 07:38:23,927 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-13 07:38:23,927 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-13 07:38:23,928 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-13 07:38:23,928 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-13 07:38:23,935 - optimus - INFO - Registered: scan_bp
+2025-12-13 07:38:23,938 - api.scan_routes - INFO - Added scan e6034bd4 to active_scans. Active scans count: 1
+2025-12-13 07:38:23,938 - api.scan_routes - INFO - Created scan e6034bd4 for target https://demo.owasp-juice.shop/#/
+2025-12-13 07:38:23,951 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-13 07:38:23,951 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-13 07:38:23,951 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-13 07:38:23,952 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-13 07:38:23,953 - core.scan_engine - INFO - start_scan called: scan_id=e6034bd4, target=https://demo.owasp-juice.shop/#/
+2025-12-13 07:38:23,955 - core.scan_engine - INFO - Scan thread started for e6034bd4
+2025-12-13 07:38:23,955 - core.scan_engine - INFO - Started scan thread for e6034bd4
+2025-12-13 07:38:23,956 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-13 07:38:23,958 - core.scan_engine - INFO - Creating AutonomousPentestAgent for scan e6034bd4
+2025-12-13 07:38:23,958 - api.scan_routes - INFO - Scan e6034bd4 started successfully
+2025-12-13 07:38:23,960 - werkzeug - INFO - 127.0.0.1 - - [13/Dec/2025 07:38:23] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-13 07:38:24,254 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-13 07:38:24,255 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-13 07:38:24,255 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-13 07:38:24,261 - core.scan_engine - INFO -  Scan config: {'max_time': 3600, 'mode': 'quick', 'enable_exploitation': False, 'use_ai': False, 'scan_id': 'e6034bd4'}
+2025-12-13 07:38:24,262 - core.scan_engine - INFO - Calling agent.run_autonomous_scan()
+2025-12-13 07:38:24,264 - inference.target_analyzer - INFO - [TargetAnalyzer] Analyzing target: https://demo.owasp-juice.shop/#/
+2025-12-13 07:38:24,264 - inference.target_analyzer - INFO - [TargetAnalyzer] Target profile: {'target': 'https://demo.owasp-juice.shop/#/', 'type': 'web', 'technologies': ['http_server', 'web_framework'], 'risk_level': 'medium', 'scan_strategy': 'web_application'}
+2025-12-13 07:38:24,265 - inference.autonomous_agent - INFO - === Iteration 1 | Phase: reconnaissance | Strategy: adaptive ===
+2025-12-13 07:38:24,265 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-13 07:38:24,269 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('shodan'), np.str_('fierce')]
+2025-12-13 07:38:24,270 - intelligence.optimus_brain - INFO - Initializing Optimus Brain...
+2025-12-13 07:38:24,282 - intelligence.memory_system - INFO - Memory database initialized
+2025-12-13 07:38:24,282 - intelligence.memory_system - INFO - Smart Memory System initialized with DB: data/optimus_memory.db
+2025-12-13 07:38:24,292 - intelligence.delegation_system - INFO - Initialized research agent
+2025-12-13 07:38:24,293 - intelligence.delegation_system - INFO - Initialized exploitation agent
+2025-12-13 07:38:24,293 - intelligence.delegation_system - INFO - Initialized recon agent
+2025-12-13 07:38:24,294 - intelligence.delegation_system - INFO - Initialized analysis agent
+2025-12-13 07:38:24,294 - intelligence.delegation_system - INFO - Initialized reporting agent
+2025-12-13 07:38:24,295 - intelligence.delegation_system - INFO - Initialized 5 specialized agents
+2025-12-13 07:38:24,300 - intelligence.adaptive_exploitation - INFO - Real-Time Adaptive Engine initialized
+2025-12-13 07:38:24,305 - intelligence.vulnerability_chaining - INFO - Vulnerability Chain Engine initialized
+2025-12-13 07:38:24,311 - intelligence.explainable_ai - INFO - Explainable AI Engine initialized
+2025-12-13 07:38:24,317 - intelligence.continuous_learning - INFO - Loaded weights from data\models\online_weights.json
+2025-12-13 07:38:24,317 - intelligence.continuous_learning - INFO - Continuous Learning Engine initialized
+2025-12-13 07:38:24,322 - intelligence.continuous_learning - INFO - Zero-Day Discovery Engine initialized
+2025-12-13 07:38:24,327 - intelligence.campaign_intelligence - INFO - Campaign Intelligence Engine initialized
+2025-12-13 07:38:24,332 - intelligence.optimus_brain - INFO - Optimus Brain initialization complete
+2025-12-13 07:38:24,340 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('shodan'), np.str_('fierce')]
+2025-12-13 07:38:24,342 - inference.tool_manager - ERROR - Hybrid system resolution failed: 'KnowledgeBase' object has no attribute 'get_tool'
+2025-12-13 07:38:39,427 - paramiko.transport - ERROR - Exception (client): Error reading SSH protocol banner
+2025-12-13 07:38:39,429 - paramiko.transport - ERROR - Traceback (most recent call last):
+2025-12-13 07:38:39,429 - paramiko.transport - ERROR -   File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\paramiko\transport.py", line 2327, in _check_banner
+2025-12-13 07:38:39,430 - paramiko.transport - ERROR -     buf = self.packetizer.readline(timeout)
+2025-12-13 07:38:39,430 - paramiko.transport - ERROR -   File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\paramiko\packet.py", line 381, in readline
+2025-12-13 07:38:39,431 - paramiko.transport - ERROR -     buf += self._read_timeout(timeout)
+2025-12-13 07:38:39,431 - paramiko.transport - ERROR -            ~~~~~~~~~~~~~~~~~~^^^^^^^^^
+2025-12-13 07:38:39,431 - paramiko.transport - ERROR -   File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\paramiko\packet.py", line 626, in _read_timeout
+2025-12-13 07:38:39,432 - paramiko.transport - ERROR -     raise socket.timeout()
+2025-12-13 07:38:39,432 - paramiko.transport - ERROR - TimeoutError
+2025-12-13 07:38:39,433 - paramiko.transport - ERROR - 
+2025-12-13 07:38:39,433 - paramiko.transport - ERROR - During handling of the above exception, another exception occurred:
+2025-12-13 07:38:39,433 - paramiko.transport - ERROR - 
+2025-12-13 07:38:39,434 - paramiko.transport - ERROR - Traceback (most recent call last):
+2025-12-13 07:38:39,434 - paramiko.transport - ERROR -   File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\paramiko\transport.py", line 2143, in run
+2025-12-13 07:38:39,435 - paramiko.transport - ERROR -     self._check_banner()
+2025-12-13 07:38:39,435 - paramiko.transport - ERROR -     ~~~~~~~~~~~~~~~~~~^^
+2025-12-13 07:38:39,436 - paramiko.transport - ERROR -   File "D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\paramiko\transport.py", line 2331, in _check_banner
+2025-12-13 07:38:39,436 - paramiko.transport - ERROR -     raise SSHException(
+2025-12-13 07:38:39,436 - paramiko.transport - ERROR -         "Error reading SSH protocol banner" + str(e)
+2025-12-13 07:38:39,437 - paramiko.transport - ERROR -     )
+2025-12-13 07:38:39,437 - paramiko.transport - ERROR - paramiko.ssh_exception.SSHException: Error reading SSH protocol banner
+2025-12-13 07:38:39,438 - paramiko.transport - ERROR - 
+2025-12-13 07:38:41,495 - paramiko.transport - INFO - Connected (version 2.0, client OpenSSH_10.2p1)
+2025-12-13 07:38:41,698 - paramiko.transport - INFO - Authentication (password) successful!
+2025-12-13 07:38:41,699 - tools.hybrid_tool_system - INFO - Updated SSH client for hybrid tool system
+2025-12-13 07:38:41,700 - inference.tool_manager - WARNING - Hybrid tool resolution failed: 'KnowledgeBase' object has no attribute 'get_tool'
+2025-12-13 07:38:41,701 - inference.tool_knowledge_base - INFO - [ToolKB] Generated command for amass: amass enum -d demo.owasp-juice.shop -passive...
+2025-12-13 07:38:41,702 - inference.tool_manager - INFO - [ToolManager] KB resolution for amass
+2025-12-13 07:39:12,149 - werkzeug - INFO - 127.0.0.1 - - [13/Dec/2025 07:39:12] "GET /api/scan/status/e6034bd4 HTTP/1.1" 200 -
