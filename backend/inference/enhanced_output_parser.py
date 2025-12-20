@@ -1592,6 +1592,6 @@ Only return valid JSON. If no findings, return {{"vulnerabilities": []}}"""
 class OutputParser(EnhancedOutputParser):
     """Backward compatible wrapper"""
     
-    def parse_tool_output(self, tool_name: str, stdout: str, stderr: str) -> Dict[str, Any]:
-        """Original interface method"""
-        return self.parse(tool_name, stdout, stderr)
+    def parse_tool_output(self, tool_name: str, stdout: str, stderr: str, command: str = "", target: str = "") -> Dict[str, Any]:
+        """Original interface method with full signature"""
+        return self.parse(tool_name, stdout, stderr, command, target)
