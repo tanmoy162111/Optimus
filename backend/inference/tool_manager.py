@@ -352,7 +352,11 @@ class ToolManager:
             # Parse output
             if hasattr(self.output_parser, 'parse_tool_output'):
                 # Use backward compatible method
-                parsed_results = self.output_parser.parse_tool_output(tool_name, stdout, stderr, command, target_url)
+                try:
+                    parsed_results = self.output_parser.parse_tool_output(tool_name, stdout, stderr, command, target_url)
+                except AttributeError:
+                    # Fallback to direct method if parse_tool_output doesn't accept all params
+                    parsed_results = self.output_parser.parse_tool_output(tool_name, stdout, stderr)
             else:
                 # Use direct method
                 parsed_results = self.output_parser.parse(tool_name, stdout, stderr, command, target_url)

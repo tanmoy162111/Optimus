@@ -10894,3 +10894,632 @@ AssertionError: write() before start_response
 2025-12-20 20:17:42,940 - core.scan_engine - INFO - Scan completed: 0 findings
 2025-12-20 20:17:42,940 - core.scan_engine - INFO -  Scan 03975c2d completed successfully!
 2025-12-20 20:17:42,941 - core.scan_engine - INFO - Scan 03975c2d results: 0 findings, 17 tools executed
+2025-12-20 20:18:52,367 - api.scan_routes - INFO - Added scan 99e42043 to active_scans. Active scans count: 5
+2025-12-20 20:18:52,367 - api.scan_routes - INFO - Created scan 99e42043 for target https://demo.owasp-juice.shop
+2025-12-20 20:18:52,370 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-20 20:18:52,371 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-20 20:18:52,371 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-20 20:18:52,371 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-20 20:18:52,373 - core.scan_engine - INFO - start_scan called: scan_id=99e42043, target=https://demo.owasp-juice.shop
+2025-12-20 20:18:52,373 - core.scan_engine - INFO - Scan thread started for 99e42043
+2025-12-20 20:18:52,373 - core.scan_engine - INFO - Started scan thread for 99e42043
+2025-12-20 20:18:52,374 - core.scan_engine - INFO - Creating AutonomousPentestAgent for scan 99e42043
+2025-12-20 20:18:52,374 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-20 20:18:52,374 - api.scan_routes - INFO - Scan 99e42043 started successfully
+2025-12-20 20:18:52,375 - werkzeug - INFO - 127.0.0.1 - - [20/Dec/2025 20:18:52] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-20 20:18:52,375 - inference.tool_selector - INFO - Phase-specific models not available, using fallback methods
+2025-12-20 20:18:52,375 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-20 20:18:52,376 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-20 20:18:52,376 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-20 20:18:52,379 - core.scan_engine - INFO - Starting autonomous scan for 99e42043
+2025-12-20 20:18:52,380 - inference.target_analyzer - INFO - [TargetAnalyzer] Analyzing target: https://demo.owasp-juice.shop
+2025-12-20 20:18:52,380 - inference.target_analyzer - INFO - [TargetAnalyzer] Target profile: {'target': 'https://demo.owasp-juice.shop', 'type': 'web', 'technologies': ['http_server', 'web_framework'], 'risk_level': 'medium', 'scan_strategy': 'web_application'}
+2025-12-20 20:18:52,381 - inference.autonomous_agent - INFO - === Iteration 1 | Phase: reconnaissance ===
+2025-12-20 20:18:52,381 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-20 20:18:52,381 - inference.tool_selector - INFO - Using rule-based selector for reconnaissance
+2025-12-20 20:18:52,381 - inference.autonomous_agent - INFO - Executing tool: sublist3r
+2025-12-20 20:18:52,381 - inference.tool_manager - INFO - Using hybrid system resolved command for sublist3r: sublist3r https://demo.owasp-juice.shop
+2025-12-20 20:18:52,398 - paramiko.transport - INFO - Connected (version 2.0, client OpenSSH_10.2p1)
+2025-12-20 20:18:52,650 - paramiko.transport - INFO - Authentication (password) successful!
+2025-12-20 20:18:52,651 - tools.hybrid_tool_system - INFO - Updated SSH client for hybrid tool system
+2025-12-20 20:18:53,337 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:18:53,338 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:18:53,839 - inference.autonomous_agent - INFO - === Iteration 2 | Phase: reconnaissance ===
+2025-12-20 20:18:53,840 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-20 20:18:53,840 - inference.tool_selector - INFO - Using rule-based selector for reconnaissance
+2025-12-20 20:18:53,841 - inference.autonomous_agent - INFO - Executing tool: theHarvester
+2025-12-20 20:18:53,841 - inference.tool_manager - INFO - Using hybrid system resolved command for theHarvester: theHarvester https://demo.owasp-juice.shop
+2025-12-20 20:18:53,841 - inference.tool_manager - INFO - [API] theHarvester missing optional keys: ['SHODAN_API_KEY', 'CENSYS_API_KEY', 'HUNTER_API_KEY'] (tool will work with reduced functionality)
+2025-12-20 20:18:54,470 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:18:54,472 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:18:54,973 - inference.autonomous_agent - INFO - === Iteration 3 | Phase: reconnaissance ===
+2025-12-20 20:18:54,974 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-20 20:18:54,974 - inference.tool_selector - INFO - Using rule-based selector for reconnaissance
+2025-12-20 20:18:54,975 - inference.autonomous_agent - INFO - Executing tool: whatweb
+2025-12-20 20:18:54,975 - inference.tool_manager - INFO - Using hybrid system resolved command for whatweb: whatweb https://demo.owasp-juice.shop
+2025-12-20 20:19:03,736 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:03,738 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:04,239 - inference.autonomous_agent - INFO - === Iteration 4 | Phase: reconnaissance ===
+2025-12-20 20:19:04,240 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-20 20:19:04,240 - inference.tool_selector - INFO - Using rule-based selector for reconnaissance
+2025-12-20 20:19:04,240 - inference.autonomous_agent - INFO - Executing tool: builtwith
+2025-12-20 20:19:04,241 - inference.tool_manager - INFO - Using hybrid system resolved command for builtwith: builtwith https://demo.owasp-juice.shop
+2025-12-20 20:19:04,367 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:04,369 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:04,871 - inference.autonomous_agent - INFO - === Iteration 5 | Phase: reconnaissance ===
+2025-12-20 20:19:04,871 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-20 20:19:04,872 - inference.tool_selector - INFO - Using rule-based selector for reconnaissance
+2025-12-20 20:19:04,872 - inference.autonomous_agent - INFO - Executing tool: shodan
+2025-12-20 20:19:04,872 - inference.tool_manager - INFO - Using hybrid system resolved command for shodan: shodan https://demo.owasp-juice.shop
+2025-12-20 20:19:04,873 - inference.tool_manager - WARNING - [API] shodan missing REQUIRED keys: ['SHODAN_API_KEY']
+2025-12-20 20:19:04,873 - inference.tool_manager - WARNING - [ToolManager] shodan missing required API keys: ['SHODAN_API_KEY']
+2025-12-20 20:19:04,873 - inference.tool_manager - INFO - [ToolManager] Using fallback tool: nmap
+2025-12-20 20:19:05,499 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:05,501 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:05,503 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:06,004 - inference.autonomous_agent - INFO - === Iteration 6 | Phase: scanning ===
+2025-12-20 20:19:06,005 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:06,005 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:19:06,005 - inference.autonomous_agent - INFO - Executing tool: nmap
+2025-12-20 20:19:06,005 - inference.tool_manager - INFO - Using hybrid system resolved command for nmap: nmap -sV -sC https://demo.owasp-juice.shop
+2025-12-20 20:19:06,431 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:06,432 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:06,437 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:19:06,938 - inference.autonomous_agent - INFO - === Iteration 7 | Phase: exploitation ===
+2025-12-20 20:19:06,939 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:19:06,939 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:19:06,939 - inference.autonomous_agent - INFO - Executing tool: sqlmap
+2025-12-20 20:19:06,939 - inference.tool_manager - INFO - Using hybrid system resolved command for sqlmap: sqlmap -u https://demo.owasp-juice.shop --batch --random-agent
+2025-12-20 20:19:25,768 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:25,769 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:25,772 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:19:26,273 - inference.autonomous_agent - INFO - === Iteration 16 | Phase: exploitation ===
+2025-12-20 20:19:26,273 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:19:26,273 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:19:26,274 - inference.autonomous_agent - INFO - Executing tool: metasploit
+2025-12-20 20:19:26,274 - inference.tool_manager - INFO - Using hybrid system resolved command for metasploit: metasploit https://demo.owasp-juice.shop
+2025-12-20 20:19:26,398 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:26,399 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:26,402 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:26,903 - inference.autonomous_agent - INFO - === Iteration 17 | Phase: post_exploitation ===
+2025-12-20 20:19:26,904 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:26,904 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:19:26,905 - inference.autonomous_agent - INFO - Executing tool: lazagne
+2025-12-20 20:19:26,905 - inference.tool_manager - ERROR - [ToolManager] BLOCKED: lazagne requires active session on remote target
+2025-12-20 20:19:26,905 - inference.tool_manager - ERROR - [ToolManager] These tools run on COMPROMISED systems, not the scanner!
+2025-12-20 20:19:26,906 - inference.autonomous_agent - WARNING - Tool failed with no findings: lazagne blocked - requires confirmed shell access to remote target
+2025-12-20 20:19:26,909 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:27,410 - inference.autonomous_agent - INFO - === Iteration 18 | Phase: covering_tracks ===
+2025-12-20 20:19:27,410 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:27,411 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:19:27,411 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:19:28,412 - inference.autonomous_agent - INFO - === Iteration 19 | Phase: covering_tracks ===
+2025-12-20 20:19:28,412 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:28,413 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:19:28,413 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:19:29,413 - inference.autonomous_agent - INFO - === Iteration 20 | Phase: covering_tracks ===
+2025-12-20 20:19:29,414 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:29,414 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:19:29,415 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:19:29,417 - inference.autonomous_agent - INFO - === Iteration 21 | Phase: scanning ===
+2025-12-20 20:19:29,418 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:29,418 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:19:29,418 - inference.autonomous_agent - INFO - Executing tool: nuclei
+2025-12-20 20:19:29,418 - inference.tool_manager - INFO - Using hybrid system resolved command for nuclei: nuclei -u https://demo.owasp-juice.shop -severity critical,high
+2025-12-20 20:19:29,418 - inference.tool_manager - INFO - [API] nuclei missing optional keys: ['GITHUB_TOKEN'] (tool will work with reduced functionality)
+2025-12-20 20:19:29,546 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:29,548 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:29,551 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:19:30,052 - inference.autonomous_agent - INFO - === Iteration 22 | Phase: exploitation ===
+2025-12-20 20:19:30,052 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:19:30,053 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:19:30,053 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:19:31,054 - inference.autonomous_agent - INFO - === Iteration 23 | Phase: exploitation ===
+2025-12-20 20:19:31,055 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:19:31,055 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:19:31,056 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:19:32,056 - inference.autonomous_agent - INFO - === Iteration 24 | Phase: exploitation ===
+2025-12-20 20:19:32,057 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:19:32,057 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:19:32,057 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:19:32,060 - inference.autonomous_agent - INFO - === Iteration 25 | Phase: post_exploitation ===
+2025-12-20 20:19:32,060 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:32,062 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:19:32,063 - inference.autonomous_agent - INFO - Executing tool: crackmapexec
+2025-12-20 20:19:32,063 - inference.tool_manager - INFO - Using hybrid system resolved command for crackmapexec: crackmapexec https://demo.owasp-juice.shop
+2025-12-20 20:19:32,189 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:32,191 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:32,194 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:32,695 - inference.autonomous_agent - INFO - === Iteration 26 | Phase: covering_tracks ===
+2025-12-20 20:19:32,695 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:32,696 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:19:32,696 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:19:33,697 - inference.autonomous_agent - INFO - === Iteration 27 | Phase: covering_tracks ===
+2025-12-20 20:19:33,697 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:33,698 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:19:33,698 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:19:34,699 - inference.autonomous_agent - INFO - === Iteration 28 | Phase: covering_tracks ===
+2025-12-20 20:19:34,699 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:34,700 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:19:34,700 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:19:34,703 - inference.autonomous_agent - INFO - === Iteration 29 | Phase: scanning ===
+2025-12-20 20:19:34,703 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:34,703 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:19:34,703 - inference.autonomous_agent - INFO - Executing tool: sslscan
+2025-12-20 20:19:34,703 - inference.tool_manager - INFO - Using hybrid system resolved command for sslscan: sslscan https://demo.owasp-juice.shop
+2025-12-20 20:19:45,628 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:45,630 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:45,634 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:46,135 - inference.autonomous_agent - INFO - === Iteration 8 | Phase: post_exploitation ===
+2025-12-20 20:19:46,135 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:46,136 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:19:46,136 - inference.autonomous_agent - INFO - Executing tool: linpeas
+2025-12-20 20:19:46,136 - inference.tool_manager - ERROR - [ToolManager] BLOCKED: linpeas requires active session on remote target
+2025-12-20 20:19:46,136 - inference.tool_manager - ERROR - [ToolManager] These tools run on COMPROMISED systems, not the scanner!
+2025-12-20 20:19:46,137 - inference.autonomous_agent - WARNING - Tool failed with no findings: linpeas blocked - requires confirmed shell access to remote target
+2025-12-20 20:19:46,140 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:46,641 - inference.autonomous_agent - INFO - === Iteration 9 | Phase: covering_tracks ===
+2025-12-20 20:19:46,641 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:46,642 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:19:46,642 - inference.autonomous_agent - INFO - Executing tool: clear_logs
+2025-12-20 20:19:46,642 - inference.tool_manager - INFO - Using hybrid system resolved command for clear_logs: clear_logs https://demo.owasp-juice.shop
+2025-12-20 20:19:46,767 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:46,768 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:47,270 - inference.autonomous_agent - INFO - === Iteration 10 | Phase: covering_tracks ===
+2025-12-20 20:19:47,270 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:47,270 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:19:47,270 - inference.autonomous_agent - INFO - Executing tool: timestomp
+2025-12-20 20:19:47,271 - inference.tool_manager - INFO - Using hybrid system resolved command for timestomp: timestomp https://demo.owasp-juice.shop
+2025-12-20 20:19:47,394 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:47,395 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:47,897 - inference.autonomous_agent - INFO - === Iteration 11 | Phase: covering_tracks ===
+2025-12-20 20:19:47,897 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:47,898 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:19:47,898 - inference.autonomous_agent - INFO - Executing tool: shred
+2025-12-20 20:19:47,898 - inference.tool_manager - INFO - Using hybrid system resolved command for shred: shred https://demo.owasp-juice.shop
+2025-12-20 20:19:48,022 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:48,024 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:19:48,525 - inference.autonomous_agent - INFO - === Iteration 12 | Phase: covering_tracks ===
+2025-12-20 20:19:48,526 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:48,526 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:19:48,527 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:19:49,527 - inference.autonomous_agent - INFO - === Iteration 13 | Phase: covering_tracks ===
+2025-12-20 20:19:49,528 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:49,528 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:19:49,529 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:19:50,530 - inference.autonomous_agent - INFO - === Iteration 14 | Phase: covering_tracks ===
+2025-12-20 20:19:50,530 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:50,530 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:19:50,531 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:19:50,533 - inference.autonomous_agent - INFO - === Iteration 15 | Phase: scanning ===
+2025-12-20 20:19:50,534 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:19:50,534 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:19:50,534 - inference.autonomous_agent - INFO - Executing tool: nikto
+2025-12-20 20:19:50,534 - inference.tool_manager - INFO - Using hybrid system resolved command for nikto: nikto -h https://demo.owasp-juice.shop
+2025-12-20 20:20:53,666 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:20:53,667 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:20:53,670 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:20:54,171 - inference.autonomous_agent - INFO - === Iteration 30 | Phase: exploitation ===
+2025-12-20 20:20:54,171 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:20:54,172 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:20:54,172 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:20:55,174 - inference.autonomous_agent - INFO - === Iteration 31 | Phase: exploitation ===
+2025-12-20 20:20:55,174 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:20:55,175 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:20:55,175 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:20:56,176 - inference.autonomous_agent - INFO - === Iteration 32 | Phase: exploitation ===
+2025-12-20 20:20:56,177 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:20:56,177 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:20:56,178 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:20:56,182 - inference.autonomous_agent - INFO - === Iteration 33 | Phase: post_exploitation ===
+2025-12-20 20:20:56,182 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:20:56,186 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:20:56,186 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:20:57,187 - inference.autonomous_agent - INFO - === Iteration 34 | Phase: post_exploitation ===
+2025-12-20 20:20:57,188 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:20:57,188 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:20:57,189 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:20:58,190 - inference.autonomous_agent - INFO - === Iteration 35 | Phase: post_exploitation ===
+2025-12-20 20:20:58,190 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:20:58,190 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:20:58,191 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:20:58,194 - inference.autonomous_agent - INFO - === Iteration 36 | Phase: covering_tracks ===
+2025-12-20 20:20:58,194 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:20:58,194 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:20:58,195 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:20:59,195 - inference.autonomous_agent - INFO - === Iteration 37 | Phase: covering_tracks ===
+2025-12-20 20:20:59,196 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:20:59,196 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:20:59,197 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:00,198 - inference.autonomous_agent - INFO - === Iteration 38 | Phase: covering_tracks ===
+2025-12-20 20:21:00,198 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:00,198 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:21:00,199 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:00,202 - inference.autonomous_agent - INFO - === Iteration 39 | Phase: scanning ===
+2025-12-20 20:21:00,203 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:00,203 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:21:00,203 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:01,204 - inference.autonomous_agent - INFO - === Iteration 40 | Phase: scanning ===
+2025-12-20 20:21:01,204 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:01,205 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:21:01,206 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:02,207 - inference.autonomous_agent - INFO - === Iteration 41 | Phase: scanning ===
+2025-12-20 20:21:02,207 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:02,207 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:21:02,208 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:02,211 - inference.autonomous_agent - INFO - === Iteration 42 | Phase: exploitation ===
+2025-12-20 20:21:02,211 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:21:02,213 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:21:02,214 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:03,214 - inference.autonomous_agent - INFO - === Iteration 43 | Phase: exploitation ===
+2025-12-20 20:21:03,215 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:21:03,215 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:21:03,215 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:04,216 - inference.autonomous_agent - INFO - === Iteration 44 | Phase: exploitation ===
+2025-12-20 20:21:04,216 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:21:04,217 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:21:04,217 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:04,220 - inference.autonomous_agent - INFO - === Iteration 45 | Phase: post_exploitation ===
+2025-12-20 20:21:04,220 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:04,223 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:21:04,223 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:05,224 - inference.autonomous_agent - INFO - === Iteration 46 | Phase: post_exploitation ===
+2025-12-20 20:21:05,224 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:05,225 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:21:05,225 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:06,226 - inference.autonomous_agent - INFO - === Iteration 47 | Phase: post_exploitation ===
+2025-12-20 20:21:06,226 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:06,227 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:21:06,227 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:06,230 - inference.autonomous_agent - INFO - === Iteration 48 | Phase: covering_tracks ===
+2025-12-20 20:21:06,230 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:06,230 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:21:06,231 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:07,231 - inference.autonomous_agent - INFO - === Iteration 49 | Phase: covering_tracks ===
+2025-12-20 20:21:07,232 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:07,232 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:21:07,233 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:08,233 - inference.autonomous_agent - INFO - === Iteration 50 | Phase: covering_tracks ===
+2025-12-20 20:21:08,234 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:08,234 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:21:08,235 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:08,237 - inference.autonomous_agent - INFO - === Iteration 51 | Phase: scanning ===
+2025-12-20 20:21:08,238 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:08,238 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:21:08,238 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:09,239 - inference.autonomous_agent - INFO - === Iteration 52 | Phase: scanning ===
+2025-12-20 20:21:09,240 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:09,240 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:21:09,240 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:10,241 - inference.autonomous_agent - INFO - === Iteration 53 | Phase: scanning ===
+2025-12-20 20:21:10,241 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:10,241 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:21:10,242 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:10,245 - inference.autonomous_agent - INFO - === Iteration 54 | Phase: exploitation ===
+2025-12-20 20:21:10,245 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:21:10,248 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:21:10,248 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:11,249 - inference.autonomous_agent - INFO - === Iteration 55 | Phase: exploitation ===
+2025-12-20 20:21:11,249 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:21:11,250 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:21:11,250 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:12,251 - inference.autonomous_agent - INFO - === Iteration 56 | Phase: exploitation ===
+2025-12-20 20:21:12,251 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:21:12,252 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:21:12,252 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:12,255 - inference.autonomous_agent - INFO - === Iteration 57 | Phase: post_exploitation ===
+2025-12-20 20:21:12,256 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:12,258 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:21:12,259 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:13,259 - inference.autonomous_agent - INFO - === Iteration 58 | Phase: post_exploitation ===
+2025-12-20 20:21:13,260 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:13,260 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:21:13,260 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:14,261 - inference.autonomous_agent - INFO - === Iteration 59 | Phase: post_exploitation ===
+2025-12-20 20:21:14,261 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:14,262 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:21:14,262 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:14,266 - inference.autonomous_agent - INFO - === Iteration 60 | Phase: covering_tracks ===
+2025-12-20 20:21:14,266 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:14,266 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:21:14,267 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:15,268 - inference.autonomous_agent - INFO - === Iteration 61 | Phase: covering_tracks ===
+2025-12-20 20:21:15,268 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:15,268 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:21:15,269 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:16,269 - inference.autonomous_agent - INFO - === Iteration 62 | Phase: covering_tracks ===
+2025-12-20 20:21:16,270 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:16,270 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:21:16,270 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:16,273 - inference.autonomous_agent - INFO - === Iteration 63 | Phase: scanning ===
+2025-12-20 20:21:16,273 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:16,273 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:21:16,273 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:17,274 - inference.autonomous_agent - INFO - === Iteration 64 | Phase: scanning ===
+2025-12-20 20:21:17,275 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:17,275 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:21:17,275 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:18,276 - inference.autonomous_agent - INFO - === Iteration 65 | Phase: scanning ===
+2025-12-20 20:21:18,276 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:18,277 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:21:18,277 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:18,279 - inference.autonomous_agent - INFO - === Iteration 66 | Phase: exploitation ===
+2025-12-20 20:21:18,279 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:21:18,282 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:21:18,282 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:19,283 - inference.autonomous_agent - INFO - === Iteration 67 | Phase: exploitation ===
+2025-12-20 20:21:19,284 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:21:19,284 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:21:19,285 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:20,286 - inference.autonomous_agent - INFO - === Iteration 68 | Phase: exploitation ===
+2025-12-20 20:21:20,286 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:21:20,287 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:21:20,288 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:20,291 - inference.autonomous_agent - INFO - === Iteration 69 | Phase: post_exploitation ===
+2025-12-20 20:21:20,291 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:20,293 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:21:20,294 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:21,295 - inference.autonomous_agent - INFO - === Iteration 70 | Phase: post_exploitation ===
+2025-12-20 20:21:21,295 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:21,295 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:21:21,296 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:22,297 - inference.autonomous_agent - INFO - === Iteration 71 | Phase: post_exploitation ===
+2025-12-20 20:21:22,297 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:22,298 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:21:22,298 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:22,300 - inference.autonomous_agent - INFO - === Iteration 72 | Phase: covering_tracks ===
+2025-12-20 20:21:22,300 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:22,300 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:21:22,300 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:23,301 - inference.autonomous_agent - INFO - === Iteration 73 | Phase: covering_tracks ===
+2025-12-20 20:21:23,301 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:23,302 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:21:23,302 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:24,302 - inference.autonomous_agent - INFO - === Iteration 74 | Phase: covering_tracks ===
+2025-12-20 20:21:24,303 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:24,303 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:21:24,304 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:24,306 - inference.autonomous_agent - INFO - === Iteration 75 | Phase: scanning ===
+2025-12-20 20:21:24,306 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:24,307 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:21:24,307 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:25,308 - inference.autonomous_agent - INFO - === Iteration 76 | Phase: scanning ===
+2025-12-20 20:21:25,309 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:25,309 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:21:25,310 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:26,311 - inference.autonomous_agent - INFO - === Iteration 77 | Phase: scanning ===
+2025-12-20 20:21:26,311 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:26,312 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:21:26,312 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:26,314 - inference.autonomous_agent - INFO - === Iteration 78 | Phase: exploitation ===
+2025-12-20 20:21:26,314 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:21:26,317 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:21:26,317 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:27,318 - inference.autonomous_agent - INFO - === Iteration 79 | Phase: exploitation ===
+2025-12-20 20:21:27,318 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:21:27,319 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:21:27,319 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:28,320 - inference.autonomous_agent - INFO - === Iteration 80 | Phase: exploitation ===
+2025-12-20 20:21:28,321 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:21:28,321 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:21:28,321 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:28,323 - inference.autonomous_agent - INFO - === Iteration 81 | Phase: post_exploitation ===
+2025-12-20 20:21:28,323 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:28,325 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:21:28,326 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:29,327 - inference.autonomous_agent - INFO - === Iteration 82 | Phase: post_exploitation ===
+2025-12-20 20:21:29,327 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:29,328 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:21:29,328 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:30,329 - inference.autonomous_agent - INFO - === Iteration 83 | Phase: post_exploitation ===
+2025-12-20 20:21:30,329 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:30,330 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:21:30,330 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:30,333 - inference.autonomous_agent - INFO - === Iteration 84 | Phase: covering_tracks ===
+2025-12-20 20:21:30,334 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:30,334 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:21:30,334 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:31,335 - inference.autonomous_agent - INFO - === Iteration 85 | Phase: covering_tracks ===
+2025-12-20 20:21:31,336 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:31,336 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:21:31,336 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:32,337 - inference.autonomous_agent - INFO - === Iteration 86 | Phase: covering_tracks ===
+2025-12-20 20:21:32,337 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:32,338 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:21:32,338 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:32,341 - inference.autonomous_agent - INFO - === Iteration 87 | Phase: scanning ===
+2025-12-20 20:21:32,341 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:32,342 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:21:32,342 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:33,343 - inference.autonomous_agent - INFO - === Iteration 88 | Phase: scanning ===
+2025-12-20 20:21:33,343 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:33,343 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:21:33,344 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:34,345 - inference.autonomous_agent - INFO - === Iteration 89 | Phase: scanning ===
+2025-12-20 20:21:34,345 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:34,346 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:21:34,346 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:34,349 - inference.autonomous_agent - INFO - === Iteration 90 | Phase: exploitation ===
+2025-12-20 20:21:34,350 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:21:34,353 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:21:34,353 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:35,354 - inference.autonomous_agent - INFO - === Iteration 91 | Phase: exploitation ===
+2025-12-20 20:21:35,355 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:21:35,355 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:21:35,356 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:36,357 - inference.autonomous_agent - INFO - === Iteration 92 | Phase: exploitation ===
+2025-12-20 20:21:36,357 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:21:36,358 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:21:36,358 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:36,361 - inference.autonomous_agent - INFO - === Iteration 93 | Phase: post_exploitation ===
+2025-12-20 20:21:36,361 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:36,364 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:21:36,365 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:37,365 - inference.autonomous_agent - INFO - === Iteration 94 | Phase: post_exploitation ===
+2025-12-20 20:21:37,366 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:37,366 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:21:37,366 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:38,367 - inference.autonomous_agent - INFO - === Iteration 95 | Phase: post_exploitation ===
+2025-12-20 20:21:38,367 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:38,367 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:21:38,368 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:38,370 - inference.autonomous_agent - INFO - === Iteration 96 | Phase: covering_tracks ===
+2025-12-20 20:21:38,371 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:38,371 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:21:38,371 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:39,372 - inference.autonomous_agent - INFO - === Iteration 97 | Phase: covering_tracks ===
+2025-12-20 20:21:39,372 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:39,372 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:21:39,373 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:40,374 - inference.autonomous_agent - INFO - === Iteration 98 | Phase: covering_tracks ===
+2025-12-20 20:21:40,374 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:40,374 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:21:40,375 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:21:40,377 - inference.autonomous_agent - INFO - === Iteration 99 | Phase: scanning ===
+2025-12-20 20:21:40,377 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:40,378 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:21:40,378 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:21:41,379 - inference.autonomous_agent - INFO - === Iteration 100 | Phase: scanning ===
+2025-12-20 20:21:41,379 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:21:41,379 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:21:41,380 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:21:42,381 - core.scan_engine - INFO - Scan completed: 0 findings
+2025-12-20 20:21:42,381 - core.scan_engine - INFO -  Scan 2e7601f3 completed successfully!
+2025-12-20 20:21:42,381 - core.scan_engine - INFO - Scan 2e7601f3 results: 0 findings, 17 tools executed
+2025-12-20 20:22:21,510 - werkzeug - INFO - 127.0.0.1 - - [20/Dec/2025 20:22:21] "GET /api/scan/status/99e42043 HTTP/1.1" 200 -
+2025-12-20 20:22:50,579 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:22:50,581 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:22:50,585 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:22:51,086 - inference.autonomous_agent - INFO - === Iteration 16 | Phase: exploitation ===
+2025-12-20 20:22:51,086 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:22:51,086 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:22:51,087 - inference.autonomous_agent - INFO - Executing tool: metasploit
+2025-12-20 20:22:51,087 - inference.tool_manager - INFO - Using hybrid system resolved command for metasploit: metasploit https://demo.owasp-juice.shop
+2025-12-20 20:22:51,213 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:22:51,214 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:22:51,218 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:22:51,719 - inference.autonomous_agent - INFO - === Iteration 17 | Phase: post_exploitation ===
+2025-12-20 20:22:51,719 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:22:51,720 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:22:51,720 - inference.autonomous_agent - INFO - Executing tool: lazagne
+2025-12-20 20:22:51,720 - inference.tool_manager - ERROR - [ToolManager] BLOCKED: lazagne requires active session on remote target
+2025-12-20 20:22:51,721 - inference.tool_manager - ERROR - [ToolManager] These tools run on COMPROMISED systems, not the scanner!
+2025-12-20 20:22:51,721 - inference.autonomous_agent - WARNING - Tool failed with no findings: lazagne blocked - requires confirmed shell access to remote target
+2025-12-20 20:22:51,725 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:22:52,225 - inference.autonomous_agent - INFO - === Iteration 18 | Phase: covering_tracks ===
+2025-12-20 20:22:52,226 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:22:52,226 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:22:52,227 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:22:53,227 - inference.autonomous_agent - INFO - === Iteration 19 | Phase: covering_tracks ===
+2025-12-20 20:22:53,228 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:22:53,228 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:22:53,229 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:22:54,229 - inference.autonomous_agent - INFO - === Iteration 20 | Phase: covering_tracks ===
+2025-12-20 20:22:54,230 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:22:54,230 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:22:54,231 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:22:54,234 - inference.autonomous_agent - INFO - === Iteration 21 | Phase: scanning ===
+2025-12-20 20:22:54,234 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:22:54,234 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:22:54,235 - inference.autonomous_agent - INFO - Executing tool: nuclei
+2025-12-20 20:22:54,235 - inference.tool_manager - INFO - Using hybrid system resolved command for nuclei: nuclei -u https://demo.owasp-juice.shop -severity critical,high
+2025-12-20 20:22:54,235 - inference.tool_manager - INFO - [API] nuclei missing optional keys: ['GITHUB_TOKEN'] (tool will work with reduced functionality)
+2025-12-20 20:22:54,363 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:22:54,365 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:22:54,369 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:22:54,870 - inference.autonomous_agent - INFO - === Iteration 22 | Phase: exploitation ===
+2025-12-20 20:22:54,870 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:22:54,871 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:22:54,871 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:22:55,872 - inference.autonomous_agent - INFO - === Iteration 23 | Phase: exploitation ===
+2025-12-20 20:22:55,873 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:22:55,873 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:22:55,873 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:22:56,874 - inference.autonomous_agent - INFO - === Iteration 24 | Phase: exploitation ===
+2025-12-20 20:22:56,875 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:22:56,875 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:22:56,876 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:22:56,878 - inference.autonomous_agent - INFO - === Iteration 25 | Phase: post_exploitation ===
+2025-12-20 20:22:56,879 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:22:56,882 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:22:56,882 - inference.autonomous_agent - INFO - Executing tool: crackmapexec
+2025-12-20 20:22:56,883 - inference.tool_manager - INFO - Using hybrid system resolved command for crackmapexec: crackmapexec https://demo.owasp-juice.shop
+2025-12-20 20:22:57,009 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:22:57,011 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:22:57,014 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:22:57,515 - inference.autonomous_agent - INFO - === Iteration 26 | Phase: covering_tracks ===
+2025-12-20 20:22:57,515 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:22:57,515 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:22:57,516 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:22:58,516 - inference.autonomous_agent - INFO - === Iteration 27 | Phase: covering_tracks ===
+2025-12-20 20:22:58,517 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:22:58,517 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:22:58,517 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:22:59,518 - inference.autonomous_agent - INFO - === Iteration 28 | Phase: covering_tracks ===
+2025-12-20 20:22:59,519 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:22:59,519 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:22:59,520 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:22:59,523 - inference.autonomous_agent - INFO - === Iteration 29 | Phase: scanning ===
+2025-12-20 20:22:59,523 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:22:59,523 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:22:59,524 - inference.autonomous_agent - INFO - Executing tool: sslscan
+2025-12-20 20:22:59,524 - inference.tool_manager - INFO - Using hybrid system resolved command for sslscan: sslscan https://demo.owasp-juice.shop
+2025-12-20 20:24:22,731 - inference.tool_manager - ERROR - Tool execution failed: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:24:22,735 - inference.autonomous_agent - WARNING - Tool failed with no findings: 'EnhancedOutputParser' object has no attribute 'parse_tool_output'
+2025-12-20 20:24:22,738 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:24:23,239 - inference.autonomous_agent - INFO - === Iteration 30 | Phase: exploitation ===
+2025-12-20 20:24:23,239 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:24:23,240 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:24:23,240 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:24:24,241 - inference.autonomous_agent - INFO - === Iteration 31 | Phase: exploitation ===
+2025-12-20 20:24:24,241 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:24:24,242 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:24:24,242 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:24:25,243 - inference.autonomous_agent - INFO - === Iteration 32 | Phase: exploitation ===
+2025-12-20 20:24:25,244 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:24:25,244 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:24:25,245 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:24:25,248 - inference.autonomous_agent - INFO - === Iteration 33 | Phase: post_exploitation ===
+2025-12-20 20:24:25,248 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:24:25,251 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:24:25,251 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:24:26,252 - inference.autonomous_agent - INFO - === Iteration 34 | Phase: post_exploitation ===
+2025-12-20 20:24:26,252 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:24:26,252 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:24:26,253 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:24:27,254 - inference.autonomous_agent - INFO - === Iteration 35 | Phase: post_exploitation ===
+2025-12-20 20:24:27,254 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:24:27,255 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-20 20:24:27,256 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:24:27,260 - inference.autonomous_agent - INFO - === Iteration 36 | Phase: covering_tracks ===
+2025-12-20 20:24:27,261 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:24:27,261 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:24:27,261 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:24:28,262 - inference.autonomous_agent - INFO - === Iteration 37 | Phase: covering_tracks ===
+2025-12-20 20:24:28,263 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:24:28,263 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:24:28,264 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:24:29,264 - inference.autonomous_agent - INFO - === Iteration 38 | Phase: covering_tracks ===
+2025-12-20 20:24:29,265 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:24:29,265 - inference.tool_selector - INFO - Using rule-based selector for covering_tracks
+2025-12-20 20:24:29,266 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:24:29,269 - inference.autonomous_agent - INFO - === Iteration 39 | Phase: scanning ===
+2025-12-20 20:24:29,269 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:24:29,269 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:24:29,270 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:24:30,270 - inference.autonomous_agent - INFO - === Iteration 40 | Phase: scanning ===
+2025-12-20 20:24:30,271 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:24:30,271 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:24:30,272 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
+2025-12-20 20:24:31,273 - inference.autonomous_agent - INFO - === Iteration 41 | Phase: scanning ===
+2025-12-20 20:24:31,273 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-20 20:24:31,274 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-20 20:24:31,274 - inference.autonomous_agent - WARNING - No tools recommended (3/3)
+2025-12-20 20:24:31,277 - inference.autonomous_agent - INFO - === Iteration 42 | Phase: exploitation ===
+2025-12-20 20:24:31,278 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:24:31,280 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:24:31,281 - inference.autonomous_agent - WARNING - No tools recommended (1/3)
+2025-12-20 20:24:32,281 - inference.autonomous_agent - INFO - === Iteration 43 | Phase: exploitation ===
+2025-12-20 20:24:32,282 - inference.strategy_selector - INFO - Strategy selection: aggressive (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 8.0})
+2025-12-20 20:24:32,282 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-20 20:24:32,282 - inference.autonomous_agent - WARNING - No tools recommended (2/3)
