@@ -350,16 +350,8 @@ class ToolManager:
             self.tool_execution_history[tool_name].append(execution_time)
             
             # Parse output
-            if hasattr(self.output_parser, 'parse_tool_output'):
-                # Use backward compatible method
-                try:
-                    parsed_results = self.output_parser.parse_tool_output(tool_name, stdout, stderr, command, target_url)
-                except TypeError:
-                    # Fallback to direct method if parse_tool_output doesn't accept all params
-                    parsed_results = self.output_parser.parse_tool_output(tool_name, stdout, stderr)
-            else:
-                # Use direct method
-                parsed_results = self.output_parser.parse(tool_name, stdout, stderr, command, target_url)
+            # Always use the direct method since EnhancedOutputParser has parse()
+            parsed_results = self.output_parser.parse(tool_name, stdout, stderr, command, target_url)
             
             # DEBUG: Log raw output for analysis
             print(f"\n{'='*60}")
