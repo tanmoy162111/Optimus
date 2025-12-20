@@ -350,7 +350,7 @@ class ToolManager:
             self.tool_execution_history[tool_name].append(execution_time)
             
             # Parse output
-            parsed_results = self.output_parser.parse_tool_output(tool_name, stdout, stderr)
+            parsed_results = self.output_parser.parse(tool_name, stdout, stderr, command, target_url)
             
             # DEBUG: Log raw output for analysis
             print(f"\n{'='*60}")

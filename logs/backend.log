@@ -9249,3 +9249,74 @@ AssertionError: write() before start_response
  * Running on http://127.0.0.1:5000
  * Running on http://192.168.1.112:5000
 2025-12-20 16:17:52,761 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-20 19:56:01,236 - optimus - INFO - Registered: api_bp
+2025-12-20 19:56:01,241 - optimus - INFO - Registered: tool_bp
+2025-12-20 19:56:01,249 - optimus - INFO - Registered: intelligence_bp
+2025-12-20 19:56:01,252 - optimus - INFO - Registered: metrics_bp
+2025-12-20 19:56:01,263 - optimus - INFO - Registered: report_bp
+2025-12-20 19:56:01,266 - optimus - INFO - Registered: training_bp
+2025-12-20 19:56:01,268 - optimus - INFO - WebSocket handlers registered
+2025-12-20 19:56:01,357 - optimus - WARNING - Intelligence module not available: No module named 'numpy'
+2025-12-20 19:56:01,364 - optimus - INFO - Hybrid tool system initialized
+2025-12-20 19:56:01,375 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-20 19:56:01,396 - inference.autonomous_agent - WARNING - Intelligence module not available
+2025-12-20 19:56:01,406 - inference.tool_selector - WARNING - Phase-specific models not available: No module named 'numpy'
+2025-12-20 19:56:02,103 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-20 19:56:02,116 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-20 19:56:02,116 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-20 19:56:02,116 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-20 19:56:02,117 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-20 19:56:02,117 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-20 19:56:02,117 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-20 19:56:02,121 - optimus - INFO - Registered: scan_bp
+2025-12-20 19:56:02,122 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-20 19:56:02,122 - optimus - INFO - Debug mode: True
+2025-12-20 19:56:02,122 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-20 19:56:02,207 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.112:5000
+2025-12-20 19:56:02,207 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-20 19:56:55,713 - optimus - INFO - Registered: api_bp
+2025-12-20 19:56:55,716 - optimus - INFO - Registered: tool_bp
+2025-12-20 19:56:55,724 - optimus - INFO - Registered: intelligence_bp
+2025-12-20 19:56:55,725 - optimus - INFO - Registered: metrics_bp
+2025-12-20 19:56:55,728 - optimus - INFO - Registered: report_bp
+2025-12-20 19:56:55,730 - optimus - INFO - Registered: training_bp
+2025-12-20 19:56:55,730 - optimus - INFO - WebSocket handlers registered
+2025-12-20 19:56:55,733 - optimus - WARNING - Intelligence module not available: No module named 'numpy'
+2025-12-20 19:56:55,734 - optimus - INFO - Hybrid tool system initialized
+2025-12-20 19:56:55,735 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-20 19:56:55,735 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-20 19:56:55,736 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-20 19:56:55,736 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-20 19:56:55,736 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-20 19:56:55,740 - optimus - INFO - Registered: scan_bp
+2025-12-20 19:56:55,741 - api.scan_routes - INFO - Added scan 9f9fbe1e to active_scans. Active scans count: 1
+2025-12-20 19:56:55,742 - api.scan_routes - INFO - Created scan 9f9fbe1e for target https://demo.owasp-juice.shop
+2025-12-20 19:56:55,743 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-20 19:56:55,744 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-20 19:56:55,744 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-20 19:56:55,744 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-20 19:56:55,745 - core.scan_engine - INFO - start_scan called: scan_id=9f9fbe1e, target=https://demo.owasp-juice.shop
+2025-12-20 19:56:55,745 - core.scan_engine - INFO - Scan thread started for 9f9fbe1e
+2025-12-20 19:56:55,746 - core.scan_engine - INFO - Started scan thread for 9f9fbe1e
+2025-12-20 19:56:55,746 - core.scan_engine - INFO - Creating AutonomousPentestAgent for scan 9f9fbe1e
+2025-12-20 19:56:55,746 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-20 19:56:55,746 - api.scan_routes - INFO - Scan 9f9fbe1e started successfully
+2025-12-20 19:56:55,747 - werkzeug - INFO - 127.0.0.1 - - [20/Dec/2025 19:56:55] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-20 19:56:55,748 - inference.tool_selector - INFO - Phase-specific models not available, using fallback methods
+2025-12-20 19:56:55,749 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-20 19:56:55,749 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-20 19:56:55,750 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-20 19:56:55,846 - core.scan_engine - INFO - Starting autonomous scan for 9f9fbe1e
+2025-12-20 19:56:55,847 - inference.target_analyzer - INFO - [TargetAnalyzer] Analyzing target: https://demo.owasp-juice.shop
+2025-12-20 19:56:55,847 - inference.target_analyzer - INFO - [TargetAnalyzer] Target profile: {'target': 'https://demo.owasp-juice.shop', 'type': 'web', 'technologies': ['http_server', 'web_framework'], 'risk_level': 'medium', 'scan_strategy': 'web_application'}
+2025-12-20 19:56:55,848 - inference.autonomous_agent - INFO - === Iteration 1 | Phase: reconnaissance ===
+2025-12-20 19:56:55,849 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-20 19:56:55,849 - inference.tool_selector - INFO - Using rule-based selector for reconnaissance
+2025-12-20 19:56:55,850 - inference.autonomous_agent - INFO - Executing tool: sublist3r
+2025-12-20 19:56:55,850 - inference.tool_manager - INFO - Using hybrid system resolved command for sublist3r: sublist3r https://demo.owasp-juice.shop
+2025-12-20 19:56:55,900 - paramiko.transport - INFO - Connected (version 2.0, client OpenSSH_10.2p1)
+2025-12-20 19:56:56,075 - paramiko.transport - INFO - Authentication (password) successful!
+2025-12-20 19:56:56,076 - tools.hybrid_tool_system - INFO - Updated SSH client for hybrid tool system
