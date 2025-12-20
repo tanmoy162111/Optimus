@@ -354,7 +354,7 @@ class ToolManager:
                 # Use backward compatible method
                 try:
                     parsed_results = self.output_parser.parse_tool_output(tool_name, stdout, stderr, command, target_url)
-                except AttributeError:
+                except TypeError:
                     # Fallback to direct method if parse_tool_output doesn't accept all params
                     parsed_results = self.output_parser.parse_tool_output(tool_name, stdout, stderr)
             else:
