@@ -98,15 +98,16 @@ class AutonomousPentestAgent:
         approach_changes = 0
         max_approach_changes = 3
         
+        consecutive_empty_recommendations = 0
+        MAX_EMPTY_RECOMMENDATIONS = 3
+        
         while not self._is_scan_complete(scan_state) and iteration < max_iterations:
             iteration += 1
-            logger.info(f"=== Iteration {iteration} | Phase: {scan_state['phase']} | Strategy: {scan_state.get('strategy', 'none')} ===")
+            logger.info(f"=== Iteration {iteration} | Phase: {scan_state['phase']} ===")
             
-            # MINIMUM TIME CHECK: Don't allow phase transitions in first 60 seconds
             elapsed_time = (datetime.now() - datetime.fromisoformat(scan_state['start_time'])).total_seconds()
             if elapsed_time < 60:
-                # Still in warmup period, skip forced transitions
-                stalled_iterations = 0  # Reset stall counter during warmup
+                stalled_iterations = 0
             
             # NEW: Check if strategy should change
             if self.strategy_selector.should_change_strategy(scan_state):
@@ -143,89 +144,65 @@ class AutonomousPentestAgent:
                 stalled_iterations = 0
                 continue
             
-            # Tool recommendation with strategy awareness
+            # Get tool recommendation
             tool_recommendation = self._get_tool_recommendation(scan_state)
-            recommended_tools = tool_recommendation['tools']
+            recommended_tools = tool_recommendation.get('tools', [])
             
-            if not recommended_tools or tool_recommendation.get('method') == 'exhausted':
-                logger.info("Tool selector exhausted, checking phase transition")
+            # Handle empty recommendations
+            if not recommended_tools:
+                consecutive_empty_recommendations += 1
+                logger.warning(f"No tools recommended ({consecutive_empty_recommendations}/{MAX_EMPTY_RECOMMENDATIONS})")
+                
+                if consecutive_empty_recommendations >= MAX_EMPTY_RECOMMENDATIONS:
+                    suggested_next = tool_recommendation.get('suggested_next_phase')
+                    current_phase = scan_state['phase']
+                    
+                    if suggested_next and suggested_next != current_phase:
+                        logger.info(f"Forcing phase transition: {current_phase} → {suggested_next}")
+                        scan_state['phase'] = suggested_next
+                        scan_state['phase_start_time'] = datetime.now().isoformat()
+                        consecutive_empty_recommendations = 0
                         
-                # NEW: Use suggested next phase if available
-                suggested_next = tool_recommendation.get('suggested_next_phase')
-                if suggested_next:
-                    next_phase = suggested_next
-                else:
-                    next_phase = self.phase_controller.should_transition(scan_state)
-                        
-                if next_phase != scan_state['phase']:
-                    logger.info(f"📍 Phase transition: {scan_state['phase']} → {next_phase}")
-                    scan_state['phase'] = next_phase
-                    scan_state['phase_start_time'] = datetime.now().isoformat()
-                    scan_state['strategy'] = self.strategy_selector.select_strategy(scan_state)
-                    # Reset tracking for new phase
-                    scan_state['blacklisted_tools'] = []  # Clear blacklist for new phase
-                    approach_changes = 0
-                    stalled_iterations = 0
+                        if self.socketio:
+                            self.socketio.emit('phase_transition', {
+                                'scan_id': scan_state['scan_id'],
+                                'from': current_phase,
+                                'to': suggested_next
+                            }, room=f"scan_{scan_state['scan_id']}")
+                        continue
+                    else:
+                        logger.info("No more phases, ending scan")
+                        break
+                
+                time.sleep(1)
                 continue
             
-            # Execute tool with attempt tracking
-            if recommended_tools:
-                tool_to_execute = recommended_tools[0]
-                print(f"\n[AutonomousPentestAgent] Tool to execute: {tool_to_execute}")
-                
-                # Prevent infinite attempts
-                tool_execution_attempts[tool_to_execute] = tool_execution_attempts.get(tool_to_execute, 0) + 1
-                if tool_execution_attempts[tool_to_execute] > max_tool_attempts:
-                    logger.warning(f"Tool {tool_to_execute} attempted {max_tool_attempts} times, skipping")
-                    next_phase = self.phase_controller.get_next_phase(scan_state['phase'], scan_state)
-                    scan_state['phase'] = next_phase
-                    scan_state['phase_start_time'] = datetime.now().isoformat()
-                    continue
-                
-                # NEW: Check if tool has already been executed recently to prevent looping
-                tools_executed = [t['tool'] if isinstance(t, dict) else t 
-                                  for t in scan_state.get('tools_executed', [])]
-                if tool_to_execute in tools_executed:
-                    # Check how many times this tool has been executed
-                    tool_count = tools_executed.count(tool_to_execute)
-                    if tool_count >= 3:  # Already executed 3 times
-                        logger.warning(f"Tool {tool_to_execute} already executed {tool_count} times, skipping to prevent looping")
-                        # Add to blacklisted tools to prevent future recommendations
-                        if 'blacklisted_tools' not in scan_state:
-                            scan_state['blacklisted_tools'] = []
-                        if tool_to_execute not in scan_state['blacklisted_tools']:
-                            scan_state['blacklisted_tools'].append(tool_to_execute)
-                        continue
-                
-                # Generate tool parameters - BUG FIX 2: Tool Parameters Not Being Passed Correctly
-                # Analyze current situation to generate appropriate parameters
-                analysis = {
-                    'total_findings': len(scan_state.get('findings', [])),
-                    'unique_tools_executed': len(list(set(tools_executed))),
-                    'finding_types': self._get_finding_types(scan_state.get('findings', [])),
-                    'average_severity': self._calculate_average_severity(scan_state.get('findings', [])),
-                    'technologies_detected': scan_state.get('technologies_detected', []),
-                    'coverage_estimate': scan_state.get('coverage', 0.0),
-                    'tools_executed_recently': tools_executed[-5:] if len(tools_executed) > 5 else tools_executed,
-                }
-                
-                # Generate parameters for the tool
-                tool_parameters = self._generate_tool_parameters(tool_to_execute, scan_state, analysis)
-                print(f"[AutonomousPentestAgent] Generated parameters for {tool_to_execute}: {tool_parameters}")
-                
-                print(f"[AutonomousPentestAgent] Calling _execute_tool_real for {tool_to_execute}...")
-                result = self._execute_tool_real(
-                    tool_to_execute, 
-                    target,
-                    scan_state,
-                    tool_parameters  # Pass the generated parameters
-                )
-                
-                # Update scan state
-                self._update_scan_state_real(scan_state, result)
-                
-                # Learn from execution
-                self._learn_from_execution(tool_to_execute, result, scan_state)
+            consecutive_empty_recommendations = 0
+            
+            # Execute tool
+            tool_to_execute = recommended_tools[0]
+            
+            # Check repetition
+            tools_executed = [t['tool'] if isinstance(t, dict) else t 
+                             for t in scan_state.get('tools_executed', [])]
+            tool_count = tools_executed.count(tool_to_execute)
+            
+            if tool_count >= 3:
+                logger.warning(f"Tool {tool_to_execute} executed {tool_count} times, blacklisting")
+                if 'blacklisted_tools' not in scan_state:
+                    scan_state['blacklisted_tools'] = []
+                if tool_to_execute not in scan_state['blacklisted_tools']:
+                    scan_state['blacklisted_tools'].append(tool_to_execute)
+                continue
+            
+            # Generate parameters and execute
+            parameters = self._generate_tool_parameters(tool_to_execute, scan_state, {})
+            
+            logger.info(f"Executing tool: {tool_to_execute}")
+            result = self._execute_tool_real(tool_to_execute, target, scan_state, parameters)
+            
+            # Update state
+            self._update_scan_state_real(scan_state, result)
             
             # Check for phase transition
             next_phase = self.phase_controller.should_transition(scan_state)

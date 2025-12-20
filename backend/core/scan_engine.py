@@ -139,38 +139,28 @@ class ScanManager:
     def _run_scan_thread(self, scan_id: str, target: str, options: Dict[str, Any]):
         """Execute scan in background thread"""
         logger.info(f"Scan thread started for {scan_id}")
-        print(f"\n{'='*60}")
-        print(f"[SCAN THREAD] Starting scan {scan_id} for target: {target}")
-        print(f"[SCAN THREAD] DEBUG: This is the UPDATED version of _run_scan_thread")
-        print(f"{'='*60}\n")
         
         try:
             scan_state = self.active_scans.get(scan_id)
             if not scan_state:
                 logger.error(f"Scan state not found for {scan_id}")
-                print(f"[SCAN THREAD] ERROR: Scan state not found for {scan_id}")
                 return
             
             # Ensure agent_class is initialized
             if not self.agent_class:
-                logger.warning("Agent class not initialized, attempting to re-initialize components")
-                print(f"[SCAN THREAD] WARNING: Agent class not initialized, re-initializing...")
+                logger.warning("Agent class not initialized, re-initializing")
                 self._init_components()
                 
-                # Check again
                 if not self.agent_class:
-                    logger.error("Agent class still not initialized after re-initialization!")
-                    print(f"[SCAN THREAD] ERROR: Agent class still not initialized after re-initialization!")
+                    logger.error("Agent class not initialized after re-init")
                     scan_state['status'] = 'error'
                     scan_state['error'] = 'Scan agent not initialized'
                     self._emit_error(scan_id, 'Scan agent not initialized')
                     return
             
-            # Create the autonomous agent
+            # Create agent
             logger.info(f"Creating AutonomousPentestAgent for scan {scan_id}")
-            print(f"[SCAN THREAD] Creating AutonomousPentestAgent...")
             agent = self.agent_class(socketio=self.socketio)
-            print(f"[SCAN THREAD] Agent created successfully!")
             
             # Prepare config
             scan_config = {
@@ -181,30 +171,13 @@ class ScanManager:
                 'scan_id': scan_id,
             }
             
-            logger.info(f" Scan config: {scan_config}")
-            print(f"[SCAN THREAD] Config: {scan_config}")
-            
             # Emit phase transition
             self._emit_phase_transition(scan_id, 'initializing', 'reconnaissance')
             
-            # RUN THE ACTUAL SCAN
-            logger.info(f"Calling agent.run_autonomous_scan()")
-            print(f"[SCAN THREAD] Starting autonomous scan loop...")
-            print(f"[SCAN THREAD] This will attempt to connect to Kali VM at {self._get_kali_info()}")
+            # Run scan
+            logger.info(f"Starting autonomous scan for {scan_id}")
             result = agent.run_autonomous_scan(target, scan_config)
-            
-            # Debug: Log what the agent returned
-            print(f"[SCAN THREAD] Agent returned:")
-            print(f"  - findings count: {len(result.get('findings', []))}")
-            print(f"  - tools_executed count: {len(result.get('tools_executed', []))}")
-            print(f"  - coverage: {result.get('coverage', 0)}")
-            if result.get('findings'):
-                print(f"  - First 3 findings:")
-                for f in result.get('findings', [])[:3]:
-                    print(f"    * {f.get('type')}: {f.get('name', '')[:50]}")
-            
-            logger.info(f" Scan execution completed")
-            print(f"[SCAN THREAD] Scan loop completed!")
+            logger.info(f"Scan completed: {len(result.get('findings', []))} findings")
             
             # Check if stopped
             if self._stop_flags.get(scan_id):
