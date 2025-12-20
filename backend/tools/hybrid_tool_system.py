@@ -563,6 +563,10 @@ class KnowledgeBase:
             },
         }
     
+    def get_tool(self, tool_name: str) -> Optional[Dict[str, Any]]:
+        """Get tool information from knowledge base"""
+        return self.tools.get(tool_name)
+    
     def get_command_template(self, tool_name: str, task: str) -> Optional[str]:
         """Get command template for tool and task"""
         tool_data = self.get_tool(tool_name)

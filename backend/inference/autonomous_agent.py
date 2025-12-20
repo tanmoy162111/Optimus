@@ -5,6 +5,8 @@ import time
 from datetime import datetime
 from typing import Dict, List, Any
 
+logger = logging.getLogger(__name__)
+
 # Add intelligence import
 try:
     from intelligence import get_optimus_brain
@@ -490,6 +492,7 @@ class AutonomousPentestAgent:
         suggested_phases = analysis.get('suggested_phases', [])  # NEW: Suggested phases
         
         # FIXED: Get tools from BOTH databases
+        current_phase = scan_state.get('phase', 'reconnaissance')
         dynamic_tools = list(self.tool_db.tools.keys())
         kb_tools = list(self.tool_manager.tool_kb.command_templates.keys()) if hasattr(self.tool_manager, 'tool_kb') else []
         
@@ -541,7 +544,6 @@ class AutonomousPentestAgent:
                 }
         
         # NEW: If we have suggested phases and current approach isn't working, consider phase change
-        current_phase = scan_state.get('phase', 'reconnaissance')
         if suggested_phases and unique_tools >= 10 and findings < 3:
             # Consider transitioning to a suggested phase
             if suggested_phases and suggested_phases[0] != current_phase:

@@ -8,46 +8,75 @@
     "builtwith": {},
     "shodan": {},
     "nmap": {
-      "target_web": 0.495,
-      "phase_scanning": 0.495
+      "target_web": 0.46695,
+      "phase_scanning": 0.46695
     },
     "nuclei": {
-      "target_web": 0.495,
-      "phase_scanning": 0.495
+      "target_web": 0.46695,
+      "phase_scanning": 0.46695
     },
     "nikto": {
-      "target_web": 0.507,
-      "phase_scanning": 0.507
+      "target_web": 0.47895,
+      "phase_scanning": 0.47895
     },
-    "sslscan": {},
+    "sslscan": {
+      "target_web": 0.4855,
+      "phase_scanning": 0.4855
+    },
     "sqlmap": {
-      "target_web": 0.495,
-      "phase_exploitation": 0.495
+      "target_web": 0.46695,
+      "phase_exploitation": 0.46695
     },
     "metasploit": {
-      "target_web": 0.495,
-      "phase_exploitation": 0.495
+      "target_web": 0.46695,
+      "phase_exploitation": 0.46695
     },
     "linpeas": {
-      "target_web": 0.495,
-      "phase_post_exploitation": 0.495
+      "target_web": 0.46695,
+      "phase_post_exploitation": 0.46695
     },
-    "lazagne": {},
-    "crackmapexec": {},
+    "lazagne": {
+      "target_web": 0.47195,
+      "phase_post_exploitation": 0.47195
+    },
+    "crackmapexec": {
+      "target_web": 0.47195,
+      "phase_post_exploitation": 0.47195
+    },
     "clear_logs": {
-      "target_web": 0.495,
-      "phase_covering_tracks": 0.495
+      "target_web": 0.46695,
+      "phase_covering_tracks": 0.46695
     },
     "timestomp": {
-      "target_web": 0.495,
-      "phase_covering_tracks": 0.495
+      "target_web": 0.46695,
+      "phase_covering_tracks": 0.46695
     },
     "shred": {
-      "target_web": 0.506,
-      "phase_covering_tracks": 0.506
+      "target_web": 0.47795,
+      "phase_covering_tracks": 0.47795
+    },
+    "amass": {
+      "target_web": 0.47195,
+      "phase_reconnaissance": 0.47195
+    },
+    "fierce": {
+      "target_web": 0.47195,
+      "phase_reconnaissance": 0.47195
+    },
+    "whatweb": {
+      "target_web": 0.47195,
+      "phase_reconnaissance": 0.47195
+    },
+    "dnsenum": {
+      "target_web": 0.47195,
+      "phase_reconnaissance": 0.47195
+    },
+    "enum4linux": {
+      "target_web": 0.47195,
+      "phase_reconnaissance": 0.47195
     }
   },
   "pattern_weights": {},
-  "update_count": 10,
-  "last_updated": "2025-12-08T00:12:40.392744"
+  "update_count": 50,
+  "last_updated": "2025-12-13T08:23:24.258214"
 }
