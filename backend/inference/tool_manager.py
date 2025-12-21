@@ -58,16 +58,35 @@ class ToolManager:
         self.tool_kb = ToolKnowledgeBase()
         # Tool execution history for dynamic timeout adjustment
         self.tool_execution_history = {}
-        # Initialize the output parser
-        # Try enhanced parser first, fall back to basic
+        # Initialize the output parser - use self-learning parser if available
         try:
-            from .enhanced_output_parser import EnhancedOutputParser
-            self.output_parser = EnhancedOutputParser(llm_client=None)
-            logger.info("[ToolManager] Using EnhancedOutputParser")
-        except ImportError:
-            from .output_parser import OutputParser
-            self.output_parser = OutputParser()
-            logger.info("[ToolManager] Using basic OutputParser")
+            from .self_learning_parser import SelfLearningParser
+            
+            # Check if LLM and learning are enabled in config
+            enable_llm = True
+            enable_learning = True
+            try:
+                enable_llm = getattr(Config, 'OLLAMA_ENABLED', True)
+                enable_learning = getattr(Config, 'PARSER_LEARNING_ENABLED', True)
+            except (ImportError, AttributeError):
+                pass
+            
+            self.output_parser = SelfLearningParser(
+                enable_llm=enable_llm,
+                enable_learning=enable_learning
+            )
+            logger.info(f"[ToolManager] Using SelfLearningParser (LLM: {enable_llm}, Learning: {enable_learning})")
+            
+        except ImportError as e:
+            logger.warning(f"[ToolManager] SelfLearningParser not available: {e}")
+            try:
+                from .enhanced_output_parser import EnhancedOutputParser
+                self.output_parser = EnhancedOutputParser(llm_client=None)
+                logger.info("[ToolManager] Using EnhancedOutputParser")
+            except ImportError:
+                from .output_parser import OutputParser
+                self.output_parser = OutputParser()
+                logger.info("[ToolManager] Using basic OutputParser")
         
         # Try to initialize hybrid tool system
         self.hybrid_system = None
@@ -351,7 +370,7 @@ class ToolManager:
             
             # Parse output
             # Always use the direct method since EnhancedOutputParser has parse()
-            parsed_results = self.output_parser.parse(tool_name, stdout, stderr, command, target_url)
+            parsed_results = self.output_parser.parse(tool_name, stdout, stderr, command, target)
             
             # DEBUG: Log raw output for analysis
             print(f"\n{'='*60}")
@@ -523,6 +542,11 @@ class ToolManager:
                 data_timeout = int(base_data_timeout * adaptive_factor)
                 # Cap at 25 minutes for web scanners
                 data_timeout = min(data_timeout, 1500)
+            elif tool_name in ['whatweb', 'wappalyzer', 'httpx', 'wafw00f', 'amass']:
+                # Fast web reconnaissance tools - 60s base, 5min cap
+                base_data_timeout = 60
+                data_timeout = int(base_data_timeout * adaptive_factor)
+                data_timeout = min(data_timeout, 300)
             else:
                 # Other tools
                 base_data_timeout = 120  # 2 minutes base

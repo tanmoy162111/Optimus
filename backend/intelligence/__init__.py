@@ -23,6 +23,26 @@ from .explainable_ai import get_explainable_engine, ExplainableAIEngine
 from .continuous_learning import get_learning_engine, get_zeroday_engine
 from .campaign_intelligence import get_campaign_engine, CampaignIntelligenceEngine
 
+# New V3 Intelligence modules
+from .surface_web_intel import (
+    SurfaceWebIntelligence,
+    get_surface_intel,
+    VulnerabilityInfo,
+    IntelResult
+)
+from .dark_web_intel import (
+    DarkWebIntelligence,
+    get_dark_web_intel,
+    BreachInfo,
+    DarkWebResult
+)
+from .unified_intel import (
+    UnifiedIntelligence,
+    get_unified_intel,
+    ThreatAssessment,
+    search_intelligence_sync
+)
+
 __all__ = [
     'get_optimus_brain',
     'OptimusBrain', 
@@ -42,5 +62,18 @@ __all__ = [
     'get_learning_engine',
     'get_zeroday_engine',
     'get_campaign_engine',
-    'CampaignIntelligenceEngine'
+    'CampaignIntelligenceEngine',
+    # V3 Intelligence
+    'SurfaceWebIntelligence',
+    'get_surface_intel',
+    'VulnerabilityInfo',
+    'IntelResult',
+    'DarkWebIntelligence',
+    'get_dark_web_intel',
+    'BreachInfo',
+    'DarkWebResult',
+    'UnifiedIntelligence',
+    'get_unified_intel',
+    'ThreatAssessment',
+    'search_intelligence_sync'
 ]

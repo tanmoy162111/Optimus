@@ -45,6 +45,36 @@ class Config:
     RL_EPSILON_DECAY = float(os.getenv('RL_EPSILON_DECAY', 0.995))
     RL_EPSILON_MIN = float(os.getenv('RL_EPSILON_MIN', 0.05))
     
+    # Ollama LLM Configuration
+    OLLAMA_BASE_URL = os.getenv('OLLAMA_BASE_URL', 'http://localhost:11434')
+    OLLAMA_MODEL = os.getenv('OLLAMA_MODEL', 'codellama:7b-instruct')
+    OLLAMA_TIMEOUT = int(os.getenv('OLLAMA_TIMEOUT', 120))
+    OLLAMA_ENABLED = os.getenv('OLLAMA_ENABLED', 'true').lower() == 'true'
+    
+    # Self-Learning Parser
+    PARSER_LEARNING_ENABLED = os.getenv('PARSER_LEARNING_ENABLED', 'true').lower() == 'true'
+    PARSER_MIN_CONFIDENCE = float(os.getenv('PARSER_MIN_CONFIDENCE', 0.7))
+    
+    # Deep RL Configuration
+    DEEP_RL_ENABLED = os.getenv('DEEP_RL_ENABLED', 'true').lower() == 'true'
+    DEEP_RL_STATE_DIM = int(os.getenv('DEEP_RL_STATE_DIM', 128))
+    DEEP_RL_NUM_ACTIONS = int(os.getenv('DEEP_RL_NUM_ACTIONS', 35))
+    DEEP_RL_LEARNING_RATE = float(os.getenv('DEEP_RL_LEARNING_RATE', 0.0001))
+    DEEP_RL_GAMMA = float(os.getenv('DEEP_RL_GAMMA', 0.99))
+    DEEP_RL_BUFFER_SIZE = int(os.getenv('DEEP_RL_BUFFER_SIZE', 100000))
+    DEEP_RL_BATCH_SIZE = int(os.getenv('DEEP_RL_BATCH_SIZE', 64))
+    DEEP_RL_USE_PER = os.getenv('DEEP_RL_USE_PER', 'true').lower() == 'true'
+    DEEP_RL_USE_NOISY = os.getenv('DEEP_RL_USE_NOISY', 'true').lower() == 'true'
+    
+    # Intelligence Configuration
+    NVD_API_KEY = os.getenv('NVD_API_KEY', '')
+    INTEL_CACHE_TTL = int(os.getenv('INTEL_CACHE_TTL', 3600))
+    
+    # Dark Web Intelligence (requires Tor)
+    DARK_WEB_ENABLED = os.getenv('DARK_WEB_ENABLED', 'false').lower() == 'true'
+    TOR_PROXY_HOST = os.getenv('TOR_PROXY_HOST', '127.0.0.1')
+    TOR_PROXY_PORT = int(os.getenv('TOR_PROXY_PORT', 9050))
+    
     # Pentesting Phases
     PHASES = [
         'reconnaissance',

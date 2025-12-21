@@ -53,6 +53,25 @@ class AutonomousPentestAgent:
         print("[AutonomousPentestAgent] Creating RealTimeLearningModule...")
         self.learning_module = RealTimeLearningModule()  # NEW
         
+        # Initialize Deep RL agent
+        self.deep_rl_agent = None
+        try:
+            from training.deep_rl_agent import DeepRLAgent
+            from config import Config
+            
+            if getattr(Config, 'DEEP_RL_ENABLED', True):
+                self.deep_rl_agent = DeepRLAgent(
+                    num_actions=getattr(Config, 'DEEP_RL_NUM_ACTIONS', 35),
+                    state_dim=getattr(Config, 'DEEP_RL_STATE_DIM', 128),
+                    use_per=getattr(Config, 'DEEP_RL_USE_PER', True),
+                    use_noisy=getattr(Config, 'DEEP_RL_USE_NOISY', True)
+                )
+                # Try to load existing weights
+                self.deep_rl_agent.load()
+                print("[AutonomousPentestAgent] Deep RL agent initialized")
+        except Exception as e:
+            logger.warning(f"[AutonomousPentestAgent] Deep RL not available: {e}")
+        
         # Initialize intelligence layer (optional but enhances decisions)
         self.optimus_brain = None
         if INTELLIGENCE_AVAILABLE:
@@ -99,7 +118,8 @@ class AutonomousPentestAgent:
         max_approach_changes = 3
         
         consecutive_empty_recommendations = 0
-        MAX_EMPTY_RECOMMENDATIONS = 3
+        MAX_EMPTY_RECOMMENDATIONS = 5
+        MAX_STALLED_ITERATIONS = 20
         
         while not self._is_scan_complete(scan_state) and iteration < max_iterations:
             iteration += 1
@@ -115,7 +135,7 @@ class AutonomousPentestAgent:
                 old_strategy = scan_state.get('strategy', 'none')
                 
                 if new_strategy != old_strategy:
-                    logger.info(f"🔄 STRATEGY CHANGE: {old_strategy} → {new_strategy}")
+                    logger.info("Strategy change: %s -> %s", old_strategy, new_strategy)
                     scan_state['strategy'] = new_strategy
                     scan_state['strategy_changes'] += 1
                     
@@ -135,8 +155,8 @@ class AutonomousPentestAgent:
             last_findings_count = current_findings_count
             
             # Force phase change if stalled too long
-            if stalled_iterations >= 15:
-                logger.warning(f"Scan stalled for {stalled_iterations} iterations, forcing phase transition")
+            if stalled_iterations >= MAX_STALLED_ITERATIONS:
+                logger.warning("Scan stalled for %d iterations, forcing phase transition", stalled_iterations)
                 next_phase = self.phase_controller.get_next_phase(scan_state['phase'], scan_state)
                 scan_state['phase'] = next_phase
                 scan_state['phase_start_time'] = datetime.now().isoformat()
@@ -151,14 +171,14 @@ class AutonomousPentestAgent:
             # Handle empty recommendations
             if not recommended_tools:
                 consecutive_empty_recommendations += 1
-                logger.warning(f"No tools recommended ({consecutive_empty_recommendations}/{MAX_EMPTY_RECOMMENDATIONS})")
+                logger.warning("No tools recommended (%d/%d)", consecutive_empty_recommendations, MAX_EMPTY_RECOMMENDATIONS)
                 
                 if consecutive_empty_recommendations >= MAX_EMPTY_RECOMMENDATIONS:
                     suggested_next = tool_recommendation.get('suggested_next_phase')
                     current_phase = scan_state['phase']
                     
                     if suggested_next and suggested_next != current_phase:
-                        logger.info(f"Forcing phase transition: {current_phase} → {suggested_next}")
+                        logger.info("Forcing phase transition: %s -> %s", current_phase, suggested_next)
                         scan_state['phase'] = suggested_next
                         scan_state['phase_start_time'] = datetime.now().isoformat()
                         consecutive_empty_recommendations = 0
