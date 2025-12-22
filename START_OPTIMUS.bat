@@ -51,12 +51,14 @@ echo.
 echo [STEP 2/3] Starting Optimus Backend...
 cd /d "%~dp0"
 set "PYTHON_PATH=C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\python.exe"
+set PYTHONIOENCODING=utf-8
+set PYTHONUTF8=1
 if not exist "backend\venv" (
     echo [INFO] Creating Python virtual environment...
     "%PYTHON_PATH%" -m venv backend\venv
 )
 echo [INFO] Activating virtual environment and starting backend...
-start "Optimus Backend" cmd /k "cd /d %~dp0backend && venv\Scripts\activate && python app.py"
+start "Optimus Backend" cmd /k "cd /d %~dp0backend && set PYTHONIOENCODING=utf-8 && set PYTHONUTF8=1 && venv\Scripts\activate && python app.py"
 timeout /t 3 /nobreak >nul
 echo [OK] Backend started
 

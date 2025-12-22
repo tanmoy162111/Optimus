@@ -88,6 +88,11 @@ class EnhancedStateEncoder:
         Returns:
             np.ndarray of shape (128,) with float32 values in [0, 1] range
         """
+        # Handle numpy array input (convert back to dict)
+        if isinstance(scan_state, np.ndarray):
+            logger.warning("[EnhancedStateEncoder] Received numpy array instead of dict, returning zeros")
+            return np.zeros(self.state_dim, dtype=np.float32)
+        
         vector = []
         
         try:

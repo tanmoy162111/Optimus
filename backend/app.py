@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 Optimus Backend - Main Flask Application
 AI-Driven Autonomous Penetration Testing Platform
@@ -7,9 +8,22 @@ FIXED VERSION - All issues resolved
 
 import os
 import sys
+import io
 import logging
 from pathlib import Path
 from datetime import datetime
+
+# Fix Windows encoding issues BEFORE any logging
+if sys.platform == 'win32':
+    try:
+        # Force UTF-8 encoding for stdout/stderr on Windows
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+    except Exception:
+        pass  # Already wrapped or not available
+
+os.environ['PYTHONIOENCODING'] = 'utf-8'
+os.environ['PYTHONUTF8'] = '1'
 
 from flask import Flask, jsonify
 from flask_cors import CORS
@@ -31,15 +45,69 @@ LOGS_DIR.mkdir(parents=True, exist_ok=True)
 (DATA_DIR / 'scans').mkdir(parents=True, exist_ok=True)
 (DATA_DIR / 'reports').mkdir(parents=True, exist_ok=True)
 
+# Safe formatter that handles Unicode on Windows
+class SafeLogFormatter(logging.Formatter):
+    """Formatter that replaces Unicode characters with ASCII on Windows"""
+    
+    UNICODE_REPLACEMENTS = {
+        '✅': '[OK]',
+        '❌': '[FAIL]',
+        '📍': '[*]',
+        '🔍': '[SCAN]',
+        '⚠️': '[WARN]',
+        '🎯': '[TARGET]',
+        '🔧': '[TOOL]',
+        '💡': '[INFO]',
+        '🚀': '[START]',
+        '✓': '[v]',
+        '✗': '[x]',
+        '→': '->',
+        '←': '<-',
+        '•': '*',
+        '─': '-',
+        '═': '=',
+        '│': '|',
+    }
+    
+    def format(self, record):
+        message = super().format(record)
+        if sys.platform == 'win32':
+            for unicode_char, ascii_char in self.UNICODE_REPLACEMENTS.items():
+                message = message.replace(unicode_char, ascii_char)
+            # Handle any remaining non-ASCII characters
+            try:
+                message.encode('cp1252')
+            except UnicodeEncodeError:
+                message = message.encode('ascii', errors='replace').decode('ascii')
+        return message
+
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(sys.stdout),
-        logging.FileHandler(LOGS_DIR / 'backend.log')
-    ]
-)
+def setup_logging():
+    log_level = logging.DEBUG if os.environ.get('DEBUG', 'False').lower() == 'true' else logging.INFO
+    
+    # Console handler
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(log_level)
+    console_handler.setFormatter(SafeLogFormatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    ))
+    
+    # File handler (UTF-8, no encoding issues)
+    handlers = [console_handler]
+    try:
+        LOGS_DIR.mkdir(parents=True, exist_ok=True)
+        file_handler = logging.FileHandler(LOGS_DIR / 'backend.log', encoding='utf-8')
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        ))
+        handlers.append(file_handler)
+    except Exception as e:
+        print(f"[WARN] Could not create log file: {e}")
+    
+    logging.basicConfig(level=log_level, handlers=handlers)
+
+setup_logging()
 logger = logging.getLogger('optimus')
 
 # Create Flask app

@@ -74,28 +74,34 @@ class RuleBasedToolSelector:
     
     def _initialize_phase_tools(self) -> Dict[str, List[str]]:
         """
-        Define optimal tool sequences for each phase
+        Define optimal tool sequences for each phase.
+        Prioritizes tools that:
+        1. Are available on Kali Linux
+        2. Work well for web application testing (like Juice Shop)
+        3. Don't require API keys
         """
         return {
             'reconnaissance': [
-                # Passive first
-                'sublist3r',      # Subdomain enumeration
-                'theHarvester',   # Email/employee discovery
-                'shodan',         # Internet-wide scan data
-                'builtwith',      # Technology stack detection
-                'crt.sh',         # Certificate transparency
-                # Active second
-                'whatweb',        # Web tech fingerprinting
+                # Active web reconnaissance first (more useful for direct targets)
+                'whatweb',        # Web tech fingerprinting - ALWAYS WORKS
+                'nmap',           # Initial port scan
+                'gobuster',       # Directory enumeration
                 'dnsenum',        # DNS enumeration
                 'fierce',         # DNS brute force
+                'amass',          # Subdomain enumeration
+                'sublist3r',      # Subdomain enumeration (alternative)
+                'theHarvester',   # Email/employee discovery
             ],
             'scanning': [
-                'nmap',           # Port scanning (always first)
-                'nuclei',         # Vulnerability scanning
-                'nikto',          # Web vulnerability scanning
+                'nmap',           # Port scanning (detailed)
+                'nikto',          # Web vulnerability scanning - finds many issues
+                'nuclei',         # Vulnerability scanning with templates
+                'gobuster',       # Directory/file enumeration
+                'ffuf',           # Fast web fuzzer
+                'dirb',           # Directory brute force
                 'sslscan',        # SSL/TLS analysis
-                'enum4linux',     # SMB enumeration
-                'testssl.sh',     # SSL/TLS testing
+                'wpscan',         # WordPress scanning
+                'wfuzz',          # Web fuzzer
             ],
             'exploitation': [
                 'sqlmap',         # SQL injection
@@ -243,114 +249,128 @@ class RuleBasedToolSelector:
         return None
     
     def _recommend_reconnaissance(self, context: Dict, tools_executed: List[str]) -> List[str]:
-        """Reconnaissance phase logic"""
+        """Reconnaissance phase logic - prioritize working tools for web apps"""
         recommended = []
+        target_type = context.get('target_type', 'web')
         
-        # Start with passive tools
-        passive_tools = ['sublist3r', 'theHarvester', 'builtwith', 'shodan']
-        for tool in passive_tools:
+        if target_type == 'web':
+            # Web-focused recon - these tools work reliably
+            web_recon_tools = ['whatweb', 'nmap', 'gobuster']
+            for tool in web_recon_tools:
+                if tool not in tools_executed:
+                    recommended.append(tool)
+        
+        # DNS/subdomain tools
+        dns_tools = ['amass', 'dnsenum', 'fierce']
+        for tool in dns_tools:
             if tool not in tools_executed:
                 recommended.append(tool)
         
-        # If passive complete, move to active
-        if all(t in tools_executed for t in passive_tools[:2]):
-            active_tools = ['whatweb', 'dnsenum']
-            recommended.extend([t for t in active_tools if t not in tools_executed])
+        # Passive tools last (may require API keys)
+        passive_tools = ['sublist3r', 'theHarvester']
+        recommended.extend([t for t in passive_tools if t not in tools_executed])
         
-        # Sort by effectiveness
         return self._sort_by_effectiveness(recommended)
     
     def _recommend_scanning(self, context: Dict, tools_executed: List[str],
                         technologies: List[str]) -> List[str]:
-        """Scanning phase logic with learning-based prioritization"""
+        """Scanning phase logic - run more tools for comprehensive coverage"""
         recommended = []
         
-        # Always start with nmap
+        # Always start with nmap for port discovery
         if 'nmap' not in tools_executed:
             return ['nmap']
         
-        # Prioritize tools based on learning data
-        # Get tools that have shown good performance
-        effective_tools = []
-        for tool, stats in self.tool_effectiveness.items():
-            if stats['avg_findings_per_execution'] > 0.5:  # At least 0.5 findings per execution
-                effective_tools.append((tool, stats['avg_findings_per_execution']))
-        
-        # Sort by effectiveness
-        effective_tools.sort(key=lambda x: x[1], reverse=True)
-        
-        # Add effective tools first
-        for tool, effectiveness in effective_tools:
-            if tool not in tools_executed and tool in ['nuclei', 'nikto', 'wpscan', 'joomscan', 'sslscan']:
+        # Core web scanning tools - run ALL of these
+        core_web_tools = ['nikto', 'nuclei', 'gobuster', 'ffuf', 'dirb']
+        for tool in core_web_tools:
+            if tool not in tools_executed:
                 recommended.append(tool)
         
-        # Then nuclei for CVE detection (if not already added)
-        if 'nuclei' not in tools_executed and 'nuclei' not in recommended:
-            recommended.append('nuclei')
-        
-        # Web-specific tools
-        if context.get('target_type') == 'web':
-            if 'nikto' not in tools_executed and 'nikto' not in recommended:
-                recommended.append('nikto')
+        # Add more tools based on findings
+        findings = context.get('findings', [])
+        if len(findings) > 0:
+            aggressive_tools = ['wfuzz', 'sslscan']
+            for tool in aggressive_tools:
+                if tool not in tools_executed:
+                    recommended.append(tool)
         
         # Technology-specific tools
-        if 'wordpress' in technologies and 'wpscan' not in tools_executed and 'wpscan' not in recommended:
-            recommended.insert(0, 'wpscan')  # High priority
+        if 'wordpress' in technologies and 'wpscan' not in tools_executed:
+            recommended.insert(0, 'wpscan')
         
-        if 'joomla' in technologies and 'joomscan' not in tools_executed and 'joomscan' not in recommended:
+        if 'joomla' in technologies and 'joomscan' not in tools_executed:
             recommended.insert(0, 'joomscan')
         
-        # SSL/TLS if HTTPS
+        # SSL/TLS for HTTPS targets
         if 'https' in context.get('target', ''):
             if 'sslscan' not in tools_executed and 'sslscan' not in recommended:
                 recommended.append('sslscan')
         
-        # Sort by effectiveness
+        # Prioritize by effectiveness from learning
+        effective_tools = []
+        for tool, stats in self.tool_effectiveness.items():
+            if stats['avg_findings_per_execution'] > 0.3:
+                effective_tools.append((tool, stats['avg_findings_per_execution']))
+        
+        effective_tools.sort(key=lambda x: x[1], reverse=True)
+        
+        for tool, _ in effective_tools:
+            if tool not in tools_executed and tool not in recommended:
+                recommended.append(tool)
+        
         return self._sort_by_effectiveness(recommended)
     
     def _recommend_exploitation(self, context: Dict, findings: List[Dict],
                              tools_executed: List[str]) -> List[str]:
-        """Exploitation phase logic with learning-based tool selection"""
+        """Exploitation phase logic - target discovered vulnerabilities"""
         recommended = []
         
-        # React to discovered vulnerabilities
-        attack_types_found = set(f.get('type', '') for f in findings)
+        # Get attack types from findings
+        attack_types_found = set(f.get('type', '').lower() for f in findings)
         
-        # Prioritize by severity
-        critical_findings = [f for f in findings if f.get('severity', 0) >= 9.0]
+        # Map attack types to tools
+        attack_tool_map = {
+            'sql_injection': 'sqlmap',
+            'sqli': 'sqlmap',
+            'xss': 'dalfox',
+            'cross-site scripting': 'dalfox',
+            'command_injection': 'commix',
+            'rce': 'commix',
+            'lfi': 'commix',
+            'rfi': 'commix',
+        }
         
-        # First, use learning data to prioritize tools that have been effective
-        effective_exploitation_tools = []
-        for tool, stats in self.tool_effectiveness.items():
-            if stats['avg_findings_per_execution'] > 0.3:  # Lower threshold for exploitation
-                effective_exploitation_tools.append((tool, stats['avg_findings_per_execution']))
+        # Add tools based on discovered vulnerabilities
+        for attack_type, tool in attack_tool_map.items():
+            if attack_type in attack_types_found or any(attack_type in at for at in attack_types_found):
+                if tool not in tools_executed and tool not in recommended:
+                    recommended.insert(0, tool)  # High priority
         
-        # Sort by effectiveness
-        effective_exploitation_tools.sort(key=lambda x: x[1], reverse=True)
-        
-        # Add effective tools first
-        for tool, effectiveness in effective_exploitation_tools:
-            if tool not in tools_executed and tool in ['sqlmap', 'metasploit', 'hydra', 'dalfox', 'commix', 'xsser']:
+        # Always try sqlmap and dalfox for web apps (they're fast)
+        core_exploit_tools = ['sqlmap', 'dalfox', 'commix']
+        for tool in core_exploit_tools:
+            if tool not in tools_executed and tool not in recommended:
                 recommended.append(tool)
         
-        for finding in sorted(findings, key=lambda x: x.get('severity', 0), reverse=True):
-            attack_type = finding.get('type', '')
-            
-            # Get appropriate tool for this attack
-            exploit_tool = self.attack_response_tools.get(attack_type)
-            
-            if exploit_tool and exploit_tool not in tools_executed and exploit_tool not in recommended:
-                recommended.append(exploit_tool)
-                logger.info(f"Recommending {exploit_tool} for {attack_type} "
-                           f"(severity: {finding.get('severity')})")
+        # Add credential attacks if login forms detected
+        if any('login' in str(f).lower() or 'auth' in str(f).lower() for f in findings):
+            if 'hydra' not in tools_executed:
+                recommended.append('hydra')
         
-        # If no specific exploits, try general tools
-        if not recommended:
-            if context.get('target_type') == 'web':
-                general_tools = ['sqlmap', 'metasploit']
-                recommended = [t for t in general_tools if t not in tools_executed and t not in recommended]
+        # Prioritize by learning data
+        effective_tools = []
+        for tool, stats in self.tool_effectiveness.items():
+            if stats['avg_findings_per_execution'] > 0.2:
+                effective_tools.append((tool, stats['avg_findings_per_execution']))
         
-        # Sort by effectiveness
+        effective_tools.sort(key=lambda x: x[1], reverse=True)
+        
+        for tool, _ in effective_tools:
+            if tool not in tools_executed and tool not in recommended:
+                if tool in ['sqlmap', 'dalfox', 'commix', 'xsser', 'hydra']:
+                    recommended.append(tool)
+        
         return self._sort_by_effectiveness(recommended)
     
     def _recommend_post_exploitation(self, context: Dict,

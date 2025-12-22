@@ -26,6 +26,12 @@ try:
 except ImportError:
     TF_AVAILABLE = False
     tf = None
+    keras = None
+    layers = None
+    Model = None
+    optimizers = None
+    Orthogonal = None
+    Zeros = None
 
 from .enhanced_state_encoder import EnhancedStateEncoder, get_state_encoder
 from .prioritized_replay import PrioritizedReplayBuffer, StandardReplayBuffer
@@ -33,70 +39,71 @@ from .prioritized_replay import PrioritizedReplayBuffer, StandardReplayBuffer
 logger = logging.getLogger(__name__)
 
 
-class NoisyDense(layers.Layer):
-    """
-    Noisy linear layer for exploration.
-    
-    Replaces epsilon-greedy with learned noise for better exploration.
-    Reference: Fortunato et al., "Noisy Networks for Exploration" (2018)
-    """
-    
-    def __init__(self, units: int, sigma_init: float = 0.5, **kwargs):
-        super().__init__(**kwargs)
-        self.units = units
-        self.sigma_init = sigma_init
-    
-    def build(self, input_shape):
-        self.input_dim = int(input_shape[-1])
+if TF_AVAILABLE:
+    class NoisyDense(layers.Layer):
+        """
+        Noisy linear layer for exploration.
         
-        # Learnable parameters
-        mu_range = 1.0 / np.sqrt(self.input_dim)
+        Replaces epsilon-greedy with learned noise for better exploration.
+        Reference: Fortunato et al., "Noisy Networks for Exploration" (2018)
+        """
         
-        self.w_mu = self.add_weight(
-            name='w_mu',
-            shape=(self.input_dim, self.units),
-            initializer=tf.random_uniform_initializer(-mu_range, mu_range),
-            trainable=True
-        )
-        self.w_sigma = self.add_weight(
-            name='w_sigma',
-            shape=(self.input_dim, self.units),
-            initializer=tf.constant_initializer(self.sigma_init / np.sqrt(self.input_dim)),
-            trainable=True
-        )
-        self.b_mu = self.add_weight(
-            name='b_mu',
-            shape=(self.units,),
-            initializer=tf.random_uniform_initializer(-mu_range, mu_range),
-            trainable=True
-        )
-        self.b_sigma = self.add_weight(
-            name='b_sigma',
-            shape=(self.units,),
-            initializer=tf.constant_initializer(self.sigma_init / np.sqrt(self.units)),
-            trainable=True
-        )
-    
-    def call(self, inputs, training=None):
-        if training:
-            # Sample noise
-            epsilon_in = self._f(tf.random.normal((self.input_dim, 1)))
-            epsilon_out = self._f(tf.random.normal((1, self.units)))
+        def __init__(self, units: int, sigma_init: float = 0.5, **kwargs):
+            super().__init__(**kwargs)
+            self.units = units
+            self.sigma_init = sigma_init
+        
+        def build(self, input_shape):
+            self.input_dim = int(input_shape[-1])
             
-            w_epsilon = tf.matmul(epsilon_in, epsilon_out)
-            b_epsilon = tf.squeeze(epsilon_out)
+            # Learnable parameters
+            mu_range = 1.0 / np.sqrt(self.input_dim)
             
-            w = self.w_mu + self.w_sigma * w_epsilon
-            b = self.b_mu + self.b_sigma * b_epsilon
-        else:
-            w = self.w_mu
-            b = self.b_mu
+            self.w_mu = self.add_weight(
+                name='w_mu',
+                shape=(self.input_dim, self.units),
+                initializer=tf.random_uniform_initializer(-mu_range, mu_range),
+                trainable=True
+            )
+            self.w_sigma = self.add_weight(
+                name='w_sigma',
+                shape=(self.input_dim, self.units),
+                initializer=tf.constant_initializer(self.sigma_init / np.sqrt(self.input_dim)),
+                trainable=True
+            )
+            self.b_mu = self.add_weight(
+                name='b_mu',
+                shape=(self.units,),
+                initializer=tf.random_uniform_initializer(-mu_range, mu_range),
+                trainable=True
+            )
+            self.b_sigma = self.add_weight(
+                name='b_sigma',
+                shape=(self.units,),
+                initializer=tf.constant_initializer(self.sigma_init / np.sqrt(self.units)),
+                trainable=True
+            )
         
-        return tf.matmul(inputs, w) + b
-    
-    def _f(self, x):
-        """Factorized Gaussian noise function"""
-        return tf.sign(x) * tf.sqrt(tf.abs(x))
+        def call(self, inputs, training=None):
+            if training:
+                # Sample noise
+                epsilon_in = self._f(tf.random.normal((self.input_dim, 1)))
+                epsilon_out = self._f(tf.random.normal((1, self.units)))
+                
+                w_epsilon = tf.matmul(epsilon_in, epsilon_out)
+                b_epsilon = tf.squeeze(epsilon_out)
+                
+                w = self.w_mu + self.w_sigma * w_epsilon
+                b = self.b_mu + self.b_sigma * b_epsilon
+            else:
+                w = self.w_mu
+                b = self.b_mu
+            
+            return tf.matmul(inputs, w) + b
+        
+        def _f(self, x):
+            """Factorized Gaussian noise function"""
+            return tf.sign(x) * tf.sqrt(tf.abs(x))
 
 
 def create_dueling_network(
@@ -169,7 +176,8 @@ def create_dueling_network(
         advantage = layers.Dense(num_actions, name='advantage_output')(advantage_stream)
     
     # Combine: Q(s,a) = V(s) + (A(s,a) - mean(A))
-    q_values = value + (advantage - tf.reduce_mean(advantage, axis=1, keepdims=True))
+    import keras.ops as K
+    q_values = layers.Add()([value, layers.Subtract()([advantage, K.mean(advantage, axis=1, keepdims=True)])])
     
     model = Model(inputs=state_input, outputs=q_values, name=name)
     
@@ -572,11 +580,14 @@ class DeepRLAgent:
             path = self.model_dir / f'checkpoint_{timestamp}'
         
         path = Path(path)
+        # Remove .pt extension if present
+        if path.suffix == '.pt':
+            path = path.with_suffix('')
         path.mkdir(parents=True, exist_ok=True)
         
         # Save weights
-        self.online_network.save_weights(str(path / 'online_weights.h5'))
-        self.target_network.save_weights(str(path / 'target_weights.h5'))
+        self.online_network.save_weights(str(path / 'online_weights.weights.h5'))
+        self.target_network.save_weights(str(path / 'target_weights.weights.h5'))
         
         # Save training state
         state = {
@@ -608,10 +619,20 @@ class DeepRLAgent:
             path = max(checkpoints, key=lambda p: p.stat().st_mtime)
         
         path = Path(path)
+        # Remove .pt extension if present
+        if path.suffix == '.pt':
+            path = path.with_suffix('')
         
         try:
-            self.online_network.load_weights(str(path / 'online_weights.h5'))
-            self.target_network.load_weights(str(path / 'target_weights.h5'))
+            # Try new format first, fallback to old
+            online_weights = path / 'online_weights.weights.h5'
+            target_weights = path / 'target_weights.weights.h5'
+            if not online_weights.exists():
+                online_weights = path / 'online_weights.h5'
+                target_weights = path / 'target_weights.h5'
+            
+            self.online_network.load_weights(str(online_weights))
+            self.target_network.load_weights(str(target_weights))
             
             import json
             with open(path / 'training_state.json', 'r') as f:

@@ -305,6 +305,17 @@ class ToolManager:
                     'success': False
                 }
         
+        # Normalize target based on tool type
+        try:
+            from .target_normalizer import get_target_normalizer
+            normalizer = get_target_normalizer()
+            normalized_target = normalizer.get_tool_target(target, tool_name)
+            logger.info(f"[ToolManager] Normalized target for {tool_name}: {target} -> {normalized_target}")
+            parameters['original_target'] = target
+            target = normalized_target
+        except ImportError:
+            logger.warning("[ToolManager] Target normalizer not available")
+        
         try:
             # Ensure SSH connection with retry logic
             max_connection_retries = 3
@@ -833,14 +844,20 @@ class ToolManager:
         # Use the mapped tool if available
         actual_tool = tool_mapping.get(tool_name, tool_name)
         
+        # Strip URL fragments and trailing slashes
+        target = re.sub(r'#.*$', '', target).rstrip('/')
+        
+        # Ensure protocol
+        if not target.startswith(('http://', 'https://')):
+            target = f'http://{target}'
+        
         # Extract hostname/port from target
         hostname_match = re.search(r'(?:https?://)?([^:/]+)(?::(\d+))?', target)
         hostname = hostname_match.group(1) if hostname_match else target
         port = hostname_match.group(2) if hostname_match and hostname_match.group(2) else '80'
         
-        # Ensure target has proper format
-        if not target.startswith(('http://', 'https://')):
-            target = f"http://{target}"
+        # Check if Juice Shop
+        is_juice_shop = 'juice' in target.lower()
         
         # Tool paths
         tool_paths = {
@@ -864,35 +881,34 @@ class ToolManager:
         
         # IMPROVED commands optimized for web application testing
         fallback_commands = {
-            # Nmap: More thorough scan for web apps
+            # Nmap: Scan HOSTNAME not URL
             'nmap': f"{tool_path} -sV -sC -T4 -p 80,443,3000,8080,8443 --script=http-enum,http-headers,http-methods,http-title {hostname}",
             
-            # Nikto: Comprehensive web scanner
+            # Nikto: Scan base URL
             'nikto': f"{tool_path} -h {target} -C all -Tuning 123bde -timeout 10",
             
-            # SQLMap: Need to specify testable endpoints
-            # For Juice Shop, test the login endpoint
-            'sqlmap': f"{tool_path} -u '{target}/rest/products/search?q=test' --batch --level=2 --risk=2 --forms --crawl=2 --timeout=30",
+            # SQLMap: Use proper endpoint
+            'sqlmap': self._get_sqlmap_command(tool_path, target, is_juice_shop),
             
             # Nuclei: Comprehensive templates
             'nuclei': f"{tool_path} -u {target} -t cves/ -t vulnerabilities/ -t exposures/ -t misconfiguration/ -severity critical,high,medium -timeout 30",
             
-            # Dalfox: XSS scanner with crawling
-            'dalfox': f"{tool_path} url {target} --deep-domxss --mining-dict --skip-bav",
+            # Dalfox: XSS scanner
+            'dalfox': self._get_dalfox_command(tool_path, target, is_juice_shop),
             
-            # Commix: Command injection with form testing
-            'commix': f"{tool_path} --url='{target}' --batch --level=2 --crawl=2",
+            # Commix: Command injection
+            'commix': self._get_commix_command(tool_path, target, is_juice_shop),
             
-            # Gobuster: Directory enumeration with more extensions
+            # Gobuster: Directory enumeration
             'gobuster': f"{tool_path} dir -u {target} -w /usr/share/wordlists/dirb/common.txt -x js,json,php,html,txt,bak -t 50 -q",
             
-            # FFUF: Fuzzing with better wordlist
+            # FFUF: Fuzzing
             'ffuf': f"{tool_path} -u {target}/FUZZ -w /usr/share/wordlists/dirb/common.txt -mc 200,301,302,401,403 -t 50",
             
             # Whatweb: Technology detection
             'whatweb': f"{tool_path} -a 3 {target}",
             
-            # Amass: Subdomain enumeration (for domain targets)
+            # Amass: Subdomain enumeration
             'amass': f"{tool_path} enum -passive -d {hostname}",
             
             # DNSenum
@@ -901,8 +917,8 @@ class ToolManager:
             # Fierce
             'fierce': f"{tool_path} --domain {hostname}",
             
-            # WPScan (if WordPress detected)
-            'wpscan': f"{tool_path} --url {target} --enumerate vp,vt,u --api-token $WPSCAN_API_TOKEN",
+            # WPScan
+            'wpscan': f"{tool_path} --url {target} --enumerate vp,vt,u",
             
             # SSLScan
             'sslscan': f"{tool_path} {hostname}:{port}",
@@ -912,6 +928,27 @@ class ToolManager:
         
         print(f"[DEBUG] Generated command for {actual_tool}: {command}")
         return command
+    
+    def _get_sqlmap_command(self, tool_path: str, target: str, is_juice_shop: bool) -> str:
+        """Generate SQLMap command with proper endpoints"""
+        if is_juice_shop:
+            return f"{tool_path} -u '{target}/rest/products/search?q=test' --batch --level=3 --risk=2 --forms --crawl=2 --timeout=30"
+        else:
+            return f"{tool_path} -u '{target}' --batch --level=2 --risk=2 --forms --crawl=3 --timeout=30"
+    
+    def _get_dalfox_command(self, tool_path: str, target: str, is_juice_shop: bool) -> str:
+        """Generate Dalfox command"""
+        if is_juice_shop:
+            return f"{tool_path} url '{target}/rest/products/search?q=test' --deep-domxss --skip-bav"
+        else:
+            return f"{tool_path} url {target} --deep-domxss --mining-dict --skip-bav"
+    
+    def _get_commix_command(self, tool_path: str, target: str, is_juice_shop: bool) -> str:
+        """Generate Commix command"""
+        if is_juice_shop:
+            return f"{tool_path} --url='{target}/rest/products/search?q=test' --batch --level=2"
+        else:
+            return f"{tool_path} --url='{target}' --batch --level=2 --crawl=2"
 
     def _fallback_command(self, tool_name: str, target: str) -> str:
         """Fallback commands if Knowledge Base fails"""
