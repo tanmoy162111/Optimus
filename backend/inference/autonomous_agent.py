@@ -15,6 +15,17 @@ except ImportError:
     INTELLIGENCE_AVAILABLE = False
     logger.warning("Intelligence module not available")
 
+# Exploitation module integration
+try:
+    from exploitation.integration import (
+        ExploitationManager,
+        get_post_exploitation_commands
+    )
+    EXPLOITATION_MODULE_AVAILABLE = True
+except ImportError:
+    EXPLOITATION_MODULE_AVAILABLE = False
+    logger.warning("Exploitation module not available")
+
 from inference.tool_selector import PhaseAwareToolSelector
 from inference.phase_controller import PhaseController
 from inference.tool_manager import ToolManager
@@ -52,6 +63,15 @@ class AutonomousPentestAgent:
         
         print("[AutonomousPentestAgent] Creating RealTimeLearningModule...")
         self.learning_module = RealTimeLearningModule()  # NEW
+        
+        # Initialize exploitation module
+        self.exploitation_manager = None
+        if EXPLOITATION_MODULE_AVAILABLE:
+            try:
+                self.exploitation_manager = ExploitationManager(self.tool_manager)
+                print("[AutonomousPentestAgent] ExploitationManager initialized")
+            except Exception as e:
+                logger.warning(f"[AutonomousPentestAgent] Failed to init ExploitationManager: {e}")
         
         # Initialize Deep RL agent
         self.deep_rl_agent = None
@@ -1251,7 +1271,106 @@ class AutonomousPentestAgent:
             'coverage': scan_state['coverage'],
             'duration': (datetime.now() - datetime.fromisoformat(scan_state['start_time'])).total_seconds(),
             'strategy_changes': scan_state.get('strategy_changes', 0),
+            'exploitation_results': scan_state.get('exploitation_results', []),
+            'shell_sessions': scan_state.get('shell_sessions', []),
         }
+    
+    async def exploit_finding(
+        self,
+        finding: Dict[str, Any],
+        scan_state: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Attempt to exploit a vulnerability finding using the exploitation module.
+        """
+        if not EXPLOITATION_MODULE_AVAILABLE or self.exploitation_manager is None:
+            logger.warning("[Agent] Exploitation module not available, using fallback")
+            return await self._fallback_exploit(finding, scan_state)
+        
+        context = {
+            'target': scan_state.get('target', ''),
+            'url': scan_state.get('target', ''),
+            'host': self._extract_host(scan_state.get('target', '')),
+            'port': finding.get('port', 80),
+            'lhost': scan_state.get('config', {}).get('lhost', '127.0.0.1'),
+            'lport': scan_state.get('config', {}).get('lport', 4444),
+            'service': finding.get('service', ''),
+            'endpoint': finding.get('endpoint', finding.get('url', '/')),
+            'parameter': finding.get('parameter', 'id'),
+        }
+        
+        if finding.get('cve'):
+            context['cve_ids'] = finding['cve'] if isinstance(finding['cve'], list) else [finding['cve']]
+        
+        logger.info(f"[Agent] Attempting exploit for: {finding.get('type', 'unknown')}")
+        
+        try:
+            result = await self.exploitation_manager.exploit_finding(finding, context)
+            
+            exploit_result = {
+                'success': result.is_success,
+                'status': result.status.value,
+                'exploit_id': result.exploit_id,
+                'shell_obtained': result.shell_obtained,
+                'credentials_found': result.credentials_found,
+                'extracted_data': result.extracted_data,
+                'output': result.output[:2000] if result.output else '',
+                'recommendations': result.recommendations,
+                'execution_time': result.execution_time,
+            }
+            
+            if result.shell_obtained:
+                exploit_result['post_exploit_commands'] = get_post_exploitation_commands(
+                    shell_type='linux',
+                    objective='enumerate'
+                )
+            
+            return exploit_result
+            
+        except Exception as e:
+            logger.error(f"[Agent] Exploitation error: {e}")
+            return {'success': False, 'status': 'error', 'error': str(e)}
+    
+    async def _fallback_exploit(self, finding: Dict[str, Any], scan_state: Dict[str, Any]) -> Dict[str, Any]:
+        """Fallback exploitation without the exploitation module"""
+        vuln_type = finding.get('type', '').lower()
+        target = scan_state.get('target', '')
+        
+        exploit_map = {
+            'sql_injection': f"sqlmap -u '{target}' --batch --dbs",
+            'sqli': f"sqlmap -u '{target}' --batch --dbs",
+            'xss': f"dalfox url '{target}' --silence",
+            'command_injection': f"commix --url='{target}' --batch",
+            'lfi': f"curl -s '{target}/../../etc/passwd'",
+        }
+        
+        command = exploit_map.get(vuln_type)
+        if not command:
+            return {'success': False, 'status': 'no_exploit', 'message': f'No exploit for {vuln_type}'}
+        
+        result = self.tool_manager.execute_tool_direct(command, timeout=300)
+        
+        return {
+            'success': bool(result.get('output')),
+            'status': 'executed',
+            'command': command,
+            'output': result.get('output', '')[:2000],
+        }
+    
+    def _extract_host(self, target: str) -> str:
+        """Extract hostname from target URL"""
+        import re
+        from urllib.parse import urlparse
+        
+        if target.startswith(('http://', 'https://')):
+            parsed = urlparse(target)
+            return parsed.hostname or target
+        
+        ip_match = re.match(r'^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})', target)
+        if ip_match:
+            return ip_match.group(1)
+        
+        return target.split('/')[0].split(':')[0]
 
     def _generate_fully_autonomous_report(self, scan_state: Dict) -> Dict[str, Any]:
         """

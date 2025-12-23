@@ -1,0 +1,45 @@
+{
+  "training_time_seconds": 43276.453256607056,
+  "total_episodes": 90,
+  "total_steps": 745,
+  "best_avg_reward": 125.32257570525012,
+  "final_avg_reward": 35.980606892108916,
+  "final_avg_findings": 19.9,
+  "experience_stats": {
+    "total_experiences": 732,
+    "total_rewards": 6088.352164769166,
+    "positive_rewards": 645,
+    "negative_rewards": 87,
+    "tools_used": {
+      "amass": 109,
+      "fierce": 85,
+      "dnsenum": 49,
+      "gobuster": 73,
+      "sslscan": 58,
+      "ffuf": 55,
+      "nmap": 110,
+      "nuclei": 47,
+      "hydra": 18,
+      "nikto": 62,
+      "whatweb": 28,
+      "dirb": 27,
+      "dalfox": 3,
+      "xsser": 2,
+      "sqlmap": 2,
+      "commix": 4
+    },
+    "phases_visited": {
+      "reconnaissance": 400,
+      "scanning": 282,
+      "exploitation": 29,
+      "post_exploitation": 21
+    },
+    "findings_by_severity": {
+      "critical": 114,
+      "high": 109,
+      "medium": 1290,
+      "low": 1040
+    }
+  },
+  "timestamp": "2025-12-23T06:56:25.837278"
+}
