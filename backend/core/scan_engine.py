@@ -142,7 +142,7 @@ class ScanManager:
         return True
     
     def _run_scan_thread(self, scan_id: str, target: str, options: Dict[str, Any]):
-        """Execute scan in background thread"""
+        """Execute scan in background thread using RobustScanOrchestrator"""
         logger.info(f"Scan thread started for {scan_id}")
         
         try:
@@ -151,37 +151,48 @@ class ScanManager:
                 logger.error(f"Scan state not found for {scan_id}")
                 return
             
-            # Ensure agent_class is initialized
-            if not self.agent_class:
-                logger.warning("Agent class not initialized, re-initializing")
-                self._init_components()
-                
-                if not self.agent_class:
-                    logger.error("Agent class not initialized after re-init")
-                    scan_state['status'] = 'error'
-                    scan_state['error'] = 'Scan agent not initialized'
-                    self._emit_error(scan_id, 'Scan agent not initialized')
-                    return
-            
-            # Create agent
-            logger.info(f"Creating AutonomousPentestAgent for scan {scan_id}")
-            agent = self.agent_class(socketio=self.socketio)
+            # Use RobustScanOrchestrator for better phase handling
+            try:
+                from inference.robust_orchestrator import get_robust_orchestrator
+                orchestrator = get_robust_orchestrator(self.socketio)
+                USE_ROBUST_ORCHESTRATOR = True
+                logger.info(f"Using RobustScanOrchestrator for scan {scan_id}")
+            except ImportError:
+                USE_ROBUST_ORCHESTRATOR = False
+                logger.warning("RobustScanOrchestrator not available, using legacy agent")
             
             # Prepare config
             scan_config = {
                 'max_time': options.get('maxDuration', 3600),
                 'mode': options.get('mode', 'standard'),
-                'enable_exploitation': options.get('enableExploitation', False),
+                'enable_exploitation': options.get('enableExploitation', True),  # Enable by default
                 'use_ai': options.get('useAI', True),
                 'scan_id': scan_id,
+                'lhost': options.get('lhost', '10.10.14.1'),
+                'lport': options.get('lport', 4444),
             }
             
             # Emit phase transition
             self._emit_phase_transition(scan_id, 'initializing', 'reconnaissance')
             
-            # Run scan
-            logger.info(f"Starting autonomous scan for {scan_id}")
-            result = agent.run_autonomous_scan(target, scan_config)
+            # Run scan with appropriate orchestrator
+            if USE_ROBUST_ORCHESTRATOR:
+                logger.info(f"Starting robust scan for {scan_id}")
+                result = orchestrator.run_full_scan(target, scan_config)
+            else:
+                # Fallback to legacy agent
+                if not self.agent_class:
+                    self._init_components()
+                    if not self.agent_class:
+                        scan_state['status'] = 'error'
+                        scan_state['error'] = 'Scan agent not initialized'
+                        self._emit_error(scan_id, 'Scan agent not initialized')
+                        return
+                
+                agent = self.agent_class(socketio=self.socketio)
+                logger.info(f"Starting legacy autonomous scan for {scan_id}")
+                result = agent.run_autonomous_scan(target, scan_config)
+            
             logger.info(f"Scan completed: {len(result.get('findings', []))} findings")
             
             # Check if stopped

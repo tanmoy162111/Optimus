@@ -18168,3 +18168,5 @@ AssertionError: write() before start_response
 2025-12-24 15:26:49,928 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:26:49] "GET /api/tools/inventory HTTP/1.1" 200 -
 2025-12-24 15:26:50,106 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:26:50] "GET /api/scan/list?limit=50 HTTP/1.1" 200 -
 2025-12-24 15:26:50,413 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:26:50] "GET /api/scan/list?limit=50 HTTP/1.1" 200 -
+2025-12-24 15:27:32,791 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:27:32] "GET /api/scan/results/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:27:33,040 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:27:33] "GET /api/scan/results/ebfbbb30 HTTP/1.1" 200 -
