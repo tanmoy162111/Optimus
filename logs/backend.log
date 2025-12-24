@@ -17652,3 +17652,519 @@ AssertionError: write() before start_response
 2025-12-24 14:05:04,803 - exploitation.metasploit - INFO - [MetasploitDB] Loaded 28 modules
 2025-12-24 14:05:04,803 - exploitation.integration - INFO - [ExploitationManager] Metasploit components initialized
 2025-12-24 14:05:04,804 - exploitation.integration - INFO - [ExploitationManager] Initialized
+2025-12-24 14:05:20,381 - training.enhanced_state_encoder - INFO - [EnhancedStateEncoder] Initialized with 128 dimensions
+2025-12-24 14:05:20,381 - training.deep_rl_agent - INFO - [DeepRL] Creating networks: state_dim=128, actions=35
+2025-12-24 14:05:22,399 - tensorflow - WARNING - From C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\keras\src\backend\tensorflow\core.py:232: The name tf.placeholder is deprecated. Please use tf.compat.v1.placeholder instead.
+
+2025-12-24 14:05:22,679 - training.prioritized_replay - INFO - [PER] Initialized: capacity=100000, alpha=0.6, beta=0.4→1.0
+2025-12-24 14:05:22,680 - training.deep_rl_agent - INFO - [DeepRL] Agent initialized (PER: True, Noisy: True)
+2025-12-24 14:05:22,681 - training.deep_rl_agent - WARNING - [DeepRL] No checkpoints found
+2025-12-24 14:05:22,682 - inference.autonomous_agent - INFO - 🤖 Autonomous Pentest Agent initialized
+2025-12-24 14:05:22,682 - core.scan_engine - INFO - Starting autonomous scan for 4093de6e
+2025-12-24 14:05:22,683 - inference.target_analyzer - INFO - [TargetAnalyzer] Analyzing target: https://demo.owasp-juice.shop
+2025-12-24 14:05:22,683 - inference.target_analyzer - INFO - [TargetAnalyzer] Target profile: {'target': 'https://demo.owasp-juice.shop', 'type': 'web', 'technologies': ['http_server', 'web_framework'], 'risk_level': 'medium', 'scan_strategy': 'web_application'}
+2025-12-24 14:05:22,684 - inference.autonomous_agent - INFO - === Iteration 1 | Phase: reconnaissance ===
+2025-12-24 14:05:22,684 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-24 14:05:22,687 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('shodan'), np.str_('fierce')]
+2025-12-24 14:05:22,687 - intelligence.optimus_brain - INFO - Initializing Optimus Brain...
+2025-12-24 14:05:22,696 - intelligence.memory_system - INFO - Memory database initialized
+2025-12-24 14:05:22,696 - intelligence.memory_system - INFO - Smart Memory System initialized with DB: data/optimus_memory.db
+2025-12-24 14:05:22,697 - intelligence.optimus_brain - INFO - ✓ Memory System initialized
+2025-12-24 14:05:22,697 - intelligence.optimus_brain - INFO - ✓ Web Intelligence initialized
+2025-12-24 14:05:22,698 - intelligence.delegation_system - INFO - Initialized research agent
+2025-12-24 14:05:22,698 - intelligence.delegation_system - INFO - Initialized exploitation agent
+2025-12-24 14:05:22,699 - intelligence.delegation_system - INFO - Initialized recon agent
+2025-12-24 14:05:22,699 - intelligence.delegation_system - INFO - Initialized analysis agent
+2025-12-24 14:05:22,700 - intelligence.delegation_system - INFO - Initialized reporting agent
+2025-12-24 14:05:22,700 - intelligence.delegation_system - INFO - Initialized 5 specialized agents
+2025-12-24 14:05:22,701 - intelligence.optimus_brain - INFO - ✓ Delegation System initialized
+2025-12-24 14:05:22,701 - intelligence.adaptive_exploitation - INFO - Real-Time Adaptive Engine initialized
+2025-12-24 14:05:22,702 - intelligence.optimus_brain - INFO - ✓ Adaptive Exploitation Engine initialized
+2025-12-24 14:05:22,702 - intelligence.vulnerability_chaining - INFO - Vulnerability Chain Engine initialized
+2025-12-24 14:05:22,703 - intelligence.optimus_brain - INFO - ✓ Vulnerability Chain Engine initialized
+2025-12-24 14:05:22,703 - intelligence.explainable_ai - INFO - Explainable AI Engine initialized
+2025-12-24 14:05:22,703 - intelligence.optimus_brain - INFO - ✓ Explainable AI Engine initialized
+2025-12-24 14:05:22,705 - intelligence.continuous_learning - INFO - Loaded weights from data\models\online_weights.json
+2025-12-24 14:05:22,705 - intelligence.continuous_learning - INFO - Continuous Learning Engine initialized
+2025-12-24 14:05:22,705 - intelligence.optimus_brain - INFO - ✓ Continuous Learning Engine initialized
+2025-12-24 14:05:22,706 - intelligence.continuous_learning - INFO - Zero-Day Discovery Engine initialized
+2025-12-24 14:05:22,706 - intelligence.optimus_brain - INFO - ✓ Zero-Day Discovery Engine initialized
+2025-12-24 14:05:22,707 - intelligence.campaign_intelligence - INFO - Campaign Intelligence Engine initialized
+2025-12-24 14:05:22,708 - intelligence.optimus_brain - INFO - ✓ Campaign Intelligence Engine initialized
+2025-12-24 14:05:22,709 - intelligence.optimus_brain - INFO - Optimus Brain initialization complete
+2025-12-24 14:05:22,717 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('shodan'), np.str_('fierce')]
+2025-12-24 14:05:22,717 - inference.autonomous_agent - INFO - Executing tool: amass
+2025-12-24 14:05:22,718 - inference.tool_manager - INFO - Using hybrid system resolved command for amass: amass https://demo.owasp-juice.shop
+2025-12-24 14:05:22,720 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-24 14:05:22,721 - inference.tool_manager - INFO - [ToolManager] Normalized target for amass: https://demo.owasp-juice.shop -> demo.owasp-juice.shop
+2025-12-24 14:05:22,774 - paramiko.transport - INFO - Connected (version 2.0, client OpenSSH_10.2p1)
+2025-12-24 14:05:23,069 - paramiko.transport - INFO - Authentication (password) successful!
+2025-12-24 14:05:23,069 - tools.hybrid_tool_system - INFO - Updated SSH client for hybrid tool system
+2025-12-24 14:05:25,982 - inference.autonomous_agent - INFO - ✓ Found 2 new vulnerabilities
+2025-12-24 14:05:26,483 - inference.autonomous_agent - INFO - === Iteration 2 | Phase: reconnaissance ===
+2025-12-24 14:05:26,483 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-24 14:05:26,485 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('shodan'), np.str_('theHarvester')]
+2025-12-24 14:05:26,492 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('shodan'), np.str_('theHarvester')]
+2025-12-24 14:05:26,492 - inference.autonomous_agent - INFO - Executing tool: whatweb
+2025-12-24 14:05:26,493 - inference.tool_manager - INFO - Using hybrid system resolved command for whatweb: whatweb https://demo.owasp-juice.shop
+2025-12-24 14:05:26,493 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-24 14:05:26,494 - inference.tool_manager - INFO - [ToolManager] Normalized target for whatweb: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-24 14:06:26,586 - inference.autonomous_agent - WARNING - Tool failed with no findings: None
+2025-12-24 14:06:27,087 - inference.autonomous_agent - INFO - === Iteration 3 | Phase: reconnaissance ===
+2025-12-24 14:06:27,087 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-24 14:06:27,090 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('theHarvester'), np.str_('shodan')]
+2025-12-24 14:06:27,096 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('theHarvester'), np.str_('shodan')]
+2025-12-24 14:06:27,096 - inference.autonomous_agent - INFO - Executing tool: dnsenum
+2025-12-24 14:06:27,097 - inference.tool_manager - INFO - Using hybrid system resolved command for dnsenum: dnsenum https://demo.owasp-juice.shop
+2025-12-24 14:06:27,097 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-24 14:06:27,098 - inference.tool_manager - INFO - [ToolManager] Normalized target for dnsenum: https://demo.owasp-juice.shop -> demo.owasp-juice.shop
+2025-12-24 14:06:29,252 - inference.autonomous_agent - INFO - ✓ Found 1 new vulnerabilities
+2025-12-24 14:06:29,252 - inference.autonomous_agent - INFO - 📍 Phase transition: reconnaissance → scanning
+2025-12-24 14:06:29,253 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-24 14:06:29,754 - inference.autonomous_agent - INFO - === Iteration 4 | Phase: scanning ===
+2025-12-24 14:06:29,755 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-24 14:06:29,797 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-24 14:06:29,817 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-24 14:06:29,818 - inference.autonomous_agent - INFO - Executing tool: nmap
+2025-12-24 14:06:29,819 - inference.tool_manager - INFO - Using hybrid system resolved command for nmap: nmap -sV -sC https://demo.owasp-juice.shop
+2025-12-24 14:06:29,820 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-24 14:06:29,821 - inference.tool_manager - INFO - [ToolManager] Normalized target for nmap: https://demo.owasp-juice.shop -> demo.owasp-juice.shop
+2025-12-24 14:06:32,932 - inference.ollama_client - INFO - [OllamaClient] Model codellama:7b-instruct is available
+2025-12-24 14:06:34,965 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-24 14:06:36,984 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-24 14:06:36,985 - inference.autonomous_agent - INFO - ✓ Found 1 new vulnerabilities
+2025-12-24 14:06:36,986 - inference.autonomous_agent - INFO - 📍 Phase transition: scanning → exploitation
+2025-12-24 14:06:36,986 - inference.strategy_selector - INFO - Strategy selection: targeted (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 13.0})
+2025-12-24 14:06:37,487 - inference.autonomous_agent - INFO - === Iteration 5 | Phase: exploitation ===
+2025-12-24 14:06:37,488 - inference.strategy_selector - INFO - Strategy selection: targeted (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 13.0})
+2025-12-24 14:06:37,491 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-24 14:06:37,496 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-24 14:06:37,497 - inference.autonomous_agent - INFO - Executing tool: sqlmap
+2025-12-24 14:06:37,498 - inference.tool_manager - INFO - Using hybrid system resolved command for sqlmap: sqlmap -u https://demo.owasp-juice.shop --batch --random-agent
+2025-12-24 14:06:37,498 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-24 14:06:37,499 - inference.tool_manager - INFO - [ToolManager] Normalized target for sqlmap: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2025-12-24 14:07:14,755 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-24 14:07:16,776 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-24 14:07:16,777 - inference.autonomous_agent - INFO - ✓ Found 1 new vulnerabilities
+2025-12-24 14:07:16,777 - inference.autonomous_agent - INFO - 📍 Phase transition: exploitation → post_exploitation
+2025-12-24 14:07:16,777 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-24 14:07:17,278 - inference.autonomous_agent - INFO - === Iteration 6 | Phase: post_exploitation ===
+2025-12-24 14:07:17,279 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-24 14:07:17,291 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-24 14:07:17,306 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-24 14:07:17,307 - inference.autonomous_agent - INFO - Executing tool: linpeas
+2025-12-24 14:07:17,307 - inference.tool_manager - ERROR - [ToolManager] BLOCKED: linpeas requires active session on remote target
+2025-12-24 14:07:17,307 - inference.tool_manager - ERROR - [ToolManager] These tools run on COMPROMISED systems, not the scanner!
+2025-12-24 14:07:17,308 - inference.autonomous_agent - WARNING - Tool failed with no findings: linpeas blocked - requires confirmed shell access to remote target
+2025-12-24 14:07:17,308 - inference.autonomous_agent - INFO - 📍 Phase transition: post_exploitation → covering_tracks
+2025-12-24 14:07:17,308 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-24 14:07:17,809 - core.scan_engine - INFO - Scan completed: 5 findings
+2025-12-24 14:07:17,810 - core.scan_engine - INFO -  Scan 4093de6e completed successfully!
+2025-12-24 14:07:17,810 - core.scan_engine - INFO - Scan 4093de6e results: 5 findings, 6 tools executed
+2025-12-24 14:09:03,584 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:09:03] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-24 14:09:03,587 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:09:03] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-24 14:09:03,589 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:09:03] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-24 14:09:03,835 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:09:03] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-24 14:09:03,913 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:09:03] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-24 14:09:03,915 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:09:03] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-24 14:09:12,350 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:09:12] "GET /api/scan/list?limit=50 HTTP/1.1" 200 -
+2025-12-24 14:09:12,659 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:09:12] "GET /api/scan/list?limit=50 HTTP/1.1" 200 -
+2025-12-24 14:09:13,978 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:09:13] "GET /api/scan/results/4093de6e HTTP/1.1" 200 -
+2025-12-24 14:09:14,230 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:09:14] "GET /api/scan/results/4093de6e HTTP/1.1" 200 -
+2025-12-24 14:14:20,047 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:20] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-24 14:14:20,297 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:20] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-24 14:14:26,858 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:26] "OPTIONS /api/scan/start HTTP/1.1" 200 -
+2025-12-24 14:14:27,163 - api.scan_routes - INFO - Added scan 8a9cf855 to active_scans. Active scans count: 2
+2025-12-24 14:14:27,164 - api.scan_routes - INFO - Created scan 8a9cf855 for target https://demo.owasp-juice.shop/#/
+2025-12-24 14:14:27,167 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-24 14:14:27,167 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-24 14:14:27,168 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-24 14:14:27,168 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-24 14:14:27,169 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-24 14:14:27,169 - core.scan_engine - INFO - start_scan called: scan_id=8a9cf855, target=https://demo.owasp-juice.shop/#/
+2025-12-24 14:14:27,171 - core.scan_engine - INFO - Scan thread started for 8a9cf855
+2025-12-24 14:14:27,171 - core.scan_engine - INFO - Started scan thread for 8a9cf855
+2025-12-24 14:14:27,171 - core.scan_engine - INFO - Creating AutonomousPentestAgent for scan 8a9cf855
+2025-12-24 14:14:27,172 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-24 14:14:27,172 - api.scan_routes - INFO - Scan 8a9cf855 started successfully
+2025-12-24 14:14:27,175 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:27] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-24 14:14:27,213 - phase_specific_models - INFO - ✅ Loaded reconnaissance model from models\tool_recommender_reconnaissance.pkl
+2025-12-24 14:14:27,228 - websocket.handlers - INFO - Client kVwYOHcK_fAZTIqCAAAB joined room scan_8a9cf855
+2025-12-24 14:14:27,280 - phase_specific_models - INFO - ✅ Loaded scanning model from models\tool_recommender_scanning.pkl
+2025-12-24 14:14:27,318 - phase_specific_models - INFO - ✅ Loaded exploitation model from models\tool_recommender_exploitation.pkl
+2025-12-24 14:14:27,370 - phase_specific_models - INFO - ✅ Loaded post_exploitation model from models\tool_recommender_post_exploitation.pkl
+2025-12-24 14:14:27,392 - phase_specific_models - INFO - ✅ Loaded covering_tracks model from models\tool_recommender_covering_tracks.pkl
+2025-12-24 14:14:27,393 - inference.tool_selector - INFO - ✅ Phase-specific models loaded successfully
+2025-12-24 14:14:27,394 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-24 14:14:27,394 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-24 14:14:27,395 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-24 14:14:27,395 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-24 14:14:27,397 - exploitation.integration - INFO - [ExploitationManager] LLM components initialized
+2025-12-24 14:14:27,397 - exploitation.integration - INFO - [ExploitationManager] Metasploit components initialized
+2025-12-24 14:14:27,398 - exploitation.integration - INFO - [ExploitationManager] Initialized
+2025-12-24 14:14:27,400 - training.deep_rl_agent - INFO - [DeepRL] Creating networks: state_dim=128, actions=35
+2025-12-24 14:14:27,671 - training.prioritized_replay - INFO - [PER] Initialized: capacity=100000, alpha=0.6, beta=0.4→1.0
+2025-12-24 14:14:27,671 - training.deep_rl_agent - INFO - [DeepRL] Agent initialized (PER: True, Noisy: True)
+2025-12-24 14:14:27,672 - training.deep_rl_agent - WARNING - [DeepRL] No checkpoints found
+2025-12-24 14:14:27,672 - inference.autonomous_agent - INFO - 🤖 Autonomous Pentest Agent initialized
+2025-12-24 14:14:27,673 - core.scan_engine - INFO - Starting autonomous scan for 8a9cf855
+2025-12-24 14:14:27,673 - inference.target_analyzer - INFO - [TargetAnalyzer] Analyzing target: https://demo.owasp-juice.shop/#/
+2025-12-24 14:14:27,674 - inference.target_analyzer - INFO - [TargetAnalyzer] Target profile: {'target': 'https://demo.owasp-juice.shop/#/', 'type': 'web', 'technologies': ['http_server', 'web_framework'], 'risk_level': 'medium', 'scan_strategy': 'web_application'}
+2025-12-24 14:14:27,675 - inference.autonomous_agent - INFO - === Iteration 1 | Phase: reconnaissance ===
+2025-12-24 14:14:27,675 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-24 14:14:27,679 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('shodan'), np.str_('fierce')]
+2025-12-24 14:14:27,685 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('shodan'), np.str_('fierce')]
+2025-12-24 14:14:27,685 - inference.autonomous_agent - INFO - Executing tool: amass
+2025-12-24 14:14:27,686 - inference.tool_manager - INFO - Using hybrid system resolved command for amass: amass https://demo.owasp-juice.shop/#/
+2025-12-24 14:14:27,687 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop/#/ -> https://demo.owasp-juice.shop
+2025-12-24 14:14:27,687 - inference.tool_manager - INFO - [ToolManager] Normalized target for amass: https://demo.owasp-juice.shop/#/ -> demo.owasp-juice.shop
+2025-12-24 14:14:27,712 - paramiko.transport - INFO - Connected (version 2.0, client OpenSSH_10.2p1)
+2025-12-24 14:14:27,850 - paramiko.transport - INFO - Authentication (password) successful!
+2025-12-24 14:14:27,851 - tools.hybrid_tool_system - INFO - Updated SSH client for hybrid tool system
+2025-12-24 14:14:28,566 - inference.autonomous_agent - INFO - ✓ Found 1 new vulnerabilities
+2025-12-24 14:14:29,067 - inference.autonomous_agent - INFO - === Iteration 2 | Phase: reconnaissance ===
+2025-12-24 14:14:29,068 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-24 14:14:29,071 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('shodan'), np.str_('theHarvester')]
+2025-12-24 14:14:29,080 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('shodan'), np.str_('theHarvester')]
+2025-12-24 14:14:29,080 - inference.autonomous_agent - INFO - Executing tool: whatweb
+2025-12-24 14:14:29,081 - inference.tool_manager - INFO - Using hybrid system resolved command for whatweb: whatweb https://demo.owasp-juice.shop/#/
+2025-12-24 14:14:29,081 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop/#/ -> https://demo.owasp-juice.shop
+2025-12-24 14:14:29,081 - inference.tool_manager - INFO - [ToolManager] Normalized target for whatweb: https://demo.owasp-juice.shop/#/ -> https://demo.owasp-juice.shop
+2025-12-24 14:14:29,229 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:29] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:14:31,531 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:31] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:14:33,228 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:33] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:14:35,532 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:35] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:14:37,227 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:37] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:14:39,531 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:39] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:14:41,227 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:41] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:14:43,837 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:43] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:14:45,533 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:45] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:14:47,834 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:47] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:14:49,534 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:49] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:14:51,837 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:51] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:14:53,533 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:53] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:14:55,835 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:55] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:14:57,533 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:57] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:14:59,835 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:14:59] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:01,533 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:01] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:03,835 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:03] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:05,533 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:05] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:07,837 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:07] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:09,532 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:09] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:11,835 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:11] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:13,534 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:13] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:15,835 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:15] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:17,534 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:17] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:19,835 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:19] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:21,534 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:21] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:23,836 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:23] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:25,532 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:25] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:27,835 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:27] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:29,226 - inference.autonomous_agent - WARNING - Tool failed with no findings: None
+2025-12-24 14:15:29,533 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:29] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:29,726 - inference.autonomous_agent - INFO - === Iteration 3 | Phase: reconnaissance ===
+2025-12-24 14:15:29,727 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-24 14:15:29,729 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('theHarvester'), np.str_('shodan')]
+2025-12-24 14:15:29,735 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('theHarvester'), np.str_('shodan')]
+2025-12-24 14:15:29,736 - inference.autonomous_agent - INFO - Executing tool: dnsenum
+2025-12-24 14:15:29,736 - inference.tool_manager - INFO - Using hybrid system resolved command for dnsenum: dnsenum https://demo.owasp-juice.shop/#/
+2025-12-24 14:15:29,737 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop/#/ -> https://demo.owasp-juice.shop
+2025-12-24 14:15:29,738 - inference.tool_manager - INFO - [ToolManager] Normalized target for dnsenum: https://demo.owasp-juice.shop/#/ -> demo.owasp-juice.shop
+2025-12-24 14:15:31,836 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:31] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:33,533 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:33] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:35,837 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:35] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:37,535 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:37] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:39,837 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:39] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:15:41,533 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:15:41] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:16:08,837 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:16:08] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:17:08,535 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:17:08] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:17:30,204 - inference.autonomous_agent - INFO - ✓ Found 1 new vulnerabilities
+2025-12-24 14:17:30,205 - inference.autonomous_agent - INFO - 📍 Phase transition: reconnaissance → scanning
+2025-12-24 14:17:30,206 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-24 14:17:30,706 - inference.autonomous_agent - INFO - === Iteration 4 | Phase: scanning ===
+2025-12-24 14:17:30,707 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-24 14:17:30,730 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-24 14:17:30,753 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-24 14:17:30,774 - inference.autonomous_agent - INFO - Executing tool: nmap
+2025-12-24 14:17:30,775 - inference.tool_manager - INFO - Using hybrid system resolved command for nmap: nmap -sV -sC https://demo.owasp-juice.shop/#/
+2025-12-24 14:17:30,776 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop/#/ -> https://demo.owasp-juice.shop
+2025-12-24 14:17:30,776 - inference.tool_manager - INFO - [ToolManager] Normalized target for nmap: https://demo.owasp-juice.shop/#/ -> demo.owasp-juice.shop
+2025-12-24 14:17:33,267 - inference.ollama_client - INFO - [OllamaClient] Model codellama:7b-instruct is available
+2025-12-24 14:17:35,276 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-24 14:17:37,295 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-24 14:17:37,296 - inference.autonomous_agent - INFO - ✓ Found 1 new vulnerabilities
+2025-12-24 14:17:37,297 - inference.autonomous_agent - INFO - 📍 Phase transition: scanning → exploitation
+2025-12-24 14:17:37,297 - inference.strategy_selector - INFO - Strategy selection: targeted (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 13.0})
+2025-12-24 14:17:37,798 - inference.autonomous_agent - INFO - === Iteration 5 | Phase: exploitation ===
+2025-12-24 14:17:37,798 - inference.strategy_selector - INFO - Strategy selection: targeted (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 13.0})
+2025-12-24 14:17:37,801 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-24 14:17:37,807 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-24 14:17:37,807 - inference.autonomous_agent - INFO - Executing tool: sqlmap
+2025-12-24 14:17:37,808 - inference.tool_manager - INFO - Using hybrid system resolved command for sqlmap: sqlmap -u https://demo.owasp-juice.shop/#/ --batch --random-agent
+2025-12-24 14:17:37,809 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop/#/ -> https://demo.owasp-juice.shop
+2025-12-24 14:17:37,809 - inference.tool_manager - INFO - [ToolManager] Normalized target for sqlmap: https://demo.owasp-juice.shop/#/ -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2025-12-24 14:17:50,829 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-24 14:17:52,838 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-24 14:17:52,839 - inference.autonomous_agent - INFO - ✓ Found 1 new vulnerabilities
+2025-12-24 14:17:52,840 - inference.autonomous_agent - INFO - 📍 Phase transition: exploitation → post_exploitation
+2025-12-24 14:17:52,841 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-24 14:17:53,341 - inference.autonomous_agent - INFO - === Iteration 6 | Phase: post_exploitation ===
+2025-12-24 14:17:53,342 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-24 14:17:53,360 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-24 14:17:53,378 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-24 14:17:53,379 - inference.autonomous_agent - INFO - Executing tool: linpeas
+2025-12-24 14:17:53,379 - inference.tool_manager - ERROR - [ToolManager] BLOCKED: linpeas requires active session on remote target
+2025-12-24 14:17:53,380 - inference.tool_manager - ERROR - [ToolManager] These tools run on COMPROMISED systems, not the scanner!
+2025-12-24 14:17:53,380 - inference.autonomous_agent - WARNING - Tool failed with no findings: linpeas blocked - requires confirmed shell access to remote target
+2025-12-24 14:17:53,381 - inference.autonomous_agent - INFO - 📍 Phase transition: post_exploitation → covering_tracks
+2025-12-24 14:17:53,381 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-24 14:17:53,882 - core.scan_engine - INFO - Scan completed: 4 findings
+2025-12-24 14:17:53,883 - core.scan_engine - INFO -  Scan 8a9cf855 completed successfully!
+2025-12-24 14:17:53,884 - core.scan_engine - INFO - Scan 8a9cf855 results: 4 findings, 6 tools executed
+2025-12-24 14:18:08,837 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:18:08] "GET /api/scan/status/8a9cf855 HTTP/1.1" 200 -
+2025-12-24 14:18:09,087 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:18:09] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-24 14:18:09,174 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:18:09] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-24 14:46:19,376 - websocket.handlers - INFO - Client disconnected: kVwYOHcK_fAZTIqCAAAB
+2025-12-24 14:46:19,387 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:46:19] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-24 14:46:19,436 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-24 15:12:35,062 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:12:35] "GET /api/scan/status/4093de6e HTTP/1.1" 200 -
+2025-12-24 15:20:15,999 - optimus - INFO - Registered: api_bp
+2025-12-24 15:20:16,007 - optimus - INFO - Registered: tool_bp
+2025-12-24 15:20:16,023 - optimus - INFO - Registered: intelligence_bp
+2025-12-24 15:20:16,027 - optimus - INFO - Registered: metrics_bp
+2025-12-24 15:20:16,041 - optimus - INFO - Registered: report_bp
+2025-12-24 15:20:16,049 - optimus - INFO - Registered: training_bp
+2025-12-24 15:20:16,051 - optimus - INFO - WebSocket handlers registered
+2025-12-24 15:20:16,357 - intelligence.dark_web_intel - WARNING - [DarkWebIntel] aiohttp_socks not installed - dark web features disabled
+2025-12-24 15:20:16,362 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-24 15:20:16,363 - optimus - INFO - Intelligence module initialized
+2025-12-24 15:20:16,372 - optimus - INFO - Hybrid tool system initialized
+2025-12-24 15:20:16,385 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-24 15:20:16,466 - exploitation.msf_manager - WARNING - [MSF-RPC] msgpack or requests not installed
+2025-12-24 15:20:20,455 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-24 15:20:20,484 - inference.parser_pattern_db - INFO - [ParserPatternDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\data\parser_patterns.db
+2025-12-24 15:20:20,486 - inference.ollama_client - INFO - [OllamaClient] Initialized with model: codellama:7b-instruct
+2025-12-24 15:20:20,486 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-24 15:20:20,487 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-24 15:20:20,487 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-24 15:20:20,488 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-24 15:20:20,489 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-24 15:20:20,490 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-24 15:20:20,490 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-24 15:20:20,503 - optimus - INFO - Registered: scan_bp
+2025-12-24 15:20:20,505 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-24 15:20:20,506 - optimus - INFO - Debug mode: True
+2025-12-24 15:20:20,506 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-24 15:20:20,544 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.112:5000
+2025-12-24 15:20:20,544 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-24 15:24:56,482 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:24:56] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-24 15:24:56,489 - websocket.handlers - INFO - Client connected: XFklBRY4IC9Ab5krAAAB
+2025-12-24 15:24:56,517 - websocket.handlers - INFO - Client connected: wmUQNTXTZIqK50uVAAAD
+2025-12-24 15:24:56,721 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:24:56] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-24 15:25:02,754 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:02] "OPTIONS /api/scan/start HTTP/1.1" 200 -
+2025-12-24 15:25:03,091 - optimus - INFO - Registered: api_bp
+2025-12-24 15:25:03,097 - optimus - INFO - Registered: tool_bp
+2025-12-24 15:25:03,115 - optimus - INFO - Registered: intelligence_bp
+2025-12-24 15:25:03,117 - optimus - INFO - Registered: metrics_bp
+2025-12-24 15:25:03,127 - optimus - INFO - Registered: report_bp
+2025-12-24 15:25:03,131 - optimus - INFO - Registered: training_bp
+2025-12-24 15:25:03,131 - optimus - INFO - WebSocket handlers registered
+2025-12-24 15:25:03,131 - optimus - INFO - Intelligence module initialized
+2025-12-24 15:25:03,132 - optimus - INFO - Hybrid tool system initialized
+2025-12-24 15:25:03,132 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-24 15:25:03,133 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-24 15:25:03,133 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-24 15:25:03,133 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-24 15:25:03,134 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-24 15:25:03,134 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-24 15:25:03,145 - optimus - INFO - Registered: scan_bp
+2025-12-24 15:25:03,147 - api.scan_routes - INFO - Added scan ebfbbb30 to active_scans. Active scans count: 1
+2025-12-24 15:25:03,147 - api.scan_routes - INFO - Created scan ebfbbb30 for target https://demo.owasp-juice.shop/#/
+2025-12-24 15:25:03,148 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-24 15:25:03,148 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-24 15:25:03,148 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-24 15:25:03,149 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-24 15:25:03,149 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-24 15:25:03,150 - core.scan_engine - INFO - start_scan called: scan_id=ebfbbb30, target=https://demo.owasp-juice.shop/#/
+2025-12-24 15:25:03,151 - core.scan_engine - INFO - Scan thread started for ebfbbb30
+2025-12-24 15:25:03,151 - core.scan_engine - INFO - Started scan thread for ebfbbb30
+2025-12-24 15:25:03,151 - core.scan_engine - INFO - Creating AutonomousPentestAgent for scan ebfbbb30
+2025-12-24 15:25:03,153 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-24 15:25:03,154 - api.scan_routes - INFO - Scan ebfbbb30 started successfully
+2025-12-24 15:25:03,156 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:03] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-24 15:25:03,206 - websocket.handlers - INFO - Client wmUQNTXTZIqK50uVAAAD joined room scan_ebfbbb30
+2025-12-24 15:25:03,233 - phase_specific_models - INFO - ✅ Loaded reconnaissance model from models\tool_recommender_reconnaissance.pkl
+2025-12-24 15:25:03,281 - phase_specific_models - INFO - ✅ Loaded scanning model from models\tool_recommender_scanning.pkl
+2025-12-24 15:25:03,302 - phase_specific_models - INFO - ✅ Loaded exploitation model from models\tool_recommender_exploitation.pkl
+2025-12-24 15:25:03,350 - phase_specific_models - INFO - ✅ Loaded post_exploitation model from models\tool_recommender_post_exploitation.pkl
+2025-12-24 15:25:03,374 - phase_specific_models - INFO - ✅ Loaded covering_tracks model from models\tool_recommender_covering_tracks.pkl
+2025-12-24 15:25:03,374 - inference.tool_selector - INFO - ✅ Phase-specific models loaded successfully
+2025-12-24 15:25:03,375 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-24 15:25:03,376 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-24 15:25:03,376 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-24 15:25:03,377 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-24 15:25:03,380 - exploitation.exploit_db - INFO - [ExploitDB] Loaded 24 exploit templates
+2025-12-24 15:25:03,380 - exploitation.payload_crafter - INFO - [PayloadCrafter] Initialized
+2025-12-24 15:25:03,381 - exploitation.exploit_executor - INFO - [ExploitExecutor] Initialized
+2025-12-24 15:25:03,381 - inference.ollama_client - INFO - [OllamaClient] Initialized with model: codellama:7b-instruct
+2025-12-24 15:25:03,382 - exploitation.llm_generator - INFO - [LLMExploitGenerator] Initialized
+2025-12-24 15:25:03,382 - exploitation.strategic_planner - INFO - [StrategicPlanner] Initialized
+2025-12-24 15:25:03,382 - exploitation.exploit_chainer - INFO - [ExploitChainer] Initialized
+2025-12-24 15:25:03,383 - exploitation.cve_templates - INFO - [CVE-DB] Loaded 36 CVE templates
+2025-12-24 15:25:03,383 - exploitation.integration - INFO - [ExploitationManager] LLM components initialized
+2025-12-24 15:25:03,384 - exploitation.metasploit - INFO - [MetasploitDB] Loaded 28 modules
+2025-12-24 15:25:03,384 - exploitation.integration - INFO - [ExploitationManager] Metasploit components initialized
+2025-12-24 15:25:03,385 - exploitation.integration - INFO - [ExploitationManager] Initialized
+2025-12-24 15:25:05,205 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:05] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:07,507 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:07] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:09,204 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:09] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:11,524 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:11] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:13,205 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:13] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:15,508 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:15] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:17,204 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:17] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:17,648 - training.enhanced_state_encoder - INFO - [EnhancedStateEncoder] Initialized with 128 dimensions
+2025-12-24 15:25:17,648 - training.deep_rl_agent - INFO - [DeepRL] Creating networks: state_dim=128, actions=35
+2025-12-24 15:25:19,402 - tensorflow - WARNING - From C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\keras\src\backend\tensorflow\core.py:232: The name tf.placeholder is deprecated. Please use tf.compat.v1.placeholder instead.
+
+2025-12-24 15:25:19,519 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:19] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:19,703 - training.prioritized_replay - INFO - [PER] Initialized: capacity=100000, alpha=0.6, beta=0.4→1.0
+2025-12-24 15:25:19,704 - training.deep_rl_agent - INFO - [DeepRL] Agent initialized (PER: True, Noisy: True)
+2025-12-24 15:25:19,705 - training.deep_rl_agent - WARNING - [DeepRL] No checkpoints found
+2025-12-24 15:25:19,705 - inference.autonomous_agent - INFO - 🤖 Autonomous Pentest Agent initialized
+2025-12-24 15:25:19,707 - core.scan_engine - INFO - Starting autonomous scan for ebfbbb30
+2025-12-24 15:25:19,707 - inference.target_analyzer - INFO - [TargetAnalyzer] Analyzing target: https://demo.owasp-juice.shop/#/
+2025-12-24 15:25:19,708 - inference.target_analyzer - INFO - [TargetAnalyzer] Target profile: {'target': 'https://demo.owasp-juice.shop/#/', 'type': 'web', 'technologies': ['http_server', 'web_framework'], 'risk_level': 'medium', 'scan_strategy': 'web_application'}
+2025-12-24 15:25:19,709 - inference.autonomous_agent - INFO - === Iteration 1 | Phase: reconnaissance ===
+2025-12-24 15:25:19,709 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-24 15:25:19,713 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('shodan'), np.str_('fierce')]
+2025-12-24 15:25:19,714 - intelligence.optimus_brain - INFO - Initializing Optimus Brain...
+2025-12-24 15:25:19,738 - intelligence.memory_system - INFO - Memory database initialized
+2025-12-24 15:25:19,738 - intelligence.memory_system - INFO - Smart Memory System initialized with DB: data/optimus_memory.db
+2025-12-24 15:25:19,739 - intelligence.optimus_brain - INFO - ✓ Memory System initialized
+2025-12-24 15:25:19,739 - intelligence.optimus_brain - INFO - ✓ Web Intelligence initialized
+2025-12-24 15:25:19,740 - intelligence.delegation_system - INFO - Initialized research agent
+2025-12-24 15:25:19,741 - intelligence.delegation_system - INFO - Initialized exploitation agent
+2025-12-24 15:25:19,742 - intelligence.delegation_system - INFO - Initialized recon agent
+2025-12-24 15:25:19,742 - intelligence.delegation_system - INFO - Initialized analysis agent
+2025-12-24 15:25:19,743 - intelligence.delegation_system - INFO - Initialized reporting agent
+2025-12-24 15:25:19,743 - intelligence.delegation_system - INFO - Initialized 5 specialized agents
+2025-12-24 15:25:19,744 - intelligence.optimus_brain - INFO - ✓ Delegation System initialized
+2025-12-24 15:25:19,745 - intelligence.adaptive_exploitation - INFO - Real-Time Adaptive Engine initialized
+2025-12-24 15:25:19,745 - intelligence.optimus_brain - INFO - ✓ Adaptive Exploitation Engine initialized
+2025-12-24 15:25:19,746 - intelligence.vulnerability_chaining - INFO - Vulnerability Chain Engine initialized
+2025-12-24 15:25:19,746 - intelligence.optimus_brain - INFO - ✓ Vulnerability Chain Engine initialized
+2025-12-24 15:25:19,747 - intelligence.explainable_ai - INFO - Explainable AI Engine initialized
+2025-12-24 15:25:19,747 - intelligence.optimus_brain - INFO - ✓ Explainable AI Engine initialized
+2025-12-24 15:25:19,748 - intelligence.continuous_learning - INFO - Loaded weights from data\models\online_weights.json
+2025-12-24 15:25:19,749 - intelligence.continuous_learning - INFO - Continuous Learning Engine initialized
+2025-12-24 15:25:19,749 - intelligence.optimus_brain - INFO - ✓ Continuous Learning Engine initialized
+2025-12-24 15:25:19,749 - intelligence.continuous_learning - INFO - Zero-Day Discovery Engine initialized
+2025-12-24 15:25:19,750 - intelligence.optimus_brain - INFO - ✓ Zero-Day Discovery Engine initialized
+2025-12-24 15:25:19,750 - intelligence.campaign_intelligence - INFO - Campaign Intelligence Engine initialized
+2025-12-24 15:25:19,751 - intelligence.optimus_brain - INFO - ✓ Campaign Intelligence Engine initialized
+2025-12-24 15:25:19,751 - intelligence.optimus_brain - INFO - Optimus Brain initialization complete
+2025-12-24 15:25:19,759 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('shodan'), np.str_('fierce')]
+2025-12-24 15:25:19,760 - inference.autonomous_agent - INFO - Executing tool: amass
+2025-12-24 15:25:19,761 - inference.tool_manager - INFO - Using hybrid system resolved command for amass: amass https://demo.owasp-juice.shop/#/
+2025-12-24 15:25:19,764 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop/#/ -> https://demo.owasp-juice.shop
+2025-12-24 15:25:19,765 - inference.tool_manager - INFO - [ToolManager] Normalized target for amass: https://demo.owasp-juice.shop/#/ -> demo.owasp-juice.shop
+2025-12-24 15:25:19,790 - paramiko.transport - INFO - Connected (version 2.0, client OpenSSH_10.2p1)
+2025-12-24 15:25:19,933 - paramiko.transport - INFO - Authentication (password) successful!
+2025-12-24 15:25:19,934 - tools.hybrid_tool_system - INFO - Updated SSH client for hybrid tool system
+2025-12-24 15:25:21,205 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:21] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:21,289 - inference.autonomous_agent - INFO - ✓ Found 1 new vulnerabilities
+2025-12-24 15:25:21,790 - inference.autonomous_agent - INFO - === Iteration 2 | Phase: reconnaissance ===
+2025-12-24 15:25:21,790 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 8.0, 'aggressive': 5.0, 'stealth': 8.0, 'targeted': 5.0})
+2025-12-24 15:25:21,794 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('shodan'), np.str_('theHarvester')]
+2025-12-24 15:25:21,806 - inference.tool_selector - INFO - Using phase-specific model: [np.str_('sublist3r'), np.str_('shodan'), np.str_('theHarvester')]
+2025-12-24 15:25:21,807 - inference.autonomous_agent - INFO - Executing tool: whatweb
+2025-12-24 15:25:21,807 - inference.tool_manager - INFO - Using hybrid system resolved command for whatweb: whatweb https://demo.owasp-juice.shop/#/
+2025-12-24 15:25:21,808 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop/#/ -> https://demo.owasp-juice.shop
+2025-12-24 15:25:21,808 - inference.tool_manager - INFO - [ToolManager] Normalized target for whatweb: https://demo.owasp-juice.shop/#/ -> https://demo.owasp-juice.shop
+2025-12-24 15:25:23,507 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:23] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:25,205 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:25] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:27,506 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:27] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:29,204 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:29] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:31,507 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:31] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:33,205 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:33] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:35,509 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:35] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:37,204 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:37] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:39,507 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:39] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:40,976 - inference.autonomous_agent - INFO - ✓ Found 4 new vulnerabilities
+2025-12-24 15:25:40,976 - inference.autonomous_agent - INFO - 📍 Phase transition: reconnaissance → scanning
+2025-12-24 15:25:40,977 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-24 15:25:41,205 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:41] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:41,477 - inference.autonomous_agent - INFO - === Iteration 3 | Phase: scanning ===
+2025-12-24 15:25:41,478 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-24 15:25:41,490 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-24 15:25:41,504 - inference.tool_selector - INFO - Using rule-based selector for scanning
+2025-12-24 15:25:41,504 - inference.autonomous_agent - INFO - Executing tool: nmap
+2025-12-24 15:25:41,505 - inference.tool_manager - INFO - Using hybrid system resolved command for nmap: nmap -sV -sC https://demo.owasp-juice.shop/#/
+2025-12-24 15:25:41,505 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop/#/ -> https://demo.owasp-juice.shop
+2025-12-24 15:25:41,505 - inference.tool_manager - INFO - [ToolManager] Normalized target for nmap: https://demo.owasp-juice.shop/#/ -> demo.owasp-juice.shop
+2025-12-24 15:25:43,508 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:43] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:43,962 - inference.ollama_client - INFO - [OllamaClient] Model codellama:7b-instruct is available
+2025-12-24 15:25:45,204 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:45] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:45,972 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-24 15:25:47,509 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:47] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:47,982 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-24 15:25:47,983 - inference.autonomous_agent - INFO - ✓ Found 1 new vulnerabilities
+2025-12-24 15:25:47,983 - inference.autonomous_agent - INFO - 📍 Phase transition: scanning → exploitation
+2025-12-24 15:25:47,984 - inference.strategy_selector - INFO - Strategy selection: targeted (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 13.0})
+2025-12-24 15:25:48,485 - inference.autonomous_agent - INFO - === Iteration 4 | Phase: exploitation ===
+2025-12-24 15:25:48,485 - inference.strategy_selector - INFO - Strategy selection: targeted (scores: {'adaptive': 5.0, 'aggressive': 8.0, 'stealth': 5.0, 'targeted': 13.0})
+2025-12-24 15:25:48,489 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-24 15:25:48,495 - inference.tool_selector - INFO - Using rule-based selector for exploitation
+2025-12-24 15:25:48,496 - inference.autonomous_agent - INFO - Executing tool: sqlmap
+2025-12-24 15:25:48,496 - inference.tool_manager - INFO - Using hybrid system resolved command for sqlmap: sqlmap -u https://demo.owasp-juice.shop/#/ --batch --random-agent
+2025-12-24 15:25:48,496 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop/#/ -> https://demo.owasp-juice.shop
+2025-12-24 15:25:48,497 - inference.tool_manager - INFO - [ToolManager] Normalized target for sqlmap: https://demo.owasp-juice.shop/#/ -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2025-12-24 15:25:49,204 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:49] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:51,508 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:51] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:53,204 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:53] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:55,507 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:55] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:57,204 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:57] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:25:59,507 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:25:59] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:26:00,220 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-24 15:26:01,527 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:26:01] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:26:02,227 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-24 15:26:02,228 - inference.autonomous_agent - INFO - ✓ Found 1 new vulnerabilities
+2025-12-24 15:26:02,228 - inference.autonomous_agent - INFO - 📍 Phase transition: exploitation → post_exploitation
+2025-12-24 15:26:02,229 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-24 15:26:02,730 - inference.autonomous_agent - INFO - === Iteration 5 | Phase: post_exploitation ===
+2025-12-24 15:26:02,731 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-24 15:26:02,748 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-24 15:26:02,772 - inference.tool_selector - INFO - Using rule-based selector for post_exploitation
+2025-12-24 15:26:02,773 - inference.autonomous_agent - INFO - Executing tool: linpeas
+2025-12-24 15:26:02,773 - inference.tool_manager - ERROR - [ToolManager] BLOCKED: linpeas requires active session on remote target
+2025-12-24 15:26:02,774 - inference.tool_manager - ERROR - [ToolManager] These tools run on COMPROMISED systems, not the scanner!
+2025-12-24 15:26:02,774 - inference.autonomous_agent - WARNING - Tool failed with no findings: linpeas blocked - requires confirmed shell access to remote target
+2025-12-24 15:26:02,775 - inference.autonomous_agent - INFO - 📍 Phase transition: post_exploitation → covering_tracks
+2025-12-24 15:26:02,775 - inference.strategy_selector - INFO - Strategy selection: adaptive (scores: {'adaptive': 5.0, 'aggressive': 5.0, 'stealth': 5.0, 'targeted': 5.0})
+2025-12-24 15:26:03,276 - core.scan_engine - INFO - Scan completed: 7 findings
+2025-12-24 15:26:03,276 - core.scan_engine - INFO -  Scan ebfbbb30 completed successfully!
+2025-12-24 15:26:03,278 - core.scan_engine - INFO - Scan ebfbbb30 results: 7 findings, 5 tools executed
+2025-12-24 15:26:03,831 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:26:03] "GET /api/scan/status/ebfbbb30 HTTP/1.1" 200 -
+2025-12-24 15:26:04,083 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:26:04] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-24 15:26:04,159 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:26:04] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-24 15:26:47,911 - websocket.handlers - INFO - Client wmUQNTXTZIqK50uVAAAD left room scan_ebfbbb30
+2025-12-24 15:26:47,922 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:26:47] "GET /api/scan/list?limit=20 HTTP/1.1" 200 -
+2025-12-24 15:26:48,233 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:26:48] "GET /api/scan/list?limit=20 HTTP/1.1" 200 -
+2025-12-24 15:26:49,677 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:26:49] "GET /api/tools/inventory HTTP/1.1" 200 -
+2025-12-24 15:26:49,928 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:26:49] "GET /api/tools/inventory HTTP/1.1" 200 -
+2025-12-24 15:26:50,106 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:26:50] "GET /api/scan/list?limit=50 HTTP/1.1" 200 -
+2025-12-24 15:26:50,413 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 15:26:50] "GET /api/scan/list?limit=50 HTTP/1.1" 200 -
