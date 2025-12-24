@@ -17565,3 +17565,90 @@ AssertionError: write() before start_response
  * Running on http://127.0.0.1:5000
  * Running on http://192.168.1.112:5000
 2025-12-22 17:16:13,578 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-24 14:02:33,745 - optimus - INFO - Registered: api_bp
+2025-12-24 14:02:33,752 - optimus - INFO - Registered: tool_bp
+2025-12-24 14:02:33,763 - optimus - INFO - Registered: intelligence_bp
+2025-12-24 14:02:33,767 - optimus - INFO - Registered: metrics_bp
+2025-12-24 14:02:33,776 - optimus - INFO - Registered: report_bp
+2025-12-24 14:02:33,780 - optimus - INFO - Registered: training_bp
+2025-12-24 14:02:33,782 - optimus - INFO - WebSocket handlers registered
+2025-12-24 14:02:34,777 - intelligence.dark_web_intel - WARNING - [DarkWebIntel] aiohttp_socks not installed - dark web features disabled
+2025-12-24 14:02:34,781 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-24 14:02:34,782 - optimus - INFO - Intelligence module initialized
+2025-12-24 14:02:34,788 - optimus - INFO - Hybrid tool system initialized
+2025-12-24 14:02:34,794 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-24 14:02:34,844 - exploitation.msf_manager - WARNING - [MSF-RPC] msgpack or requests not installed
+2025-12-24 14:02:48,698 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-24 14:02:48,735 - inference.parser_pattern_db - INFO - [ParserPatternDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\data\parser_patterns.db
+2025-12-24 14:02:48,735 - inference.ollama_client - INFO - [OllamaClient] Initialized with model: codellama:7b-instruct
+2025-12-24 14:02:48,736 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-24 14:02:48,736 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-24 14:02:48,737 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-24 14:02:48,737 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-24 14:02:48,737 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-24 14:02:48,738 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-24 14:02:48,738 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-24 14:02:48,747 - optimus - INFO - Registered: scan_bp
+2025-12-24 14:02:48,748 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-24 14:02:48,749 - optimus - INFO - Debug mode: True
+2025-12-24 14:02:48,749 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-24 14:02:48,803 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.112:5000
+2025-12-24 14:02:48,804 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-24 14:02:49,020 - websocket.handlers - INFO - Client connected: kVwYOHcK_fAZTIqCAAAB
+2025-12-24 14:03:47,835 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:03:47] "[33mPOST /api/scan HTTP/1.1[0m" 404 -
+2025-12-24 14:04:32,236 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:04:32] "[33mPOST /scan/start HTTP/1.1[0m" 404 -
+2025-12-24 14:05:04,549 - optimus - INFO - Registered: api_bp
+2025-12-24 14:05:04,554 - optimus - INFO - Registered: tool_bp
+2025-12-24 14:05:04,567 - optimus - INFO - Registered: intelligence_bp
+2025-12-24 14:05:04,571 - optimus - INFO - Registered: metrics_bp
+2025-12-24 14:05:04,576 - optimus - INFO - Registered: report_bp
+2025-12-24 14:05:04,580 - optimus - INFO - Registered: training_bp
+2025-12-24 14:05:04,580 - optimus - INFO - WebSocket handlers registered
+2025-12-24 14:05:04,581 - optimus - INFO - Intelligence module initialized
+2025-12-24 14:05:04,581 - optimus - INFO - Hybrid tool system initialized
+2025-12-24 14:05:04,582 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-24 14:05:04,582 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-24 14:05:04,583 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-24 14:05:04,583 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-24 14:05:04,584 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-24 14:05:04,584 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-24 14:05:04,593 - optimus - INFO - Registered: scan_bp
+2025-12-24 14:05:04,595 - api.scan_routes - INFO - Added scan 4093de6e to active_scans. Active scans count: 1
+2025-12-24 14:05:04,596 - api.scan_routes - INFO - Created scan 4093de6e for target https://demo.owasp-juice.shop
+2025-12-24 14:05:04,597 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-24 14:05:04,598 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-24 14:05:04,598 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-24 14:05:04,598 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-24 14:05:04,599 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-24 14:05:04,599 - core.scan_engine - INFO - start_scan called: scan_id=4093de6e, target=https://demo.owasp-juice.shop
+2025-12-24 14:05:04,601 - core.scan_engine - INFO - Scan thread started for 4093de6e
+2025-12-24 14:05:04,601 - core.scan_engine - INFO - Started scan thread for 4093de6e
+2025-12-24 14:05:04,601 - core.scan_engine - INFO - Creating AutonomousPentestAgent for scan 4093de6e
+2025-12-24 14:05:04,601 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-24 14:05:04,603 - api.scan_routes - INFO - Scan 4093de6e started successfully
+2025-12-24 14:05:04,604 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 14:05:04] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-24 14:05:04,671 - phase_specific_models - INFO - ✅ Loaded reconnaissance model from models\tool_recommender_reconnaissance.pkl
+2025-12-24 14:05:04,715 - phase_specific_models - INFO - ✅ Loaded scanning model from models\tool_recommender_scanning.pkl
+2025-12-24 14:05:04,734 - phase_specific_models - INFO - ✅ Loaded exploitation model from models\tool_recommender_exploitation.pkl
+2025-12-24 14:05:04,776 - phase_specific_models - INFO - ✅ Loaded post_exploitation model from models\tool_recommender_post_exploitation.pkl
+2025-12-24 14:05:04,794 - phase_specific_models - INFO - ✅ Loaded covering_tracks model from models\tool_recommender_covering_tracks.pkl
+2025-12-24 14:05:04,794 - inference.tool_selector - INFO - ✅ Phase-specific models loaded successfully
+2025-12-24 14:05:04,795 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-24 14:05:04,795 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-24 14:05:04,796 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-24 14:05:04,796 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-24 14:05:04,799 - exploitation.exploit_db - INFO - [ExploitDB] Loaded 24 exploit templates
+2025-12-24 14:05:04,799 - exploitation.payload_crafter - INFO - [PayloadCrafter] Initialized
+2025-12-24 14:05:04,800 - exploitation.exploit_executor - INFO - [ExploitExecutor] Initialized
+2025-12-24 14:05:04,800 - inference.ollama_client - INFO - [OllamaClient] Initialized with model: codellama:7b-instruct
+2025-12-24 14:05:04,801 - exploitation.llm_generator - INFO - [LLMExploitGenerator] Initialized
+2025-12-24 14:05:04,801 - exploitation.strategic_planner - INFO - [StrategicPlanner] Initialized
+2025-12-24 14:05:04,801 - exploitation.exploit_chainer - INFO - [ExploitChainer] Initialized
+2025-12-24 14:05:04,802 - exploitation.cve_templates - INFO - [CVE-DB] Loaded 36 CVE templates
+2025-12-24 14:05:04,802 - exploitation.integration - INFO - [ExploitationManager] LLM components initialized
+2025-12-24 14:05:04,803 - exploitation.metasploit - INFO - [MetasploitDB] Loaded 28 modules
+2025-12-24 14:05:04,803 - exploitation.integration - INFO - [ExploitationManager] Metasploit components initialized
+2025-12-24 14:05:04,804 - exploitation.integration - INFO - [ExploitationManager] Initialized

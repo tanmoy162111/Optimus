@@ -125,11 +125,16 @@ class ScanManager:
         # Emit WebSocket event
         if self.socketio:
             try:
-                self.socketio.emit('scan_started', {
-                    'scan_id': scan_id,
-                    'target': target,
-                    'timestamp': datetime.utcnow().isoformat()
-                }, room=f'scan_{scan_id}')
+                self.socketio.start_background_task(
+                    self.socketio.emit,
+                    'scan_started',
+                    {
+                        'scan_id': scan_id,
+                        'target': target,
+                        'timestamp': datetime.utcnow().isoformat()
+                    },
+                    room=f'scan_{scan_id}'
+                )
                 logger.info(f"Emitted scan_started event")
             except Exception as e:
                 logger.warning(f"WebSocket emit failed: {e}")
@@ -223,11 +228,12 @@ class ScanManager:
         """Emit phase transition WebSocket event"""
         if self.socketio:
             try:
-                self.socketio.emit('phase_transition', {
-                    'scan_id': scan_id,
-                    'from': from_phase,
-                    'to': to_phase
-                }, room=f'scan_{scan_id}')
+                self.socketio.start_background_task(
+                    self.socketio.emit,
+                    'phase_transition',
+                    {'scan_id': scan_id, 'from': from_phase, 'to': to_phase},
+                    room=f'scan_{scan_id}'
+                )
             except Exception as e:
                 logger.warning(f"Failed to emit phase_transition: {e}")
     
@@ -235,12 +241,12 @@ class ScanManager:
         """Emit scan complete WebSocket event"""
         if self.socketio:
             try:
-                self.socketio.emit('scan_complete', {
-                    'scan_id': scan_id,
-                    'findings_count': len(scan_state.get('findings', [])),
-                    'time_elapsed': scan_state.get('time_elapsed', 0),
-                    'status': scan_state['status']
-                }, room=f'scan_{scan_id}')
+                self.socketio.start_background_task(
+                    self.socketio.emit,
+                    'scan_complete',
+                    {'scan_id': scan_id, 'findings_count': len(scan_state.get('findings', [])), 'time_elapsed': scan_state.get('time_elapsed', 0), 'status': scan_state['status']},
+                    room=f'scan_{scan_id}'
+                )
             except Exception as e:
                 logger.warning(f"Failed to emit scan_complete: {e}")
     
@@ -248,10 +254,12 @@ class ScanManager:
         """Emit scan error WebSocket event"""
         if self.socketio:
             try:
-                self.socketio.emit('scan_error', {
-                    'scan_id': scan_id,
-                    'error': error
-                }, room=f'scan_{scan_id}')
+                self.socketio.start_background_task(
+                    self.socketio.emit,
+                    'scan_error',
+                    {'scan_id': scan_id, 'error': error},
+                    room=f'scan_{scan_id}'
+                )
             except Exception as e:
                 logger.warning(f"Failed to emit scan_error: {e}")
     

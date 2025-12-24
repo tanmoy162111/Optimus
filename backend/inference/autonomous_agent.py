@@ -188,6 +188,16 @@ class AutonomousPentestAgent:
             tool_recommendation = self._get_tool_recommendation(scan_state)
             recommended_tools = tool_recommendation.get('tools', [])
             
+            # Limit iterations based on phase - increase tool execution
+            phase_limits = {
+                'reconnaissance': 25,  # More recon
+                'enumeration': 30,     # More enumeration
+                'vulnerability_analysis': 35,  # More vuln scanning
+                'exploitation': 20,
+                'post_exploitation': 15
+            }
+            max_iterations = phase_limits.get(scan_state['phase'], 20)
+            
             # Handle empty recommendations
             if not recommended_tools:
                 consecutive_empty_recommendations += 1
@@ -204,11 +214,12 @@ class AutonomousPentestAgent:
                         consecutive_empty_recommendations = 0
                         
                         if self.socketio:
-                            self.socketio.emit('phase_transition', {
-                                'scan_id': scan_state['scan_id'],
-                                'from': current_phase,
-                                'to': suggested_next
-                            }, room=f"scan_{scan_state['scan_id']}")
+                            self.socketio.start_background_task(
+                                self.socketio.emit,
+                                'phase_transition',
+                                {'scan_id': scan_state['scan_id'], 'from': current_phase, 'to': suggested_next},
+                                room=f"scan_{scan_state['scan_id']}"
+                            )
                         continue
                     else:
                         logger.info("No more phases, ending scan")
