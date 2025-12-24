@@ -1,0 +1,34 @@
+{
+  "phases": {
+    "reconnaissance": {
+      "durations": [
+        4.01284
+      ],
+      "avg_duration": 4.01284
+    },
+    "enumeration": {
+      "durations": [
+        5.016051
+      ],
+      "avg_duration": 5.016051
+    },
+    "vulnerability_scan": {
+      "durations": [
+        5.015477
+      ],
+      "avg_duration": 5.015477
+    },
+    "exploitation": {
+      "durations": [
+        0.000677
+      ],
+      "avg_duration": 0.000677
+    },
+    "post_exploitation": {
+      "durations": [
+        0.000768
+      ],
+      "avg_duration": 0.000768
+    }
+  }
+}
