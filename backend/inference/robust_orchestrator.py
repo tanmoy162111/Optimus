@@ -123,7 +123,14 @@ class RobustScanOrchestrator:
         self._init_phase_tools()
     
     def _init_components(self):
-        """Initialize required components"""
+        # Initialize required components
+        try:
+            from inference.target_normalizer import get_target_normalizer
+            self.target_normalizer = get_target_normalizer()
+            logger.info("[Orchestrator] TargetNormalizer initialized")
+        except Exception as e:
+            logger.warning(f"[Orchestrator] TargetNormalizer not available: {e}")
+            self.target_normalizer = None
         try:
             from inference.tool_manager import ToolManager
             self.tool_manager = ToolManager(self.socketio)
@@ -348,17 +355,24 @@ class RobustScanOrchestrator:
     def _init_scan_state(self, target: str, config: Dict) -> Dict[str, Any]:
         """Initialize scan state"""
         # Normalize target
-        if not target.startswith(('http://', 'https://')):
-            target = f"http://{target}"
+        normalized_target = target
+        if hasattr(self, 'target_normalizer') and self.target_normalizer:
+            normalized_result = self.target_normalizer.normalize(target)
+            normalized_target = normalized_result['url']
+        else:
+            # Fallback normalization
+            if not target.startswith(('http://', 'https://')):
+                target = f"http://{target}"
+            normalized_target = target
         
         # Extract domain for DNS tools
         from urllib.parse import urlparse
-        parsed = urlparse(target)
+        parsed = urlparse(normalized_target)
         domain = parsed.netloc.split(':')[0]
         
         return {
             'scan_id': config.get('scan_id', str(uuid.uuid4())[:8]),
-            'target': target,
+            'target': normalized_target,
             'domain': domain,
             'host': parsed.netloc,
             'phase': 'init',
@@ -411,9 +425,13 @@ class RobustScanOrchestrator:
             args_template = tool_config['args']
             description = tool_config['description']
             
-            # Build command
+            # Build command with normalized target
+            normalized_target = scan_state['target']
+            if self.target_normalizer:
+                normalized_target = self.target_normalizer.get_tool_target(scan_state['target'], tool_name)
+            
             args = args_template.format(
-                target=scan_state['target'],
+                target=normalized_target,
                 domain=scan_state['domain'],
                 host=scan_state['host']
             )
@@ -502,8 +520,12 @@ class RobustScanOrchestrator:
                 
                 try:
                     # Create attack plan
+                    normalized_target = scan_state['target']
+                    if self.target_normalizer:
+                        normalized_target = self.target_normalizer.get_tool_target(scan_state['target'], 'exploitation')
+                    
                     plan = self.exploitation_manager.create_attack_plan(
-                        target=scan_state['target'],
+                        target=normalized_target,
                         objective="shell",
                         vulnerabilities=[finding],
                         context={
@@ -554,11 +576,15 @@ class RobustScanOrchestrator:
         """Fallback exploitation when ExploitationManager not available"""
         for finding in findings[:5]:
             vuln_type = finding.get('type', '').lower()
-            target = scan_state['target']
+            
+            # Normalize target for this tool
+            normalized_target = scan_state['target']
+            if self.target_normalizer:
+                normalized_target = self.target_normalizer.get_tool_target(scan_state['target'], 'sqlmap')
             
             if 'sql' in vuln_type:
                 # SQLMap exploitation
-                url = finding.get('url', target)
+                url = finding.get('url', normalized_target)
                 param = finding.get('parameter', 'id')
                 result = self._execute_tool(
                     'sqlmap',
@@ -611,6 +637,11 @@ class RobustScanOrchestrator:
         # Get progress tracker from scan state
         progress_tracker = scan_state.get('progress_tracker')
         
+        # Get normalized target for this specific tool
+        normalized_target = scan_state['target']
+        if hasattr(self, 'target_normalizer') and self.target_normalizer:
+            normalized_target = self.target_normalizer.get_tool_target(scan_state['target'], tool)
+        
         try:
             # Start tool in progress tracker
             if progress_tracker:
@@ -619,8 +650,8 @@ class RobustScanOrchestrator:
             # Execute via tool manager
             result = self.tool_manager.execute_tool(
                 tool_name=tool,
-                target=scan_state['target'],
-                options={'args': args},
+                target=normalized_target,
+                parameters={'args': args},
                 scan_id=scan_state['scan_id'],
                 phase=scan_state['phase']
             )

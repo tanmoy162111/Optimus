@@ -2,33 +2,38 @@
   "phases": {
     "reconnaissance": {
       "durations": [
-        4.01284
+        4.01284,
+        4.012483
       ],
-      "avg_duration": 4.01284
+      "avg_duration": 4.0126615
     },
     "enumeration": {
       "durations": [
-        5.016051
+        5.016051,
+        5.014715
       ],
-      "avg_duration": 5.016051
+      "avg_duration": 5.015383
     },
     "vulnerability_scan": {
       "durations": [
-        5.015477
+        5.015477,
+        5.016292
       ],
-      "avg_duration": 5.015477
+      "avg_duration": 5.0158845
     },
     "exploitation": {
       "durations": [
-        0.000677
+        0.000677,
+        0.001187
       ],
-      "avg_duration": 0.000677
+      "avg_duration": 0.0009319999999999999
     },
     "post_exploitation": {
       "durations": [
-        0.000768
+        0.000768,
+        0.000818
       ],
-      "avg_duration": 0.000768
+      "avg_duration": 0.0007930000000000001
     }
   }
 }

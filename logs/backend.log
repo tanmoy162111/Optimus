@@ -18395,3 +18395,261 @@ AssertionError: write() before start_response
 2025-12-24 18:49:32,344 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
 2025-12-24 18:49:32,845 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: whatweb - Web fingerprinting
 2025-12-24 18:49:32,846 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:33,347 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: dig - DNS enumeration
+2025-12-24 18:49:33,347 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:33,848 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: whois - WHOIS lookup
+2025-12-24 18:49:33,849 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:34,350 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: curl - HTTP headers
+2025-12-24 18:49:34,350 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:34,851 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: wafw00f - WAF detection
+2025-12-24 18:49:34,852 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:35,353 - inference.progress_tracker - INFO - [Progress] Phase completed: reconnaissance (4.0s)
+2025-12-24 18:49:35,353 - inference.robust_orchestrator - INFO - [Orchestrator] Phase reconnaissance complete:
+2025-12-24 18:49:35,354 - inference.robust_orchestrator - INFO -   Tools executed: 8
+2025-12-24 18:49:35,354 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-24 18:49:35,355 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-24 18:49:35,355 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: enumeration
+2025-12-24 18:49:35,355 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-24 18:49:35,356 - inference.progress_tracker - INFO - [Progress] Phase started: enumeration
+2025-12-24 18:49:35,356 - inference.robust_orchestrator - INFO - [Orchestrator] Phase enumeration: 10 tools available
+2025-12-24 18:49:35,357 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: gobuster - Directory bruteforce
+2025-12-24 18:49:35,357 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:35,858 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: ffuf - Fuzzing
+2025-12-24 18:49:35,859 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:36,359 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nikto - Web server scan
+2025-12-24 18:49:36,360 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:36,861 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: wpscan - WordPress scan
+2025-12-24 18:49:36,862 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:37,363 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: droopescan - Drupal scan
+2025-12-24 18:49:37,363 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:37,864 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: joomscan - Joomla scan
+2025-12-24 18:49:37,865 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:38,366 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: curl - API discovery
+2025-12-24 18:49:38,366 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:38,868 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: curl - Swagger discovery
+2025-12-24 18:49:38,868 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:39,369 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: curl - Robots.txt
+2025-12-24 18:49:39,369 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:39,870 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: curl - Sitemap
+2025-12-24 18:49:39,871 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:40,372 - inference.progress_tracker - INFO - [Progress] Phase completed: enumeration (5.0s)
+2025-12-24 18:49:40,372 - inference.robust_orchestrator - INFO - [Orchestrator] Phase enumeration complete:
+2025-12-24 18:49:40,372 - inference.robust_orchestrator - INFO -   Tools executed: 10
+2025-12-24 18:49:40,373 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-24 18:49:40,373 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-24 18:49:40,373 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: vulnerability_scan
+2025-12-24 18:49:40,373 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-24 18:49:40,373 - inference.progress_tracker - INFO - [Progress] Phase started: vulnerability_scan
+2025-12-24 18:49:40,374 - inference.robust_orchestrator - INFO - [Orchestrator] Phase vulnerability_scan: 10 tools available
+2025-12-24 18:49:40,374 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nuclei - CVE scanning
+2025-12-24 18:49:40,374 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:40,875 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nuclei - Vuln templates
+2025-12-24 18:49:40,875 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:41,376 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nuclei - Exposure scanning
+2025-12-24 18:49:41,377 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:41,878 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: sqlmap - SQL injection
+2025-12-24 18:49:41,879 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:42,380 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: xsstrike - XSS scanning
+2025-12-24 18:49:42,380 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:42,881 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: commix - Command injection
+2025-12-24 18:49:42,882 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:43,383 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: ssrf-sheriff - SSRF scanning
+2025-12-24 18:49:43,384 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:43,885 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: lfi-suite - LFI scanning
+2025-12-24 18:49:43,886 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:44,386 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: sslscan - SSL analysis
+2025-12-24 18:49:44,387 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:44,887 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: testssl - TLS testing
+2025-12-24 18:49:44,888 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 18:49:45,389 - inference.progress_tracker - INFO - [Progress] Phase completed: vulnerability_scan (5.0s)
+2025-12-24 18:49:45,390 - inference.robust_orchestrator - INFO - [Orchestrator] Phase vulnerability_scan complete:
+2025-12-24 18:49:45,390 - inference.robust_orchestrator - INFO -   Tools executed: 10
+2025-12-24 18:49:45,390 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-24 18:49:45,391 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-24 18:49:45,391 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: exploitation
+2025-12-24 18:49:45,391 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-24 18:49:45,392 - inference.progress_tracker - INFO - [Progress] Phase started: exploitation
+2025-12-24 18:49:45,392 - inference.robust_orchestrator - INFO - [Orchestrator] === EXPLOITATION PHASE ===
+2025-12-24 18:49:45,392 - inference.robust_orchestrator - WARNING - [Orchestrator] No findings to exploit
+2025-12-24 18:49:45,392 - inference.progress_tracker - INFO - [Progress] Phase completed: exploitation (0.0s)
+2025-12-24 18:49:45,392 - inference.robust_orchestrator - INFO - [Orchestrator] Phase exploitation complete:
+2025-12-24 18:49:45,393 - inference.robust_orchestrator - INFO -   Tools executed: 0
+2025-12-24 18:49:45,393 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-24 18:49:45,393 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-24 18:49:45,393 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: post_exploitation
+2025-12-24 18:49:45,393 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-24 18:49:45,394 - inference.progress_tracker - INFO - [Progress] Phase started: post_exploitation
+2025-12-24 18:49:45,394 - inference.robust_orchestrator - INFO - [Orchestrator] === POST-EXPLOITATION PHASE ===
+2025-12-24 18:49:45,394 - inference.robust_orchestrator - INFO - [Orchestrator] No sessions for post-exploitation
+2025-12-24 18:49:45,394 - inference.progress_tracker - INFO - [Progress] Phase completed: post_exploitation (0.0s)
+2025-12-24 18:49:45,395 - inference.robust_orchestrator - INFO - [Orchestrator] Phase post_exploitation complete:
+2025-12-24 18:49:45,395 - inference.robust_orchestrator - INFO -   Tools executed: 0
+2025-12-24 18:49:45,395 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-24 18:49:45,397 - inference.progress_tracker - INFO - [Progress] Scan 6053a01d completed
+2025-12-24 18:49:45,398 - core.scan_engine - INFO - Scan completed: 0 findings
+2025-12-24 18:49:45,398 - core.scan_engine - INFO -  Scan 6053a01d completed successfully!
+2025-12-24 18:49:45,399 - core.scan_engine - INFO - Scan 6053a01d results: 0 findings, 28 tools executed
+2025-12-24 20:25:49,348 - api.scan_routes - INFO - Added scan 6ccd384d to active_scans. Active scans count: 2
+2025-12-24 20:25:49,349 - api.scan_routes - INFO - Created scan 6ccd384d for target https://demo.owasp-juice.shop
+2025-12-24 20:25:49,350 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-24 20:25:49,351 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-24 20:25:49,351 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-24 20:25:49,352 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-24 20:25:49,352 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-24 20:25:49,352 - core.scan_engine - INFO - start_scan called: scan_id=6ccd384d, target=https://demo.owasp-juice.shop
+2025-12-24 20:25:49,353 - core.scan_engine - INFO - Scan thread started for 6ccd384d
+2025-12-24 20:25:49,353 - core.scan_engine - INFO - Started scan thread for 6ccd384d
+2025-12-24 20:25:49,354 - core.scan_engine - INFO - Using RobustScanOrchestrator for scan 6ccd384d
+2025-12-24 20:25:49,355 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-24 20:25:49,355 - core.scan_engine - INFO - Starting robust scan for 6ccd384d
+2025-12-24 20:25:49,355 - api.scan_routes - INFO - Scan 6ccd384d started successfully
+2025-12-24 20:25:49,356 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 20:25:49] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-24 20:25:49,356 - inference.progress_tracker - INFO - [Progress] Loaded historical data for better estimates
+2025-12-24 20:25:49,358 - inference.progress_tracker - INFO - [Progress] Scan 6ccd384d started
+2025-12-24 20:25:49,359 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-24 20:25:49,359 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: reconnaissance
+2025-12-24 20:25:49,359 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-24 20:25:49,359 - inference.progress_tracker - INFO - [Progress] Phase started: reconnaissance
+2025-12-24 20:25:49,360 - inference.robust_orchestrator - INFO - [Orchestrator] Phase reconnaissance: 8 tools available
+2025-12-24 20:25:49,360 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nmap - Host discovery
+2025-12-24 20:25:49,360 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:49,861 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nmap - Full port scan
+2025-12-24 20:25:49,861 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:50,363 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nmap - UDP scan
+2025-12-24 20:25:50,363 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:50,864 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: whatweb - Web fingerprinting
+2025-12-24 20:25:50,865 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:51,366 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: dig - DNS enumeration
+2025-12-24 20:25:51,366 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:51,867 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: whois - WHOIS lookup
+2025-12-24 20:25:51,868 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:52,369 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: curl - HTTP headers
+2025-12-24 20:25:52,369 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:52,870 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: wafw00f - WAF detection
+2025-12-24 20:25:52,871 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:53,372 - inference.progress_tracker - INFO - [Progress] Phase completed: reconnaissance (4.0s)
+2025-12-24 20:25:53,372 - inference.robust_orchestrator - INFO - [Orchestrator] Phase reconnaissance complete:
+2025-12-24 20:25:53,373 - inference.robust_orchestrator - INFO -   Tools executed: 8
+2025-12-24 20:25:53,373 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-24 20:25:53,374 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-24 20:25:53,374 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: enumeration
+2025-12-24 20:25:53,374 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-24 20:25:53,374 - inference.progress_tracker - INFO - [Progress] Phase started: enumeration
+2025-12-24 20:25:53,375 - inference.robust_orchestrator - INFO - [Orchestrator] Phase enumeration: 10 tools available
+2025-12-24 20:25:53,375 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: gobuster - Directory bruteforce
+2025-12-24 20:25:53,375 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:53,876 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: ffuf - Fuzzing
+2025-12-24 20:25:53,877 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:54,378 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nikto - Web server scan
+2025-12-24 20:25:54,378 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:54,879 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: wpscan - WordPress scan
+2025-12-24 20:25:54,880 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:55,381 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: droopescan - Drupal scan
+2025-12-24 20:25:55,382 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:55,882 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: joomscan - Joomla scan
+2025-12-24 20:25:55,883 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:56,383 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: curl - API discovery
+2025-12-24 20:25:56,384 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:56,885 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: curl - Swagger discovery
+2025-12-24 20:25:56,885 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:57,386 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: curl - Robots.txt
+2025-12-24 20:25:57,387 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:57,888 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: curl - Sitemap
+2025-12-24 20:25:57,888 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:58,389 - inference.progress_tracker - INFO - [Progress] Phase completed: enumeration (5.0s)
+2025-12-24 20:25:58,390 - inference.robust_orchestrator - INFO - [Orchestrator] Phase enumeration complete:
+2025-12-24 20:25:58,390 - inference.robust_orchestrator - INFO -   Tools executed: 10
+2025-12-24 20:25:58,391 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-24 20:25:58,391 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-24 20:25:58,391 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: vulnerability_scan
+2025-12-24 20:25:58,392 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-24 20:25:58,392 - inference.progress_tracker - INFO - [Progress] Phase started: vulnerability_scan
+2025-12-24 20:25:58,392 - inference.robust_orchestrator - INFO - [Orchestrator] Phase vulnerability_scan: 10 tools available
+2025-12-24 20:25:58,392 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nuclei - CVE scanning
+2025-12-24 20:25:58,393 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:58,893 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nuclei - Vuln templates
+2025-12-24 20:25:58,894 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:59,395 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nuclei - Exposure scanning
+2025-12-24 20:25:59,395 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:25:59,896 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: sqlmap - SQL injection
+2025-12-24 20:25:59,897 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:26:00,398 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: xsstrike - XSS scanning
+2025-12-24 20:26:00,398 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:26:00,899 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: commix - Command injection
+2025-12-24 20:26:00,900 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:26:01,401 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: ssrf-sheriff - SSRF scanning
+2025-12-24 20:26:01,402 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:26:01,903 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: lfi-suite - LFI scanning
+2025-12-24 20:26:01,903 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:26:02,404 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: sslscan - SSL analysis
+2025-12-24 20:26:02,405 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:26:02,906 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: testssl - TLS testing
+2025-12-24 20:26:02,907 - inference.robust_orchestrator - ERROR - [Orchestrator] Tool execution error: ToolManager.execute_tool() got an unexpected keyword argument 'options'
+2025-12-24 20:26:03,408 - inference.progress_tracker - INFO - [Progress] Phase completed: vulnerability_scan (5.0s)
+2025-12-24 20:26:03,409 - inference.robust_orchestrator - INFO - [Orchestrator] Phase vulnerability_scan complete:
+2025-12-24 20:26:03,409 - inference.robust_orchestrator - INFO -   Tools executed: 10
+2025-12-24 20:26:03,409 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-24 20:26:03,410 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-24 20:26:03,410 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: exploitation
+2025-12-24 20:26:03,410 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-24 20:26:03,411 - inference.progress_tracker - INFO - [Progress] Phase started: exploitation
+2025-12-24 20:26:03,411 - inference.robust_orchestrator - INFO - [Orchestrator] === EXPLOITATION PHASE ===
+2025-12-24 20:26:03,412 - inference.robust_orchestrator - WARNING - [Orchestrator] No findings to exploit
+2025-12-24 20:26:03,412 - inference.progress_tracker - INFO - [Progress] Phase completed: exploitation (0.0s)
+2025-12-24 20:26:03,412 - inference.robust_orchestrator - INFO - [Orchestrator] Phase exploitation complete:
+2025-12-24 20:26:03,413 - inference.robust_orchestrator - INFO -   Tools executed: 0
+2025-12-24 20:26:03,413 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-24 20:26:03,413 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-24 20:26:03,413 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: post_exploitation
+2025-12-24 20:26:03,414 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-24 20:26:03,414 - inference.progress_tracker - INFO - [Progress] Phase started: post_exploitation
+2025-12-24 20:26:03,414 - inference.robust_orchestrator - INFO - [Orchestrator] === POST-EXPLOITATION PHASE ===
+2025-12-24 20:26:03,415 - inference.robust_orchestrator - INFO - [Orchestrator] No sessions for post-exploitation
+2025-12-24 20:26:03,415 - inference.progress_tracker - INFO - [Progress] Phase completed: post_exploitation (0.0s)
+2025-12-24 20:26:03,415 - inference.robust_orchestrator - INFO - [Orchestrator] Phase post_exploitation complete:
+2025-12-24 20:26:03,415 - inference.robust_orchestrator - INFO -   Tools executed: 0
+2025-12-24 20:26:03,416 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-24 20:26:03,417 - inference.progress_tracker - INFO - [Progress] Scan 6ccd384d completed
+2025-12-24 20:26:03,417 - core.scan_engine - INFO - Scan completed: 0 findings
+2025-12-24 20:26:03,418 - core.scan_engine - INFO -  Scan 6ccd384d completed successfully!
+2025-12-24 20:26:03,419 - core.scan_engine - INFO - Scan 6ccd384d results: 0 findings, 28 tools executed
+2025-12-24 20:33:47,267 - websocket.handlers - INFO - Client connected: ncxhdX9r7YQLTz25AAAB
+2025-12-24 20:33:47,342 - websocket.handlers - INFO - Client connected: Y2nuRwqjojnSy88KAAAD
+2025-12-24 21:06:27,552 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 21:06:27] "GET /api/scan/status/6ccd384d HTTP/1.1" 200 -
+2025-12-24 21:35:47,297 - websocket.handlers - INFO - Client disconnected: ncxhdX9r7YQLTz25AAAB
+2025-12-24 21:35:47,309 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 21:35:47] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-24 21:35:47,346 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
+2025-12-24 21:36:02,641 - websocket.handlers - INFO - Client disconnected: Y2nuRwqjojnSy88KAAAD
+2025-12-24 21:36:02,651 - werkzeug - INFO - 127.0.0.1 - - [24/Dec/2025 21:36:02] "[35m[1mGET /socket.io/?EIO=4&transport=websocket HTTP/1.1[0m" 500 -
+2025-12-24 21:36:02,654 - werkzeug - ERROR - Error on request:
+Traceback (most recent call last):
+  File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\serving.py", line 370, in run_wsgi
+    execute(self.server.app)
+    ~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\serving.py", line 336, in execute
+    write(b"")
+    ~~~~~^^^^^
+  File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\serving.py", line 261, in write
+    assert status_set is not None, "write() before start_response"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: write() before start_response
