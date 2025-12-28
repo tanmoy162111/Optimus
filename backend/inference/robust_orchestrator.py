@@ -224,7 +224,7 @@ class RobustScanOrchestrator:
             ],
         }
     
-    def run_full_scan(self, target: str, config: Dict = None) -> Dict[str, Any]:
+    def run_full_scan(self, target: str, config: Dict = None, shared_scan_state: Dict = None) -> Dict[str, Any]:
         """
         Run complete scan through all phases.
         
@@ -243,8 +243,14 @@ class RobustScanOrchestrator:
         print(f"  Config: {config}")
         print(f"{'='*70}\n")
         
-        # Initialize scan state
-        scan_state = self._init_scan_state(target, config)
+        # Use shared scan state if provided, otherwise initialize new one
+        if shared_scan_state is not None:
+            scan_state = shared_scan_state
+            logger.info(f"[Orchestrator] Using shared scan state for {scan_state['scan_id']}")
+        else:
+            # Initialize scan state
+            scan_state = self._init_scan_state(target, config)
+            logger.info(f"[Orchestrator] Created new scan state for {scan_state['scan_id']}")
         
         # Initialize progress tracker
         progress_tracker = None
@@ -254,7 +260,8 @@ class RobustScanOrchestrator:
                 target
             )
             progress_tracker.start_scan()
-            scan_state['progress_tracker'] = progress_tracker
+            # Don't add progress_tracker to scan_state as it's not JSON serializable
+            # Instead, keep it as a local variable for use in this method
         
         # Emit scan started
         self._emit_event('scan_started', {
@@ -370,7 +377,8 @@ class RobustScanOrchestrator:
         parsed = urlparse(normalized_target)
         domain = parsed.netloc.split(':')[0]
         
-        return {
+        # Return initialized scan state with all required fields
+        result = {
             'scan_id': config.get('scan_id', str(uuid.uuid4())[:8]),
             'target': normalized_target,
             'domain': domain,
@@ -392,6 +400,7 @@ class RobustScanOrchestrator:
             'discovered_technologies': [],
             'open_ports': [],
         }
+        return result
     
     def _run_standard_phase(self, scan_state: Dict, phase: ScanPhase):
         """Run a standard scanning phase"""
@@ -438,7 +447,7 @@ class RobustScanOrchestrator:
             
             logger.info(f"[Orchestrator] Executing: {tool_name} - {description}")
             
-            result = self._execute_tool(tool_name, args, scan_state)
+            result = self._execute_tool(tool_name, args, scan_state, progress_tracker)
             
             if result:
                 tools_run_in_phase += 1
@@ -570,9 +579,9 @@ class RobustScanOrchestrator:
         else:
             # Fallback: Use basic exploitation tools
             logger.info("[Orchestrator] Using fallback exploitation (no ExploitationManager)")
-            self._run_fallback_exploitation(scan_state, exploitable)
+            self._run_fallback_exploitation(scan_state, exploitable, progress_tracker)
     
-    def _run_fallback_exploitation(self, scan_state: Dict, findings: List[Dict]):
+    def _run_fallback_exploitation(self, scan_state: Dict, findings: List[Dict], progress_tracker=None):
         """Fallback exploitation when ExploitationManager not available"""
         for finding in findings[:5]:
             vuln_type = finding.get('type', '').lower()
@@ -589,7 +598,8 @@ class RobustScanOrchestrator:
                 result = self._execute_tool(
                     'sqlmap',
                     f"-u '{url}' -p {param} --batch --dump --level=3 --risk=3",
-                    scan_state
+                    scan_state,
+                    progress_tracker
                 )
                 if result:
                     scan_state['exploits_attempted'].append({
@@ -628,14 +638,11 @@ class RobustScanOrchestrator:
             # Would run linpeas, winpeas, credential harvesting, etc.
             # This requires an active session which we may or may not have
     
-    def _execute_tool(self, tool: str, args: str, scan_state: Dict) -> Optional[Dict]:
+    def _execute_tool(self, tool: str, args: str, scan_state: Dict, progress_tracker=None) -> Optional[Dict]:
         """Execute a tool via ToolManager with enhanced parsing"""
         if not self.tool_manager:
             logger.error("[Orchestrator] ToolManager not available")
             return None
-        
-        # Get progress tracker from scan state
-        progress_tracker = scan_state.get('progress_tracker')
         
         # Get normalized target for this specific tool
         normalized_target = scan_state['target']
@@ -722,7 +729,7 @@ class RobustScanOrchestrator:
         
         logger.info(f"[Orchestrator] Exploit step: {tool}")
         
-        result = self._execute_tool(tool, command, scan_state)
+        result = self._execute_tool(tool, command, scan_state, progress_tracker)
         
         if result:
             # Check for shell indicators

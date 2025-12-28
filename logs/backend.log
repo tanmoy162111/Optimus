@@ -18653,3 +18653,820 @@ Traceback (most recent call last):
     assert status_set is not None, "write() before start_response"
            ^^^^^^^^^^^^^^^^^^^^^^
 AssertionError: write() before start_response
+2025-12-28 23:32:11,969 - optimus - INFO - Registered: api_bp
+2025-12-28 23:32:11,976 - optimus - INFO - Registered: tool_bp
+2025-12-28 23:32:11,992 - optimus - INFO - Registered: intelligence_bp
+2025-12-28 23:32:11,996 - optimus - INFO - Registered: metrics_bp
+2025-12-28 23:32:12,004 - optimus - INFO - Registered: report_bp
+2025-12-28 23:32:12,010 - optimus - INFO - Registered: training_bp
+2025-12-28 23:32:12,012 - optimus - INFO - WebSocket handlers registered
+2025-12-28 23:32:13,091 - intelligence.dark_web_intel - WARNING - [DarkWebIntel] aiohttp_socks not installed - dark web features disabled
+2025-12-28 23:32:13,096 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-28 23:32:13,096 - optimus - INFO - Intelligence module initialized
+2025-12-28 23:32:13,103 - optimus - INFO - Hybrid tool system initialized
+2025-12-28 23:32:13,109 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-28 23:32:13,162 - exploitation.msf_manager - WARNING - [MSF-RPC] msgpack or requests not installed
+2025-12-28 23:32:24,807 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-28 23:32:24,838 - inference.parser_pattern_db - INFO - [ParserPatternDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\data\parser_patterns.db
+2025-12-28 23:32:24,839 - inference.ollama_client - INFO - [OllamaClient] Initialized with model: codellama:7b-instruct
+2025-12-28 23:32:24,839 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-28 23:32:24,839 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-28 23:32:24,840 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-28 23:32:24,840 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-28 23:32:24,840 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-28 23:32:24,840 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-28 23:32:24,840 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-28 23:32:24,846 - optimus - INFO - Registered: scan_bp
+2025-12-28 23:32:24,847 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-28 23:32:24,848 - optimus - INFO - Debug mode: True
+2025-12-28 23:32:24,848 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-28 23:32:24,899 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.110:5000
+2025-12-28 23:32:24,899 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-28 23:33:38,036 - optimus - INFO - Registered: api_bp
+2025-12-28 23:33:38,041 - optimus - INFO - Registered: tool_bp
+2025-12-28 23:33:38,052 - optimus - INFO - Registered: intelligence_bp
+2025-12-28 23:33:38,054 - optimus - INFO - Registered: metrics_bp
+2025-12-28 23:33:38,060 - optimus - INFO - Registered: report_bp
+2025-12-28 23:33:38,064 - optimus - INFO - Registered: training_bp
+2025-12-28 23:33:38,064 - optimus - INFO - WebSocket handlers registered
+2025-12-28 23:33:38,065 - optimus - INFO - Intelligence module initialized
+2025-12-28 23:33:38,065 - optimus - INFO - Hybrid tool system initialized
+2025-12-28 23:33:38,067 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-28 23:33:38,067 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-28 23:33:38,068 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-28 23:33:38,068 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-28 23:33:38,068 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-28 23:33:38,069 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-28 23:33:38,075 - optimus - INFO - Registered: scan_bp
+2025-12-28 23:33:38,077 - api.scan_routes - INFO - Added scan 53d898c8 to active_scans. Active scans count: 1
+2025-12-28 23:33:38,077 - api.scan_routes - INFO - Created scan 53d898c8 for target https://demo.owasp-juice.shop
+2025-12-28 23:33:38,079 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-28 23:33:38,079 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-28 23:33:38,080 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-28 23:33:38,080 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-28 23:33:38,081 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-28 23:33:38,081 - core.scan_engine - INFO - start_scan called: scan_id=53d898c8, target=https://demo.owasp-juice.shop
+2025-12-28 23:33:38,082 - core.scan_engine - INFO - Scan thread started for 53d898c8
+2025-12-28 23:33:38,083 - core.scan_engine - INFO - Started scan thread for 53d898c8
+2025-12-28 23:33:38,084 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-28 23:33:38,085 - api.scan_routes - INFO - Scan 53d898c8 started successfully
+2025-12-28 23:33:38,086 - werkzeug - INFO - 127.0.0.1 - - [28/Dec/2025 23:33:38] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-28 23:33:38,112 - inference.robust_orchestrator - INFO - [Orchestrator] TargetNormalizer initialized
+2025-12-28 23:33:38,113 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-28 23:33:38,114 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-28 23:33:38,116 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-28 23:33:38,117 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-28 23:33:38,117 - inference.robust_orchestrator - INFO - [Orchestrator] ToolManager initialized
+2025-12-28 23:33:38,119 - exploitation.exploit_db - INFO - [ExploitDB] Loaded 24 exploit templates
+2025-12-28 23:33:38,120 - exploitation.payload_crafter - INFO - [PayloadCrafter] Initialized
+2025-12-28 23:33:38,121 - exploitation.exploit_executor - INFO - [ExploitExecutor] Initialized
+2025-12-28 23:33:38,121 - inference.ollama_client - INFO - [OllamaClient] Initialized with model: codellama:7b-instruct
+2025-12-28 23:33:38,122 - exploitation.llm_generator - INFO - [LLMExploitGenerator] Initialized
+2025-12-28 23:33:38,123 - exploitation.strategic_planner - INFO - [StrategicPlanner] Initialized
+2025-12-28 23:33:38,124 - exploitation.exploit_chainer - INFO - [ExploitChainer] Initialized
+2025-12-28 23:33:38,125 - exploitation.cve_templates - INFO - [CVE-DB] Loaded 36 CVE templates
+2025-12-28 23:33:38,125 - exploitation.integration - INFO - [ExploitationManager] LLM components initialized
+2025-12-28 23:33:38,127 - exploitation.metasploit - INFO - [MetasploitDB] Loaded 28 modules
+2025-12-28 23:33:38,128 - exploitation.integration - INFO - [ExploitationManager] Metasploit components initialized
+2025-12-28 23:33:38,128 - exploitation.integration - INFO - [ExploitationManager] Initialized
+2025-12-28 23:33:38,129 - inference.robust_orchestrator - INFO - [Orchestrator] ExploitationManager initialized
+2025-12-28 23:33:38,135 - inference.robust_orchestrator - INFO - [Orchestrator] ProgressManager initialized
+2025-12-28 23:33:38,136 - inference.robust_orchestrator - WARNING - [Orchestrator] EnhancedParser not available: No module named 'inference.enhanced_parser'
+2025-12-28 23:33:38,136 - inference.robust_orchestrator - WARNING - [Orchestrator] UniversalExploitDB not available: No module named 'exploitation.universal_exploits'
+2025-12-28 23:33:38,137 - core.scan_engine - INFO - Using RobustScanOrchestrator for scan 53d898c8
+2025-12-28 23:33:38,138 - core.scan_engine - INFO - Starting robust scan for 53d898c8
+2025-12-28 23:33:38,139 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:33:38,140 - inference.progress_tracker - INFO - [Progress] Loaded historical data for better estimates
+2025-12-28 23:33:38,142 - inference.progress_tracker - INFO - [Progress] Scan 53d898c8 started
+2025-12-28 23:33:38,143 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-28 23:33:38,144 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: reconnaissance
+2025-12-28 23:33:38,145 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-28 23:33:38,145 - inference.progress_tracker - INFO - [Progress] Phase started: reconnaissance
+2025-12-28 23:33:38,146 - inference.robust_orchestrator - INFO - [Orchestrator] Phase reconnaissance: 8 tools available
+2025-12-28 23:33:38,147 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:33:38,147 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nmap - Host discovery
+2025-12-28 23:33:38,148 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:33:38,149 - inference.tool_manager - INFO - Using hybrid system resolved command for nmap: nmap -sV -sC demo.owasp-juice.shop
+2025-12-28 23:33:38,150 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: demo.owasp-juice.shop -> http://demo.owasp-juice.shop
+2025-12-28 23:33:38,150 - inference.tool_manager - INFO - [ToolManager] Normalized target for nmap: demo.owasp-juice.shop -> demo.owasp-juice.shop
+2025-12-28 23:33:53,252 - paramiko.transport - ERROR - Exception (client): Error reading SSH protocol banner
+2025-12-28 23:33:53,281 - paramiko.transport - ERROR - Traceback (most recent call last):
+2025-12-28 23:33:53,281 - paramiko.transport - ERROR -   File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\paramiko\transport.py", line 2327, in _check_banner
+2025-12-28 23:33:53,282 - paramiko.transport - ERROR -     buf = self.packetizer.readline(timeout)
+2025-12-28 23:33:53,282 - paramiko.transport - ERROR -   File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\paramiko\packet.py", line 381, in readline
+2025-12-28 23:33:53,282 - paramiko.transport - ERROR -     buf += self._read_timeout(timeout)
+2025-12-28 23:33:53,283 - paramiko.transport - ERROR -            ~~~~~~~~~~~~~~~~~~^^^^^^^^^
+2025-12-28 23:33:53,283 - paramiko.transport - ERROR -   File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\paramiko\packet.py", line 626, in _read_timeout
+2025-12-28 23:33:53,283 - paramiko.transport - ERROR -     raise socket.timeout()
+2025-12-28 23:33:53,283 - paramiko.transport - ERROR - TimeoutError
+2025-12-28 23:33:53,284 - paramiko.transport - ERROR - 
+2025-12-28 23:33:53,284 - paramiko.transport - ERROR - During handling of the above exception, another exception occurred:
+2025-12-28 23:33:53,285 - paramiko.transport - ERROR - 
+2025-12-28 23:33:53,285 - paramiko.transport - ERROR - Traceback (most recent call last):
+2025-12-28 23:33:53,285 - paramiko.transport - ERROR -   File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\paramiko\transport.py", line 2143, in run
+2025-12-28 23:33:53,286 - paramiko.transport - ERROR -     self._check_banner()
+2025-12-28 23:33:53,286 - paramiko.transport - ERROR -     ~~~~~~~~~~~~~~~~~~^^
+2025-12-28 23:33:53,286 - paramiko.transport - ERROR -   File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\paramiko\transport.py", line 2331, in _check_banner
+2025-12-28 23:33:53,287 - paramiko.transport - ERROR -     raise SSHException(
+2025-12-28 23:33:53,288 - paramiko.transport - ERROR -         "Error reading SSH protocol banner" + str(e)
+2025-12-28 23:33:53,288 - paramiko.transport - ERROR -     )
+2025-12-28 23:33:53,289 - paramiko.transport - ERROR - paramiko.ssh_exception.SSHException: Error reading SSH protocol banner
+2025-12-28 23:33:53,289 - paramiko.transport - ERROR - 
+2025-12-28 23:34:02,245 - paramiko.transport - INFO - Connected (version 2.0, client OpenSSH_10.2p1)
+2025-12-28 23:34:02,906 - paramiko.transport - INFO - Authentication (password) successful!
+2025-12-28 23:34:02,907 - tools.hybrid_tool_system - INFO - Updated SSH client for hybrid tool system
+2025-12-28 23:34:30,253 - werkzeug - INFO - 127.0.0.1 - - [28/Dec/2025 23:34:30] "GET /api/scan/status/53d898c8 HTTP/1.1" 200 -
+2025-12-28 23:35:41,346 - werkzeug - INFO - 127.0.0.1 - - [28/Dec/2025 23:35:41] "GET /api/scan/status/53d898c8 HTTP/1.1" 200 -
+2025-12-28 23:36:04,389 - werkzeug - INFO - 127.0.0.1 - - [28/Dec/2025 23:36:04] "GET /api/scan/status/53d898c8 HTTP/1.1" 200 -
+2025-12-28 23:37:59,620 - werkzeug - INFO - 127.0.0.1 - - [28/Dec/2025 23:37:59] "GET /api/scan/status/53d898c8 HTTP/1.1" 200 -
+2025-12-28 23:38:23,548 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-28 23:38:23,549 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-28 23:38:23,549 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-28 23:38:23,550 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-28 23:38:23,550 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-28 23:38:23,551 - core.scan_engine - INFO - Stop signal sent for 53d898c8
+2025-12-28 23:38:23,552 - werkzeug - INFO - 127.0.0.1 - - [28/Dec/2025 23:38:23] "POST /api/scan/stop/53d898c8 HTTP/1.1" 200 -
+2025-12-28 23:38:33,440 - api.scan_routes - INFO - Added scan c73a82ac to active_scans. Active scans count: 1
+2025-12-28 23:38:33,441 - api.scan_routes - INFO - Created scan c73a82ac for target https://demo.owasp-juice.shop
+2025-12-28 23:38:33,441 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-28 23:38:33,442 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-28 23:38:33,442 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-28 23:38:33,442 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-28 23:38:33,442 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-28 23:38:33,443 - core.scan_engine - INFO - start_scan called: scan_id=c73a82ac, target=https://demo.owasp-juice.shop
+2025-12-28 23:38:33,444 - core.scan_engine - INFO - Scan thread started for c73a82ac
+2025-12-28 23:38:33,444 - core.scan_engine - INFO - Started scan thread for c73a82ac
+2025-12-28 23:38:33,445 - core.scan_engine - INFO - Using RobustScanOrchestrator for scan c73a82ac
+2025-12-28 23:38:33,446 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-28 23:38:33,447 - api.scan_routes - INFO - Scan c73a82ac started successfully
+2025-12-28 23:38:33,447 - core.scan_engine - INFO - Starting robust scan for c73a82ac
+2025-12-28 23:38:33,448 - werkzeug - INFO - 127.0.0.1 - - [28/Dec/2025 23:38:33] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-28 23:38:33,449 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:38:33,451 - inference.progress_tracker - INFO - [Progress] Loaded historical data for better estimates
+2025-12-28 23:38:33,453 - inference.progress_tracker - INFO - [Progress] Scan c73a82ac started
+2025-12-28 23:38:33,453 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-28 23:38:33,457 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: reconnaissance
+2025-12-28 23:38:33,457 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-28 23:38:33,458 - inference.progress_tracker - INFO - [Progress] Phase started: reconnaissance
+2025-12-28 23:38:33,459 - inference.robust_orchestrator - INFO - [Orchestrator] Phase reconnaissance: 8 tools available
+2025-12-28 23:38:33,459 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:38:33,460 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nmap - Host discovery
+2025-12-28 23:38:33,460 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:38:33,461 - inference.tool_manager - INFO - Using hybrid system resolved command for nmap: nmap -sV -sC demo.owasp-juice.shop
+2025-12-28 23:38:33,462 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: demo.owasp-juice.shop -> http://demo.owasp-juice.shop
+2025-12-28 23:38:33,463 - inference.tool_manager - INFO - [ToolManager] Normalized target for nmap: demo.owasp-juice.shop -> demo.owasp-juice.shop
+2025-12-28 23:39:06,168 - inference.ollama_client - INFO - [OllamaClient] Model codellama:7b-instruct is available
+2025-12-28 23:39:08,182 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:39:10,199 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:39:10,702 - inference.robust_orchestrator - INFO - [Orchestrator] Phase time limit reached: 332.555968s
+2025-12-28 23:39:10,703 - inference.progress_tracker - INFO - [Progress] Phase completed: reconnaissance (332.6s)
+2025-12-28 23:39:10,703 - inference.robust_orchestrator - INFO - [Orchestrator] Phase reconnaissance complete:
+2025-12-28 23:39:10,703 - inference.robust_orchestrator - INFO -   Tools executed: 1
+2025-12-28 23:39:10,704 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-28 23:39:10,704 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-28 23:39:10,723 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: enumeration
+2025-12-28 23:39:10,723 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-28 23:39:10,724 - inference.progress_tracker - INFO - [Progress] Phase started: enumeration
+2025-12-28 23:39:10,725 - inference.robust_orchestrator - INFO - [Orchestrator] Phase enumeration: 10 tools available
+2025-12-28 23:39:10,725 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:39:10,726 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: gobuster - Directory bruteforce
+2025-12-28 23:39:10,726 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:39:10,727 - inference.tool_manager - INFO - Using hybrid system resolved command for gobuster: gobuster dir -u https://demo.owasp-juice.shop -w /usr/share/dirb/wordlists/common.txt
+2025-12-28 23:39:10,727 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:39:10,727 - inference.tool_manager - INFO - [ToolManager] Normalized target for gobuster: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:39:24,063 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:39:26,072 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:39:26,573 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:39:26,574 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: ffuf - Fuzzing
+2025-12-28 23:39:26,574 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:39:26,575 - inference.tool_manager - INFO - Using hybrid system resolved command for ffuf: ffuf -u https://demo.owasp-juice.shop/FUZZ -w /usr/share/dirb/wordlists/common.txt
+2025-12-28 23:39:26,576 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:39:26,576 - inference.tool_manager - INFO - [ToolManager] Normalized target for ffuf: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:39:41,927 - werkzeug - INFO - 127.0.0.1 - - [28/Dec/2025 23:39:41] "GET /api/scan/status/c73a82ac HTTP/1.1" 200 -
+2025-12-28 23:40:09,141 - werkzeug - INFO - 127.0.0.1 - - [28/Dec/2025 23:40:09] "GET /api/scan/status/c73a82ac HTTP/1.1" 200 -
+2025-12-28 23:41:29,328 - werkzeug - INFO - 127.0.0.1 - - [28/Dec/2025 23:41:29] "GET /api/scan/status/c73a82ac HTTP/1.1" 200 -
+2025-12-28 23:43:09,033 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-28 23:43:09,033 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-28 23:43:09,034 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-28 23:43:09,034 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-28 23:43:09,034 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-28 23:43:09,035 - core.scan_engine - INFO - Stop signal sent for c73a82ac
+2025-12-28 23:43:09,035 - werkzeug - INFO - 127.0.0.1 - - [28/Dec/2025 23:43:09] "POST /api/scan/stop/c73a82ac HTTP/1.1" 200 -
+2025-12-28 23:43:35,639 - inference.ollama_client - INFO - [OllamaClient] Model codellama:7b-instruct is available
+2025-12-28 23:43:37,387 - api.scan_routes - INFO - Added scan 4b46fcb9 to active_scans. Active scans count: 1
+2025-12-28 23:43:37,388 - api.scan_routes - INFO - Created scan 4b46fcb9 for target https://demo.owasp-juice.shop
+2025-12-28 23:43:37,388 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-28 23:43:37,388 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-28 23:43:37,389 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-28 23:43:37,389 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-28 23:43:37,389 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-28 23:43:37,390 - core.scan_engine - INFO - start_scan called: scan_id=4b46fcb9, target=https://demo.owasp-juice.shop
+2025-12-28 23:43:37,391 - core.scan_engine - INFO - Scan thread started for 4b46fcb9
+2025-12-28 23:43:37,392 - core.scan_engine - INFO - Started scan thread for 4b46fcb9
+2025-12-28 23:43:37,392 - core.scan_engine - INFO - Using RobustScanOrchestrator for scan 4b46fcb9
+2025-12-28 23:43:37,393 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-28 23:43:37,394 - core.scan_engine - INFO - Starting robust scan for 4b46fcb9
+2025-12-28 23:43:37,394 - api.scan_routes - INFO - Scan 4b46fcb9 started successfully
+2025-12-28 23:43:37,394 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:43:37,395 - werkzeug - INFO - 127.0.0.1 - - [28/Dec/2025 23:43:37] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-28 23:43:37,396 - inference.progress_tracker - INFO - [Progress] Loaded historical data for better estimates
+2025-12-28 23:43:37,398 - inference.progress_tracker - INFO - [Progress] Scan 4b46fcb9 started
+2025-12-28 23:43:37,398 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-28 23:43:37,400 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: reconnaissance
+2025-12-28 23:43:37,400 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-28 23:43:37,401 - inference.progress_tracker - INFO - [Progress] Phase started: reconnaissance
+2025-12-28 23:43:37,402 - inference.robust_orchestrator - INFO - [Orchestrator] Phase reconnaissance: 8 tools available
+2025-12-28 23:43:37,402 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:43:37,402 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nmap - Host discovery
+2025-12-28 23:43:37,403 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:43:37,403 - inference.tool_manager - INFO - Using hybrid system resolved command for nmap: nmap -sV -sC demo.owasp-juice.shop
+2025-12-28 23:43:37,404 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: demo.owasp-juice.shop -> http://demo.owasp-juice.shop
+2025-12-28 23:43:37,405 - inference.tool_manager - INFO - [ToolManager] Normalized target for nmap: demo.owasp-juice.shop -> demo.owasp-juice.shop
+2025-12-28 23:43:37,648 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:43:39,655 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:43:40,157 - inference.robust_orchestrator - INFO - [Orchestrator] Phase time limit reached: 306.697778s
+2025-12-28 23:43:40,157 - inference.progress_tracker - INFO - [Progress] Phase completed: reconnaissance (306.7s)
+2025-12-28 23:43:40,158 - inference.robust_orchestrator - INFO - [Orchestrator] Phase reconnaissance complete:
+2025-12-28 23:43:40,158 - inference.robust_orchestrator - INFO -   Tools executed: 1
+2025-12-28 23:43:40,159 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-28 23:43:40,159 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-28 23:43:40,159 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: enumeration
+2025-12-28 23:43:40,160 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-28 23:43:40,160 - inference.progress_tracker - INFO - [Progress] Phase started: enumeration
+2025-12-28 23:43:40,161 - inference.robust_orchestrator - INFO - [Orchestrator] Phase enumeration: 10 tools available
+2025-12-28 23:43:40,162 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:43:40,162 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: gobuster - Directory bruteforce
+2025-12-28 23:43:40,162 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:43:40,163 - inference.tool_manager - INFO - Using hybrid system resolved command for gobuster: gobuster dir -u https://demo.owasp-juice.shop -w /usr/share/dirb/wordlists/common.txt
+2025-12-28 23:43:40,164 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:43:40,165 - inference.tool_manager - INFO - [ToolManager] Normalized target for gobuster: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:43:56,936 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:43:58,955 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:43:59,457 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:43:59,457 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: ffuf - Fuzzing
+2025-12-28 23:43:59,458 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:43:59,459 - inference.tool_manager - INFO - Using hybrid system resolved command for ffuf: ffuf -u https://demo.owasp-juice.shop/FUZZ -w /usr/share/dirb/wordlists/common.txt
+2025-12-28 23:43:59,459 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:43:59,459 - inference.tool_manager - INFO - [ToolManager] Normalized target for ffuf: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:26,787 - inference.self_learning_parser - WARNING - [SelfLearningParser] Base parser error: invalid literal for int() with base 10: '\x1b[2K.htaccess'
+2025-12-28 23:44:28,805 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:44:30,815 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:44:31,350 - inference.robust_orchestrator - INFO - [Orchestrator] Phase time limit reached: 320.624674s
+2025-12-28 23:44:31,350 - inference.progress_tracker - INFO - [Progress] Phase completed: enumeration (320.6s)
+2025-12-28 23:44:31,351 - inference.robust_orchestrator - INFO - [Orchestrator] Phase enumeration complete:
+2025-12-28 23:44:31,351 - inference.robust_orchestrator - INFO -   Tools executed: 2
+2025-12-28 23:44:31,351 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-28 23:44:31,351 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-28 23:44:31,352 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: vulnerability_scan
+2025-12-28 23:44:31,352 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-28 23:44:31,353 - inference.progress_tracker - INFO - [Progress] Phase started: vulnerability_scan
+2025-12-28 23:44:31,353 - inference.robust_orchestrator - INFO - [Orchestrator] Phase vulnerability_scan: 10 tools available
+2025-12-28 23:44:31,353 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:31,354 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nuclei - CVE scanning
+2025-12-28 23:44:31,354 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:31,354 - inference.tool_manager - INFO - Using hybrid system resolved command for nuclei: nuclei -u https://demo.owasp-juice.shop -severity critical,high
+2025-12-28 23:44:31,355 - inference.tool_manager - INFO - [API] nuclei missing optional keys: ['GITHUB_TOKEN'] (tool will work with reduced functionality)
+2025-12-28 23:44:31,355 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:31,356 - inference.tool_manager - INFO - [ToolManager] Normalized target for nuclei: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:33,544 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:44:35,561 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:44:36,063 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:36,064 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nuclei - Vuln templates
+2025-12-28 23:44:36,064 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:36,065 - inference.tool_manager - INFO - Using hybrid system resolved command for nuclei: nuclei -u https://demo.owasp-juice.shop -severity critical,high
+2025-12-28 23:44:36,065 - inference.tool_manager - INFO - [API] nuclei missing optional keys: ['GITHUB_TOKEN'] (tool will work with reduced functionality)
+2025-12-28 23:44:36,065 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:36,066 - inference.tool_manager - INFO - [ToolManager] Normalized target for nuclei: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:38,231 - inference.ollama_client - INFO - [OllamaClient] Model codellama:7b-instruct is available
+2025-12-28 23:44:40,263 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:44:42,275 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:44:42,776 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:42,777 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nuclei - Exposure scanning
+2025-12-28 23:44:42,777 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:42,778 - inference.tool_manager - INFO - Using hybrid system resolved command for nuclei: nuclei -u https://demo.owasp-juice.shop -severity critical,high
+2025-12-28 23:44:42,779 - inference.tool_manager - INFO - [API] nuclei missing optional keys: ['GITHUB_TOKEN'] (tool will work with reduced functionality)
+2025-12-28 23:44:42,779 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:42,780 - inference.tool_manager - INFO - [ToolManager] Normalized target for nuclei: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:44,961 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:44:46,968 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:44:47,470 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:47,470 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: sqlmap - SQL injection
+2025-12-28 23:44:47,471 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:47,471 - inference.tool_manager - INFO - Using hybrid system resolved command for sqlmap: sqlmap -u https://demo.owasp-juice.shop/rest/products/search?q=test --batch --random-agent
+2025-12-28 23:44:47,472 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop/rest/products/search?q=test -> https://demo.owasp-juice.shop
+2025-12-28 23:44:47,472 - inference.tool_manager - INFO - [ToolManager] Normalized target for sqlmap: https://demo.owasp-juice.shop/rest/products/search?q=test -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2025-12-28 23:44:49,644 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:44:51,663 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:44:52,164 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:52,165 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: xsstrike - XSS scanning
+2025-12-28 23:44:52,166 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:52,167 - inference.tool_manager - INFO - Using hybrid system resolved command for xsstrike: xsstrike https://demo.owasp-juice.shop
+2025-12-28 23:44:52,167 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:52,168 - inference.tool_manager - INFO - [ToolManager] Normalized target for xsstrike: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:54,334 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:44:56,363 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:44:56,864 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:56,864 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: commix - Command injection
+2025-12-28 23:44:56,865 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:44:56,865 - inference.tool_manager - INFO - Using hybrid system resolved command for commix: commix --url=https://demo.owasp-juice.shop/rest/products/search?q=test --batch
+2025-12-28 23:44:56,866 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop/rest/products/search?q=test -> https://demo.owasp-juice.shop
+2025-12-28 23:44:56,866 - inference.tool_manager - INFO - [ToolManager] Normalized target for commix: https://demo.owasp-juice.shop/rest/products/search?q=test -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2025-12-28 23:44:59,044 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:45:01,054 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:45:01,555 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:45:01,556 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: ssrf-sheriff - SSRF scanning
+2025-12-28 23:45:01,556 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:45:01,557 - inference.tool_manager - INFO - Using hybrid system resolved command for ssrf-sheriff: ssrf-sheriff https://demo.owasp-juice.shop
+2025-12-28 23:45:01,558 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:45:01,558 - inference.tool_manager - INFO - [ToolManager] Normalized target for ssrf-sheriff: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:45:03,738 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:45:05,746 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:45:06,248 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:45:06,250 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: lfi-suite - LFI scanning
+2025-12-28 23:45:06,251 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:45:06,252 - inference.tool_manager - INFO - Using hybrid system resolved command for lfi-suite: lfi-suite https://demo.owasp-juice.shop
+2025-12-28 23:45:06,253 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:45:06,253 - inference.tool_manager - INFO - [ToolManager] Normalized target for lfi-suite: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:45:08,440 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:45:10,449 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:45:10,950 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:45:10,951 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: sslscan - SSL analysis
+2025-12-28 23:45:10,951 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:45:10,952 - inference.tool_manager - INFO - Using hybrid system resolved command for sslscan: sslscan demo.owasp-juice.shop
+2025-12-28 23:45:10,953 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: demo.owasp-juice.shop -> http://demo.owasp-juice.shop
+2025-12-28 23:45:10,953 - inference.tool_manager - INFO - [ToolManager] Normalized target for sslscan: demo.owasp-juice.shop -> demo.owasp-juice.shop
+2025-12-28 23:45:41,293 - werkzeug - INFO - 127.0.0.1 - - [28/Dec/2025 23:45:41] "GET /api/scan/status/4b46fcb9 HTTP/1.1" 200 -
+2025-12-28 23:46:12,545 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:46:12,545 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: testssl - TLS testing
+2025-12-28 23:46:12,546 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:46:12,546 - inference.tool_manager - INFO - Using hybrid system resolved command for testssl: testssl https://demo.owasp-juice.shop
+2025-12-28 23:46:12,547 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:46:12,547 - inference.tool_manager - INFO - [ToolManager] Normalized target for testssl: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:46:14,726 - inference.ollama_client - INFO - [OllamaClient] Model codellama:7b-instruct is available
+2025-12-28 23:46:16,737 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:46:18,760 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:46:19,261 - inference.progress_tracker - INFO - [Progress] Phase completed: vulnerability_scan (107.9s)
+2025-12-28 23:46:19,261 - inference.robust_orchestrator - INFO - [Orchestrator] Phase vulnerability_scan complete:
+2025-12-28 23:46:19,262 - inference.robust_orchestrator - INFO -   Tools executed: 10
+2025-12-28 23:46:19,262 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-28 23:46:19,262 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-28 23:46:19,263 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: exploitation
+2025-12-28 23:46:19,263 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-28 23:46:19,263 - inference.progress_tracker - INFO - [Progress] Phase started: exploitation
+2025-12-28 23:46:19,264 - inference.robust_orchestrator - INFO - [Orchestrator] === EXPLOITATION PHASE ===
+2025-12-28 23:46:19,264 - inference.robust_orchestrator - WARNING - [Orchestrator] No findings to exploit
+2025-12-28 23:46:19,264 - inference.progress_tracker - INFO - [Progress] Phase completed: exploitation (0.0s)
+2025-12-28 23:46:19,265 - inference.robust_orchestrator - INFO - [Orchestrator] Phase exploitation complete:
+2025-12-28 23:46:19,265 - inference.robust_orchestrator - INFO -   Tools executed: 0
+2025-12-28 23:46:19,265 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-28 23:46:19,266 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-28 23:46:19,266 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: post_exploitation
+2025-12-28 23:46:19,266 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-28 23:46:19,267 - inference.progress_tracker - INFO - [Progress] Phase started: post_exploitation
+2025-12-28 23:46:19,267 - inference.robust_orchestrator - INFO - [Orchestrator] === POST-EXPLOITATION PHASE ===
+2025-12-28 23:46:19,267 - inference.robust_orchestrator - INFO - [Orchestrator] No sessions for post-exploitation
+2025-12-28 23:46:19,268 - inference.progress_tracker - INFO - [Progress] Phase completed: post_exploitation (0.0s)
+2025-12-28 23:46:19,269 - inference.robust_orchestrator - INFO - [Orchestrator] Phase post_exploitation complete:
+2025-12-28 23:46:19,269 - inference.robust_orchestrator - INFO -   Tools executed: 0
+2025-12-28 23:46:19,269 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-28 23:46:19,272 - inference.progress_tracker - INFO - [Progress] Scan 53d898c8 completed
+2025-12-28 23:46:19,274 - core.scan_engine - INFO - Scan completed: 0 findings
+2025-12-28 23:46:19,274 - core.scan_engine - INFO - Scan 53d898c8 was stopped by user
+2025-12-28 23:46:19,277 - core.scan_engine - INFO - Scan 53d898c8 results: 0 findings, 0 tools executed
+2025-12-28 23:46:31,986 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-28 23:46:31,986 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-28 23:46:31,986 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-28 23:46:31,987 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-28 23:46:31,987 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-28 23:46:31,988 - core.scan_engine - INFO - Stop signal sent for 4b46fcb9
+2025-12-28 23:46:31,989 - werkzeug - INFO - 127.0.0.1 - - [28/Dec/2025 23:46:31] "POST /api/scan/stop/4b46fcb9 HTTP/1.1" 200 -
+2025-12-28 23:48:39,541 - inference.ollama_client - INFO - [OllamaClient] Model codellama:7b-instruct is available
+2025-12-28 23:48:41,592 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:48:43,600 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:48:44,101 - inference.robust_orchestrator - INFO - [Orchestrator] Phase time limit reached: 306.699856s
+2025-12-28 23:48:44,102 - inference.progress_tracker - INFO - [Progress] Phase completed: reconnaissance (306.7s)
+2025-12-28 23:48:44,102 - inference.robust_orchestrator - INFO - [Orchestrator] Phase reconnaissance complete:
+2025-12-28 23:48:44,103 - inference.robust_orchestrator - INFO -   Tools executed: 1
+2025-12-28 23:48:44,103 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-28 23:48:44,103 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-28 23:48:44,104 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: enumeration
+2025-12-28 23:48:44,104 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-28 23:48:44,104 - inference.progress_tracker - INFO - [Progress] Phase started: enumeration
+2025-12-28 23:48:44,105 - inference.robust_orchestrator - INFO - [Orchestrator] Phase enumeration: 10 tools available
+2025-12-28 23:48:44,105 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:48:44,106 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: gobuster - Directory bruteforce
+2025-12-28 23:48:44,106 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:48:44,107 - inference.tool_manager - INFO - Using hybrid system resolved command for gobuster: gobuster dir -u https://demo.owasp-juice.shop -w /usr/share/dirb/wordlists/common.txt
+2025-12-28 23:48:44,107 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:48:44,108 - inference.tool_manager - INFO - [ToolManager] Normalized target for gobuster: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:48:56,245 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:48:58,277 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:48:58,778 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:48:58,779 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: ffuf - Fuzzing
+2025-12-28 23:48:58,779 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:48:58,780 - inference.tool_manager - INFO - Using hybrid system resolved command for ffuf: ffuf -u https://demo.owasp-juice.shop/FUZZ -w /usr/share/dirb/wordlists/common.txt
+2025-12-28 23:48:58,780 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:48:58,781 - inference.tool_manager - INFO - [ToolManager] Normalized target for ffuf: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:48:59,598 - inference.self_learning_parser - WARNING - [SelfLearningParser] Base parser error: invalid literal for int() with base 10: '\x1b[2K.htaccess'
+2025-12-28 23:49:01,616 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:49:03,625 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:49:04,170 - inference.robust_orchestrator - INFO - [Orchestrator] Phase time limit reached: 324.00918s
+2025-12-28 23:49:04,171 - inference.progress_tracker - INFO - [Progress] Phase completed: enumeration (324.0s)
+2025-12-28 23:49:04,172 - inference.robust_orchestrator - INFO - [Orchestrator] Phase enumeration complete:
+2025-12-28 23:49:04,172 - inference.robust_orchestrator - INFO -   Tools executed: 2
+2025-12-28 23:49:04,173 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-28 23:49:04,173 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-28 23:49:04,173 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: vulnerability_scan
+2025-12-28 23:49:04,174 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-28 23:49:04,174 - inference.progress_tracker - INFO - [Progress] Phase started: vulnerability_scan
+2025-12-28 23:49:04,175 - inference.robust_orchestrator - INFO - [Orchestrator] Phase vulnerability_scan: 10 tools available
+2025-12-28 23:49:04,175 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:04,175 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nuclei - CVE scanning
+2025-12-28 23:49:04,176 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:04,176 - inference.tool_manager - INFO - Using hybrid system resolved command for nuclei: nuclei -u https://demo.owasp-juice.shop -severity critical,high
+2025-12-28 23:49:04,177 - inference.tool_manager - INFO - [API] nuclei missing optional keys: ['GITHUB_TOKEN'] (tool will work with reduced functionality)
+2025-12-28 23:49:04,178 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:04,178 - inference.tool_manager - INFO - [ToolManager] Normalized target for nuclei: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:06,357 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:49:08,386 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:49:08,888 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:08,888 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nuclei - Vuln templates
+2025-12-28 23:49:08,889 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:08,890 - inference.tool_manager - INFO - Using hybrid system resolved command for nuclei: nuclei -u https://demo.owasp-juice.shop -severity critical,high
+2025-12-28 23:49:08,891 - inference.tool_manager - INFO - [API] nuclei missing optional keys: ['GITHUB_TOKEN'] (tool will work with reduced functionality)
+2025-12-28 23:49:08,891 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:08,892 - inference.tool_manager - INFO - [ToolManager] Normalized target for nuclei: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:11,083 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:49:13,094 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:49:13,595 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:13,596 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nuclei - Exposure scanning
+2025-12-28 23:49:13,597 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:13,597 - inference.tool_manager - INFO - Using hybrid system resolved command for nuclei: nuclei -u https://demo.owasp-juice.shop -severity critical,high
+2025-12-28 23:49:13,598 - inference.tool_manager - INFO - [API] nuclei missing optional keys: ['GITHUB_TOKEN'] (tool will work with reduced functionality)
+2025-12-28 23:49:13,598 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:13,599 - inference.tool_manager - INFO - [ToolManager] Normalized target for nuclei: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:15,773 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:49:17,791 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:49:18,293 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:18,293 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: sqlmap - SQL injection
+2025-12-28 23:49:18,294 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:18,295 - inference.tool_manager - INFO - Using hybrid system resolved command for sqlmap: sqlmap -u https://demo.owasp-juice.shop/rest/products/search?q=test --batch --random-agent
+2025-12-28 23:49:18,295 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop/rest/products/search?q=test -> https://demo.owasp-juice.shop
+2025-12-28 23:49:18,296 - inference.tool_manager - INFO - [ToolManager] Normalized target for sqlmap: https://demo.owasp-juice.shop/rest/products/search?q=test -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2025-12-28 23:49:20,460 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:49:22,471 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:49:22,973 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:22,974 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: xsstrike - XSS scanning
+2025-12-28 23:49:22,975 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:22,975 - inference.tool_manager - INFO - Using hybrid system resolved command for xsstrike: xsstrike https://demo.owasp-juice.shop
+2025-12-28 23:49:22,976 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:22,976 - inference.tool_manager - INFO - [ToolManager] Normalized target for xsstrike: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:25,127 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:49:27,137 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:49:27,639 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:27,639 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: commix - Command injection
+2025-12-28 23:49:27,639 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:27,640 - inference.tool_manager - INFO - Using hybrid system resolved command for commix: commix --url=https://demo.owasp-juice.shop/rest/products/search?q=test --batch
+2025-12-28 23:49:27,640 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop/rest/products/search?q=test -> https://demo.owasp-juice.shop
+2025-12-28 23:49:27,641 - inference.tool_manager - INFO - [ToolManager] Normalized target for commix: https://demo.owasp-juice.shop/rest/products/search?q=test -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2025-12-28 23:49:29,807 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:49:31,818 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:49:32,320 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:32,320 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: ssrf-sheriff - SSRF scanning
+2025-12-28 23:49:32,320 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:32,321 - inference.tool_manager - INFO - Using hybrid system resolved command for ssrf-sheriff: ssrf-sheriff https://demo.owasp-juice.shop
+2025-12-28 23:49:32,321 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:32,322 - inference.tool_manager - INFO - [ToolManager] Normalized target for ssrf-sheriff: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:34,514 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:49:36,523 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:49:37,024 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:37,024 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: lfi-suite - LFI scanning
+2025-12-28 23:49:37,025 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:37,026 - inference.tool_manager - INFO - Using hybrid system resolved command for lfi-suite: lfi-suite https://demo.owasp-juice.shop
+2025-12-28 23:49:37,026 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:37,027 - inference.tool_manager - INFO - [ToolManager] Normalized target for lfi-suite: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:39,180 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:49:41,187 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:49:41,688 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:41,689 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: sslscan - SSL analysis
+2025-12-28 23:49:41,689 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:49:41,690 - inference.tool_manager - INFO - Using hybrid system resolved command for sslscan: sslscan demo.owasp-juice.shop
+2025-12-28 23:49:41,690 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: demo.owasp-juice.shop -> http://demo.owasp-juice.shop
+2025-12-28 23:49:41,691 - inference.tool_manager - INFO - [ToolManager] Normalized target for sslscan: demo.owasp-juice.shop -> demo.owasp-juice.shop
+2025-12-28 23:51:04,788 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:51:04,789 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: testssl - TLS testing
+2025-12-28 23:51:04,789 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:51:04,790 - inference.tool_manager - INFO - Using hybrid system resolved command for testssl: testssl https://demo.owasp-juice.shop
+2025-12-28 23:51:04,790 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:51:04,791 - inference.tool_manager - INFO - [ToolManager] Normalized target for testssl: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:51:06,947 - inference.ollama_client - INFO - [OllamaClient] Model codellama:7b-instruct is available
+2025-12-28 23:51:08,956 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:51:10,966 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:51:11,467 - inference.progress_tracker - INFO - [Progress] Phase completed: vulnerability_scan (127.3s)
+2025-12-28 23:51:11,468 - inference.robust_orchestrator - INFO - [Orchestrator] Phase vulnerability_scan complete:
+2025-12-28 23:51:11,468 - inference.robust_orchestrator - INFO -   Tools executed: 10
+2025-12-28 23:51:11,469 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-28 23:51:11,470 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-28 23:51:11,470 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: exploitation
+2025-12-28 23:51:11,471 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-28 23:51:11,471 - inference.progress_tracker - INFO - [Progress] Phase started: exploitation
+2025-12-28 23:51:11,472 - inference.robust_orchestrator - INFO - [Orchestrator] === EXPLOITATION PHASE ===
+2025-12-28 23:51:11,472 - inference.robust_orchestrator - WARNING - [Orchestrator] No findings to exploit
+2025-12-28 23:51:11,473 - inference.progress_tracker - INFO - [Progress] Phase completed: exploitation (0.0s)
+2025-12-28 23:51:11,473 - inference.robust_orchestrator - INFO - [Orchestrator] Phase exploitation complete:
+2025-12-28 23:51:11,473 - inference.robust_orchestrator - INFO -   Tools executed: 0
+2025-12-28 23:51:11,474 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-28 23:51:11,475 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-28 23:51:11,475 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: post_exploitation
+2025-12-28 23:51:11,475 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-28 23:51:11,476 - inference.progress_tracker - INFO - [Progress] Phase started: post_exploitation
+2025-12-28 23:51:11,476 - inference.robust_orchestrator - INFO - [Orchestrator] === POST-EXPLOITATION PHASE ===
+2025-12-28 23:51:11,477 - inference.robust_orchestrator - INFO - [Orchestrator] No sessions for post-exploitation
+2025-12-28 23:51:11,477 - inference.progress_tracker - INFO - [Progress] Phase completed: post_exploitation (0.0s)
+2025-12-28 23:51:11,478 - inference.robust_orchestrator - INFO - [Orchestrator] Phase post_exploitation complete:
+2025-12-28 23:51:11,478 - inference.robust_orchestrator - INFO -   Tools executed: 0
+2025-12-28 23:51:11,479 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-28 23:51:11,481 - inference.progress_tracker - INFO - [Progress] Scan c73a82ac completed
+2025-12-28 23:51:11,482 - core.scan_engine - INFO - Scan completed: 0 findings
+2025-12-28 23:51:11,482 - core.scan_engine - INFO - Scan c73a82ac was stopped by user
+2025-12-28 23:51:11,484 - core.scan_engine - INFO - Scan c73a82ac results: 0 findings, 0 tools executed
+2025-12-28 23:53:58,942 - inference.self_learning_parser - WARNING - [SelfLearningParser] Base parser error: invalid literal for int() with base 10: '\x1b[2K.htpasswd'
+2025-12-28 23:54:00,962 - inference.ollama_client - INFO - [OllamaClient] Model codellama:7b-instruct is available
+2025-12-28 23:54:02,992 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:54:05,022 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:54:05,569 - inference.robust_orchestrator - INFO - [Orchestrator] Phase time limit reached: 321.464279s
+2025-12-28 23:54:05,577 - inference.progress_tracker - INFO - [Progress] Phase completed: enumeration (321.5s)
+2025-12-28 23:54:05,578 - inference.robust_orchestrator - INFO - [Orchestrator] Phase enumeration complete:
+2025-12-28 23:54:05,582 - inference.robust_orchestrator - INFO -   Tools executed: 2
+2025-12-28 23:54:05,584 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-28 23:54:05,606 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-28 23:54:05,609 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: vulnerability_scan
+2025-12-28 23:54:05,609 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-28 23:54:05,610 - inference.progress_tracker - INFO - [Progress] Phase started: vulnerability_scan
+2025-12-28 23:54:05,610 - inference.robust_orchestrator - INFO - [Orchestrator] Phase vulnerability_scan: 10 tools available
+2025-12-28 23:54:05,611 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:05,611 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nuclei - CVE scanning
+2025-12-28 23:54:05,612 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:05,612 - inference.tool_manager - INFO - Using hybrid system resolved command for nuclei: nuclei -u https://demo.owasp-juice.shop -severity critical,high
+2025-12-28 23:54:05,613 - inference.tool_manager - INFO - [API] nuclei missing optional keys: ['GITHUB_TOKEN'] (tool will work with reduced functionality)
+2025-12-28 23:54:05,613 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:05,614 - inference.tool_manager - INFO - [ToolManager] Normalized target for nuclei: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:07,792 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:54:09,811 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:54:10,314 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:10,314 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nuclei - Vuln templates
+2025-12-28 23:54:10,314 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:10,315 - inference.tool_manager - INFO - Using hybrid system resolved command for nuclei: nuclei -u https://demo.owasp-juice.shop -severity critical,high
+2025-12-28 23:54:10,315 - inference.tool_manager - INFO - [API] nuclei missing optional keys: ['GITHUB_TOKEN'] (tool will work with reduced functionality)
+2025-12-28 23:54:10,316 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:10,316 - inference.tool_manager - INFO - [ToolManager] Normalized target for nuclei: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:12,482 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:54:14,495 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:54:14,998 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:14,999 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nuclei - Exposure scanning
+2025-12-28 23:54:14,999 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:15,000 - inference.tool_manager - INFO - Using hybrid system resolved command for nuclei: nuclei -u https://demo.owasp-juice.shop -severity critical,high
+2025-12-28 23:54:15,001 - inference.tool_manager - INFO - [API] nuclei missing optional keys: ['GITHUB_TOKEN'] (tool will work with reduced functionality)
+2025-12-28 23:54:15,001 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:15,002 - inference.tool_manager - INFO - [ToolManager] Normalized target for nuclei: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:17,155 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:54:19,163 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:54:19,665 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:19,666 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: sqlmap - SQL injection
+2025-12-28 23:54:19,666 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:19,667 - inference.tool_manager - INFO - Using hybrid system resolved command for sqlmap: sqlmap -u https://demo.owasp-juice.shop/rest/products/search?q=test --batch --random-agent
+2025-12-28 23:54:19,668 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop/rest/products/search?q=test -> https://demo.owasp-juice.shop
+2025-12-28 23:54:19,668 - inference.tool_manager - INFO - [ToolManager] Normalized target for sqlmap: https://demo.owasp-juice.shop/rest/products/search?q=test -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2025-12-28 23:54:21,847 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:54:23,859 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:54:24,361 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:24,361 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: xsstrike - XSS scanning
+2025-12-28 23:54:24,362 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:24,362 - inference.tool_manager - INFO - Using hybrid system resolved command for xsstrike: xsstrike https://demo.owasp-juice.shop
+2025-12-28 23:54:24,362 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:24,363 - inference.tool_manager - INFO - [ToolManager] Normalized target for xsstrike: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:26,528 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:54:28,562 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:54:29,064 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:29,064 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: commix - Command injection
+2025-12-28 23:54:29,065 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:29,066 - inference.tool_manager - INFO - Using hybrid system resolved command for commix: commix --url=https://demo.owasp-juice.shop/rest/products/search?q=test --batch
+2025-12-28 23:54:29,066 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop/rest/products/search?q=test -> https://demo.owasp-juice.shop
+2025-12-28 23:54:29,066 - inference.tool_manager - INFO - [ToolManager] Normalized target for commix: https://demo.owasp-juice.shop/rest/products/search?q=test -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2025-12-28 23:54:31,255 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:54:33,273 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:54:33,776 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:33,777 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: ssrf-sheriff - SSRF scanning
+2025-12-28 23:54:33,777 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:33,778 - inference.tool_manager - INFO - Using hybrid system resolved command for ssrf-sheriff: ssrf-sheriff https://demo.owasp-juice.shop
+2025-12-28 23:54:33,778 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:33,779 - inference.tool_manager - INFO - [ToolManager] Normalized target for ssrf-sheriff: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:35,979 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:54:38,006 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:54:38,508 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:38,508 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: lfi-suite - LFI scanning
+2025-12-28 23:54:38,509 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:38,509 - inference.tool_manager - INFO - Using hybrid system resolved command for lfi-suite: lfi-suite https://demo.owasp-juice.shop
+2025-12-28 23:54:38,510 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:38,510 - inference.tool_manager - INFO - [ToolManager] Normalized target for lfi-suite: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:40,682 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:54:42,693 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:54:43,195 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:43,195 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: sslscan - SSL analysis
+2025-12-28 23:54:43,196 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:54:43,196 - inference.tool_manager - INFO - Using hybrid system resolved command for sslscan: sslscan demo.owasp-juice.shop
+2025-12-28 23:54:43,197 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: demo.owasp-juice.shop -> http://demo.owasp-juice.shop
+2025-12-28 23:54:43,197 - inference.tool_manager - INFO - [ToolManager] Normalized target for sslscan: demo.owasp-juice.shop -> demo.owasp-juice.shop
+2025-12-28 23:56:01,419 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:56:01,420 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: testssl - TLS testing
+2025-12-28 23:56:01,420 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:56:01,421 - inference.tool_manager - INFO - Using hybrid system resolved command for testssl: testssl https://demo.owasp-juice.shop
+2025-12-28 23:56:01,422 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:56:01,422 - inference.tool_manager - INFO - [ToolManager] Normalized target for testssl: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2025-12-28 23:56:03,600 - inference.ollama_client - INFO - [OllamaClient] Model codellama:7b-instruct is available
+2025-12-28 23:56:05,615 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:56:07,628 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-28 23:56:08,132 - inference.progress_tracker - INFO - [Progress] Phase completed: vulnerability_scan (122.5s)
+2025-12-28 23:56:08,132 - inference.robust_orchestrator - INFO - [Orchestrator] Phase vulnerability_scan complete:
+2025-12-28 23:56:08,133 - inference.robust_orchestrator - INFO -   Tools executed: 10
+2025-12-28 23:56:08,133 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-28 23:56:08,134 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-28 23:56:08,134 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: exploitation
+2025-12-28 23:56:08,134 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-28 23:56:08,134 - inference.progress_tracker - INFO - [Progress] Phase started: exploitation
+2025-12-28 23:56:08,135 - inference.robust_orchestrator - INFO - [Orchestrator] === EXPLOITATION PHASE ===
+2025-12-28 23:56:08,135 - inference.robust_orchestrator - WARNING - [Orchestrator] No findings to exploit
+2025-12-28 23:56:08,136 - inference.progress_tracker - INFO - [Progress] Phase completed: exploitation (0.0s)
+2025-12-28 23:56:08,136 - inference.robust_orchestrator - INFO - [Orchestrator] Phase exploitation complete:
+2025-12-28 23:56:08,136 - inference.robust_orchestrator - INFO -   Tools executed: 0
+2025-12-28 23:56:08,136 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-28 23:56:08,137 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-28 23:56:08,137 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: post_exploitation
+2025-12-28 23:56:08,137 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-28 23:56:08,138 - inference.progress_tracker - INFO - [Progress] Phase started: post_exploitation
+2025-12-28 23:56:08,138 - inference.robust_orchestrator - INFO - [Orchestrator] === POST-EXPLOITATION PHASE ===
+2025-12-28 23:56:08,139 - inference.robust_orchestrator - INFO - [Orchestrator] No sessions for post-exploitation
+2025-12-28 23:56:08,140 - inference.progress_tracker - INFO - [Progress] Phase completed: post_exploitation (0.0s)
+2025-12-28 23:56:08,140 - inference.robust_orchestrator - INFO - [Orchestrator] Phase post_exploitation complete:
+2025-12-28 23:56:08,141 - inference.robust_orchestrator - INFO -   Tools executed: 0
+2025-12-28 23:56:08,141 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-28 23:56:08,147 - inference.progress_tracker - INFO - [Progress] Scan 4b46fcb9 completed
+2025-12-28 23:56:08,148 - core.scan_engine - INFO - Scan completed: 0 findings
+2025-12-28 23:56:08,148 - core.scan_engine - INFO - Scan 4b46fcb9 was stopped by user
+2025-12-28 23:56:08,150 - core.scan_engine - INFO - Scan 4b46fcb9 results: 0 findings, 0 tools executed
+2025-12-29 00:00:17,283 - api.scan_routes - INFO - Added scan a1553ca6 to active_scans. Active scans count: 1
+2025-12-29 00:00:17,284 - api.scan_routes - INFO - Created scan a1553ca6 for target https://httpbin.org
+2025-12-29 00:00:17,285 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-29 00:00:17,286 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-29 00:00:17,287 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-29 00:00:17,287 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-29 00:00:17,288 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-29 00:00:17,289 - core.scan_engine - INFO - start_scan called: scan_id=a1553ca6, target=https://httpbin.org
+2025-12-29 00:00:17,290 - core.scan_engine - INFO - Scan thread started for a1553ca6
+2025-12-29 00:00:17,291 - core.scan_engine - INFO - Started scan thread for a1553ca6
+2025-12-29 00:00:17,291 - core.scan_engine - INFO - Using RobustScanOrchestrator for scan a1553ca6
+2025-12-29 00:00:17,292 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-29 00:00:17,292 - core.scan_engine - INFO - Starting robust scan for a1553ca6
+2025-12-29 00:00:17,293 - api.scan_routes - INFO - Scan a1553ca6 started successfully
+2025-12-29 00:00:17,293 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:00:17,294 - werkzeug - INFO - 127.0.0.1 - - [29/Dec/2025 00:00:17] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-29 00:00:17,295 - inference.progress_tracker - INFO - [Progress] Loaded historical data for better estimates
+2025-12-29 00:00:17,298 - inference.progress_tracker - INFO - [Progress] Scan a1553ca6 started
+2025-12-29 00:00:17,298 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-29 00:00:17,299 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: reconnaissance
+2025-12-29 00:00:17,299 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-29 00:00:17,300 - inference.progress_tracker - INFO - [Progress] Phase started: reconnaissance
+2025-12-29 00:00:17,301 - inference.robust_orchestrator - INFO - [Orchestrator] Phase reconnaissance: 8 tools available
+2025-12-29 00:00:17,302 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:00:17,303 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nmap - Host discovery
+2025-12-29 00:00:17,303 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:00:17,305 - inference.tool_manager - INFO - Using hybrid system resolved command for nmap: nmap -sV -sC httpbin.org
+2025-12-29 00:00:17,307 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: httpbin.org -> http://httpbin.org
+2025-12-29 00:00:17,307 - inference.tool_manager - INFO - [ToolManager] Normalized target for nmap: httpbin.org -> httpbin.org
+2025-12-29 00:01:21,821 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:01:21,821 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nmap - Full port scan
+2025-12-29 00:01:21,822 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:01:21,822 - inference.tool_manager - INFO - Using hybrid system resolved command for nmap: nmap -sV -sC httpbin.org
+2025-12-29 00:01:21,823 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: httpbin.org -> http://httpbin.org
+2025-12-29 00:01:21,823 - inference.tool_manager - INFO - [ToolManager] Normalized target for nmap: httpbin.org -> httpbin.org
+2025-12-29 00:02:25,797 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:02:25,797 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: nmap - UDP scan
+2025-12-29 00:02:25,798 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:02:25,798 - inference.tool_manager - INFO - Using hybrid system resolved command for nmap: nmap -sV -sC httpbin.org
+2025-12-29 00:02:25,799 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: httpbin.org -> http://httpbin.org
+2025-12-29 00:02:25,800 - inference.tool_manager - INFO - [ToolManager] Normalized target for nmap: httpbin.org -> httpbin.org
+2025-12-29 00:02:31,737 - werkzeug - INFO - 127.0.0.1 - - [29/Dec/2025 00:02:31] "GET /api/scan/status/a1553ca6 HTTP/1.1" 200 -
+2025-12-29 00:03:23,261 - werkzeug - INFO - 127.0.0.1 - - [29/Dec/2025 00:03:23] "GET /api/scan/status/a1553ca6 HTTP/1.1" 200 -
+2025-12-29 00:03:36,609 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:03:36,610 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: whatweb - Web fingerprinting
+2025-12-29 00:03:36,611 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:03:36,611 - inference.tool_manager - INFO - Using hybrid system resolved command for whatweb: whatweb https://httpbin.org
+2025-12-29 00:03:36,612 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:03:36,613 - inference.tool_manager - INFO - [ToolManager] Normalized target for whatweb: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:11,245 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:11,246 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: dig - DNS enumeration
+2025-12-29 00:04:11,246 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:11,246 - inference.tool_manager - INFO - Using hybrid system resolved command for dig: dig https://httpbin.org
+2025-12-29 00:04:11,247 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:11,247 - inference.tool_manager - INFO - [ToolManager] Normalized target for dig: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:13,711 - inference.ollama_client - INFO - [OllamaClient] Model codellama:7b-instruct is available
+2025-12-29 00:04:15,731 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-29 00:04:17,751 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-29 00:04:18,255 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:18,255 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: whois - WHOIS lookup
+2025-12-29 00:04:18,256 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:18,256 - inference.tool_manager - INFO - Using hybrid system resolved command for whois: whois https://httpbin.org
+2025-12-29 00:04:18,257 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:18,257 - inference.tool_manager - INFO - [ToolManager] Normalized target for whois: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:20,422 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-29 00:04:22,440 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-29 00:04:22,944 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:22,944 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: curl - HTTP headers
+2025-12-29 00:04:22,945 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:22,946 - inference.tool_manager - INFO - Using hybrid system resolved command for curl: curl https://httpbin.org
+2025-12-29 00:04:22,946 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:22,946 - inference.tool_manager - INFO - [ToolManager] Normalized target for curl: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:26,926 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-29 00:04:28,933 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-29 00:04:29,437 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:29,437 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: wafw00f - WAF detection
+2025-12-29 00:04:29,438 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:29,439 - inference.tool_manager - INFO - Using hybrid system resolved command for wafw00f: wafw00f https://httpbin.org
+2025-12-29 00:04:29,439 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:29,439 - inference.tool_manager - INFO - [ToolManager] Normalized target for wafw00f: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:45,891 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-29 00:04:47,909 - inference.ollama_client - ERROR - [OllamaClient] Ollama API error: 404
+2025-12-29 00:04:48,411 - inference.progress_tracker - INFO - [Progress] Phase completed: reconnaissance (271.1s)
+2025-12-29 00:04:48,411 - inference.robust_orchestrator - INFO - [Orchestrator] Phase reconnaissance complete:
+2025-12-29 00:04:48,412 - inference.robust_orchestrator - INFO -   Tools executed: 8
+2025-12-29 00:04:48,412 - inference.robust_orchestrator - INFO -   Total findings: 0
+2025-12-29 00:04:48,413 - inference.robust_orchestrator - INFO - 
+==================================================
+2025-12-29 00:04:48,413 - inference.robust_orchestrator - INFO - [Orchestrator] PHASE: enumeration
+2025-12-29 00:04:48,413 - inference.robust_orchestrator - INFO - ==================================================
+2025-12-29 00:04:48,414 - inference.progress_tracker - INFO - [Progress] Phase started: enumeration
+2025-12-29 00:04:48,414 - inference.robust_orchestrator - INFO - [Orchestrator] Phase enumeration: 10 tools available
+2025-12-29 00:04:48,415 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:48,415 - inference.robust_orchestrator - INFO - [Orchestrator] Executing: gobuster - Directory bruteforce
+2025-12-29 00:04:48,415 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:48,416 - inference.tool_manager - INFO - Using hybrid system resolved command for gobuster: gobuster dir -u https://httpbin.org -w /usr/share/dirb/wordlists/common.txt
+2025-12-29 00:04:48,416 - inference.target_normalizer - INFO - [TargetNormalizer] Normalized: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:04:48,417 - inference.tool_manager - INFO - [ToolManager] Normalized target for gobuster: https://httpbin.org -> https://httpbin.org
+2025-12-29 00:06:28,795 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-29 00:06:28,796 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-29 00:06:28,796 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-29 00:06:28,797 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-29 00:06:28,797 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-29 00:06:28,798 - core.scan_engine - INFO - Stop signal sent for a1553ca6
+2025-12-29 00:06:28,799 - werkzeug - INFO - 127.0.0.1 - - [29/Dec/2025 00:06:28] "POST /api/scan/stop/a1553ca6 HTTP/1.1" 200 -
+2025-12-29 00:07:21,933 - optimus - INFO - Registered: api_bp
+2025-12-29 00:07:21,941 - optimus - INFO - Registered: tool_bp
+2025-12-29 00:07:21,955 - optimus - INFO - Registered: intelligence_bp
+2025-12-29 00:07:21,960 - optimus - INFO - Registered: metrics_bp
+2025-12-29 00:07:21,972 - optimus - INFO - Registered: report_bp
+2025-12-29 00:07:21,978 - optimus - INFO - Registered: training_bp
+2025-12-29 00:07:21,980 - optimus - INFO - WebSocket handlers registered
+2025-12-29 00:07:22,215 - intelligence.dark_web_intel - WARNING - [DarkWebIntel] aiohttp_socks not installed - dark web features disabled
+2025-12-29 00:07:22,221 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-29 00:07:22,221 - optimus - INFO - Intelligence module initialized
+2025-12-29 00:07:22,228 - optimus - INFO - Hybrid tool system initialized
+2025-12-29 00:07:22,241 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-29 00:07:22,290 - exploitation.msf_manager - WARNING - [MSF-RPC] msgpack or requests not installed
+2025-12-29 00:07:25,383 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-29 00:07:25,412 - inference.parser_pattern_db - INFO - [ParserPatternDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\data\parser_patterns.db
+2025-12-29 00:07:25,433 - inference.ollama_client - INFO - [OllamaClient] Initialized with model: codellama:7b-instruct
+2025-12-29 00:07:25,437 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-29 00:07:25,437 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-29 00:07:25,440 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-29 00:07:25,442 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-29 00:07:25,443 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-29 00:07:25,443 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-29 00:07:25,444 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-29 00:07:25,460 - optimus - INFO - Registered: scan_bp
+2025-12-29 00:07:25,468 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-29 00:07:25,469 - optimus - INFO - Debug mode: True
+2025-12-29 00:07:25,470 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-29 00:07:25,502 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.110:5000
+2025-12-29 00:07:25,502 - werkzeug - INFO - [33mPress CTRL+C to quit[0m

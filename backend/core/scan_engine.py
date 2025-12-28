@@ -178,7 +178,8 @@ class ScanManager:
             # Run scan with appropriate orchestrator
             if USE_ROBUST_ORCHESTRATOR:
                 logger.info(f"Starting robust scan for {scan_id}")
-                result = orchestrator.run_full_scan(target, scan_config)
+                # Pass the shared scan_state to the orchestrator so it updates the same reference
+                result = orchestrator.run_full_scan(target, scan_config, scan_state)
             else:
                 # Fallback to legacy agent
                 if not self.agent_class:
