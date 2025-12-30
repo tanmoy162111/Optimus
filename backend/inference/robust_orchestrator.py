@@ -246,6 +246,8 @@ class RobustScanOrchestrator:
         # Use shared scan state if provided, otherwise initialize new one
         if shared_scan_state is not None:
             scan_state = shared_scan_state
+            # Reset start_time to current time to avoid timezone/elapsed time issues
+            scan_state['start_time'] = datetime.now().isoformat()
             logger.info(f"[Orchestrator] Using shared scan state for {scan_state['scan_id']}")
         else:
             # Initialize scan state
@@ -321,11 +323,11 @@ class RobustScanOrchestrator:
             
             # Execute phase
             if phase == ScanPhase.EXPLOITATION:
-                self._run_exploitation_phase(scan_state)
+                self._run_exploitation_phase(scan_state, progress_tracker)
             elif phase == ScanPhase.POST_EXPLOITATION:
-                self._run_post_exploitation_phase(scan_state)
+                self._run_post_exploitation_phase(scan_state, progress_tracker)
             else:
-                self._run_standard_phase(scan_state, phase)
+                self._run_standard_phase(scan_state, phase, progress_tracker)
             
             # Complete phase in tracker
             if progress_tracker:
@@ -402,7 +404,7 @@ class RobustScanOrchestrator:
         }
         return result
     
-    def _run_standard_phase(self, scan_state: Dict, phase: ScanPhase):
+    def _run_standard_phase(self, scan_state: Dict, phase: ScanPhase, progress_tracker=None):
         """Run a standard scanning phase"""
         config = PHASE_CONFIGS[phase]
         phase_start = datetime.now()
@@ -493,7 +495,7 @@ class RobustScanOrchestrator:
                 logger.info(f"[Orchestrator] Running additional tools to meet minimum ({tools_run_in_phase}/{config.min_tools})")
                 # Could run additional discovery tools here
     
-    def _run_exploitation_phase(self, scan_state: Dict):
+    def _run_exploitation_phase(self, scan_state: Dict, progress_tracker=None):
         """
         Run exploitation phase using our exploitation module.
         
@@ -616,7 +618,7 @@ class RobustScanOrchestrator:
                 # Command injection exploitation
                 pass
     
-    def _run_post_exploitation_phase(self, scan_state: Dict):
+    def _run_post_exploitation_phase(self, scan_state: Dict, progress_tracker=None):
         """Run post-exploitation phase if we have sessions"""
         logger.info("[Orchestrator] === POST-EXPLOITATION PHASE ===")
         
@@ -831,9 +833,34 @@ class RobustScanOrchestrator:
         return scan_state.get('stop_requested', False)
     
     def _get_elapsed_time(self, scan_state: Dict) -> float:
-        """Get elapsed time in seconds"""
-        start = datetime.fromisoformat(scan_state['start_time'])
-        return (datetime.now() - start).total_seconds()
+        """Get elapsed time in seconds - handles both UTC and local time"""
+        start_str = scan_state.get('start_time')
+        if not start_str:
+            return 0
+        
+        try:
+            # Parse the start time
+            start = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
+            
+            # If start time is timezone-aware (UTC), use utcnow for comparison
+            # Otherwise use local time
+            if start.tzinfo is not None:
+                now = datetime.now(start.tzinfo)
+            else:
+                now = datetime.now()
+            
+            elapsed = (now - start).total_seconds()
+            
+            # Sanity check - if elapsed is negative or unreasonably large, reset
+            if elapsed < 0 or elapsed > 86400:  # More than 24 hours is suspicious
+                logger.warning(f"[Orchestrator] Suspicious elapsed time: {elapsed}s, resetting start_time")
+                scan_state['start_time'] = datetime.now().isoformat()
+                return 0
+            
+            return elapsed
+        except Exception as e:
+            logger.error(f"[Orchestrator] Error calculating elapsed time: {e}")
+            return 0
     
     def _generate_report(self, scan_state: Dict) -> Dict[str, Any]:
         """Generate final scan report"""

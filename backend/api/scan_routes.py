@@ -59,9 +59,14 @@ def start_scan():
         scan_id = str(uuid.uuid4())[:8]
         
         # Create scan object
+        from urllib.parse import urlparse
+        parsed = urlparse(target)
+        domain = parsed.netloc.split(':')[0]
         scan = {
             'scan_id': scan_id,
             'target': target,
+            'domain': domain,
+            'host': parsed.netloc,
             'phase': 'reconnaissance',
             'status': 'initializing',
             'start_time': datetime.utcnow().isoformat(),
@@ -71,7 +76,14 @@ def start_scan():
             'time_elapsed': 0,
             'coverage': 0.0,
             'risk_score': 0.0,
-            'options': options
+            'options': options,
+            'exploits_attempted': [],
+            'sessions_obtained': [],
+            'credentials_found': [],
+            'discovered_endpoints': [],
+            'discovered_technologies': [],
+            'open_ports': [],
+            'stop_requested': False
         }
         
         # Add to active scans

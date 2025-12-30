@@ -81,7 +81,24 @@ class OllamaClient:
                 
                 # Check if our model (or base model) is available
                 model_base = self.config.model.split(':')[0]
-                self._available = any(model_base in m for m in model_names)
+                exact_model = self.config.model
+                
+                # Try exact model name first
+                self._available = any(exact_model in m for m in model_names)
+                
+                # If exact match fails, try base model name
+                if not self._available:
+                    self._available = any(model_base in m for m in model_names)
+                    
+                # If still not available, try common variations
+                if not self._available:
+                    possible_variants = [f"{model_base}:7b-instruct", f"{model_base}:7b", f"{model_base}:instruct", model_base]
+                    for variant in possible_variants:
+                        if any(variant in m for m in model_names):
+                            logger.info(f"[OllamaClient] Using available model variant: {variant}")
+                            self.config.model = variant
+                            self._available = True
+                            break
                 
                 if self._available:
                     logger.info(f"[OllamaClient] Model {self.config.model} is available")
