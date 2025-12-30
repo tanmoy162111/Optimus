@@ -19675,3 +19675,61 @@ AssertionError: write() before start_response
 2025-12-29 00:25:40,521 - core.scan_engine - INFO -  Scan 36fbb31e completed successfully!
 2025-12-29 00:25:40,522 - core.scan_engine - INFO - Scan 36fbb31e results: 0 findings, 0 tools executed
 2025-12-29 00:26:41,159 - werkzeug - INFO - 127.0.0.1 - - [29/Dec/2025 00:26:41] "GET /api/scan/status/36fbb31e HTTP/1.1" 200 -
+2025-12-31 00:36:35,261 - optimus - INFO - Registered: api_bp
+2025-12-31 00:36:35,266 - optimus - INFO - Registered: tool_bp
+2025-12-31 00:36:35,273 - optimus - INFO - Registered: intelligence_bp
+2025-12-31 00:36:35,276 - optimus - INFO - Registered: metrics_bp
+2025-12-31 00:36:35,282 - optimus - INFO - Registered: report_bp
+2025-12-31 00:36:35,285 - optimus - INFO - Registered: training_bp
+2025-12-31 00:36:35,288 - optimus - INFO - WebSocket handlers registered
+2025-12-31 00:36:35,472 - intelligence.dark_web_intel - WARNING - [DarkWebIntel] aiohttp_socks not installed - dark web features disabled
+2025-12-31 00:36:35,477 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-31 00:36:35,478 - optimus - INFO - Intelligence module initialized
+2025-12-31 00:36:35,483 - optimus - INFO - Hybrid tool system initialized
+2025-12-31 00:36:35,485 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-31 00:36:35,518 - exploitation.msf_manager - WARNING - [MSF-RPC] msgpack or requests not installed
+2025-12-31 00:36:37,672 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-31 00:36:37,686 - inference.parser_pattern_db - INFO - [ParserPatternDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\data\parser_patterns.db
+2025-12-31 00:36:37,686 - inference.ollama_client - INFO - [OllamaClient] Initialized with model: codellama:7b-instruct
+2025-12-31 00:36:37,687 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-31 00:36:37,687 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-31 00:36:37,687 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-31 00:36:37,687 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-31 00:36:37,687 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-31 00:36:37,688 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-31 00:36:37,688 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-31 00:36:37,693 - optimus - INFO - Registered: scan_bp
+2025-12-31 00:36:37,695 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-31 00:36:37,695 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-31 00:36:37,696 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-31 00:36:37,696 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-31 00:36:37,696 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-31 00:36:54,112 - optimus - INFO - Registered: api_bp
+2025-12-31 00:36:54,116 - optimus - INFO - Registered: tool_bp
+2025-12-31 00:36:54,125 - optimus - INFO - Registered: intelligence_bp
+2025-12-31 00:36:54,128 - optimus - INFO - Registered: metrics_bp
+2025-12-31 00:36:54,134 - optimus - INFO - Registered: report_bp
+2025-12-31 00:36:54,137 - optimus - INFO - Registered: training_bp
+2025-12-31 00:36:54,139 - optimus - INFO - WebSocket handlers registered
+2025-12-31 00:36:54,312 - intelligence.dark_web_intel - WARNING - [DarkWebIntel] aiohttp_socks not installed - dark web features disabled
+2025-12-31 00:36:54,316 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-31 00:36:54,316 - optimus - INFO - Intelligence module initialized
+2025-12-31 00:36:54,321 - optimus - INFO - Hybrid tool system initialized
+2025-12-31 00:36:54,325 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-31 00:36:54,361 - exploitation.msf_manager - WARNING - [MSF-RPC] msgpack or requests not installed
+2025-12-31 00:36:56,562 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-31 00:36:56,576 - inference.parser_pattern_db - INFO - [ParserPatternDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\data\parser_patterns.db
+2025-12-31 00:36:56,577 - inference.ollama_client - INFO - [OllamaClient] Initialized with model: codellama:7b-instruct
+2025-12-31 00:36:56,577 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-31 00:36:56,577 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-31 00:36:56,578 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-31 00:36:56,578 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-31 00:36:56,579 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-31 00:36:56,579 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-31 00:36:56,579 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-31 00:36:56,583 - optimus - INFO - Registered: scan_bp
+2025-12-31 00:36:56,584 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-31 00:36:56,585 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-31 00:36:56,585 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-31 00:36:56,585 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-31 00:36:56,585 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
