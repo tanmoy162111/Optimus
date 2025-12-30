@@ -535,14 +535,18 @@ class RobustScanOrchestrator:
                     if self.target_normalizer:
                         normalized_target = self.target_normalizer.get_tool_target(scan_state['target'], 'exploitation')
                     
+                    # Safely get config from scan_state with fallback to default values
+                    scan_config = scan_state.get('config', {})
+                    context = {
+                        'lhost': scan_config.get('lhost', '10.10.14.1'),
+                        'lport': scan_config.get('lport', 4444)
+                    }
+                    
                     plan = self.exploitation_manager.create_attack_plan(
                         target=normalized_target,
                         objective="shell",
                         vulnerabilities=[finding],
-                        context={
-                            'lhost': scan_state['config'].get('lhost', '10.10.14.1'),
-                            'lport': scan_state['config'].get('lport', 4444)
-                        }
+                        context=context
                     )
                     
                     if plan and plan.get('steps'):
@@ -573,7 +577,7 @@ class RobustScanOrchestrator:
                             
                             if result.get('credentials'):
                                 scan_state['credentials_found'].extend(result['credentials'])
-                    
+                
                 except Exception as e:
                     logger.error(f"[Orchestrator] Exploitation error: {e}")
                 
