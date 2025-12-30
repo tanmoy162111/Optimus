@@ -90,7 +90,7 @@ class EnhancedOutputParser:
               command: str = "", target: str = "") -> Dict[str, Any]:
         """
         Main parsing entry point - tries multiple strategies.
-        
+            
         Args:
             tool_name: Name of the tool that produced the output
             stdout: Standard output from the tool
@@ -102,7 +102,11 @@ class EnhancedOutputParser:
             Parsed results with vulnerabilities, hosts, services
         """
         self.parse_stats['total'] += 1
-        
+            
+        # Sanitize input to remove terminal escape codes and other artifacts
+        stdout = self._sanitize_output(stdout)
+        stderr = self._sanitize_output(stderr)
+            
         context = {
             'tool': tool_name,
             'command': command,
@@ -110,7 +114,7 @@ class EnhancedOutputParser:
             'stdout_length': len(stdout),
             'stderr_length': len(stderr)
         }
-        
+            
         # Strategy 1: Try structured output first (most reliable)
         result = self._try_structured_parse(stdout, stderr, context)
         if result and result.get('vulnerabilities'):
@@ -380,6 +384,31 @@ class EnhancedOutputParser:
             'tool': context.get('tool', 'unknown'),
             'raw_data': item
         }
+    
+    def _sanitize_output(self, output: str) -> str:
+        """Remove terminal escape codes and other artifacts from output"""
+        if not output:
+            return output
+        
+        # Remove ANSI escape codes (terminal color codes)
+        ansi_escape = re.compile(r'\x1B\[([0-9;]*[A-Za-z])|\x9b([0-9;]*[A-Za-z])')
+        output = ansi_escape.sub('', output)
+        
+        # Remove other common escape sequences
+        output = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', output)  # ESC[...format
+        output = re.sub(r'\x9b[0-9;]*[a-zA-Z]', '', output)   # Alternative CSI format
+        
+        # Remove common terminal artifacts
+        output = re.sub(r'\x08+', '', output)  # Remove backspaces
+        output = re.sub(r'\r\n', '\n', output)  # Normalize line endings
+        
+        # Remove common artifacts like .bash_history if it appears inappropriately
+        output = re.sub(r'\.bash_history', '', output)
+        
+        # Clean up multiple consecutive newlines
+        output = re.sub(r'\n\s*\n', '\n\n', output)
+        
+        return output
     
     def _normalize_severity(self, value: Any) -> float:
         """Normalize severity to 0-10 scale"""
