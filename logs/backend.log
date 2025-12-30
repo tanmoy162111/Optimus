@@ -19827,3 +19827,205 @@ AssertionError: write() before start_response
 2025-12-31 00:51:50,009 - core.scan_engine - INFO - Scan completed: 0 findings
 2025-12-31 00:51:50,010 - core.scan_engine - INFO -  Scan b6210d3c completed successfully!
 2025-12-31 00:51:50,011 - core.scan_engine - INFO - Scan b6210d3c results: 0 findings, 0 tools executed
+2025-12-31 00:51:59,641 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:51:59] "GET /api/scan/status/b6210d3c HTTP/1.1" 200 -
+2025-12-31 00:52:14,063 - api.scan_routes - INFO - Added scan 0021fd6b to active_scans. Active scans count: 2
+2025-12-31 00:52:14,064 - api.scan_routes - INFO - Created scan 0021fd6b for target httpbin.org
+2025-12-31 00:52:14,064 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-31 00:52:14,065 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-31 00:52:14,065 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-31 00:52:14,065 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-31 00:52:14,066 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-31 00:52:14,066 - core.scan_engine - INFO - start_scan called: scan_id=0021fd6b, target=httpbin.org
+2025-12-31 00:52:14,067 - core.scan_engine - INFO - Scan thread started for 0021fd6b
+2025-12-31 00:52:14,067 - core.scan_engine - INFO - Started scan thread for 0021fd6b
+2025-12-31 00:52:14,067 - core.scan_engine - INFO - Using RobustScanOrchestrator for scan 0021fd6b
+2025-12-31 00:52:14,068 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-31 00:52:14,068 - core.scan_engine - INFO - Starting robust scan for 0021fd6b
+2025-12-31 00:52:14,068 - api.scan_routes - INFO - Scan 0021fd6b started successfully
+2025-12-31 00:52:14,069 - inference.robust_orchestrator - INFO - [Orchestrator] Using shared scan state for 0021fd6b
+2025-12-31 00:52:14,069 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:52:14] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-31 00:52:14,071 - inference.progress_tracker - INFO - [Progress] Loaded historical data for better estimates
+2025-12-31 00:52:14,073 - inference.progress_tracker - INFO - [Progress] Scan 0021fd6b started
+2025-12-31 00:52:14,073 - inference.robust_orchestrator - INFO - [Orchestrator] Time budget exhausted: 21600.009925s
+2025-12-31 00:52:14,076 - inference.progress_tracker - INFO - [Progress] Scan 0021fd6b completed
+2025-12-31 00:52:14,077 - core.scan_engine - INFO - Scan completed: 0 findings
+2025-12-31 00:52:14,077 - core.scan_engine - INFO -  Scan 0021fd6b completed successfully!
+2025-12-31 00:52:14,078 - core.scan_engine - INFO - Scan 0021fd6b results: 0 findings, 0 tools executed
+2025-12-31 00:52:23,764 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:52:23] "GET /api/scan/status/0021fd6b HTTP/1.1" 200 -
+2025-12-31 00:52:34,445 - api.scan_routes - INFO - Added scan aad49810 to active_scans. Active scans count: 3
+2025-12-31 00:52:34,445 - api.scan_routes - INFO - Created scan aad49810 for target httpbin.org
+2025-12-31 00:52:34,447 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-31 00:52:34,447 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-31 00:52:34,448 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-31 00:52:34,448 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-31 00:52:34,448 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-31 00:52:34,448 - core.scan_engine - INFO - start_scan called: scan_id=aad49810, target=httpbin.org
+2025-12-31 00:52:34,449 - core.scan_engine - INFO - Scan thread started for aad49810
+2025-12-31 00:52:34,449 - core.scan_engine - INFO - Started scan thread for aad49810
+2025-12-31 00:52:34,450 - core.scan_engine - INFO - Using RobustScanOrchestrator for scan aad49810
+2025-12-31 00:52:34,451 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-31 00:52:34,451 - core.scan_engine - INFO - Starting robust scan for aad49810
+2025-12-31 00:52:34,452 - api.scan_routes - INFO - Scan aad49810 started successfully
+2025-12-31 00:52:34,452 - inference.robust_orchestrator - INFO - [Orchestrator] Using shared scan state for aad49810
+2025-12-31 00:52:34,452 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:52:34] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-31 00:52:34,453 - inference.progress_tracker - INFO - [Progress] Loaded historical data for better estimates
+2025-12-31 00:52:34,455 - inference.progress_tracker - INFO - [Progress] Scan aad49810 started
+2025-12-31 00:52:34,455 - inference.robust_orchestrator - INFO - [Orchestrator] Time budget exhausted: 21600.010218s
+2025-12-31 00:52:34,458 - inference.progress_tracker - INFO - [Progress] Scan aad49810 completed
+2025-12-31 00:52:34,459 - core.scan_engine - INFO - Scan completed: 0 findings
+2025-12-31 00:52:34,459 - core.scan_engine - INFO -  Scan aad49810 completed successfully!
+2025-12-31 00:52:34,460 - core.scan_engine - INFO - Scan aad49810 results: 0 findings, 0 tools executed
+2025-12-31 00:52:42,618 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:52:42] "GET /health HTTP/1.1" 200 -
+2025-12-31 00:52:50,988 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:52:50] "GET /api/scan/status/aad49810 HTTP/1.1" 200 -
+2025-12-31 00:52:59,409 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:52:59] "GET /api/scan/aad49810/findings HTTP/1.1" 200 -
+2025-12-31 00:53:44,146 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:53:44] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-31 00:55:08,040 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:55:08] "GET /api/scan/list HTTP/1.1" 200 -
+2025-12-31 00:55:27,642 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:55:27] "GET /api/metrics/system HTTP/1.1" 200 -
+2025-12-31 00:55:33,221 - websocket.handlers - INFO - Client connected: fnilZxmH2CxmWZh6AAAB
+2025-12-31 00:55:33,222 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:55:33] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-31 00:55:33,225 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:55:33] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-31 00:55:33,228 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:55:33] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-31 00:55:33,266 - websocket.handlers - INFO - Client connected: TaqiVBOGChwbwTsnAAAD
+2025-12-31 00:55:33,472 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:55:33] "GET /api/dashboard/stats HTTP/1.1" 200 -
+2025-12-31 00:55:33,528 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:55:33] "GET /api/scan/list?limit=5 HTTP/1.1" 200 -
+2025-12-31 00:55:33,531 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:55:33] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-31 00:55:38,254 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:55:38] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-31 00:55:38,561 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:55:38] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-31 00:55:40,272 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:55:40] "GET /api/scan/list?limit=20 HTTP/1.1" 200 -
+2025-12-31 00:55:40,577 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:55:40] "GET /api/scan/list?limit=20 HTTP/1.1" 200 -
+2025-12-31 00:55:43,892 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:55:43] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-31 00:55:44,198 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:55:44] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-31 00:57:07,062 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:57:07] "[33mGET /api/intelligence/summary HTTP/1.1[0m" 404 -
+2025-12-31 00:57:35,316 - intelligence.optimus_brain - INFO - Initializing Optimus Brain...
+2025-12-31 00:57:35,320 - intelligence.memory_system - INFO - Memory database initialized
+2025-12-31 00:57:35,321 - intelligence.memory_system - INFO - Smart Memory System initialized with DB: data/optimus_memory.db
+2025-12-31 00:57:35,321 - intelligence.optimus_brain - INFO - ✓ Memory System initialized
+2025-12-31 00:57:35,321 - intelligence.optimus_brain - INFO - ✓ Web Intelligence initialized
+2025-12-31 00:57:35,322 - intelligence.delegation_system - INFO - Initialized research agent
+2025-12-31 00:57:35,322 - intelligence.delegation_system - INFO - Initialized exploitation agent
+2025-12-31 00:57:35,323 - intelligence.delegation_system - INFO - Initialized recon agent
+2025-12-31 00:57:35,323 - intelligence.delegation_system - INFO - Initialized analysis agent
+2025-12-31 00:57:35,323 - intelligence.delegation_system - INFO - Initialized reporting agent
+2025-12-31 00:57:35,323 - intelligence.delegation_system - INFO - Initialized 5 specialized agents
+2025-12-31 00:57:35,324 - intelligence.optimus_brain - INFO - ✓ Delegation System initialized
+2025-12-31 00:57:35,324 - intelligence.adaptive_exploitation - INFO - Real-Time Adaptive Engine initialized
+2025-12-31 00:57:35,324 - intelligence.optimus_brain - INFO - ✓ Adaptive Exploitation Engine initialized
+2025-12-31 00:57:35,325 - intelligence.vulnerability_chaining - INFO - Vulnerability Chain Engine initialized
+2025-12-31 00:57:35,325 - intelligence.optimus_brain - INFO - ✓ Vulnerability Chain Engine initialized
+2025-12-31 00:57:35,325 - intelligence.explainable_ai - INFO - Explainable AI Engine initialized
+2025-12-31 00:57:35,325 - intelligence.optimus_brain - INFO - ✓ Explainable AI Engine initialized
+2025-12-31 00:57:35,327 - intelligence.continuous_learning - INFO - Loaded weights from data\models\online_weights.json
+2025-12-31 00:57:35,327 - intelligence.continuous_learning - INFO - Continuous Learning Engine initialized
+2025-12-31 00:57:35,327 - intelligence.optimus_brain - INFO - ✓ Continuous Learning Engine initialized
+2025-12-31 00:57:35,327 - intelligence.continuous_learning - INFO - Zero-Day Discovery Engine initialized
+2025-12-31 00:57:35,328 - intelligence.optimus_brain - INFO - ✓ Zero-Day Discovery Engine initialized
+2025-12-31 00:57:35,328 - intelligence.campaign_intelligence - INFO - Campaign Intelligence Engine initialized
+2025-12-31 00:57:35,328 - intelligence.optimus_brain - INFO - ✓ Campaign Intelligence Engine initialized
+2025-12-31 00:57:35,328 - intelligence.optimus_brain - INFO - Optimus Brain initialization complete
+2025-12-31 00:57:35,331 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:57:35] "GET /api/intelligence/status HTTP/1.1" 200 -
+2025-12-31 00:57:38,718 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:57:38] "OPTIONS /api/scan/start HTTP/1.1" 200 -
+2025-12-31 00:57:38,970 - api.scan_routes - INFO - Added scan 90dd59a8 to active_scans. Active scans count: 4
+2025-12-31 00:57:38,970 - api.scan_routes - INFO - Created scan 90dd59a8 for target https://demo.owasp-juice.shop/
+2025-12-31 00:57:38,972 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-31 00:57:38,972 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-31 00:57:38,973 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-31 00:57:38,973 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-31 00:57:38,973 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-31 00:57:38,974 - core.scan_engine - INFO - start_scan called: scan_id=90dd59a8, target=https://demo.owasp-juice.shop/
+2025-12-31 00:57:38,975 - core.scan_engine - INFO - Scan thread started for 90dd59a8
+2025-12-31 00:57:38,975 - core.scan_engine - INFO - Started scan thread for 90dd59a8
+2025-12-31 00:57:38,975 - core.scan_engine - INFO - Using RobustScanOrchestrator for scan 90dd59a8
+2025-12-31 00:57:38,976 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-31 00:57:38,976 - core.scan_engine - INFO - Starting robust scan for 90dd59a8
+2025-12-31 00:57:38,976 - api.scan_routes - INFO - Scan 90dd59a8 started successfully
+2025-12-31 00:57:38,977 - inference.robust_orchestrator - INFO - [Orchestrator] Using shared scan state for 90dd59a8
+2025-12-31 00:57:38,977 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:57:38] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-31 00:57:38,978 - inference.progress_tracker - INFO - [Progress] Loaded historical data for better estimates
+2025-12-31 00:57:38,979 - inference.progress_tracker - INFO - [Progress] Scan 90dd59a8 started
+2025-12-31 00:57:38,982 - inference.robust_orchestrator - INFO - [Orchestrator] Time budget exhausted: 21600.011773s
+2025-12-31 00:57:38,984 - inference.progress_tracker - INFO - [Progress] Scan 90dd59a8 completed
+2025-12-31 00:57:38,984 - core.scan_engine - INFO - Scan completed: 0 findings
+2025-12-31 00:57:38,984 - core.scan_engine - INFO -  Scan 90dd59a8 completed successfully!
+2025-12-31 00:57:38,985 - core.scan_engine - INFO - Scan 90dd59a8 results: 0 findings, 0 tools executed
+2025-12-31 00:57:39,014 - websocket.handlers - INFO - Client TaqiVBOGChwbwTsnAAAD joined room scan_90dd59a8
+2025-12-31 00:57:41,016 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:57:41] "GET /api/scan/status/90dd59a8 HTTP/1.1" 200 -
+2025-12-31 00:57:41,333 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:57:41] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-31 00:57:41,585 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:57:41] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-31 00:57:50,351 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:57:50] "OPTIONS /api/scan/start HTTP/1.1" 200 -
+2025-12-31 00:57:50,656 - api.scan_routes - INFO - Added scan b0e16417 to active_scans. Active scans count: 5
+2025-12-31 00:57:50,656 - api.scan_routes - INFO - Created scan b0e16417 for target https://demo.owasp-juice.shop/
+2025-12-31 00:57:50,659 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-31 00:57:50,659 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-31 00:57:50,659 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-31 00:57:50,659 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-31 00:57:50,660 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-31 00:57:50,660 - core.scan_engine - INFO - start_scan called: scan_id=b0e16417, target=https://demo.owasp-juice.shop/
+2025-12-31 00:57:50,661 - core.scan_engine - INFO - Scan thread started for b0e16417
+2025-12-31 00:57:50,662 - core.scan_engine - INFO - Started scan thread for b0e16417
+2025-12-31 00:57:50,662 - core.scan_engine - INFO - Using RobustScanOrchestrator for scan b0e16417
+2025-12-31 00:57:50,663 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-31 00:57:50,663 - core.scan_engine - INFO - Starting robust scan for b0e16417
+2025-12-31 00:57:50,663 - api.scan_routes - INFO - Scan b0e16417 started successfully
+2025-12-31 00:57:50,664 - inference.robust_orchestrator - INFO - [Orchestrator] Using shared scan state for b0e16417
+2025-12-31 00:57:50,664 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:57:50] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-31 00:57:50,666 - inference.progress_tracker - INFO - [Progress] Loaded historical data for better estimates
+2025-12-31 00:57:50,670 - inference.progress_tracker - INFO - [Progress] Scan b0e16417 started
+2025-12-31 00:57:50,671 - inference.robust_orchestrator - INFO - [Orchestrator] Time budget exhausted: 21600.014982s
+2025-12-31 00:57:50,672 - inference.progress_tracker - INFO - [Progress] Scan b0e16417 completed
+2025-12-31 00:57:50,673 - core.scan_engine - INFO - Scan completed: 0 findings
+2025-12-31 00:57:50,673 - core.scan_engine - INFO -  Scan b0e16417 completed successfully!
+2025-12-31 00:57:50,674 - core.scan_engine - INFO - Scan b0e16417 results: 0 findings, 0 tools executed
+2025-12-31 00:57:50,680 - websocket.handlers - INFO - Client TaqiVBOGChwbwTsnAAAD left room scan_90dd59a8
+2025-12-31 00:57:50,685 - websocket.handlers - INFO - Client TaqiVBOGChwbwTsnAAAD joined room scan_b0e16417
+2025-12-31 00:57:52,686 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:57:52] "GET /api/scan/status/b0e16417 HTTP/1.1" 200 -
+2025-12-31 00:57:53,000 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:57:53] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-31 00:57:53,252 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:57:53] "GET /api/tools/available HTTP/1.1" 200 -
+2025-12-31 00:57:57,594 - api.scan_routes - INFO - Added scan 124922d6 to active_scans. Active scans count: 6
+2025-12-31 00:57:57,595 - api.scan_routes - INFO - Created scan 124922d6 for target httpbin.org/headers
+2025-12-31 00:57:57,596 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-31 00:57:57,597 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-31 00:57:57,597 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-31 00:57:57,597 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-31 00:57:57,597 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-31 00:57:57,598 - core.scan_engine - INFO - start_scan called: scan_id=124922d6, target=httpbin.org/headers
+2025-12-31 00:57:57,599 - core.scan_engine - INFO - Scan thread started for 124922d6
+2025-12-31 00:57:57,599 - core.scan_engine - INFO - Started scan thread for 124922d6
+2025-12-31 00:57:57,599 - core.scan_engine - INFO - Using RobustScanOrchestrator for scan 124922d6
+2025-12-31 00:57:57,600 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-31 00:57:57,601 - core.scan_engine - INFO - Starting robust scan for 124922d6
+2025-12-31 00:57:57,601 - api.scan_routes - INFO - Scan 124922d6 started successfully
+2025-12-31 00:57:57,601 - inference.robust_orchestrator - INFO - [Orchestrator] Using shared scan state for 124922d6
+2025-12-31 00:57:57,602 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:57:57] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-31 00:57:57,605 - inference.progress_tracker - INFO - [Progress] Loaded historical data for better estimates
+2025-12-31 00:57:57,606 - inference.progress_tracker - INFO - [Progress] Scan 124922d6 started
+2025-12-31 00:57:57,607 - inference.robust_orchestrator - INFO - [Orchestrator] Time budget exhausted: 21600.012306s
+2025-12-31 00:57:57,608 - inference.progress_tracker - INFO - [Progress] Scan 124922d6 completed
+2025-12-31 00:57:57,608 - core.scan_engine - INFO - Scan completed: 0 findings
+2025-12-31 00:57:57,609 - core.scan_engine - INFO -  Scan 124922d6 completed successfully!
+2025-12-31 00:57:57,610 - core.scan_engine - INFO - Scan 124922d6 results: 0 findings, 0 tools executed
+2025-12-31 00:58:25,250 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:58:25] "GET /api/scan/status/124922d6 HTTP/1.1" 200 -
+2025-12-31 00:59:37,165 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 00:59:37] "GET /api/scan/124922d6/findings HTTP/1.1" 200 -
+2025-12-31 01:01:41,652 - api.scan_routes - INFO - Added scan 7a5b732a to active_scans. Active scans count: 7
+2025-12-31 01:01:41,653 - api.scan_routes - INFO - Created scan 7a5b732a for target httpbin.org
+2025-12-31 01:01:41,653 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-31 01:01:41,653 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-31 01:01:41,654 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-31 01:01:41,654 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-31 01:01:41,654 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-31 01:01:41,654 - core.scan_engine - INFO - start_scan called: scan_id=7a5b732a, target=httpbin.org
+2025-12-31 01:01:41,655 - core.scan_engine - INFO - Scan thread started for 7a5b732a
+2025-12-31 01:01:41,655 - core.scan_engine - INFO - Started scan thread for 7a5b732a
+2025-12-31 01:01:41,655 - core.scan_engine - INFO - Using RobustScanOrchestrator for scan 7a5b732a
+2025-12-31 01:01:41,656 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-31 01:01:41,657 - core.scan_engine - INFO - Starting robust scan for 7a5b732a
+2025-12-31 01:01:41,657 - api.scan_routes - INFO - Scan 7a5b732a started successfully
+2025-12-31 01:01:41,657 - inference.robust_orchestrator - INFO - [Orchestrator] Using shared scan state for 7a5b732a
+2025-12-31 01:01:41,658 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 01:01:41] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-31 01:01:41,658 - inference.progress_tracker - INFO - [Progress] Loaded historical data for better estimates
+2025-12-31 01:01:41,660 - inference.progress_tracker - INFO - [Progress] Scan 7a5b732a started
+2025-12-31 01:01:41,660 - inference.robust_orchestrator - INFO - [Orchestrator] Time budget exhausted: 21600.008126s
+2025-12-31 01:01:41,662 - inference.progress_tracker - INFO - [Progress] Scan 7a5b732a completed
+2025-12-31 01:01:41,662 - core.scan_engine - INFO - Scan completed: 0 findings
+2025-12-31 01:01:41,662 - core.scan_engine - INFO -  Scan 7a5b732a completed successfully!
+2025-12-31 01:01:41,664 - core.scan_engine - INFO - Scan 7a5b732a results: 0 findings, 0 tools executed
+2025-12-31 01:02:40,736 - werkzeug - INFO - 127.0.0.1 - - [31/Dec/2025 01:02:40] "GET /api/scan/status/7a5b732a HTTP/1.1" 200 -
