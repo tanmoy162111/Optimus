@@ -19470,3 +19470,208 @@ AssertionError: write() before start_response
  * Running on http://127.0.0.1:5000
  * Running on http://192.168.1.110:5000
 2025-12-29 00:07:25,502 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-29 00:08:21,484 - optimus - INFO - Registered: api_bp
+2025-12-29 00:08:21,490 - optimus - INFO - Registered: tool_bp
+2025-12-29 00:08:21,503 - optimus - INFO - Registered: intelligence_bp
+2025-12-29 00:08:21,506 - optimus - INFO - Registered: metrics_bp
+2025-12-29 00:08:21,514 - optimus - INFO - Registered: report_bp
+2025-12-29 00:08:21,518 - optimus - INFO - Registered: training_bp
+2025-12-29 00:08:21,519 - optimus - INFO - WebSocket handlers registered
+2025-12-29 00:08:21,520 - optimus - INFO - Intelligence module initialized
+2025-12-29 00:08:21,520 - optimus - INFO - Hybrid tool system initialized
+2025-12-29 00:08:21,521 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-29 00:08:21,521 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-29 00:08:21,522 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-29 00:08:21,522 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-29 00:08:21,523 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-29 00:08:21,523 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-29 00:08:21,532 - optimus - INFO - Registered: scan_bp
+2025-12-29 00:08:21,534 - api.scan_routes - INFO - Added scan 2ec29ad6 to active_scans. Active scans count: 1
+2025-12-29 00:08:21,534 - api.scan_routes - INFO - Created scan 2ec29ad6 for target https://httpbin.org
+2025-12-29 00:08:21,536 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-29 00:08:21,536 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-29 00:08:21,537 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-29 00:08:21,537 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-29 00:08:21,537 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-29 00:08:21,538 - core.scan_engine - INFO - start_scan called: scan_id=2ec29ad6, target=https://httpbin.org
+2025-12-29 00:08:21,539 - core.scan_engine - INFO - Scan thread started for 2ec29ad6
+2025-12-29 00:08:21,539 - core.scan_engine - INFO - Started scan thread for 2ec29ad6
+2025-12-29 00:08:21,541 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-29 00:08:21,541 - api.scan_routes - INFO - Scan 2ec29ad6 started successfully
+2025-12-29 00:08:21,542 - werkzeug - INFO - 127.0.0.1 - - [29/Dec/2025 00:08:21] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-29 00:08:21,563 - inference.robust_orchestrator - INFO - [Orchestrator] TargetNormalizer initialized
+2025-12-29 00:08:21,564 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-29 00:08:21,566 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-29 00:08:21,566 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-29 00:08:21,567 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-29 00:08:21,567 - inference.robust_orchestrator - INFO - [Orchestrator] ToolManager initialized
+2025-12-29 00:08:21,569 - exploitation.exploit_db - INFO - [ExploitDB] Loaded 24 exploit templates
+2025-12-29 00:08:21,570 - exploitation.payload_crafter - INFO - [PayloadCrafter] Initialized
+2025-12-29 00:08:21,571 - exploitation.exploit_executor - INFO - [ExploitExecutor] Initialized
+2025-12-29 00:08:21,571 - inference.ollama_client - INFO - [OllamaClient] Initialized with model: codellama:7b-instruct
+2025-12-29 00:08:21,572 - exploitation.llm_generator - INFO - [LLMExploitGenerator] Initialized
+2025-12-29 00:08:21,572 - exploitation.strategic_planner - INFO - [StrategicPlanner] Initialized
+2025-12-29 00:08:21,573 - exploitation.exploit_chainer - INFO - [ExploitChainer] Initialized
+2025-12-29 00:08:21,573 - exploitation.cve_templates - INFO - [CVE-DB] Loaded 36 CVE templates
+2025-12-29 00:08:21,574 - exploitation.integration - INFO - [ExploitationManager] LLM components initialized
+2025-12-29 00:08:21,574 - exploitation.metasploit - INFO - [MetasploitDB] Loaded 28 modules
+2025-12-29 00:08:21,575 - exploitation.integration - INFO - [ExploitationManager] Metasploit components initialized
+2025-12-29 00:08:21,575 - exploitation.integration - INFO - [ExploitationManager] Initialized
+2025-12-29 00:08:21,576 - inference.robust_orchestrator - INFO - [Orchestrator] ExploitationManager initialized
+2025-12-29 00:08:21,582 - inference.robust_orchestrator - INFO - [Orchestrator] ProgressManager initialized
+2025-12-29 00:08:21,583 - inference.robust_orchestrator - WARNING - [Orchestrator] EnhancedParser not available: No module named 'inference.enhanced_parser'
+2025-12-29 00:08:21,584 - inference.robust_orchestrator - WARNING - [Orchestrator] UniversalExploitDB not available: No module named 'exploitation.universal_exploits'
+2025-12-29 00:08:21,586 - core.scan_engine - INFO - Using RobustScanOrchestrator for scan 2ec29ad6
+2025-12-29 00:08:21,588 - core.scan_engine - INFO - Starting robust scan for 2ec29ad6
+2025-12-29 00:08:21,588 - inference.robust_orchestrator - INFO - [Orchestrator] Using shared scan state for 2ec29ad6
+2025-12-29 00:08:21,590 - inference.progress_tracker - INFO - [Progress] Loaded historical data for better estimates
+2025-12-29 00:08:21,592 - inference.progress_tracker - INFO - [Progress] Scan 2ec29ad6 started
+2025-12-29 00:08:21,593 - inference.robust_orchestrator - INFO - [Orchestrator] Time budget exhausted: 21600.119657s
+2025-12-29 00:08:21,597 - inference.progress_tracker - INFO - [Progress] Scan 2ec29ad6 completed
+2025-12-29 00:08:21,597 - core.scan_engine - INFO - Scan completed: 0 findings
+2025-12-29 00:08:21,599 - core.scan_engine - INFO -  Scan 2ec29ad6 completed successfully!
+2025-12-29 00:08:21,602 - core.scan_engine - INFO - Scan 2ec29ad6 results: 0 findings, 0 tools executed
+2025-12-29 00:09:18,113 - werkzeug - INFO - 127.0.0.1 - - [29/Dec/2025 00:09:18] "[35m[1mGET /api/scan/status/2ec29ad6 HTTP/1.1[0m" 500 -
+2025-12-29 00:21:05,010 - optimus - INFO - Registered: api_bp
+2025-12-29 00:21:05,018 - optimus - INFO - Registered: tool_bp
+2025-12-29 00:21:05,031 - optimus - INFO - Registered: intelligence_bp
+2025-12-29 00:21:05,036 - optimus - INFO - Registered: metrics_bp
+2025-12-29 00:21:05,045 - optimus - INFO - Registered: report_bp
+2025-12-29 00:21:05,053 - optimus - INFO - Registered: training_bp
+2025-12-29 00:21:05,056 - optimus - INFO - WebSocket handlers registered
+2025-12-29 00:21:05,280 - intelligence.dark_web_intel - WARNING - [DarkWebIntel] aiohttp_socks not installed - dark web features disabled
+2025-12-29 00:21:05,286 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2025-12-29 00:21:05,286 - optimus - INFO - Intelligence module initialized
+2025-12-29 00:21:05,293 - optimus - INFO - Hybrid tool system initialized
+2025-12-29 00:21:05,297 - core.scan_engine - INFO - Creating new ScanManager instance
+2025-12-29 00:21:05,346 - exploitation.msf_manager - WARNING - [MSF-RPC] msgpack or requests not installed
+2025-12-29 00:21:08,194 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2025-12-29 00:21:08,213 - inference.parser_pattern_db - INFO - [ParserPatternDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\data\parser_patterns.db
+2025-12-29 00:21:08,214 - inference.ollama_client - INFO - [OllamaClient] Initialized with model: codellama:7b-instruct
+2025-12-29 00:21:08,214 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-29 00:21:08,214 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-29 00:21:08,215 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-29 00:21:08,215 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-29 00:21:08,215 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-29 00:21:08,215 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2025-12-29 00:21:08,216 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-29 00:21:08,224 - optimus - INFO - Registered: scan_bp
+2025-12-29 00:21:08,226 - optimus - INFO - Starting Optimus Backend on 0.0.0.0:5000
+2025-12-29 00:21:08,226 - optimus - INFO - Debug mode: True
+2025-12-29 00:21:08,227 - optimus - INFO - Kali VM: 127.0.0.1
+2025-12-29 00:21:08,251 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.110:5000
+2025-12-29 00:21:08,252 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-29 00:22:19,068 - api.scan_routes - INFO - Added scan 8b550ce9 to active_scans. Active scans count: 2
+2025-12-29 00:22:19,069 - api.scan_routes - INFO - Created scan 8b550ce9 for target https://httpbin.org
+2025-12-29 00:22:19,069 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-29 00:22:19,070 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-29 00:22:19,070 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-29 00:22:19,070 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-29 00:22:19,071 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-29 00:22:19,071 - core.scan_engine - INFO - start_scan called: scan_id=8b550ce9, target=https://httpbin.org
+2025-12-29 00:22:19,072 - core.scan_engine - INFO - Scan thread started for 8b550ce9
+2025-12-29 00:22:19,072 - core.scan_engine - INFO - Started scan thread for 8b550ce9
+2025-12-29 00:22:19,072 - core.scan_engine - INFO - Using RobustScanOrchestrator for scan 8b550ce9
+2025-12-29 00:22:19,074 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-29 00:22:19,075 - api.scan_routes - INFO - Scan 8b550ce9 started successfully
+2025-12-29 00:22:19,075 - core.scan_engine - INFO - Starting robust scan for 8b550ce9
+2025-12-29 00:22:19,076 - werkzeug - INFO - 127.0.0.1 - - [29/Dec/2025 00:22:19] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-29 00:22:19,077 - inference.robust_orchestrator - INFO - [Orchestrator] Using shared scan state for 8b550ce9
+2025-12-29 00:22:19,079 - inference.progress_tracker - INFO - [Progress] Loaded historical data for better estimates
+2025-12-29 00:22:19,081 - inference.progress_tracker - INFO - [Progress] Scan 8b550ce9 started
+2025-12-29 00:22:19,083 - inference.robust_orchestrator - INFO - [Orchestrator] Time budget exhausted: 21600.015085s
+2025-12-29 00:22:19,086 - inference.progress_tracker - INFO - [Progress] Scan 8b550ce9 completed
+2025-12-29 00:22:19,087 - core.scan_engine - INFO - Scan completed: 0 findings
+2025-12-29 00:22:19,088 - core.scan_engine - INFO -  Scan 8b550ce9 completed successfully!
+2025-12-29 00:22:19,092 - core.scan_engine - INFO - Scan 8b550ce9 results: 0 findings, 0 tools executed
+2025-12-29 00:23:00,839 - werkzeug - INFO - 127.0.0.1 - - [29/Dec/2025 00:23:00] "[35m[1mGET /api/scan/status/8b550ce9 HTTP/1.1[0m" 500 -
+2025-12-29 00:24:37,328 - optimus - INFO - Registered: api_bp
+2025-12-29 00:24:37,335 - optimus - INFO - Registered: tool_bp
+2025-12-29 00:24:37,344 - optimus - INFO - Registered: intelligence_bp
+2025-12-29 00:24:37,347 - optimus - INFO - Registered: metrics_bp
+2025-12-29 00:24:37,352 - optimus - INFO - Registered: report_bp
+2025-12-29 00:24:37,354 - optimus - INFO - Registered: training_bp
+2025-12-29 00:24:37,355 - optimus - INFO - WebSocket handlers registered
+2025-12-29 00:24:37,356 - optimus - INFO - Intelligence module initialized
+2025-12-29 00:24:37,356 - optimus - INFO - Hybrid tool system initialized
+2025-12-29 00:24:37,357 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-29 00:24:37,357 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-29 00:24:37,358 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-29 00:24:37,358 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-29 00:24:37,359 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-29 00:24:37,359 - optimus - INFO - Hybrid tool system linked to tool manager
+2025-12-29 00:24:37,366 - optimus - INFO - Registered: scan_bp
+2025-12-29 00:24:37,369 - werkzeug - INFO - 127.0.0.1 - - [29/Dec/2025 00:24:37] "[33mPOST /api/scan/stop/8b550ce9 HTTP/1.1[0m" 404 -
+2025-12-29 00:24:49,729 - api.scan_routes - INFO - Added scan 2d4e1f12 to active_scans. Active scans count: 1
+2025-12-29 00:24:49,729 - api.scan_routes - INFO - Created scan 2d4e1f12 for target https://httpbin.org
+2025-12-29 00:24:49,730 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-29 00:24:49,731 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-29 00:24:49,731 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-29 00:24:49,732 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-29 00:24:49,732 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-29 00:24:49,732 - core.scan_engine - INFO - start_scan called: scan_id=2d4e1f12, target=https://httpbin.org
+2025-12-29 00:24:49,733 - core.scan_engine - INFO - Scan thread started for 2d4e1f12
+2025-12-29 00:24:49,733 - core.scan_engine - INFO - Started scan thread for 2d4e1f12
+2025-12-29 00:24:49,735 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-29 00:24:49,736 - api.scan_routes - INFO - Scan 2d4e1f12 started successfully
+2025-12-29 00:24:49,750 - werkzeug - INFO - 127.0.0.1 - - [29/Dec/2025 00:24:49] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-29 00:24:49,756 - inference.robust_orchestrator - INFO - [Orchestrator] TargetNormalizer initialized
+2025-12-29 00:24:49,758 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-29 00:24:49,759 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-29 00:24:49,760 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-29 00:24:49,760 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-29 00:24:49,765 - inference.robust_orchestrator - INFO - [Orchestrator] ToolManager initialized
+2025-12-29 00:24:49,768 - exploitation.exploit_db - INFO - [ExploitDB] Loaded 24 exploit templates
+2025-12-29 00:24:49,770 - exploitation.payload_crafter - INFO - [PayloadCrafter] Initialized
+2025-12-29 00:24:49,770 - exploitation.exploit_executor - INFO - [ExploitExecutor] Initialized
+2025-12-29 00:24:49,771 - inference.ollama_client - INFO - [OllamaClient] Initialized with model: codellama:7b-instruct
+2025-12-29 00:24:49,772 - exploitation.llm_generator - INFO - [LLMExploitGenerator] Initialized
+2025-12-29 00:24:49,773 - exploitation.strategic_planner - INFO - [StrategicPlanner] Initialized
+2025-12-29 00:24:49,773 - exploitation.exploit_chainer - INFO - [ExploitChainer] Initialized
+2025-12-29 00:24:49,773 - exploitation.cve_templates - INFO - [CVE-DB] Loaded 36 CVE templates
+2025-12-29 00:24:49,774 - exploitation.integration - INFO - [ExploitationManager] LLM components initialized
+2025-12-29 00:24:49,774 - exploitation.metasploit - INFO - [MetasploitDB] Loaded 28 modules
+2025-12-29 00:24:49,775 - exploitation.integration - INFO - [ExploitationManager] Metasploit components initialized
+2025-12-29 00:24:49,775 - exploitation.integration - INFO - [ExploitationManager] Initialized
+2025-12-29 00:24:49,776 - inference.robust_orchestrator - INFO - [Orchestrator] ExploitationManager initialized
+2025-12-29 00:24:49,782 - inference.robust_orchestrator - INFO - [Orchestrator] ProgressManager initialized
+2025-12-29 00:24:49,783 - inference.robust_orchestrator - WARNING - [Orchestrator] EnhancedParser not available: No module named 'inference.enhanced_parser'
+2025-12-29 00:24:49,784 - inference.robust_orchestrator - WARNING - [Orchestrator] UniversalExploitDB not available: No module named 'exploitation.universal_exploits'
+2025-12-29 00:24:49,785 - core.scan_engine - INFO - Using RobustScanOrchestrator for scan 2d4e1f12
+2025-12-29 00:24:49,787 - core.scan_engine - INFO - Starting robust scan for 2d4e1f12
+2025-12-29 00:24:49,787 - inference.robust_orchestrator - INFO - [Orchestrator] Using shared scan state for 2d4e1f12
+2025-12-29 00:24:49,789 - inference.progress_tracker - INFO - [Progress] Loaded historical data for better estimates
+2025-12-29 00:24:49,790 - inference.progress_tracker - INFO - [Progress] Scan 2d4e1f12 started
+2025-12-29 00:24:49,791 - inference.robust_orchestrator - INFO - [Orchestrator] Time budget exhausted: 21600.061922s
+2025-12-29 00:24:49,793 - inference.progress_tracker - INFO - [Progress] Scan 2d4e1f12 completed
+2025-12-29 00:24:49,794 - core.scan_engine - INFO - Scan completed: 0 findings
+2025-12-29 00:24:49,795 - core.scan_engine - INFO -  Scan 2d4e1f12 completed successfully!
+2025-12-29 00:24:49,797 - core.scan_engine - INFO - Scan 2d4e1f12 results: 0 findings, 0 tools executed
+2025-12-29 00:25:27,593 - werkzeug - INFO - 127.0.0.1 - - [29/Dec/2025 00:25:27] "GET /api/scan/status/2d4e1f12 HTTP/1.1" 200 -
+2025-12-29 00:25:40,500 - api.scan_routes - INFO - Added scan 36fbb31e to active_scans. Active scans count: 2
+2025-12-29 00:25:40,500 - api.scan_routes - INFO - Created scan 36fbb31e for target https://demo.owasp-juice.shop
+2025-12-29 00:25:40,501 - inference.self_learning_parser - INFO - [SelfLearningParser] Initialized (LLM: True, Learning: True)
+2025-12-29 00:25:40,501 - inference.tool_manager - INFO - [ToolManager] Using SelfLearningParser (LLM: True, Learning: True)
+2025-12-29 00:25:40,502 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2025-12-29 00:25:40,502 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2025-12-29 00:25:40,503 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2025-12-29 00:25:40,503 - core.scan_engine - INFO - start_scan called: scan_id=36fbb31e, target=https://demo.owasp-juice.shop
+2025-12-29 00:25:40,504 - core.scan_engine - INFO - Scan thread started for 36fbb31e
+2025-12-29 00:25:40,504 - core.scan_engine - INFO - Started scan thread for 36fbb31e
+2025-12-29 00:25:40,504 - core.scan_engine - INFO - Using RobustScanOrchestrator for scan 36fbb31e
+2025-12-29 00:25:40,505 - core.scan_engine - INFO - Emitted scan_started event
+2025-12-29 00:25:40,506 - api.scan_routes - INFO - Scan 36fbb31e started successfully
+2025-12-29 00:25:40,506 - core.scan_engine - INFO - Starting robust scan for 36fbb31e
+2025-12-29 00:25:40,508 - werkzeug - INFO - 127.0.0.1 - - [29/Dec/2025 00:25:40] "[35m[1mPOST /api/scan/start HTTP/1.1[0m" 201 -
+2025-12-29 00:25:40,508 - inference.robust_orchestrator - INFO - [Orchestrator] Using shared scan state for 36fbb31e
+2025-12-29 00:25:40,512 - inference.progress_tracker - INFO - [Progress] Loaded historical data for better estimates
+2025-12-29 00:25:40,515 - inference.progress_tracker - INFO - [Progress] Scan 36fbb31e started
+2025-12-29 00:25:40,516 - inference.robust_orchestrator - INFO - [Orchestrator] Time budget exhausted: 21600.015644s
+2025-12-29 00:25:40,519 - inference.progress_tracker - INFO - [Progress] Scan 36fbb31e completed
+2025-12-29 00:25:40,520 - core.scan_engine - INFO - Scan completed: 0 findings
+2025-12-29 00:25:40,521 - core.scan_engine - INFO -  Scan 36fbb31e completed successfully!
+2025-12-29 00:25:40,522 - core.scan_engine - INFO - Scan 36fbb31e results: 0 findings, 0 tools executed
+2025-12-29 00:26:41,159 - werkzeug - INFO - 127.0.0.1 - - [29/Dec/2025 00:26:41] "GET /api/scan/status/36fbb31e HTTP/1.1" 200 -
