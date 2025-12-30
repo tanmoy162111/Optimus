@@ -156,9 +156,9 @@ class RobustScanOrchestrator:
         
         # Initialize enhanced parser
         try:
-            from inference.enhanced_parser import get_enhanced_parser
-            self.output_parser = get_enhanced_parser()
-            logger.info("[Orchestrator] EnhancedParser initialized")
+            from inference.enhanced_output_parser import EnhancedOutputParser
+            self.output_parser = EnhancedOutputParser()
+            logger.info("[Orchestrator] EnhancedOutputParser initialized")
         except Exception as e:
             logger.warning(f"[Orchestrator] EnhancedParser not available: {e}")
             self.output_parser = None
@@ -558,7 +558,7 @@ class RobustScanOrchestrator:
                             if self._should_stop(scan_state):
                                 break
                             
-                            result = self._execute_exploit_step(step, scan_state)
+                            result = self._execute_exploit_step(step, scan_state, progress_tracker)
                             
                             if result.get('shell_obtained'):
                                 logger.info("[Orchestrator] 🐚 SHELL OBTAINED!")
@@ -666,42 +666,60 @@ class RobustScanOrchestrator:
             # Parse output with enhanced parser
             if result and self.output_parser:
                 raw_output = result.get('output', '')
+                stderr_output = result.get('stderr', '')
                 if raw_output:
-                    parsed = self.output_parser.parse(tool, raw_output, {
-                        'target': scan_state['target'],
-                        'host': scan_state.get('host', ''),
-                    })
-                    
-                    # Extract findings from parsed output
-                    if parsed.findings:
+                    # EnhancedOutputParser.parse(tool_name, stdout, stderr, command, target)
+                    parsed = self.output_parser.parse(
+                        tool, 
+                        raw_output, 
+                        stderr_output,
+                        args,  # command
+                        scan_state['target']  # target
+                    )
+                                
+                    # Extract vulnerabilities from parsed output (mapped to findings)
+                    if parsed and parsed.get('vulnerabilities'):
                         if 'findings' not in result:
                             result['findings'] = []
-                        for pf in parsed.findings:
-                            result['findings'].append(pf.to_dict())
-                    
+                        for finding in parsed['vulnerabilities']:
+                            if isinstance(finding, dict):
+                                result['findings'].append(finding)
+                            elif hasattr(finding, 'to_dict'):
+                                result['findings'].append(finding.to_dict())
+                                
                     # Extract services
-                    if parsed.services:
+                    if parsed and parsed.get('services'):
                         if 'services' not in result:
                             result['services'] = []
-                        result['services'].extend([s.to_dict() for s in parsed.services])
-                    
+                        for svc in parsed['services']:
+                            if isinstance(svc, dict):
+                                result['services'].append(svc)
+                            elif hasattr(svc, 'to_dict'):
+                                result['services'].append(svc.to_dict())
+                                
                     # Extract credentials
-                    if parsed.credentials:
+                    if parsed and parsed.get('raw_data') and isinstance(parsed['raw_data'], dict) and parsed['raw_data'].get('username'):
                         if 'credentials' not in result:
                             result['credentials'] = []
-                        result['credentials'].extend([c.to_dict() for c in parsed.credentials])
-                    
-                    # Extract endpoints
-                    if parsed.endpoints:
+                        # Extract credentials if they exist in raw_data
+                        if isinstance(parsed['raw_data'].get('username'), str):
+                            result['credentials'].append({
+                                'username': parsed['raw_data'].get('username'),
+                                'password': parsed['raw_data'].get('password', ''),
+                                'source': tool
+                            })
+                                
+                    # Extract endpoints/hosts
+                    if parsed and parsed.get('hosts'):
                         if 'endpoints' not in result:
                             result['endpoints'] = []
-                        result['endpoints'].extend(parsed.endpoints)
-                    
+                        result['endpoints'].extend(parsed['hosts'])
+                                
                     # Extract technologies
-                    if parsed.technologies:
+                    if parsed and parsed.get('technologies'):
                         if 'technologies' not in result:
                             result['technologies'] = []
-                        result['technologies'].extend(parsed.technologies)
+                        result['technologies'].extend(parsed['technologies'])
             
             # Complete tool in progress tracker
             findings_count = len(result.get('findings', [])) if result else 0
@@ -719,7 +737,7 @@ class RobustScanOrchestrator:
             
             return {'success': False, 'error': str(e), 'findings': []}
     
-    def _execute_exploit_step(self, step: Dict, scan_state: Dict) -> Dict:
+    def _execute_exploit_step(self, step: Dict, scan_state: Dict, progress_tracker=None) -> Dict:
         """Execute a single exploitation step"""
         tool = step.get('tool', '')
         command = step.get('command', '')
