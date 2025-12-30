@@ -665,63 +665,70 @@ class RobustScanOrchestrator:
                 phase=scan_state['phase']
             )
             
-            # Parse output with enhanced parser
-            if result and self.output_parser:
-                raw_output = result.get('output', '')
-                stderr_output = result.get('stderr', '')
-                if raw_output:
-                    # EnhancedOutputParser.parse(tool_name, stdout, stderr, command, target)
-                    parsed = self.output_parser.parse(
-                        tool, 
-                        raw_output, 
-                        stderr_output,
-                        args,  # command
-                        scan_state['target']  # target
-                    )
-                                
-                    # Extract vulnerabilities from parsed output (mapped to findings)
-                    if parsed and parsed.get('vulnerabilities'):
-                        if 'findings' not in result:
-                            result['findings'] = []
-                        for finding in parsed['vulnerabilities']:
-                            if isinstance(finding, dict):
-                                result['findings'].append(finding)
-                            elif hasattr(finding, 'to_dict'):
-                                result['findings'].append(finding.to_dict())
-                                
-                    # Extract services
-                    if parsed and parsed.get('services'):
-                        if 'services' not in result:
-                            result['services'] = []
-                        for svc in parsed['services']:
-                            if isinstance(svc, dict):
-                                result['services'].append(svc)
-                            elif hasattr(svc, 'to_dict'):
-                                result['services'].append(svc.to_dict())
-                                
-                    # Extract credentials
-                    if parsed and parsed.get('raw_data') and isinstance(parsed['raw_data'], dict) and parsed['raw_data'].get('username'):
-                        if 'credentials' not in result:
-                            result['credentials'] = []
-                        # Extract credentials if they exist in raw_data
-                        if isinstance(parsed['raw_data'].get('username'), str):
-                            result['credentials'].append({
-                                'username': parsed['raw_data'].get('username'),
-                                'password': parsed['raw_data'].get('password', ''),
-                                'source': tool
-                            })
-                                
-                    # Extract endpoints/hosts
-                    if parsed and parsed.get('hosts'):
-                        if 'endpoints' not in result:
-                            result['endpoints'] = []
-                        result['endpoints'].extend(parsed['hosts'])
-                                
-                    # Extract technologies
-                    if parsed and parsed.get('technologies'):
-                        if 'technologies' not in result:
-                            result['technologies'] = []
-                        result['technologies'].extend(parsed['technologies'])
+            # CRITICAL FIX: Extract findings from tool_manager's parsed_results
+            # tool_manager returns: {
+            #   'stdout': ..., 
+            #   'stderr': ..., 
+            #   'parsed_results': {'vulnerabilities': [...], 'hosts': [...], ...}
+            # }
+            if result:
+                parsed_results = result.get('parsed_results', {})
+                
+                # Extract vulnerabilities -> findings
+                if parsed_results and parsed_results.get('vulnerabilities'):
+                    if 'findings' not in result:
+                        result['findings'] = []
+                    for vuln in parsed_results['vulnerabilities']:
+                        if isinstance(vuln, dict):
+                            result['findings'].append(vuln)
+                        elif hasattr(vuln, 'to_dict'):
+                            result['findings'].append(vuln.to_dict())
+                    logger.info(f"[Orchestrator] Extracted {len(result['findings'])} findings from {tool}")
+                
+                # Extract hosts/endpoints
+                if parsed_results and parsed_results.get('hosts'):
+                    if 'endpoints' not in result:
+                        result['endpoints'] = []
+                    result['endpoints'].extend(parsed_results['hosts'])
+                
+                # Extract services
+                if parsed_results and parsed_results.get('services'):
+                    if 'services' not in result:
+                        result['services'] = []
+                    result['services'].extend(parsed_results['services'])
+                
+                # Extract technologies
+                if parsed_results and parsed_results.get('technologies'):
+                    if 'technologies' not in result:
+                        result['technologies'] = []
+                    result['technologies'].extend(parsed_results['technologies'])
+                
+                # Fallback: If still no findings, try re-parsing with enhanced parser
+                # Note: tool_manager uses 'stdout' key, not 'output'
+                if not result.get('findings') and self.output_parser:
+                    raw_output = result.get('stdout', result.get('output', ''))
+                    stderr_output = result.get('stderr', '')
+                    if raw_output and len(raw_output) > 10:
+                        try:
+                            parsed = self.output_parser.parse(
+                                tool, 
+                                raw_output, 
+                                stderr_output,
+                                args,
+                                scan_state['target']
+                            )
+                            
+                            if parsed and parsed.get('vulnerabilities'):
+                                if 'findings' not in result:
+                                    result['findings'] = []
+                                for finding in parsed['vulnerabilities']:
+                                    if isinstance(finding, dict):
+                                        result['findings'].append(finding)
+                                    elif hasattr(finding, 'to_dict'):
+                                        result['findings'].append(finding.to_dict())
+                                logger.info(f"[Orchestrator] Re-parsed {len(result['findings'])} findings from {tool}")
+                        except Exception as parse_err:
+                            logger.warning(f"[Orchestrator] Re-parsing failed for {tool}: {parse_err}")
             
             # Complete tool in progress tracker
             findings_count = len(result.get('findings', [])) if result else 0
@@ -752,8 +759,8 @@ class RobustScanOrchestrator:
         result = self._execute_tool(tool, command, scan_state, progress_tracker)
         
         if result:
-            # Check for shell indicators
-            output = result.get('output', '')
+            # Check for shell indicators - use 'stdout' key (not 'output')
+            output = result.get('stdout', result.get('output', ''))
             shell_indicators = ['uid=', 'gid=', 'whoami', 'root', 'www-data', 'SYSTEM']
             
             if any(ind in output for ind in shell_indicators):
