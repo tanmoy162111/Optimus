@@ -58,35 +58,54 @@ class ToolManager:
         self.tool_kb = ToolKnowledgeBase()
         # Tool execution history for dynamic timeout adjustment
         self.tool_execution_history = {}
-        # Initialize the output parser - use self-learning parser if available
+        # Initialize the output parser - use evolving parser if available
         try:
-            from .self_learning_parser import SelfLearningParser
+            from .evolving_parser import EvolvingParser, get_evolving_parser
             
-            # Check if LLM and learning are enabled in config
+            # Check if LLM and evolution are enabled in config
             enable_llm = True
-            enable_learning = True
+            enable_evolution = True
             try:
                 enable_llm = getattr(Config, 'OLLAMA_ENABLED', True)
-                enable_learning = getattr(Config, 'PARSER_LEARNING_ENABLED', True)
+                enable_evolution = getattr(Config, 'PARSER_EVOLUTION_ENABLED', True)
             except (ImportError, AttributeError):
                 pass
             
-            self.output_parser = SelfLearningParser(
+            self.output_parser = get_evolving_parser(
                 enable_llm=enable_llm,
-                enable_learning=enable_learning
+                enable_evolution=enable_evolution
             )
-            logger.info(f"[ToolManager] Using SelfLearningParser (LLM: {enable_llm}, Learning: {enable_learning})")
+            logger.info(f"[ToolManager] Using EvolvingParser (LLM: {enable_llm}, Evolution: {enable_evolution})")
             
         except ImportError as e:
-            logger.warning(f"[ToolManager] SelfLearningParser not available: {e}")
+            logger.warning(f"[ToolManager] EvolvingParser not available: {e}, trying SelfLearningParser")
             try:
-                from .enhanced_output_parser import EnhancedOutputParser
-                self.output_parser = EnhancedOutputParser(llm_client=None)
-                logger.info("[ToolManager] Using EnhancedOutputParser")
-            except ImportError:
-                from .output_parser import OutputParser
-                self.output_parser = OutputParser()
-                logger.info("[ToolManager] Using basic OutputParser")
+                from .self_learning_parser import SelfLearningParser
+                
+                enable_llm = True
+                enable_learning = True
+                try:
+                    enable_llm = getattr(Config, 'OLLAMA_ENABLED', True)
+                    enable_learning = getattr(Config, 'PARSER_LEARNING_ENABLED', True)
+                except (ImportError, AttributeError):
+                    pass
+                
+                self.output_parser = SelfLearningParser(
+                    enable_llm=enable_llm,
+                    enable_learning=enable_learning
+                )
+                logger.info(f"[ToolManager] Using SelfLearningParser (LLM: {enable_llm}, Learning: {enable_learning})")
+                
+            except ImportError as e2:
+                logger.warning(f"[ToolManager] SelfLearningParser not available: {e2}")
+                try:
+                    from .enhanced_output_parser import EnhancedOutputParser
+                    self.output_parser = EnhancedOutputParser(llm_client=None)
+                    logger.info("[ToolManager] Using EnhancedOutputParser")
+                except ImportError:
+                    from .output_parser import OutputParser
+                    self.output_parser = OutputParser()
+                    logger.info("[ToolManager] Using basic OutputParser")
         
         # Try to initialize hybrid tool system
         self.hybrid_system = None
@@ -96,6 +115,15 @@ class ToolManager:
                 logger.info("[ToolManager] Hybrid tool system initialized")
             except Exception as e:
                 logger.warning(f"[ToolManager] Failed to initialize hybrid tool system: {e}")
+        
+        # Initialize evolving command generator
+        self.evolving_commands = None
+        try:
+            from .evolving_commands import get_evolving_command_generator
+            self.evolving_commands = get_evolving_command_generator()
+            logger.info("[ToolManager] Evolving command generator initialized")
+        except ImportError as e:
+            logger.warning(f"[ToolManager] Evolving commands not available: {e}")
         
         logger.info("[ToolManager] Initialized with dynamic command generation")
     
@@ -407,6 +435,22 @@ class ToolManager:
             
             # Count findings
             findings_count = len(parsed_results.get('vulnerabilities', []))
+            
+            # Record execution result for learning (evolving commands)
+            if self.evolving_commands:
+                try:
+                    self.evolving_commands.learn_from_execution(
+                        tool=tool_name,
+                        command=command,
+                        target=target,
+                        exit_code=exit_code,
+                        stdout=stdout,
+                        stderr=stderr,
+                        findings_count=findings_count,
+                        execution_time=execution_time
+                    )
+                except Exception as e:
+                    logger.debug(f"Failed to learn from execution: {e}")
             
             # Record execution result for learning (if hybrid system available)
             if self.hybrid_system:
@@ -789,8 +833,19 @@ class ToolManager:
         if multiplier > 1.0 or context_adjustment > 1.0:
             print(f"[DEBUG] Dynamic timeout for {tool_name} ({tool_category}): {final_timeout}s (base: {base_timeout}s, mult: {multiplier}x, context: {context_adjustment}x, progressive: {progressive_extension})")
         
+        # TIER 0: Try Evolving Command Generator (learns from execution)
+        if self.evolving_commands:
+            try:
+                evolved_cmd, source = self.evolving_commands.generate_command(tool_name, target, context)
+                if evolved_cmd:
+                    command = evolved_cmd
+                    resolution_source = f'evolved:{source}'
+                    logger.info(f"[ToolManager] Evolved resolution: {resolution_source}")
+            except Exception as e:
+                logger.debug(f"[ToolManager] Evolving command failed: {e}")
+        
         # TIER 1: Try HybridToolSystem
-        if self.hybrid_system:
+        if not command and self.hybrid_system:
             try:
                 resolution = self.hybrid_system.resolve_tool(tool_name, target, context)
                 if resolution and resolution.status.value == 'resolved':

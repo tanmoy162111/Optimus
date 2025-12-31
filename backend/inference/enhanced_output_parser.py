@@ -106,6 +106,35 @@ class EnhancedOutputParser:
         # Sanitize input to remove terminal escape codes and other artifacts
         stdout = self._sanitize_output(stdout)
         stderr = self._sanitize_output(stderr)
+        
+        # Check for tool/command not found errors FIRST
+        combined_output = f"{stdout}\n{stderr}".lower()
+        tool_error_indicators = [
+            'command not found',
+            'not found',
+            '[tool_not_found]',
+            'no such file or directory',
+            'permission denied',
+            'cannot execute',
+            'not recognized as',
+            'is not recognized',
+            'unable to locate',
+        ]
+        
+        for indicator in tool_error_indicators:
+            if indicator in combined_output:
+                logger.warning(f"[Parser] Tool error detected for {tool_name}: {indicator}")
+                return {
+                    'vulnerabilities': [],
+                    'hosts': [],
+                    'services': [],
+                    'raw_output': stdout,
+                    'parse_method': 'tool_error',
+                    'parse_confidence': 'none',
+                    'parse_note': f'Tool execution error: {indicator}',
+                    'tool_error': True,
+                    'error_type': indicator
+                }
             
         context = {
             'tool': tool_name,

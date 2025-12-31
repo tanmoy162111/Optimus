@@ -14,11 +14,21 @@ import time
 logger = logging.getLogger(__name__)
 
 
+# Recommended models for Optimus (in order of preference)
+RECOMMENDED_MODELS = [
+    "mistral:7b-instruct-v0.2-q4_K_M",  # Best overall for Optimus
+    "mistral:7b-instruct",               # Mistral default
+    "deepseek-coder:6.7b-instruct",      # Best for regex/code
+    "codellama:7b-instruct",             # Fallback
+    "llama2:7b",                         # Last resort
+]
+
+
 @dataclass
 class OllamaConfig:
     """Configuration for Ollama client"""
     base_url: str = "http://localhost:11434"
-    model: str = "codellama:7b-instruct"
+    model: str = "mistral:7b-instruct-v0.2-q4_K_M"  # Changed from codellama
     timeout: int = 120  # Increased for complex parsing
     temperature: float = 0.1  # Low temp for structured extraction
     max_tokens: int = 4096
@@ -59,6 +69,7 @@ class OllamaClient:
     def is_available(self) -> bool:
         """
         Check if Ollama is running and model is available.
+        Auto-selects from RECOMMENDED_MODELS if configured model not found.
         Caches result for performance.
         """
         current_time = time.time()
@@ -79,7 +90,7 @@ class OllamaClient:
                 models = data.get('models', [])
                 model_names = [m.get('name', '') for m in models]
                 
-                # Check if our model (or base model) is available
+                # Check if configured model is available
                 model_base = self.config.model.split(':')[0]
                 exact_model = self.config.model
                 
@@ -89,21 +100,36 @@ class OllamaClient:
                 # If exact match fails, try base model name
                 if not self._available:
                     self._available = any(model_base in m for m in model_names)
-                    
-                # If still not available, try common variations
+                    if self._available:
+                        # Find the exact name
+                        for m in model_names:
+                            if model_base in m:
+                                self.config.model = m
+                                break
+                
+                # If still not available, try RECOMMENDED_MODELS in order
                 if not self._available:
-                    possible_variants = [f"{model_base}:7b-instruct", f"{model_base}:7b", f"{model_base}:instruct", model_base]
-                    for variant in possible_variants:
-                        if any(variant in m for m in model_names):
-                            logger.info(f"[OllamaClient] Using available model variant: {variant}")
-                            self.config.model = variant
-                            self._available = True
+                    for recommended in RECOMMENDED_MODELS:
+                        rec_base = recommended.split(':')[0]
+                        for available_model in model_names:
+                            if rec_base in available_model:
+                                logger.info(f"[OllamaClient] Auto-selected model: {available_model} (recommended: {recommended})")
+                                self.config.model = available_model
+                                self._available = True
+                                break
+                        if self._available:
                             break
+                
+                # Last resort: use any available model
+                if not self._available and model_names:
+                    self.config.model = model_names[0]
+                    self._available = True
+                    logger.warning(f"[OllamaClient] Using fallback model: {self.config.model}")
                 
                 if self._available:
                     logger.info(f"[OllamaClient] Model {self.config.model} is available")
                 else:
-                    logger.warning(f"[OllamaClient] Model {self.config.model} not found. Available: {model_names}")
+                    logger.warning(f"[OllamaClient] No models available. Install with: ollama pull mistral:7b-instruct-v0.2-q4_K_M")
                     
                 return self._available
             else:
