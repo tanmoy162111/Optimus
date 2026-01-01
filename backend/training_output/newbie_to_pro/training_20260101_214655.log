@@ -1,0 +1,670 @@
+2026-01-01 21:46:55,815 [INFO] [ToolManager] Using EnhancedOutputParser
+2026-01-01 21:46:56,046 [INFO] [ParserPatternDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\data\parser_patterns.db
+2026-01-01 21:46:56,047 [INFO] [OllamaClient] Initialized with model: codellama:7b-instruct
+2026-01-01 21:46:56,055 [INFO] [EvolutionDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\data\parser_evolution.db
+2026-01-01 21:46:56,060 [INFO] [EvolvingParser] Initialized (LLM: True, Evolution: True)
+2026-01-01 21:46:56,061 [INFO] [ToolManager] Using EvolvingParser (LLM: True, Evolution: True)
+2026-01-01 21:46:56,063 [INFO] [ToolManager] Hybrid tool system initialized
+2026-01-01 21:46:56,077 [INFO] [CommandEvolutionDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\data\command_evolution.db
+2026-01-01 21:46:56,078 [INFO] [EvolvingCommandGenerator] Initialized
+2026-01-01 21:46:56,078 [INFO] [ToolManager] Evolving command generator initialized
+2026-01-01 21:46:56,079 [INFO] [ToolManager] Initialized with dynamic command generation
+2026-01-01 21:47:02,893 [WARNING] [IntelligentSelector] RL Agent not available: cannot import name 'StateEncoder' from 'training.enhanced_state_encoder' (D:\Work\Ai Engineering\Git\Optimus\backend\training\enhanced_state_encoder.py)
+2026-01-01 21:47:02,955 [INFO] [ExploitExecutor] Initialized
+2026-01-01 21:47:02,955 [INFO] [OllamaClient] Initialized with model: codellama:7b-instruct
+2026-01-01 21:47:02,955 [INFO] [LLMExploitGenerator] Initialized
+2026-01-01 21:47:02,956 [INFO] [ExploitChainer] Initialized
+2026-01-01 21:47:03,248 [WARNING] [DarkWebIntel] aiohttp_socks not installed - dark web features disabled
+2026-01-01 21:47:03,256 [INFO] [EnhancedStateEncoder] Initialized with 128 dimensions
+2026-01-01 21:47:03,257 [INFO] [DeepRL] Creating networks: state_dim=128, actions=50
+2026-01-01 21:47:04,303 [WARNING] From D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\keras\src\backend\tensorflow\core.py:232: The name tf.placeholder is deprecated. Please use tf.compat.v1.placeholder instead.
+
+2026-01-01 21:47:04,555 [INFO] [DeepRL] Agent initialized (PER: True, Noisy: True)
+2026-01-01 21:47:04,556 [WARNING] [DeepRL] No checkpoints found
+2026-01-01 21:47:04,581 [INFO] [IntelligentSelector] Selecting tools for training, executed: 0, findings: 0
+2026-01-01 21:47:04,581 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 21:47:04,582 [INFO] Using hybrid system resolved command for nmap: nmap -sV -sC https://landscape.canonical.com
+2026-01-01 21:47:04,603 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 21:47:04,603 [INFO] [ToolManager] Normalized target for nmap: https://landscape.canonical.com -> landscape.canonical.com
+2026-01-01 21:47:04,665 [INFO] Connected (version 2.0, client OpenSSH_10.2p1)
+2026-01-01 21:47:04,944 [INFO] Authentication (password) successful!
+2026-01-01 21:47:04,945 [INFO] Updated SSH client for hybrid tool system
+2026-01-01 21:47:16,106 [INFO] Using hybrid system resolved command for nmap: nmap -sV -sC https://landscape.canonical.com
+2026-01-01 21:47:16,106 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 21:47:16,107 [INFO] [ToolManager] Normalized target for nmap: https://landscape.canonical.com -> landscape.canonical.com
+2026-01-01 21:47:16,964 [INFO] Using hybrid system resolved command for nmap: nmap -sV -sC https://landscape.canonical.com
+2026-01-01 21:47:16,964 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 21:47:16,964 [INFO] [ToolManager] Normalized target for nmap: https://landscape.canonical.com -> landscape.canonical.com
+2026-01-01 21:47:17,819 [INFO] Using hybrid system resolved command for nmap: nmap -sV -sC https://landscape.canonical.com
+2026-01-01 21:47:17,820 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 21:47:17,820 [INFO] [ToolManager] Normalized target for nmap: https://landscape.canonical.com -> landscape.canonical.com
+2026-01-01 21:47:18,684 [INFO] [IntelligentSelector] Selecting tools for training, executed: 0, findings: 0
+2026-01-01 21:47:18,685 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 21:47:18,685 [INFO] Using hybrid system resolved command for whatweb: whatweb https://demo.owasp-juice.shop
+2026-01-01 21:47:18,685 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 21:47:18,685 [INFO] [ToolManager] Normalized target for whatweb: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 21:47:51,908 [INFO] [IntelligentSelector] Selecting tools for training, executed: 0, findings: 0
+2026-01-01 21:47:51,908 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 21:47:51,909 [INFO] Using hybrid system resolved command for wafw00f: wafw00f https://landscape.canonical.com
+2026-01-01 21:47:51,909 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 21:47:51,910 [INFO] [ToolManager] Normalized target for wafw00f: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 21:48:10,627 [INFO] [IntelligentSelector] Selecting tools for training, executed: 0, findings: 0
+2026-01-01 21:48:10,627 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 21:48:10,628 [INFO] Using hybrid system resolved command for gobuster: gobuster dir -u https://demo.owasp-juice.shop -w /usr/share/dirb/wordlists/common.txt
+2026-01-01 21:48:10,628 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 21:48:10,628 [INFO] [ToolManager] Normalized target for gobuster: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 21:48:13,307 [INFO] [IntelligentSelector] Selecting tools for training, executed: 0, findings: 0
+2026-01-01 21:48:13,308 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 21:48:13,308 [INFO] Using hybrid system resolved command for ffuf: ffuf -u https://demo.owasp-juice.shop/FUZZ -w /usr/share/dirb/wordlists/common.txt
+2026-01-01 21:48:13,308 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 21:48:13,308 [INFO] [ToolManager] Normalized target for ffuf: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 21:52:38,712 [INFO] [OllamaClient] Auto-selected model: mistral:7b-instruct-v0.2-q4_K_M (recommended: mistral:7b-instruct-v0.2-q4_K_M)
+2026-01-01 21:52:38,712 [INFO] [OllamaClient] Model mistral:7b-instruct-v0.2-q4_K_M is available
+2026-01-01 21:54:40,728 [WARNING] [OllamaClient] Request timeout (attempt 1/2)
+2026-01-01 21:56:43,760 [WARNING] [OllamaClient] Request timeout (attempt 2/2)
+2026-01-01 21:56:45,788 [INFO] [OllamaClient] Model mistral:7b-instruct-v0.2-q4_K_M is available
+2026-01-01 21:56:46,226 [INFO] [IntelligentSelector] Selecting tools for training, executed: 0, findings: 0
+2026-01-01 21:56:46,227 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 21:56:46,227 [INFO] Using hybrid system resolved command for nikto: nikto -h https://demo.owasp-juice.shop
+2026-01-01 21:56:46,228 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 21:56:46,229 [INFO] [ToolManager] Normalized target for nikto: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:01:46,366 [INFO] [IntelligentSelector] Selecting tools for training, executed: 0, findings: 0
+2026-01-01 22:01:46,367 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:01:46,367 [INFO] Using hybrid system resolved command for nuclei: nuclei -u 192.168.131.128 -severity critical,high
+2026-01-01 22:01:46,367 [INFO] [API] nuclei missing optional keys: ['GITHUB_TOKEN'] (tool will work with reduced functionality)
+2026-01-01 22:01:46,368 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:01:46,368 [INFO] [ToolManager] Normalized target for nuclei: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:01:46,501 [INFO] [EvolutionDB] Added error signature: command_not_found for nuclei
+2026-01-01 22:01:46,522 [INFO] [EvolvingCommandGenerator] Tool not found: nuclei, searching alternatives
+2026-01-01 22:01:46,524 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 0, findings: 0
+2026-01-01 22:01:46,524 [INFO] [IntelligentSelector] Selected 3 tools: ['sqlmap', 'dalfox', 'commix']
+2026-01-01 22:01:46,524 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u https://landscape.canonical.com --batch --random-agent
+2026-01-01 22:01:46,524 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:01:46,525 [INFO] [ToolManager] Normalized target for sqlmap: https://landscape.canonical.com -> https://landscape.canonical.com/rest/products/search?q=test
+2026-01-01 22:02:16,494 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 1, findings: 0
+2026-01-01 22:02:16,495 [INFO] [IntelligentSelector] Selected 3 tools: ['dalfox', 'commix', 'metasploit']
+2026-01-01 22:02:16,496 [INFO] Using hybrid system resolved command for dalfox: dalfox url https://landscape.canonical.com
+2026-01-01 22:02:16,496 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:02:16,496 [INFO] [ToolManager] Normalized target for dalfox: https://landscape.canonical.com -> https://landscape.canonical.com/rest/products/search?q=test
+2026-01-01 22:02:16,664 [INFO] [EvolutionDB] Added error signature: command_not_found for dalfox
+2026-01-01 22:02:16,686 [INFO] [EvolvingCommandGenerator] Tool not found: dalfox, searching alternatives
+2026-01-01 22:02:17,689 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 2, findings: 0
+2026-01-01 22:02:17,689 [INFO] [IntelligentSelector] Selected 3 tools: ['commix', 'metasploit', 'hydra']
+2026-01-01 22:02:17,689 [INFO] Using hybrid system resolved command for commix: commix --url=https://landscape.canonical.com --batch
+2026-01-01 22:02:17,690 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:02:17,690 [INFO] [ToolManager] Normalized target for commix: https://landscape.canonical.com -> https://landscape.canonical.com/rest/products/search?q=test
+2026-01-01 22:02:59,498 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 3, findings: 0
+2026-01-01 22:02:59,499 [INFO] [IntelligentSelector] Selected 2 tools: ['metasploit', 'hydra']
+2026-01-01 22:02:59,499 [INFO] Using hybrid system resolved command for metasploit: metasploit https://landscape.canonical.com
+2026-01-01 22:02:59,500 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:02:59,500 [INFO] [ToolManager] Normalized target for metasploit: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:02:59,649 [INFO] [EvolutionDB] Added error signature: command_not_found for metasploit
+2026-01-01 22:02:59,671 [INFO] [EvolvingCommandGenerator] Tool not found: metasploit, searching alternatives
+2026-01-01 22:03:00,673 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 4, findings: 0
+2026-01-01 22:03:00,674 [INFO] [IntelligentSelector] Selected 1 tools: ['hydra']
+2026-01-01 22:03:00,674 [INFO] Using hybrid system resolved command for hydra: hydra https://landscape.canonical.com
+2026-01-01 22:03:00,675 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:03:00,675 [INFO] [ToolManager] Normalized target for hydra: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:03:02,762 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 5, findings: 0
+2026-01-01 22:03:02,763 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:03:02,764 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 0, findings: 0
+2026-01-01 22:03:02,764 [INFO] [IntelligentSelector] Selected 3 tools: ['sqlmap', 'dalfox', 'commix']
+2026-01-01 22:03:02,764 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u 192.168.131.128 --batch --random-agent
+2026-01-01 22:03:02,765 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:03:02,765 [INFO] [ToolManager] Normalized target for sqlmap: 192.168.131.128 -> http://192.168.131.128/rest/products/search?q=test
+2026-01-01 22:03:05,715 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 1, findings: 0
+2026-01-01 22:03:05,716 [INFO] [IntelligentSelector] Selected 3 tools: ['dalfox', 'commix', 'metasploit']
+2026-01-01 22:03:05,716 [INFO] Using hybrid system resolved command for dalfox: dalfox url 192.168.131.128
+2026-01-01 22:03:05,717 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:03:05,717 [INFO] [ToolManager] Normalized target for dalfox: 192.168.131.128 -> http://192.168.131.128/rest/products/search?q=test
+2026-01-01 22:03:05,864 [INFO] [EvolutionDB] Added error signature: command_not_found for dalfox
+2026-01-01 22:03:05,883 [INFO] [EvolvingCommandGenerator] Tool not found: dalfox, searching alternatives
+2026-01-01 22:03:06,885 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 2, findings: 0
+2026-01-01 22:03:06,885 [INFO] [IntelligentSelector] Selected 3 tools: ['commix', 'metasploit', 'hydra']
+2026-01-01 22:03:06,886 [INFO] Using hybrid system resolved command for commix: commix --url=192.168.131.128 --batch
+2026-01-01 22:03:06,886 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:03:06,886 [INFO] [ToolManager] Normalized target for commix: 192.168.131.128 -> http://192.168.131.128/rest/products/search?q=test
+2026-01-01 22:03:08,143 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 3, findings: 0
+2026-01-01 22:03:08,144 [INFO] [IntelligentSelector] Selected 2 tools: ['metasploit', 'hydra']
+2026-01-01 22:03:08,144 [INFO] Using hybrid system resolved command for metasploit: metasploit 192.168.131.128
+2026-01-01 22:03:08,144 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:03:08,145 [INFO] [ToolManager] Normalized target for metasploit: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:03:08,280 [INFO] [EvolutionDB] Added error signature: command_not_found for metasploit
+2026-01-01 22:03:08,306 [INFO] [EvolvingCommandGenerator] Tool not found: metasploit, searching alternatives
+2026-01-01 22:03:09,308 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 4, findings: 0
+2026-01-01 22:03:09,308 [INFO] [IntelligentSelector] Selected 1 tools: ['hydra']
+2026-01-01 22:03:09,309 [INFO] Using hybrid system resolved command for hydra: hydra 192.168.131.128
+2026-01-01 22:03:09,309 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:03:09,310 [INFO] [ToolManager] Normalized target for hydra: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:03:11,544 [INFO] [OllamaClient] Model mistral:7b-instruct-v0.2-q4_K_M is available
+2026-01-01 22:05:13,551 [WARNING] [OllamaClient] Request timeout (attempt 1/2)
+2026-01-01 22:05:35,961 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 5, findings: 0
+2026-01-01 22:05:35,962 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:05:35,962 [INFO] Using hybrid system resolved command for nmap: nmap -sV -sC https://demo.owasp-juice.shop
+2026-01-01 22:05:35,962 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:05:35,963 [INFO] [ToolManager] Normalized target for nmap: https://demo.owasp-juice.shop -> demo.owasp-juice.shop
+2026-01-01 22:05:39,442 [INFO] Checkpoint saved: training_output\newbie_to_pro\checkpoint_20260101_220539.json
+2026-01-01 22:05:39,582 [INFO] [DeepRL] Saved checkpoint to D:\Work\Ai Engineering\Git\Optimus\backend\models\deep_rl\checkpoint_20260101_220539
+2026-01-01 22:05:39,585 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u 192.168.131.128 --batch --random-agent
+2026-01-01 22:05:39,585 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:05:39,585 [INFO] [ToolManager] Normalized target for sqlmap: 192.168.131.128 -> http://192.168.131.128/rest/products/search?q=test
+2026-01-01 22:05:42,661 [INFO] [IntelligentSelector] Selecting tools for training, executed: 0, findings: 0
+2026-01-01 22:05:42,662 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:05:42,662 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u https://demo.owasp-juice.shop --batch --random-agent
+2026-01-01 22:05:42,662 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:05:42,662 [INFO] [ToolManager] Normalized target for sqlmap: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2026-01-01 22:05:55,481 [INFO] Using hybrid system resolved command for dalfox: dalfox url 192.168.131.128
+2026-01-01 22:05:55,481 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:05:55,481 [INFO] [ToolManager] Normalized target for dalfox: 192.168.131.128 -> http://192.168.131.128/rest/products/search?q=test
+2026-01-01 22:05:55,613 [INFO] [EvolutionDB] Added error signature: command_not_found for dalfox
+2026-01-01 22:05:55,631 [INFO] [EvolvingCommandGenerator] Tool not found: dalfox, searching alternatives
+2026-01-01 22:05:56,633 [INFO] Using hybrid system resolved command for xsstrike: xsstrike 192.168.131.128
+2026-01-01 22:05:56,633 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:05:56,633 [INFO] [ToolManager] Normalized target for xsstrike: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:05:56,788 [INFO] [EvolutionDB] Added error signature: command_not_found for xsstrike
+2026-01-01 22:05:56,810 [INFO] [EvolvingCommandGenerator] Tool not found: xsstrike, searching alternatives
+2026-01-01 22:05:57,812 [INFO] [IntelligentSelector] Selecting tools for training, executed: 0, findings: 0
+2026-01-01 22:05:57,824 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:05:57,824 [INFO] Using hybrid system resolved command for dalfox: dalfox url 192.168.131.128
+2026-01-01 22:05:57,825 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:05:57,825 [INFO] [ToolManager] Normalized target for dalfox: 192.168.131.128 -> http://192.168.131.128/rest/products/search?q=test
+2026-01-01 22:05:57,965 [INFO] [EvolutionDB] Added error signature: command_not_found for dalfox
+2026-01-01 22:05:57,983 [INFO] [EvolvingCommandGenerator] Tool not found: dalfox, searching alternatives
+2026-01-01 22:05:57,985 [INFO] [IntelligentSelector] Selecting tools for training, executed: 0, findings: 0
+2026-01-01 22:05:57,985 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:05:57,985 [INFO] Using hybrid system resolved command for hydra: hydra 192.168.131.128
+2026-01-01 22:05:57,986 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:05:57,986 [INFO] [ToolManager] Normalized target for hydra: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:06:00,248 [INFO] [OllamaClient] Model mistral:7b-instruct-v0.2-q4_K_M is available
+2026-01-01 22:07:34,851 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 0, findings: 0
+2026-01-01 22:07:34,851 [INFO] [IntelligentSelector] Selected 3 tools: ['sqlmap', 'dalfox', 'commix']
+2026-01-01 22:07:34,852 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u https://landscape.canonical.com --batch --random-agent
+2026-01-01 22:07:34,852 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:07:34,852 [INFO] [ToolManager] Normalized target for sqlmap: https://landscape.canonical.com -> https://landscape.canonical.com/rest/products/search?q=test
+2026-01-01 22:07:50,985 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 1, findings: 0
+2026-01-01 22:07:50,985 [INFO] [IntelligentSelector] Selected 3 tools: ['dalfox', 'commix', 'metasploit']
+2026-01-01 22:07:50,985 [INFO] Using hybrid system resolved command for dalfox: dalfox url https://landscape.canonical.com
+2026-01-01 22:07:50,986 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:07:50,986 [INFO] [ToolManager] Normalized target for dalfox: https://landscape.canonical.com -> https://landscape.canonical.com/rest/products/search?q=test
+2026-01-01 22:07:51,135 [INFO] [EvolutionDB] Added error signature: command_not_found for dalfox
+2026-01-01 22:07:51,153 [INFO] [EvolvingCommandGenerator] Tool not found: dalfox, searching alternatives
+2026-01-01 22:07:52,154 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 2, findings: 0
+2026-01-01 22:07:52,155 [INFO] [IntelligentSelector] Selected 3 tools: ['commix', 'metasploit', 'hydra']
+2026-01-01 22:07:52,155 [INFO] Using hybrid system resolved command for commix: commix --url=https://landscape.canonical.com --batch
+2026-01-01 22:07:52,155 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:07:52,155 [INFO] [ToolManager] Normalized target for commix: https://landscape.canonical.com -> https://landscape.canonical.com/rest/products/search?q=test
+2026-01-01 22:08:57,659 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 3, findings: 0
+2026-01-01 22:08:57,660 [INFO] [IntelligentSelector] Selected 2 tools: ['metasploit', 'hydra']
+2026-01-01 22:08:57,661 [INFO] Using hybrid system resolved command for metasploit: metasploit https://landscape.canonical.com
+2026-01-01 22:08:57,661 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:08:57,661 [INFO] [ToolManager] Normalized target for metasploit: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:08:57,812 [INFO] [EvolutionDB] Added error signature: command_not_found for metasploit
+2026-01-01 22:08:57,830 [INFO] [EvolvingCommandGenerator] Tool not found: metasploit, searching alternatives
+2026-01-01 22:08:58,832 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 4, findings: 0
+2026-01-01 22:08:58,833 [INFO] [IntelligentSelector] Selected 1 tools: ['hydra']
+2026-01-01 22:08:58,833 [INFO] Using hybrid system resolved command for hydra: hydra https://landscape.canonical.com
+2026-01-01 22:08:58,834 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:08:58,834 [INFO] [ToolManager] Normalized target for hydra: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:09:00,913 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 5, findings: 0
+2026-01-01 22:09:00,914 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:09:00,915 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 0, findings: 0
+2026-01-01 22:09:00,915 [INFO] [IntelligentSelector] Selected 3 tools: ['sqlmap', 'dalfox', 'commix']
+2026-01-01 22:09:00,916 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u https://demo.owasp-juice.shop --batch --random-agent
+2026-01-01 22:09:00,916 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:09:00,916 [INFO] [ToolManager] Normalized target for sqlmap: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2026-01-01 22:09:18,860 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 1, findings: 0
+2026-01-01 22:09:18,861 [INFO] [IntelligentSelector] Selected 3 tools: ['dalfox', 'commix', 'metasploit']
+2026-01-01 22:09:18,861 [INFO] Using hybrid system resolved command for dalfox: dalfox url https://demo.owasp-juice.shop
+2026-01-01 22:09:18,862 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:09:18,862 [INFO] [ToolManager] Normalized target for dalfox: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2026-01-01 22:09:19,000 [INFO] [EvolutionDB] Added error signature: command_not_found for dalfox
+2026-01-01 22:09:19,020 [INFO] [EvolvingCommandGenerator] Tool not found: dalfox, searching alternatives
+2026-01-01 22:09:20,021 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 2, findings: 0
+2026-01-01 22:09:20,022 [INFO] [IntelligentSelector] Selected 3 tools: ['commix', 'metasploit', 'hydra']
+2026-01-01 22:09:20,022 [INFO] Using hybrid system resolved command for commix: commix --url=https://demo.owasp-juice.shop --batch
+2026-01-01 22:09:20,023 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:09:20,023 [INFO] [ToolManager] Normalized target for commix: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2026-01-01 22:09:27,609 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 3, findings: 0
+2026-01-01 22:09:27,610 [INFO] [IntelligentSelector] Selected 2 tools: ['metasploit', 'hydra']
+2026-01-01 22:09:27,610 [INFO] Using hybrid system resolved command for metasploit: metasploit https://demo.owasp-juice.shop
+2026-01-01 22:09:27,611 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:09:27,611 [INFO] [ToolManager] Normalized target for metasploit: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:09:27,790 [INFO] [EvolutionDB] Added error signature: command_not_found for metasploit
+2026-01-01 22:09:27,806 [INFO] [EvolvingCommandGenerator] Tool not found: metasploit, searching alternatives
+2026-01-01 22:09:28,808 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 4, findings: 0
+2026-01-01 22:09:28,808 [INFO] [IntelligentSelector] Selected 1 tools: ['hydra']
+2026-01-01 22:09:28,809 [INFO] Using hybrid system resolved command for hydra: hydra https://demo.owasp-juice.shop
+2026-01-01 22:09:28,809 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:09:28,809 [INFO] [ToolManager] Normalized target for hydra: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:09:30,078 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 5, findings: 0
+2026-01-01 22:09:30,079 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:09:30,080 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 0, findings: 0
+2026-01-01 22:09:30,080 [INFO] [IntelligentSelector] Selected 3 tools: ['sqlmap', 'dalfox', 'commix']
+2026-01-01 22:09:30,080 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u 192.168.131.128 --batch --random-agent
+2026-01-01 22:09:30,081 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:09:30,081 [INFO] [ToolManager] Normalized target for sqlmap: 192.168.131.128 -> http://192.168.131.128/rest/products/search?q=test
+2026-01-01 22:09:32,983 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 1, findings: 0
+2026-01-01 22:09:32,984 [INFO] [IntelligentSelector] Selected 3 tools: ['dalfox', 'commix', 'metasploit']
+2026-01-01 22:09:32,984 [INFO] Using hybrid system resolved command for dalfox: dalfox url 192.168.131.128
+2026-01-01 22:09:32,985 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:09:32,985 [INFO] [ToolManager] Normalized target for dalfox: 192.168.131.128 -> http://192.168.131.128/rest/products/search?q=test
+2026-01-01 22:09:33,132 [INFO] [EvolutionDB] Added error signature: command_not_found for dalfox
+2026-01-01 22:09:33,148 [INFO] [EvolvingCommandGenerator] Tool not found: dalfox, searching alternatives
+2026-01-01 22:09:34,151 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 2, findings: 0
+2026-01-01 22:09:34,151 [INFO] [IntelligentSelector] Selected 3 tools: ['commix', 'metasploit', 'hydra']
+2026-01-01 22:09:34,152 [INFO] Using hybrid system resolved command for commix: commix --url=192.168.131.128 --batch
+2026-01-01 22:09:34,152 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:09:34,153 [INFO] [ToolManager] Normalized target for commix: 192.168.131.128 -> http://192.168.131.128/rest/products/search?q=test
+2026-01-01 22:09:35,428 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 3, findings: 0
+2026-01-01 22:09:35,428 [INFO] [IntelligentSelector] Selected 2 tools: ['metasploit', 'hydra']
+2026-01-01 22:09:35,429 [INFO] Using hybrid system resolved command for metasploit: metasploit 192.168.131.128
+2026-01-01 22:09:35,429 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:09:35,430 [INFO] [ToolManager] Normalized target for metasploit: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:09:35,583 [INFO] [EvolutionDB] Added error signature: command_not_found for metasploit
+2026-01-01 22:09:35,603 [INFO] [EvolvingCommandGenerator] Tool not found: metasploit, searching alternatives
+2026-01-01 22:09:36,604 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 4, findings: 0
+2026-01-01 22:09:36,605 [INFO] [IntelligentSelector] Selected 1 tools: ['hydra']
+2026-01-01 22:09:36,605 [INFO] Using hybrid system resolved command for hydra: hydra 192.168.131.128
+2026-01-01 22:09:36,606 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:09:36,606 [INFO] [ToolManager] Normalized target for hydra: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:09:38,892 [INFO] [OllamaClient] Model mistral:7b-instruct-v0.2-q4_K_M is available
+2026-01-01 22:11:16,538 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 5, findings: 0
+2026-01-01 22:11:16,539 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:11:16,539 [INFO] Using hybrid system resolved command for nmap: nmap -sV -sC https://landscape.canonical.com
+2026-01-01 22:11:16,540 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:11:16,540 [INFO] [ToolManager] Normalized target for nmap: https://landscape.canonical.com -> landscape.canonical.com
+2026-01-01 22:11:20,435 [INFO] Checkpoint saved: training_output\newbie_to_pro\checkpoint_20260101_221120.json
+2026-01-01 22:11:20,534 [INFO] [DeepRL] Saved checkpoint to D:\Work\Ai Engineering\Git\Optimus\backend\models\deep_rl\checkpoint_20260101_221120
+2026-01-01 22:11:20,535 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u https://landscape.canonical.com --batch --random-agent
+2026-01-01 22:11:20,536 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:11:20,536 [INFO] [ToolManager] Normalized target for sqlmap: https://landscape.canonical.com -> https://landscape.canonical.com/rest/products/search?q=test
+2026-01-01 22:11:35,060 [INFO] Using hybrid system resolved command for curl: curl https://landscape.canonical.com
+2026-01-01 22:11:35,060 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:11:35,060 [INFO] [ToolManager] Normalized target for curl: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:11:41,448 [INFO] Using hybrid system resolved command for nc: nc https://landscape.canonical.com
+2026-01-01 22:11:41,449 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:11:41,449 [INFO] [ToolManager] Normalized target for nc: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:11:42,628 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u https://landscape.canonical.com --batch --random-agent
+2026-01-01 22:11:42,629 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:11:42,629 [INFO] [ToolManager] Normalized target for sqlmap: https://landscape.canonical.com -> https://landscape.canonical.com/rest/products/search?q=test
+2026-01-01 22:11:54,749 [INFO] Using hybrid system resolved command for curl: curl https://landscape.canonical.com
+2026-01-01 22:11:54,750 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:11:54,751 [INFO] [ToolManager] Normalized target for curl: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:11:57,314 [INFO] Using hybrid system resolved command for nc: nc https://landscape.canonical.com
+2026-01-01 22:11:57,315 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:11:57,315 [INFO] [ToolManager] Normalized target for nc: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:11:58,482 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u https://landscape.canonical.com --batch --random-agent
+2026-01-01 22:11:58,483 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:11:58,483 [INFO] [ToolManager] Normalized target for sqlmap: https://landscape.canonical.com -> https://landscape.canonical.com/rest/products/search?q=test
+2026-01-01 22:12:42,824 [INFO] Using hybrid system resolved command for curl: curl https://landscape.canonical.com
+2026-01-01 22:12:42,825 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:12:42,825 [INFO] [ToolManager] Normalized target for curl: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:12:51,233 [INFO] Using hybrid system resolved command for nc: nc https://landscape.canonical.com
+2026-01-01 22:12:51,233 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:12:51,233 [INFO] [ToolManager] Normalized target for nc: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:12:52,379 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u https://landscape.canonical.com --batch --random-agent
+2026-01-01 22:12:52,379 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:12:52,379 [INFO] [ToolManager] Normalized target for sqlmap: https://landscape.canonical.com -> https://landscape.canonical.com/rest/products/search?q=test
+2026-01-01 22:13:15,245 [INFO] Using hybrid system resolved command for curl: curl https://landscape.canonical.com
+2026-01-01 22:13:15,245 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:13:15,245 [INFO] [ToolManager] Normalized target for curl: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:13:19,233 [INFO] Using hybrid system resolved command for nc: nc https://landscape.canonical.com
+2026-01-01 22:13:19,234 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:13:19,234 [INFO] [ToolManager] Normalized target for nc: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:13:20,396 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u https://landscape.canonical.com --batch --random-agent
+2026-01-01 22:13:20,396 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:13:20,397 [INFO] [ToolManager] Normalized target for sqlmap: https://landscape.canonical.com -> https://landscape.canonical.com/rest/products/search?q=test
+2026-01-01 22:13:33,969 [INFO] Using hybrid system resolved command for curl: curl https://landscape.canonical.com
+2026-01-01 22:13:33,970 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:13:33,970 [INFO] [ToolManager] Normalized target for curl: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:13:36,414 [INFO] Using hybrid system resolved command for nc: nc https://landscape.canonical.com
+2026-01-01 22:13:36,414 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:13:36,414 [INFO] [ToolManager] Normalized target for nc: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:13:37,562 [INFO] Using hybrid system resolved command for ffuf: ffuf -u 192.168.131.128/FUZZ -w /usr/share/dirb/wordlists/common.txt
+2026-01-01 22:13:37,562 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:13:37,563 [INFO] [ToolManager] Normalized target for ffuf: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:13:39,049 [INFO] Using hybrid system resolved command for curl: curl 192.168.131.128
+2026-01-01 22:13:39,050 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:13:39,050 [INFO] [ToolManager] Normalized target for curl: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:13:40,258 [INFO] Using hybrid system resolved command for nc: nc 192.168.131.128
+2026-01-01 22:13:40,259 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:13:40,259 [INFO] [ToolManager] Normalized target for nc: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:13:42,433 [INFO] [OllamaClient] Model mistral:7b-instruct-v0.2-q4_K_M is available
+2026-01-01 22:14:04,608 [INFO] Using hybrid system resolved command for ffuf: ffuf -u 192.168.131.128/FUZZ -w /usr/share/dirb/wordlists/common.txt
+2026-01-01 22:14:04,608 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:14:04,608 [INFO] [ToolManager] Normalized target for ffuf: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:14:16,654 [INFO] Using hybrid system resolved command for curl: curl 192.168.131.128
+2026-01-01 22:14:16,654 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:14:16,655 [INFO] [ToolManager] Normalized target for curl: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:14:17,880 [INFO] Using hybrid system resolved command for nc: nc 192.168.131.128
+2026-01-01 22:14:17,881 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:14:17,882 [INFO] [ToolManager] Normalized target for nc: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:14:33,862 [INFO] Using hybrid system resolved command for ffuf: ffuf -u 192.168.131.128/FUZZ -w /usr/share/dirb/wordlists/common.txt
+2026-01-01 22:14:33,863 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:14:33,864 [INFO] [ToolManager] Normalized target for ffuf: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:14:46,695 [INFO] Using hybrid system resolved command for curl: curl 192.168.131.128
+2026-01-01 22:14:46,696 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:14:46,696 [INFO] [ToolManager] Normalized target for curl: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:14:47,892 [INFO] Using hybrid system resolved command for nc: nc 192.168.131.128
+2026-01-01 22:14:47,893 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:14:47,893 [INFO] [ToolManager] Normalized target for nc: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:14:50,055 [INFO] [OllamaClient] Model mistral:7b-instruct-v0.2-q4_K_M is available
+2026-01-01 22:15:03,473 [INFO] Using hybrid system resolved command for ffuf: ffuf -u 192.168.131.128/FUZZ -w /usr/share/dirb/wordlists/common.txt
+2026-01-01 22:15:03,473 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:15:03,473 [INFO] [ToolManager] Normalized target for ffuf: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:15:11,631 [INFO] Using hybrid system resolved command for curl: curl 192.168.131.128
+2026-01-01 22:15:11,632 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:15:11,632 [INFO] [ToolManager] Normalized target for curl: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:15:12,816 [INFO] Using hybrid system resolved command for nc: nc 192.168.131.128
+2026-01-01 22:15:12,817 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:15:12,817 [INFO] [ToolManager] Normalized target for nc: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:15:25,826 [INFO] Using hybrid system resolved command for ffuf: ffuf -u 192.168.131.128/FUZZ -w /usr/share/dirb/wordlists/common.txt
+2026-01-01 22:15:25,827 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:15:25,827 [INFO] [ToolManager] Normalized target for ffuf: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:15:27,214 [INFO] Using hybrid system resolved command for curl: curl 192.168.131.128
+2026-01-01 22:15:27,215 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:15:27,215 [INFO] [ToolManager] Normalized target for curl: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:15:28,402 [INFO] Using hybrid system resolved command for nc: nc 192.168.131.128
+2026-01-01 22:15:28,403 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:15:28,403 [INFO] [ToolManager] Normalized target for nc: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:15:41,620 [INFO] Using hybrid system resolved command for commix: commix --url=https://demo.owasp-juice.shop --batch
+2026-01-01 22:15:41,620 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:15:41,621 [INFO] [ToolManager] Normalized target for commix: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2026-01-01 22:15:51,133 [INFO] [IntelligentSelector] Selecting tools for training, executed: 0, findings: 0
+2026-01-01 22:15:51,134 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:15:51,135 [INFO] Using hybrid system resolved command for commix: commix --url=https://landscape.canonical.com --batch
+2026-01-01 22:15:51,135 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:15:51,136 [INFO] [ToolManager] Normalized target for commix: https://landscape.canonical.com -> https://landscape.canonical.com/rest/products/search?q=test
+2026-01-01 22:18:00,769 [INFO] Using hybrid system resolved command for nuclei: nuclei -u https://landscape.canonical.com -severity critical,high
+2026-01-01 22:18:00,769 [INFO] [API] nuclei missing optional keys: ['GITHUB_TOKEN'] (tool will work with reduced functionality)
+2026-01-01 22:18:00,770 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:18:00,770 [INFO] [ToolManager] Normalized target for nuclei: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:18:00,915 [INFO] [EvolutionDB] Added error signature: command_not_found for nuclei
+2026-01-01 22:18:00,934 [INFO] [EvolvingCommandGenerator] Tool not found: nuclei, searching alternatives
+2026-01-01 22:18:01,936 [INFO] Using hybrid system resolved command for nuclei: nuclei -u https://landscape.canonical.com -severity critical,high
+2026-01-01 22:18:01,937 [INFO] [API] nuclei missing optional keys: ['GITHUB_TOKEN'] (tool will work with reduced functionality)
+2026-01-01 22:18:01,937 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:18:01,937 [INFO] [ToolManager] Normalized target for nuclei: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:18:02,073 [INFO] [EvolutionDB] Added error signature: command_not_found for nuclei
+2026-01-01 22:18:02,092 [INFO] [EvolvingCommandGenerator] Tool not found: nuclei, searching alternatives
+2026-01-01 22:18:03,094 [INFO] [IntelligentSelector] Selecting tools for training, executed: 0, findings: 0
+2026-01-01 22:18:03,094 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:18:03,094 [ERROR] [ToolManager] BLOCKED: linpeas requires post_exploitation phase, not training
+2026-01-01 22:18:04,095 [INFO] [IntelligentSelector] Selecting tools for training, executed: 0, findings: 0
+2026-01-01 22:18:04,095 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:18:04,095 [ERROR] [ToolManager] BLOCKED: linpeas requires post_exploitation phase, not training
+2026-01-01 22:18:05,096 [INFO] [IntelligentSelector] Selecting tools for training, executed: 0, findings: 0
+2026-01-01 22:18:05,096 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:18:05,096 [ERROR] [ToolManager] BLOCKED: linpeas requires post_exploitation phase, not training
+2026-01-01 22:18:06,097 [INFO] [IntelligentSelector] Selecting tools for training, executed: 0, findings: 0
+2026-01-01 22:18:06,098 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:18:06,098 [ERROR] [ToolManager] BLOCKED: linpeas requires post_exploitation phase, not training
+2026-01-01 22:18:07,099 [INFO] [IntelligentSelector] Selecting tools for training, executed: 0, findings: 0
+2026-01-01 22:18:07,099 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:18:07,100 [ERROR] [ToolManager] BLOCKED: linpeas requires post_exploitation phase, not training
+2026-01-01 22:18:08,101 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 0, findings: 0
+2026-01-01 22:18:08,102 [INFO] [IntelligentSelector] Selected 3 tools: ['sqlmap', 'dalfox', 'commix']
+2026-01-01 22:18:08,102 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u 192.168.131.128 --batch --random-agent
+2026-01-01 22:18:08,102 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:18:08,103 [INFO] [ToolManager] Normalized target for sqlmap: 192.168.131.128 -> http://192.168.131.128/rest/products/search?q=test
+2026-01-01 22:18:10,894 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 1, findings: 0
+2026-01-01 22:18:10,894 [INFO] [IntelligentSelector] Selected 3 tools: ['dalfox', 'commix', 'metasploit']
+2026-01-01 22:18:10,895 [INFO] Using hybrid system resolved command for dalfox: dalfox url 192.168.131.128
+2026-01-01 22:18:10,895 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:18:10,895 [INFO] [ToolManager] Normalized target for dalfox: 192.168.131.128 -> http://192.168.131.128/rest/products/search?q=test
+2026-01-01 22:18:11,030 [INFO] [EvolutionDB] Added error signature: command_not_found for dalfox
+2026-01-01 22:18:11,050 [INFO] [EvolvingCommandGenerator] Tool not found: dalfox, searching alternatives
+2026-01-01 22:18:12,052 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 2, findings: 0
+2026-01-01 22:18:12,052 [INFO] [IntelligentSelector] Selected 3 tools: ['commix', 'metasploit', 'hydra']
+2026-01-01 22:18:12,052 [INFO] Using hybrid system resolved command for commix: commix --url=192.168.131.128 --batch
+2026-01-01 22:18:12,053 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:18:12,053 [INFO] [ToolManager] Normalized target for commix: 192.168.131.128 -> http://192.168.131.128/rest/products/search?q=test
+2026-01-01 22:18:13,327 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 3, findings: 0
+2026-01-01 22:18:13,327 [INFO] [IntelligentSelector] Selected 2 tools: ['metasploit', 'hydra']
+2026-01-01 22:18:13,328 [INFO] Using hybrid system resolved command for metasploit: metasploit 192.168.131.128
+2026-01-01 22:18:13,328 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:18:13,328 [INFO] [ToolManager] Normalized target for metasploit: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:18:13,474 [INFO] [EvolutionDB] Added error signature: command_not_found for metasploit
+2026-01-01 22:18:13,491 [INFO] [EvolvingCommandGenerator] Tool not found: metasploit, searching alternatives
+2026-01-01 22:18:14,493 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 4, findings: 0
+2026-01-01 22:18:14,493 [INFO] [IntelligentSelector] Selected 1 tools: ['hydra']
+2026-01-01 22:18:14,493 [INFO] Using hybrid system resolved command for hydra: hydra 192.168.131.128
+2026-01-01 22:18:14,494 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:18:14,494 [INFO] [ToolManager] Normalized target for hydra: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:18:16,769 [INFO] [OllamaClient] Model mistral:7b-instruct-v0.2-q4_K_M is available
+2026-01-01 22:20:09,396 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 5, findings: 0
+2026-01-01 22:20:09,397 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:20:09,398 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 0, findings: 0
+2026-01-01 22:20:09,398 [INFO] [IntelligentSelector] Selected 3 tools: ['sqlmap', 'dalfox', 'commix']
+2026-01-01 22:20:09,399 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u 192.168.131.128 --batch --random-agent
+2026-01-01 22:20:09,399 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:20:09,399 [INFO] [ToolManager] Normalized target for sqlmap: 192.168.131.128 -> http://192.168.131.128/rest/products/search?q=test
+2026-01-01 22:20:12,172 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 1, findings: 0
+2026-01-01 22:20:12,173 [INFO] [IntelligentSelector] Selected 3 tools: ['dalfox', 'commix', 'metasploit']
+2026-01-01 22:20:12,173 [INFO] Using hybrid system resolved command for dalfox: dalfox url 192.168.131.128
+2026-01-01 22:20:12,175 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:20:12,175 [INFO] [ToolManager] Normalized target for dalfox: 192.168.131.128 -> http://192.168.131.128/rest/products/search?q=test
+2026-01-01 22:20:12,316 [INFO] [EvolutionDB] Added error signature: command_not_found for dalfox
+2026-01-01 22:20:12,335 [INFO] [EvolvingCommandGenerator] Tool not found: dalfox, searching alternatives
+2026-01-01 22:20:13,336 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 2, findings: 0
+2026-01-01 22:20:13,337 [INFO] [IntelligentSelector] Selected 3 tools: ['commix', 'metasploit', 'hydra']
+2026-01-01 22:20:13,339 [INFO] Using hybrid system resolved command for commix: commix --url=192.168.131.128 --batch
+2026-01-01 22:20:13,340 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:20:13,341 [INFO] [ToolManager] Normalized target for commix: 192.168.131.128 -> http://192.168.131.128/rest/products/search?q=test
+2026-01-01 22:20:14,630 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 3, findings: 0
+2026-01-01 22:20:14,630 [INFO] [IntelligentSelector] Selected 2 tools: ['metasploit', 'hydra']
+2026-01-01 22:20:14,631 [INFO] Using hybrid system resolved command for metasploit: metasploit 192.168.131.128
+2026-01-01 22:20:14,631 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:20:14,631 [INFO] [ToolManager] Normalized target for metasploit: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:20:14,784 [INFO] [EvolutionDB] Added error signature: command_not_found for metasploit
+2026-01-01 22:20:14,801 [INFO] [EvolvingCommandGenerator] Tool not found: metasploit, searching alternatives
+2026-01-01 22:20:15,803 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 4, findings: 0
+2026-01-01 22:20:15,804 [INFO] [IntelligentSelector] Selected 1 tools: ['hydra']
+2026-01-01 22:20:15,804 [INFO] Using hybrid system resolved command for hydra: hydra 192.168.131.128
+2026-01-01 22:20:15,805 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:20:15,805 [INFO] [ToolManager] Normalized target for hydra: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:20:18,109 [INFO] [OllamaClient] Model mistral:7b-instruct-v0.2-q4_K_M is available
+2026-01-01 22:21:53,919 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 5, findings: 0
+2026-01-01 22:21:53,920 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:21:53,921 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 0, findings: 0
+2026-01-01 22:21:53,922 [INFO] [IntelligentSelector] Selected 3 tools: ['sqlmap', 'dalfox', 'commix']
+2026-01-01 22:21:53,922 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u https://demo.owasp-juice.shop --batch --random-agent
+2026-01-01 22:21:53,923 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:21:53,923 [INFO] [ToolManager] Normalized target for sqlmap: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2026-01-01 22:22:05,190 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 1, findings: 0
+2026-01-01 22:22:05,190 [INFO] [IntelligentSelector] Selected 3 tools: ['dalfox', 'commix', 'metasploit']
+2026-01-01 22:22:05,191 [INFO] Using hybrid system resolved command for dalfox: dalfox url https://demo.owasp-juice.shop
+2026-01-01 22:22:05,191 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:22:05,191 [INFO] [ToolManager] Normalized target for dalfox: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2026-01-01 22:22:05,331 [INFO] [EvolutionDB] Added error signature: command_not_found for dalfox
+2026-01-01 22:22:05,351 [INFO] [EvolvingCommandGenerator] Tool not found: dalfox, searching alternatives
+2026-01-01 22:22:06,353 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 2, findings: 0
+2026-01-01 22:22:06,353 [INFO] [IntelligentSelector] Selected 3 tools: ['commix', 'metasploit', 'hydra']
+2026-01-01 22:22:06,354 [INFO] Using hybrid system resolved command for commix: commix --url=https://demo.owasp-juice.shop --batch
+2026-01-01 22:22:06,354 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:22:06,354 [INFO] [ToolManager] Normalized target for commix: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2026-01-01 22:22:13,864 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 3, findings: 0
+2026-01-01 22:22:13,865 [INFO] [IntelligentSelector] Selected 2 tools: ['metasploit', 'hydra']
+2026-01-01 22:22:13,865 [INFO] Using hybrid system resolved command for metasploit: metasploit https://demo.owasp-juice.shop
+2026-01-01 22:22:13,866 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:22:13,866 [INFO] [ToolManager] Normalized target for metasploit: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:22:14,019 [INFO] [EvolutionDB] Added error signature: command_not_found for metasploit
+2026-01-01 22:22:14,037 [INFO] [EvolvingCommandGenerator] Tool not found: metasploit, searching alternatives
+2026-01-01 22:22:15,039 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 4, findings: 0
+2026-01-01 22:22:15,039 [INFO] [IntelligentSelector] Selected 1 tools: ['hydra']
+2026-01-01 22:22:15,040 [INFO] Using hybrid system resolved command for hydra: hydra https://demo.owasp-juice.shop
+2026-01-01 22:22:15,040 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:22:15,041 [INFO] [ToolManager] Normalized target for hydra: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:22:16,287 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 5, findings: 0
+2026-01-01 22:22:16,288 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:22:16,289 [INFO] Using hybrid system resolved command for nmap: nmap -sV -sC https://landscape.canonical.com
+2026-01-01 22:22:16,289 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:22:16,290 [INFO] [ToolManager] Normalized target for nmap: https://landscape.canonical.com -> landscape.canonical.com
+2026-01-01 22:22:19,678 [INFO] Checkpoint saved: training_output\newbie_to_pro\checkpoint_20260101_222219.json
+2026-01-01 22:22:19,800 [INFO] [DeepRL] Saved checkpoint to D:\Work\Ai Engineering\Git\Optimus\backend\models\deep_rl\checkpoint_20260101_222219
+2026-01-01 22:22:19,804 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 0, findings: 0
+2026-01-01 22:22:19,804 [INFO] [IntelligentSelector] Selected 3 tools: ['sqlmap', 'dalfox', 'commix']
+2026-01-01 22:22:19,804 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u 192.168.131.128 --batch --random-agent
+2026-01-01 22:22:19,805 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:22:19,805 [INFO] [ToolManager] Normalized target for sqlmap: 192.168.131.128 -> http://192.168.131.128/rest/products/search?q=test
+2026-01-01 22:22:22,646 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 1, findings: 0
+2026-01-01 22:22:22,647 [INFO] [IntelligentSelector] Selected 3 tools: ['dalfox', 'commix', 'metasploit']
+2026-01-01 22:22:22,647 [INFO] Using hybrid system resolved command for dalfox: dalfox url 192.168.131.128
+2026-01-01 22:22:22,647 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:22:22,648 [INFO] [ToolManager] Normalized target for dalfox: 192.168.131.128 -> http://192.168.131.128/rest/products/search?q=test
+2026-01-01 22:22:22,799 [INFO] [EvolutionDB] Added error signature: command_not_found for dalfox
+2026-01-01 22:22:22,819 [INFO] [EvolvingCommandGenerator] Tool not found: dalfox, searching alternatives
+2026-01-01 22:22:23,821 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 2, findings: 0
+2026-01-01 22:22:23,821 [INFO] [IntelligentSelector] Selected 3 tools: ['commix', 'metasploit', 'hydra']
+2026-01-01 22:22:23,822 [INFO] Using hybrid system resolved command for commix: commix --url=192.168.131.128 --batch
+2026-01-01 22:22:23,822 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:22:23,823 [INFO] [ToolManager] Normalized target for commix: 192.168.131.128 -> http://192.168.131.128/rest/products/search?q=test
+2026-01-01 22:22:25,075 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 3, findings: 0
+2026-01-01 22:22:25,075 [INFO] [IntelligentSelector] Selected 2 tools: ['metasploit', 'hydra']
+2026-01-01 22:22:25,076 [INFO] Using hybrid system resolved command for metasploit: metasploit 192.168.131.128
+2026-01-01 22:22:25,076 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:22:25,076 [INFO] [ToolManager] Normalized target for metasploit: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:22:25,224 [INFO] [EvolutionDB] Added error signature: command_not_found for metasploit
+2026-01-01 22:22:25,242 [INFO] [EvolvingCommandGenerator] Tool not found: metasploit, searching alternatives
+2026-01-01 22:22:26,244 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 4, findings: 0
+2026-01-01 22:22:26,244 [INFO] [IntelligentSelector] Selected 1 tools: ['hydra']
+2026-01-01 22:22:26,245 [INFO] Using hybrid system resolved command for hydra: hydra 192.168.131.128
+2026-01-01 22:22:26,245 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:22:26,246 [INFO] [ToolManager] Normalized target for hydra: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:22:28,517 [INFO] [OllamaClient] Model mistral:7b-instruct-v0.2-q4_K_M is available
+2026-01-01 22:24:06,348 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 5, findings: 0
+2026-01-01 22:24:06,348 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:24:06,349 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 0, findings: 0
+2026-01-01 22:24:06,350 [INFO] [IntelligentSelector] Selected 3 tools: ['sqlmap', 'dalfox', 'metasploit']
+2026-01-01 22:24:06,350 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u https://demo.owasp-juice.shop --batch --random-agent
+2026-01-01 22:24:06,350 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:24:06,350 [INFO] [ToolManager] Normalized target for sqlmap: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2026-01-01 22:24:24,661 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 1, findings: 0
+2026-01-01 22:24:24,661 [INFO] [IntelligentSelector] Selected 3 tools: ['dalfox', 'commix', 'metasploit']
+2026-01-01 22:24:24,662 [INFO] Using hybrid system resolved command for dalfox: dalfox url https://demo.owasp-juice.shop
+2026-01-01 22:24:24,662 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:24:24,662 [INFO] [ToolManager] Normalized target for dalfox: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2026-01-01 22:24:24,806 [INFO] [EvolutionDB] Added error signature: command_not_found for dalfox
+2026-01-01 22:24:24,828 [INFO] [EvolvingCommandGenerator] Tool not found: dalfox, searching alternatives
+2026-01-01 22:24:25,830 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 2, findings: 0
+2026-01-01 22:24:25,831 [INFO] [IntelligentSelector] Selected 3 tools: ['commix', 'metasploit', 'hydra']
+2026-01-01 22:24:25,831 [INFO] Using hybrid system resolved command for commix: commix --url=https://demo.owasp-juice.shop --batch
+2026-01-01 22:24:25,832 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:24:25,832 [INFO] [ToolManager] Normalized target for commix: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2026-01-01 22:24:33,340 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 3, findings: 0
+2026-01-01 22:24:33,340 [INFO] [IntelligentSelector] Selected 2 tools: ['metasploit', 'hydra']
+2026-01-01 22:24:33,341 [INFO] Using hybrid system resolved command for metasploit: metasploit https://demo.owasp-juice.shop
+2026-01-01 22:24:33,341 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:24:33,341 [INFO] [ToolManager] Normalized target for metasploit: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:24:33,571 [INFO] [EvolutionDB] Added error signature: command_not_found for metasploit
+2026-01-01 22:24:33,617 [INFO] [EvolvingCommandGenerator] Tool not found: metasploit, searching alternatives
+2026-01-01 22:24:34,626 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 4, findings: 0
+2026-01-01 22:24:34,626 [INFO] [IntelligentSelector] Selected 1 tools: ['hydra']
+2026-01-01 22:24:34,627 [INFO] Using hybrid system resolved command for hydra: hydra https://demo.owasp-juice.shop
+2026-01-01 22:24:34,628 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:24:34,628 [INFO] [ToolManager] Normalized target for hydra: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:24:35,946 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 5, findings: 0
+2026-01-01 22:24:35,947 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:24:35,948 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 0, findings: 0
+2026-01-01 22:24:35,949 [INFO] [IntelligentSelector] Selected 3 tools: ['sqlmap', 'dalfox', 'commix']
+2026-01-01 22:24:35,949 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u https://demo.owasp-juice.shop --batch --random-agent
+2026-01-01 22:24:35,950 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:24:35,950 [INFO] [ToolManager] Normalized target for sqlmap: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2026-01-01 22:24:51,201 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 1, findings: 0
+2026-01-01 22:24:51,202 [INFO] [IntelligentSelector] Selected 3 tools: ['dalfox', 'commix', 'metasploit']
+2026-01-01 22:24:51,202 [INFO] Using hybrid system resolved command for dalfox: dalfox url https://demo.owasp-juice.shop
+2026-01-01 22:24:51,203 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:24:51,203 [INFO] [ToolManager] Normalized target for dalfox: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2026-01-01 22:24:51,339 [INFO] [EvolutionDB] Added error signature: command_not_found for dalfox
+2026-01-01 22:24:51,358 [INFO] [EvolvingCommandGenerator] Tool not found: dalfox, searching alternatives
+2026-01-01 22:24:52,359 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 2, findings: 0
+2026-01-01 22:24:52,360 [INFO] [IntelligentSelector] Selected 3 tools: ['commix', 'metasploit', 'hydra']
+2026-01-01 22:24:52,360 [INFO] Using hybrid system resolved command for commix: commix --url=https://demo.owasp-juice.shop --batch
+2026-01-01 22:24:52,361 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:24:52,361 [INFO] [ToolManager] Normalized target for commix: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2026-01-01 22:25:35,718 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 3, findings: 0
+2026-01-01 22:25:35,719 [INFO] [IntelligentSelector] Selected 2 tools: ['metasploit', 'hydra']
+2026-01-01 22:25:35,720 [INFO] Using hybrid system resolved command for metasploit: metasploit https://demo.owasp-juice.shop
+2026-01-01 22:25:35,721 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:25:35,721 [INFO] [ToolManager] Normalized target for metasploit: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:25:35,852 [INFO] [EvolutionDB] Added error signature: command_not_found for metasploit
+2026-01-01 22:25:35,868 [INFO] [EvolvingCommandGenerator] Tool not found: metasploit, searching alternatives
+2026-01-01 22:25:36,869 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 4, findings: 0
+2026-01-01 22:25:36,870 [INFO] [IntelligentSelector] Selected 1 tools: ['hydra']
+2026-01-01 22:25:36,870 [INFO] Using hybrid system resolved command for hydra: hydra https://demo.owasp-juice.shop
+2026-01-01 22:25:36,870 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:25:36,871 [INFO] [ToolManager] Normalized target for hydra: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:25:38,137 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 5, findings: 0
+2026-01-01 22:25:38,138 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:25:38,138 [INFO] Using hybrid system resolved command for nmap: nmap -sV -sC 192.168.131.128
+2026-01-01 22:25:38,139 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:25:38,139 [INFO] [ToolManager] Normalized target for nmap: 192.168.131.128 -> 192.168.131.128
+2026-01-01 22:26:27,922 [INFO] Checkpoint saved: training_output\newbie_to_pro\checkpoint_20260101_222627.json
+2026-01-01 22:26:28,038 [INFO] [DeepRL] Saved checkpoint to D:\Work\Ai Engineering\Git\Optimus\backend\models\deep_rl\checkpoint_20260101_222627
+2026-01-01 22:26:28,042 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 0, findings: 0
+2026-01-01 22:26:28,042 [INFO] [IntelligentSelector] Selected 3 tools: ['sqlmap', 'dalfox', 'commix']
+2026-01-01 22:26:28,042 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u https://demo.owasp-juice.shop --batch --random-agent
+2026-01-01 22:26:28,043 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:26:28,043 [INFO] [ToolManager] Normalized target for sqlmap: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2026-01-01 22:26:47,710 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 1, findings: 0
+2026-01-01 22:26:47,710 [INFO] [IntelligentSelector] Selected 3 tools: ['dalfox', 'commix', 'metasploit']
+2026-01-01 22:26:47,711 [INFO] Using hybrid system resolved command for dalfox: dalfox url https://demo.owasp-juice.shop
+2026-01-01 22:26:47,711 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:26:47,711 [INFO] [ToolManager] Normalized target for dalfox: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2026-01-01 22:26:47,864 [INFO] [EvolutionDB] Added error signature: command_not_found for dalfox
+2026-01-01 22:26:47,883 [INFO] [EvolvingCommandGenerator] Tool not found: dalfox, searching alternatives
+2026-01-01 22:26:48,885 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 2, findings: 0
+2026-01-01 22:26:48,885 [INFO] [IntelligentSelector] Selected 3 tools: ['commix', 'metasploit', 'hydra']
+2026-01-01 22:26:48,885 [INFO] Using hybrid system resolved command for commix: commix --url=https://demo.owasp-juice.shop --batch
+2026-01-01 22:26:48,886 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:26:48,886 [INFO] [ToolManager] Normalized target for commix: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop/rest/products/search?q=test
+2026-01-01 22:27:00,506 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 3, findings: 0
+2026-01-01 22:27:00,506 [INFO] [IntelligentSelector] Selected 2 tools: ['metasploit', 'hydra']
+2026-01-01 22:27:00,507 [INFO] Using hybrid system resolved command for metasploit: metasploit https://demo.owasp-juice.shop
+2026-01-01 22:27:00,507 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:27:00,507 [INFO] [ToolManager] Normalized target for metasploit: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:27:00,641 [INFO] [EvolutionDB] Added error signature: command_not_found for metasploit
+2026-01-01 22:27:00,658 [INFO] [EvolvingCommandGenerator] Tool not found: metasploit, searching alternatives
+2026-01-01 22:27:01,659 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 4, findings: 0
+2026-01-01 22:27:01,660 [INFO] [IntelligentSelector] Selected 1 tools: ['hydra']
+2026-01-01 22:27:01,660 [INFO] Using hybrid system resolved command for hydra: hydra https://demo.owasp-juice.shop
+2026-01-01 22:27:01,660 [INFO] [TargetNormalizer] Normalized: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:27:01,660 [INFO] [ToolManager] Normalized target for hydra: https://demo.owasp-juice.shop -> https://demo.owasp-juice.shop
+2026-01-01 22:27:02,912 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 5, findings: 0
+2026-01-01 22:27:02,912 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:27:02,913 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 0, findings: 0
+2026-01-01 22:27:02,913 [INFO] [IntelligentSelector] Selected 3 tools: ['sqlmap', 'dalfox', 'commix']
+2026-01-01 22:27:02,914 [INFO] Using hybrid system resolved command for sqlmap: sqlmap -u https://landscape.canonical.com --batch --random-agent
+2026-01-01 22:27:02,914 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:27:02,914 [INFO] [ToolManager] Normalized target for sqlmap: https://landscape.canonical.com -> https://landscape.canonical.com/rest/products/search?q=test
+2026-01-01 22:27:26,196 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 1, findings: 0
+2026-01-01 22:27:26,196 [INFO] [IntelligentSelector] Selected 3 tools: ['dalfox', 'commix', 'metasploit']
+2026-01-01 22:27:26,197 [INFO] Using hybrid system resolved command for dalfox: dalfox url https://landscape.canonical.com
+2026-01-01 22:27:26,197 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:27:26,197 [INFO] [ToolManager] Normalized target for dalfox: https://landscape.canonical.com -> https://landscape.canonical.com/rest/products/search?q=test
+2026-01-01 22:27:26,349 [INFO] [EvolutionDB] Added error signature: command_not_found for dalfox
+2026-01-01 22:27:26,368 [INFO] [EvolvingCommandGenerator] Tool not found: dalfox, searching alternatives
+2026-01-01 22:27:27,369 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 2, findings: 0
+2026-01-01 22:27:27,370 [INFO] [IntelligentSelector] Selected 3 tools: ['commix', 'metasploit', 'hydra']
+2026-01-01 22:27:27,370 [INFO] Using hybrid system resolved command for commix: commix --url=https://landscape.canonical.com --batch
+2026-01-01 22:27:27,371 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:27:27,371 [INFO] [ToolManager] Normalized target for commix: https://landscape.canonical.com -> https://landscape.canonical.com/rest/products/search?q=test
+2026-01-01 22:30:00,531 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 3, findings: 0
+2026-01-01 22:30:00,532 [INFO] [IntelligentSelector] Selected 2 tools: ['metasploit', 'hydra']
+2026-01-01 22:30:00,532 [INFO] Using hybrid system resolved command for metasploit: metasploit https://landscape.canonical.com
+2026-01-01 22:30:00,532 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:30:00,533 [INFO] [ToolManager] Normalized target for metasploit: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:30:00,686 [INFO] [EvolutionDB] Added error signature: command_not_found for metasploit
+2026-01-01 22:30:00,706 [INFO] [EvolvingCommandGenerator] Tool not found: metasploit, searching alternatives
+2026-01-01 22:30:01,708 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 4, findings: 0
+2026-01-01 22:30:01,709 [INFO] [IntelligentSelector] Selected 1 tools: ['hydra']
+2026-01-01 22:30:01,710 [INFO] Using hybrid system resolved command for hydra: hydra https://landscape.canonical.com
+2026-01-01 22:30:01,710 [INFO] [TargetNormalizer] Normalized: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:30:01,711 [INFO] [ToolManager] Normalized target for hydra: https://landscape.canonical.com -> https://landscape.canonical.com
+2026-01-01 22:30:02,974 [INFO] [IntelligentSelector] Selecting tools for exploitation, executed: 5, findings: 0
+2026-01-01 22:30:02,975 [INFO] [IntelligentSelector] Selected 0 tools: []
+2026-01-01 22:30:02,976 [INFO] Using hybrid system resolved command for nmap: nmap -sV -sC 192.168.131.128
+2026-01-01 22:30:02,976 [INFO] [TargetNormalizer] Normalized: 192.168.131.128 -> http://192.168.131.128
+2026-01-01 22:30:02,976 [INFO] [ToolManager] Normalized target for nmap: 192.168.131.128 -> 192.168.131.128
+2026-01-01 22:30:40,402 [INFO] Checkpoint saved: training_output\newbie_to_pro\checkpoint_20260101_223040.json
+2026-01-01 22:30:40,524 [INFO] [DeepRL] Saved checkpoint to D:\Work\Ai Engineering\Git\Optimus\backend\models\deep_rl\checkpoint_20260101_223040

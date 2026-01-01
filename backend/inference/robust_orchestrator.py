@@ -29,6 +29,36 @@ from enum import Enum
 
 logger = logging.getLogger(__name__)
 
+# Import exploitation fixes
+try:
+    from .exploitation_fix import (
+        get_enhanced_exploitable_findings,
+        classify_finding_for_exploitation,
+        get_exploitation_commands,
+        should_run_post_exploitation,
+        get_post_exploitation_tools,
+    )
+    EXPLOITATION_FIX_AVAILABLE = True
+except ImportError:
+    EXPLOITATION_FIX_AVAILABLE = False
+    logger.warning("[Orchestrator] Exploitation fix module not available")
+
+# Import professional report generator
+try:
+    from reporting.professional_report import get_professional_report_generator
+    PROFESSIONAL_REPORT_AVAILABLE = True
+except ImportError:
+    PROFESSIONAL_REPORT_AVAILABLE = False
+    logger.warning("[Orchestrator] Professional report generator not available")
+
+# Import intelligent tool selector
+try:
+    from .intelligent_selector import get_intelligent_selector, ToolRecommendation
+    INTELLIGENT_SELECTOR_AVAILABLE = True
+except ImportError:
+    INTELLIGENT_SELECTOR_AVAILABLE = False
+    logger.warning("[Orchestrator] Intelligent selector not available")
+
 
 class ScanPhase(Enum):
     """Scan phases in order"""
@@ -118,9 +148,11 @@ class RobustScanOrchestrator:
         self.output_parser = None
         self.universal_exploits = None
         self.phase_tools = {}
+        self.intelligent_selector = None
         
         self._init_components()
         self._init_phase_tools()
+        self._init_intelligent_selector()
     
     def _init_components(self):
         # Initialize required components
@@ -170,6 +202,18 @@ class RobustScanOrchestrator:
             logger.info("[Orchestrator] UniversalExploitDB initialized")
         except Exception as e:
             logger.warning(f"[Orchestrator] UniversalExploitDB not available: {e}")
+    
+    def _init_intelligent_selector(self):
+        """Initialize intelligent tool selector"""
+        if INTELLIGENT_SELECTOR_AVAILABLE:
+            try:
+                self.intelligent_selector = get_intelligent_selector()
+                logger.info("[Orchestrator] ✓ Intelligent Tool Selector initialized")
+            except Exception as e:
+                logger.warning(f"[Orchestrator] Intelligent selector failed: {e}")
+                self.intelligent_selector = None
+        else:
+            self.intelligent_selector = None
     
     def _init_phase_tools(self):
         """Initialize tools for each phase"""
@@ -253,6 +297,11 @@ class RobustScanOrchestrator:
             # Initialize scan state
             scan_state = self._init_scan_state(target, config)
             logger.info(f"[Orchestrator] Created new scan state for {scan_state['scan_id']}")
+        
+        # Reset intelligent selector for new scan
+        if self.intelligent_selector:
+            self.intelligent_selector.reset_session()
+            logger.info("[Orchestrator] ✓ Intelligent selector reset for new scan")
         
         # Initialize progress tracker
         progress_tracker = None
@@ -405,8 +454,136 @@ class RobustScanOrchestrator:
         return result
     
     def _run_standard_phase(self, scan_state: Dict, phase: ScanPhase, progress_tracker=None):
-        """Run a standard scanning phase"""
+        """
+        Run a standard scanning phase with INTELLIGENT tool selection.
+        
+        Uses IntelligentToolSelector when available, falls back to hardcoded lists.
+        """
         config = PHASE_CONFIGS[phase]
+        phase_start = datetime.now()
+        tools_run_in_phase = 0
+        
+        # Determine if using intelligent selection
+        use_intelligent = (self.intelligent_selector is not None and 
+                          INTELLIGENT_SELECTOR_AVAILABLE)
+        
+        if use_intelligent:
+            logger.info(f"[Orchestrator] Phase {phase.value}: Using INTELLIGENT tool selection")
+            self._run_phase_intelligent(scan_state, phase, config, progress_tracker)
+        else:
+            logger.info(f"[Orchestrator] Phase {phase.value}: Using fallback hardcoded tools")
+            self._run_phase_hardcoded(scan_state, phase, config, progress_tracker)
+    
+    def _run_phase_intelligent(self, scan_state: Dict, phase: ScanPhase, config: PhaseConfig, progress_tracker=None):
+        """Run phase with intelligent tool selection"""
+        phase_start = datetime.now()
+        tools_run_in_phase = 0
+        consecutive_no_findings = 0
+        
+        while tools_run_in_phase < config.max_tools:
+            # Check stop conditions
+            if self._should_stop(scan_state):
+                break
+            
+            # Check phase time limit
+            phase_elapsed = (datetime.now() - phase_start).total_seconds()
+            if phase_elapsed >= config.max_time:
+                logger.info(f"[Orchestrator] Phase time limit reached: {phase_elapsed:.0f}s")
+                break
+            
+            # Check minimum tools met and no recent findings
+            if tools_run_in_phase >= config.min_tools and consecutive_no_findings >= 3:
+                logger.info(f"[Orchestrator] Min tools met, no recent findings - moving on")
+                break
+            
+            # Get intelligent tool recommendations
+            recommendations = self.intelligent_selector.select_tools(
+                phase=phase.value,
+                scan_state=scan_state,
+                count=3  # Get top 3 recommendations
+            )
+            
+            if not recommendations:
+                logger.info(f"[Orchestrator] No more tools recommended for {phase.value}")
+                break
+            
+            # Execute top recommended tool
+            rec = recommendations[0]
+            tool_name = rec.tool
+            args_template = rec.args
+            
+            # Build command with normalized target
+            normalized_target = scan_state['target']
+            if self.target_normalizer:
+                normalized_target = self.target_normalizer.get_tool_target(scan_state['target'], tool_name)
+            
+            # Format args with target info
+            try:
+                args = args_template.format(
+                    target=normalized_target,
+                    domain=scan_state.get('domain', ''),
+                    host=scan_state.get('host', '')
+                )
+            except KeyError:
+                args = args_template.replace('{target}', normalized_target)
+            
+            logger.info(f"[Orchestrator] 🎯 Intelligent selection: {tool_name} "
+                       f"(priority={rec.priority:.2f}, source={rec.source}, reason={rec.reason})")
+            
+            # Execute tool
+            exec_start = datetime.now()
+            result = self._execute_tool(tool_name, args, scan_state, progress_tracker)
+            exec_time = (datetime.now() - exec_start).total_seconds()
+            
+            if result:
+                tools_run_in_phase += 1
+                findings_count = len(result.get('findings', []))
+                
+                # Update intelligent selector with results
+                self.intelligent_selector.record_execution(
+                    tool=tool_name,
+                    success=result.get('success', False),
+                    findings_count=findings_count,
+                    execution_time=exec_time
+                )
+                
+                # Track consecutive no-findings for early exit
+                if findings_count > 0:
+                    consecutive_no_findings = 0
+                else:
+                    consecutive_no_findings += 1
+                
+                # Record execution
+                scan_state['tools_executed'].append({
+                    'tool': tool_name,
+                    'phase': phase.value,
+                    'args': args,
+                    'selection_source': rec.source,
+                    'selection_reason': rec.reason,
+                    'priority': rec.priority,
+                    'timestamp': datetime.now().isoformat(),
+                    'success': result.get('success', False),
+                    'findings_count': findings_count
+                })
+                
+                # Process findings
+                for finding in result.get('findings', []):
+                    self._add_finding(scan_state, finding, tool_name, phase.value)
+                
+                # Update discovered info
+                if result.get('endpoints'):
+                    scan_state['discovered_endpoints'].extend(result['endpoints'])
+                if result.get('technologies'):
+                    scan_state['discovered_technologies'].extend(result['technologies'])
+                if result.get('ports'):
+                    scan_state['open_ports'].extend(result['ports'])
+            
+            time.sleep(0.5)  # Brief pause between tools
+        
+        logger.info(f"[Orchestrator] Phase {phase.value} complete: {tools_run_in_phase} tools executed")
+    
+    def _run_phase_hardcoded(self, scan_state: Dict, phase: ScanPhase, config: PhaseConfig, progress_tracker=None):
+        """Fallback: Run phase with hardcoded tool list"""
         phase_start = datetime.now()
         tools_run_in_phase = 0
         
@@ -499,27 +676,33 @@ class RobustScanOrchestrator:
         """
         Run exploitation phase using our exploitation module.
         
-        This is the key phase that was being skipped before.
+        ENHANCED: Always runs exploitation tools on findings, regardless of ExploitationManager.
         """
-        logger.info("[Orchestrator] === EXPLOITATION PHASE ===")
+        logger.info("[Orchestrator] === EXPLOITATION PHASE (ENHANCED) ===")
         
         findings = scan_state.get('findings', [])
         
         if not findings:
-            logger.warning("[Orchestrator] No findings to exploit")
+            logger.warning("[Orchestrator] No findings to exploit - running basic exploitation anyway")
+            # Run basic exploitation even without findings
+            self._run_basic_exploitation_tools(scan_state, progress_tracker)
             return
         
         logger.info(f"[Orchestrator] {len(findings)} findings available for exploitation")
         
-        # Filter exploitable findings
+        # Filter exploitable findings using enhanced logic
         exploitable = self._get_exploitable_findings(findings)
-        logger.info(f"[Orchestrator] {len(exploitable)} exploitable findings")
+        logger.info(f"[Orchestrator] {len(exploitable)} exploitable findings identified")
         
+        # ALWAYS run exploitation tools, even if no "exploitable" findings
         if not exploitable:
-            logger.info("[Orchestrator] No exploitable vulnerabilities found")
-            return
+            logger.info("[Orchestrator] No exploitable findings - running fallback exploitation on all findings")
+            exploitable = findings[:5]  # Use top 5 findings anyway
         
-        # Use exploitation manager if available
+        # Track tools executed in this phase
+        exploitation_tools_run = 0
+        
+        # Method 1: Use ExploitationManager if available
         if self.exploitation_manager:
             logger.info("[Orchestrator] Using ExploitationManager for exploitation")
             
@@ -565,6 +748,7 @@ class RobustScanOrchestrator:
                                 break
                             
                             result = self._execute_exploit_step(step, scan_state, progress_tracker)
+                            exploitation_tools_run += 1
                             
                             if result.get('shell_obtained'):
                                 logger.info("[Orchestrator] 🐚 SHELL OBTAINED!")
@@ -582,15 +766,17 @@ class RobustScanOrchestrator:
                     logger.error(f"[Orchestrator] Exploitation error: {e}")
                 
                 time.sleep(1)
-            
-            # Always run fallback exploitation as well for broader coverage
-            if len(scan_state.get('exploits_attempted', [])) < 3:
-                logger.info("[Orchestrator] Running additional fallback exploitation")
-                self._run_fallback_exploitation(scan_state, exploitable, progress_tracker)
-        else:
-            # Fallback: Use basic exploitation tools
-            logger.info("[Orchestrator] Using fallback exploitation (no ExploitationManager)")
-            self._run_fallback_exploitation(scan_state, exploitable, progress_tracker)
+        
+        # Method 2: ALWAYS run fallback exploitation tools
+        logger.info("[Orchestrator] Running fallback exploitation tools")
+        self._run_fallback_exploitation(scan_state, exploitable, progress_tracker)
+        
+        # Method 3: Run direct exploitation commands from exploitation_fix
+        if EXPLOITATION_FIX_AVAILABLE:
+            logger.info("[Orchestrator] Running enhanced exploitation commands")
+            self._run_enhanced_exploitation(scan_state, exploitable, progress_tracker)
+        
+        logger.info(f"[Orchestrator] Exploitation phase complete. Tools executed: {len(scan_state.get('tools_executed', []))}")
     
     def _run_fallback_exploitation(self, scan_state: Dict, findings: List[Dict], progress_tracker=None):
         """Fallback exploitation when ExploitationManager not available or fails"""
@@ -682,27 +868,156 @@ class RobustScanOrchestrator:
         
         logger.info(f"[Orchestrator] Fallback exploitation: {tools_executed} tools executed")
     
-    def _run_post_exploitation_phase(self, scan_state: Dict, progress_tracker=None):
-        """Run post-exploitation phase if we have sessions"""
-        logger.info("[Orchestrator] === POST-EXPLOITATION PHASE ===")
+    def _run_basic_exploitation_tools(self, scan_state: Dict, progress_tracker=None):
+        """Run basic exploitation tools even without findings."""
+        logger.info("[Orchestrator] Running basic exploitation tools (no specific findings)")
         
-        sessions = scan_state.get('sessions_obtained', [])
+        target = scan_state.get('target', '')
         
-        if not sessions:
-            logger.info("[Orchestrator] No sessions for post-exploitation")
-            return
+        # Basic exploitation attempts
+        basic_tools = [
+            ('sqlmap', f"-u '{target}' --batch --forms --crawl=2 --level=1 --risk=1"),
+            ('nuclei', f"-u '{target}' -severity critical,high -as"),
+            ('dalfox', f"url '{target}' --skip-bav"),
+        ]
         
-        logger.info(f"[Orchestrator] {len(sessions)} sessions available")
-        
-        # Run post-exploitation enumeration
-        for session in sessions:
+        for tool, args in basic_tools:
             if self._should_stop(scan_state):
                 break
             
-            logger.info(f"[Orchestrator] Post-exploitation on: {session.get('type')}")
+            try:
+                result = self._execute_tool(tool, args, scan_state, progress_tracker)
+                if result:
+                    scan_state['exploits_attempted'].append({
+                        'tool': tool,
+                        'finding_type': 'generic',
+                        'url': target,
+                        'success': result.get('success', False),
+                        'timestamp': datetime.now().isoformat()
+                    })
+            except Exception as e:
+                logger.debug(f"[Orchestrator] Basic tool {tool} failed: {e}")
             
-            # Would run linpeas, winpeas, credential harvesting, etc.
-            # This requires an active session which we may or may not have
+            time.sleep(1)
+    
+    def _run_enhanced_exploitation(self, scan_state: Dict, findings: List[Dict], progress_tracker=None):
+        """Run enhanced exploitation using exploitation_fix module."""
+        if not EXPLOITATION_FIX_AVAILABLE:
+            return
+        
+        logger.info("[Orchestrator] Running enhanced exploitation commands")
+        target = scan_state.get('target', '')
+        
+        for finding in findings[:5]:  # Top 5 findings
+            if self._should_stop(scan_state):
+                break
+            
+            try:
+                # Get exploitation commands for this finding
+                commands = get_exploitation_commands(finding, target)
+                
+                for cmd_info in commands[:2]:  # Max 2 commands per finding
+                    tool = cmd_info.get('tool', 'curl')
+                    command = cmd_info.get('command', '')
+                    description = cmd_info.get('description', '')
+                    
+                    logger.info(f"[Orchestrator] Enhanced exploit: {description}")
+                    
+                    # Extract args from command (remove tool name)
+                    args = command.replace(tool, '', 1).strip()
+                    
+                    result = self._execute_tool(tool, args, scan_state, progress_tracker)
+                    
+                    if result:
+                        scan_state['exploits_attempted'].append({
+                            'tool': tool,
+                            'command': command,
+                            'description': description,
+                            'finding_type': finding.get('type', 'unknown'),
+                            'success': result.get('success', False),
+                            'findings_count': len(result.get('findings', [])),
+                            'timestamp': datetime.now().isoformat()
+                        })
+                    
+                    time.sleep(1)
+                    
+            except Exception as e:
+                logger.debug(f"[Orchestrator] Enhanced exploitation error: {e}")
+    
+    def _run_post_exploitation_phase(self, scan_state: Dict, progress_tracker=None):
+        """
+        Run post-exploitation phase.
+        
+        ENHANCED: Runs even without sessions for reconnaissance purposes.
+        """
+        logger.info("[Orchestrator] === POST-EXPLOITATION PHASE (ENHANCED) ===")
+        
+        sessions = scan_state.get('sessions_obtained', [])
+        
+        # Check if we should run post-exploitation
+        if EXPLOITATION_FIX_AVAILABLE:
+            should_run = should_run_post_exploitation(scan_state)
+        else:
+            should_run = bool(sessions) or bool(scan_state.get('credentials_found'))
+        
+        if not should_run:
+            logger.info("[Orchestrator] Skipping post-exploitation (no sessions/findings)")
+            return
+        
+        logger.info(f"[Orchestrator] Running post-exploitation (sessions: {len(sessions)})")
+        
+        # Get post-exploitation tools
+        if EXPLOITATION_FIX_AVAILABLE:
+            post_tools = get_post_exploitation_tools(scan_state)
+        else:
+            post_tools = []
+        
+        target = scan_state.get('target', '')
+        
+        # Always run some post-exploitation enumeration
+        default_post_tools = [
+            ('curl', f"-s '{target}/robots.txt'"),
+            ('curl', f"-s '{target}/.git/config'"),
+            ('curl', f"-s '{target}/.env'"),
+            ('curl', f"-s '{target}/api/'"),
+        ]
+        
+        # Combine with enhanced tools
+        all_tools = [(t['tool'], t['command'].replace(t['tool'], '', 1).strip()) 
+                     for t in post_tools] + default_post_tools
+        
+        for tool, args in all_tools[:6]:  # Limit to 6 tools
+            if self._should_stop(scan_state):
+                break
+            
+            try:
+                result = self._execute_tool(tool, args, scan_state, progress_tracker)
+                
+                # Check for sensitive data exposure
+                if result:
+                    stdout = result.get('stdout', '')
+                    
+                    # Check for sensitive file content
+                    sensitive_patterns = ['password', 'secret', 'api_key', 'database', 
+                                         'private', 'BEGIN RSA', 'BEGIN PRIVATE']
+                    
+                    for pattern in sensitive_patterns:
+                        if pattern.lower() in stdout.lower():
+                            logger.info(f"[Orchestrator] Sensitive data found: {pattern}")
+                            scan_state.setdefault('data_exposed', []).append({
+                                'type': 'sensitive_file',
+                                'pattern': pattern,
+                                'tool': tool,
+                                'timestamp': datetime.now().isoformat()
+                            })
+                            break
+                            
+            except Exception as e:
+                logger.debug(f"[Orchestrator] Post-exploitation tool {tool} failed: {e}")
+            
+            time.sleep(0.5)
+        
+        logger.info("[Orchestrator] Post-exploitation phase complete")
     
     def _execute_tool(self, tool: str, args: str, scan_state: Dict, progress_tracker=None) -> Optional[Dict]:
         """Execute a tool via ToolManager with enhanced parsing"""
@@ -834,35 +1149,52 @@ class RobustScanOrchestrator:
         return result or {}
     
     def _get_exploitable_findings(self, findings: List[Dict]) -> List[Dict]:
-        """Filter findings that can be exploited"""
+        """Filter findings that can be exploited - ENHANCED VERSION"""
+        
+        # Use enhanced exploitation fix if available
+        if EXPLOITATION_FIX_AVAILABLE:
+            return get_enhanced_exploitable_findings(findings)
+        
+        # Fallback to original logic with expanded types
         exploitable_types = [
             'sql_injection', 'sqli', 'sql',
             'command_injection', 'rce', 'remote_code_execution',
             'file_upload', 'unrestricted_upload',
-            'xss', 'cross_site_scripting',
+            'xss', 'cross_site_scripting', 'reflected',
             'lfi', 'local_file_inclusion',
             'rfi', 'remote_file_inclusion',
             'ssrf', 'server_side_request_forgery',
             'xxe', 'xml_external_entity',
             'deserialization', 'insecure_deserialization',
             'authentication_bypass', 'auth_bypass',
+            # Added more patterns
+            'injection', 'traversal', 'path', 'directory',
+            'command', 'shell', 'code', 'remote',
+            'critical', 'high', 'exploit', 'vulnerable',
         ]
         
         exploitable = []
         
         for finding in findings:
             vuln_type = finding.get('type', '').lower()
+            vuln_name = finding.get('name', '').lower()
             severity = finding.get('severity', 0)
             
-            # Check if type is exploitable
-            if any(t in vuln_type for t in exploitable_types):
+            # Check if type or name matches exploitable patterns
+            combined = f"{vuln_type} {vuln_name}"
+            if any(t in combined for t in exploitable_types):
                 exploitable.append(finding)
-            # Or if severity is high/critical
-            elif severity >= 7.0:
+            # Or if severity is high/critical (>= 6.0 instead of 7.0)
+            elif severity >= 6.0:
+                exploitable.append(finding)
+            # Or if marked exploitable
+            elif finding.get('exploitable', False):
                 exploitable.append(finding)
         
         # Sort by severity (highest first)
         exploitable.sort(key=lambda x: x.get('severity', 0), reverse=True)
+        
+        logger.info(f"[Orchestrator] Found {len(exploitable)} exploitable findings from {len(findings)} total")
         
         return exploitable
     

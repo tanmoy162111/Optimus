@@ -1,0 +1,20 @@
+2026-01-01 21:42:42,373 [INFO] [ToolManager] Using EnhancedOutputParser
+2026-01-01 21:43:04,769 [WARNING] [IntelligentSelector] RL Agent not available: cannot import name 'StateEncoder' from 'training.enhanced_state_encoder' (D:\Work\Ai Engineering\Git\Optimus\backend\training\enhanced_state_encoder.py)
+2026-01-01 21:43:04,901 [INFO] [ParserPatternDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\data\parser_patterns.db
+2026-01-01 21:43:04,902 [INFO] [OllamaClient] Initialized with model: codellama:7b-instruct
+2026-01-01 21:43:04,910 [INFO] [EvolutionDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\data\parser_evolution.db
+2026-01-01 21:43:04,915 [INFO] [EvolvingParser] Initialized (LLM: True, Evolution: True)
+2026-01-01 21:43:04,932 [INFO] [CommandEvolutionDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\data\command_evolution.db
+2026-01-01 21:43:04,933 [INFO] [EvolvingCommandGenerator] Initialized
+2026-01-01 21:43:05,027 [INFO] [ExploitExecutor] Initialized
+2026-01-01 21:43:05,027 [INFO] [OllamaClient] Initialized with model: codellama:7b-instruct
+2026-01-01 21:43:05,027 [INFO] [LLMExploitGenerator] Initialized
+2026-01-01 21:43:05,028 [INFO] [ExploitChainer] Initialized
+2026-01-01 21:43:05,609 [WARNING] [DarkWebIntel] aiohttp_socks not installed - dark web features disabled
+2026-01-01 21:43:05,617 [INFO] [EnhancedStateEncoder] Initialized with 128 dimensions
+2026-01-01 21:43:05,617 [INFO] [DeepRL] Creating networks: state_dim=128, actions=50
+2026-01-01 21:43:07,075 [WARNING] From D:\Work\Ai Engineering\Git\Optimus\venv\Lib\site-packages\keras\src\backend\tensorflow\core.py:232: The name tf.placeholder is deprecated. Please use tf.compat.v1.placeholder instead.
+
+2026-01-01 21:43:07,266 [INFO] [DeepRL] Agent initialized (PER: True, Noisy: True)
+2026-01-01 21:43:07,267 [WARNING] [DeepRL] No checkpoints found
+2026-01-01 21:43:07,285 [ERROR] Tool Manager is required!

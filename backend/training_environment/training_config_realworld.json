@@ -1,0 +1,92 @@
+{
+    "training_name": "Optimus Real-World Training v2",
+    "description": "Comprehensive training on OWASP Juice Shop and vulnerable VMs",
+    
+    "targets": [
+        {
+            "name": "OWASP_Juice_Shop",
+            "url": "http://192.168.56.101:3000",
+            "type": "web_application",
+            "difficulty": "medium",
+            "expected_vulns": ["sqli", "xss", "idor", "broken_auth", "sensitive_data"]
+        },
+        {
+            "name": "Vulnerable_VM_1",
+            "ip": "192.168.56.102",
+            "type": "linux_server",
+            "difficulty": "medium",
+            "expected_vulns": ["weak_ssh", "privesc", "misconfig"]
+        },
+        {
+            "name": "Vulnerable_VM_2", 
+            "ip": "192.168.56.103",
+            "type": "linux_server",
+            "difficulty": "hard",
+            "expected_vulns": ["web_vuln", "privesc", "kernel_exploit"]
+        }
+    ],
+    
+    "training_parameters": {
+        "episodes_per_target": 5,
+        "max_time_per_episode": 1800,
+        "exploration_rate": 0.3,
+        "checkpoint_interval": 3
+    },
+    
+    "features": {
+        "enable_chain_attacks": true,
+        "enable_parser_evolution": true,
+        "enable_command_evolution": true,
+        "enable_web_intel": true,
+        "enable_new_tool_discovery": true
+    },
+    
+    "rewards": {
+        "reward_finding": 10.0,
+        "reward_chain_success": 50.0,
+        "reward_new_tool": 20.0,
+        "reward_parser_improvement": 15.0,
+        "reward_shell": 100.0
+    },
+    
+    "chain_attacks_to_learn": [
+        {
+            "name": "SQLi to Database Dump",
+            "applicable_to": ["OWASP_Juice_Shop"],
+            "steps": ["sqli_detection", "db_enumeration", "table_dump", "credential_extract"]
+        },
+        {
+            "name": "XSS to Admin Takeover",
+            "applicable_to": ["OWASP_Juice_Shop"],
+            "steps": ["xss_detection", "session_steal", "admin_access"]
+        },
+        {
+            "name": "SSH Brute to Privesc",
+            "applicable_to": ["Vulnerable_VM_1", "Vulnerable_VM_2"],
+            "steps": ["port_scan", "ssh_brute", "user_access", "privesc_enum", "root_access"]
+        },
+        {
+            "name": "Web to Shell to Root",
+            "applicable_to": ["Vulnerable_VM_1", "Vulnerable_VM_2"],
+            "steps": ["web_vuln", "webshell_upload", "reverse_shell", "privesc"]
+        }
+    ],
+    
+    "tools_to_master": {
+        "reconnaissance": ["nmap", "whatweb", "wafw00f", "dig", "whois"],
+        "enumeration": ["gobuster", "ffuf", "nikto", "dirsearch", "wpscan"],
+        "vulnerability_scan": ["nuclei", "sqlmap", "xsstrike", "commix", "dalfox"],
+        "exploitation": ["metasploit", "hydra", "john", "hashcat"],
+        "post_exploitation": ["linpeas", "pspy", "sudo_killer"]
+    },
+    
+    "output_dir": "training_output/comprehensive_v2",
+    
+    "notes": [
+        "Ensure all VMs are running before starting",
+        "OWASP Juice Shop should be accessible at port 3000",
+        "Training will take approximately 2-3 hours",
+        "Checkpoints saved every 3 episodes",
+        "RL model saved at end of training"
+    ]
+}

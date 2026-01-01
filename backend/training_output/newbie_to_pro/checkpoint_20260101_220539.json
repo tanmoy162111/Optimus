@@ -1,0 +1,152 @@
+{
+  "timestamp": "2026-01-01T22:05:39.440939",
+  "agent": {
+    "agent_id": "8ec90df4",
+    "created_at": "2026-01-01T21:46:55.635369",
+    "current_level": "SkillLevel.NEWBIE",
+    "total_training_hours": 0.0,
+    "skills": {
+      "nmap_basic": {
+        "name": "nmap_basic",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 10.05625,
+        "experience": 39,
+        "successes": 3,
+        "failures": 2,
+        "last_practiced": "2026-01-01T22:05:36.438678"
+      },
+      "port_scanning": {
+        "name": "port_scanning",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 8.75,
+        "experience": 30,
+        "successes": 2,
+        "failures": 1,
+        "last_practiced": "2026-01-01T21:47:18.683765"
+      },
+      "service_detection": {
+        "name": "service_detection",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 8.75,
+        "experience": 30,
+        "successes": 2,
+        "failures": 1,
+        "last_practiced": "2026-01-01T21:47:18.683770"
+      },
+      "whatweb": {
+        "name": "whatweb",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 8.75,
+        "experience": 30,
+        "successes": 2,
+        "failures": 1,
+        "last_practiced": "2026-01-01T21:48:10.625920"
+      },
+      "wafw00f": {
+        "name": "wafw00f",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 8.75,
+        "experience": 30,
+        "successes": 2,
+        "failures": 1,
+        "last_practiced": "2026-01-01T21:48:10.625924"
+      },
+      "tech_detection": {
+        "name": "tech_detection",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 8.75,
+        "experience": 30,
+        "successes": 2,
+        "failures": 1,
+        "last_practiced": "2026-01-01T21:48:10.625927"
+      },
+      "gobuster": {
+        "name": "gobuster",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 7.75,
+        "experience": 36,
+        "successes": 2,
+        "failures": 2,
+        "last_practiced": "2026-01-01T22:05:35.962339"
+      },
+      "ffuf": {
+        "name": "ffuf",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 7.75,
+        "experience": 36,
+        "successes": 2,
+        "failures": 2,
+        "last_practiced": "2026-01-01T22:05:35.962348"
+      },
+      "dirbusting": {
+        "name": "dirbusting",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 8.75,
+        "experience": 30,
+        "successes": 2,
+        "failures": 1,
+        "last_practiced": "2026-01-01T21:56:46.226135"
+      },
+      "nikto": {
+        "name": "nikto",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 8.75,
+        "experience": 30,
+        "successes": 2,
+        "failures": 1,
+        "last_practiced": "2026-01-01T22:01:46.523420"
+      },
+      "nuclei_basic": {
+        "name": "nuclei_basic",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 8.75,
+        "experience": 30,
+        "successes": 2,
+        "failures": 1,
+        "last_practiced": "2026-01-01T22:01:46.523423"
+      },
+      "vuln_prioritization": {
+        "name": "vuln_prioritization",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 8.75,
+        "experience": 30,
+        "successes": 2,
+        "failures": 1,
+        "last_practiced": "2026-01-01T22:01:46.523426"
+      }
+    },
+    "achievements": [],
+    "weaknesses": [
+      "nmap_basic",
+      "port_scanning",
+      "service_detection",
+      "whatweb",
+      "wafw00f",
+      "tech_detection",
+      "gobuster",
+      "ffuf",
+      "dirbusting",
+      "nikto",
+      "nuclei_basic",
+      "vuln_prioritization"
+    ],
+    "strengths": [],
+    "total_episodes": 0,
+    "total_findings": 0,
+    "total_shells": 0,
+    "total_chains_completed": 0,
+    "performance_history": []
+  },
+  "metrics": {
+    "lessons_completed": 0,
+    "challenges_completed": 0,
+    "skills_learned": 0,
+    "total_findings": 0,
+    "total_shells": 0,
+    "total_chains": 0,
+    "rl_updates": 0
+  },
+  "total_reward": 82.78944616,
+  "completed_lessons": [],
+  "completed_challenges": []
+}

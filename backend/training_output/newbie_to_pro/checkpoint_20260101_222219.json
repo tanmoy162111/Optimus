@@ -1,0 +1,422 @@
+{
+  "timestamp": "2026-01-01T22:22:19.675160",
+  "agent": {
+    "agent_id": "8ec90df4",
+    "created_at": "2026-01-01T21:46:55.635369",
+    "current_level": "SkillLevel.NEWBIE",
+    "total_training_hours": 0.0,
+    "skills": {
+      "nmap_basic": {
+        "name": "nmap_basic",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 14.497222656249999,
+        "experience": 49,
+        "successes": 5,
+        "failures": 2,
+        "last_practiced": "2026-01-01T22:22:16.672669"
+      },
+      "port_scanning": {
+        "name": "port_scanning",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 8.75,
+        "experience": 30,
+        "successes": 2,
+        "failures": 1,
+        "last_practiced": "2026-01-01T21:47:18.683765"
+      },
+      "service_detection": {
+        "name": "service_detection",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 8.75,
+        "experience": 30,
+        "successes": 2,
+        "failures": 1,
+        "last_practiced": "2026-01-01T21:47:18.683770"
+      },
+      "whatweb": {
+        "name": "whatweb",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 8.75,
+        "experience": 30,
+        "successes": 2,
+        "failures": 1,
+        "last_practiced": "2026-01-01T21:48:10.625920"
+      },
+      "wafw00f": {
+        "name": "wafw00f",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 8.75,
+        "experience": 30,
+        "successes": 2,
+        "failures": 1,
+        "last_practiced": "2026-01-01T21:48:10.625924"
+      },
+      "tech_detection": {
+        "name": "tech_detection",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 8.75,
+        "experience": 30,
+        "successes": 2,
+        "failures": 1,
+        "last_practiced": "2026-01-01T21:48:10.625927"
+      },
+      "gobuster": {
+        "name": "gobuster",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 6.75,
+        "experience": 42,
+        "successes": 2,
+        "failures": 3,
+        "last_practiced": "2026-01-01T22:09:00.914967"
+      },
+      "ffuf": {
+        "name": "ffuf",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 6.75,
+        "experience": 42,
+        "successes": 2,
+        "failures": 3,
+        "last_practiced": "2026-01-01T22:09:00.914987"
+      },
+      "dirbusting": {
+        "name": "dirbusting",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 8.75,
+        "experience": 30,
+        "successes": 2,
+        "failures": 1,
+        "last_practiced": "2026-01-01T21:56:46.226135"
+      },
+      "nikto": {
+        "name": "nikto",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 8.75,
+        "experience": 30,
+        "successes": 2,
+        "failures": 1,
+        "last_practiced": "2026-01-01T22:01:46.523420"
+      },
+      "nuclei_basic": {
+        "name": "nuclei_basic",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 8.75,
+        "experience": 30,
+        "successes": 2,
+        "failures": 1,
+        "last_practiced": "2026-01-01T22:01:46.523423"
+      },
+      "vuln_prioritization": {
+        "name": "vuln_prioritization",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 8.75,
+        "experience": 30,
+        "successes": 2,
+        "failures": 1,
+        "last_practiced": "2026-01-01T22:01:46.523426"
+      },
+      "api_enum": {
+        "name": "api_enum",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 0,
+        "experience": 30,
+        "successes": 0,
+        "failures": 3,
+        "last_practiced": "2026-01-01T22:05:39.584352"
+      },
+      "param_fuzzing": {
+        "name": "param_fuzzing",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 0,
+        "experience": 30,
+        "successes": 0,
+        "failures": 3,
+        "last_practiced": "2026-01-01T22:05:39.584355"
+      },
+      "deep_enum": {
+        "name": "deep_enum",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 0,
+        "experience": 30,
+        "successes": 0,
+        "failures": 3,
+        "last_practiced": "2026-01-01T22:05:39.584358"
+      },
+      "sqli_detection": {
+        "name": "sqli_detection",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 3.0,
+        "experience": 40,
+        "successes": 1,
+        "failures": 3,
+        "last_practiced": "2026-01-01T22:09:30.079405"
+      },
+      "sqlmap": {
+        "name": "sqlmap",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 3.0,
+        "experience": 40,
+        "successes": 1,
+        "failures": 3,
+        "last_practiced": "2026-01-01T22:09:30.079415"
+      },
+      "db_extraction": {
+        "name": "db_extraction",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 4.0,
+        "experience": 30,
+        "successes": 1,
+        "failures": 2,
+        "last_practiced": "2026-01-01T22:05:55.480447"
+      },
+      "xss_detection": {
+        "name": "xss_detection",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 3.0,
+        "experience": 41,
+        "successes": 1,
+        "failures": 3,
+        "last_practiced": "2026-01-01T22:11:16.539635"
+      },
+      "dalfox": {
+        "name": "dalfox",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 4.0,
+        "experience": 30,
+        "successes": 1,
+        "failures": 2,
+        "last_practiced": "2026-01-01T22:05:57.984444"
+      },
+      "payload_crafting": {
+        "name": "payload_crafting",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 3.0,
+        "experience": 41,
+        "successes": 1,
+        "failures": 3,
+        "last_practiced": "2026-01-01T22:11:16.539645"
+      },
+      "auth_testing": {
+        "name": "auth_testing",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 4.0,
+        "experience": 30,
+        "successes": 1,
+        "failures": 2,
+        "last_practiced": "2026-01-01T22:07:34.850879"
+      },
+      "hydra": {
+        "name": "hydra",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 4.0,
+        "experience": 30,
+        "successes": 1,
+        "failures": 2,
+        "last_practiced": "2026-01-01T22:07:34.850883"
+      },
+      "brute_force": {
+        "name": "brute_force",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 4.0,
+        "experience": 30,
+        "successes": 1,
+        "failures": 2,
+        "last_practiced": "2026-01-01T22:07:34.850886"
+      },
+      "sqli_chain": {
+        "name": "sqli_chain",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 0,
+        "experience": 44,
+        "successes": 0,
+        "failures": 4,
+        "last_practiced": "2026-01-01T22:20:09.397635"
+      },
+      "webshell_upload": {
+        "name": "webshell_upload",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 0,
+        "experience": 44,
+        "successes": 0,
+        "failures": 4,
+        "last_practiced": "2026-01-01T22:20:09.397656"
+      },
+      "reverse_shell": {
+        "name": "reverse_shell",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 0,
+        "experience": 30,
+        "successes": 0,
+        "failures": 3,
+        "last_practiced": "2026-01-01T22:13:37.561619"
+      },
+      "lfi_exploitation": {
+        "name": "lfi_exploitation",
+        "category": "SkillCategory.EXPLOITATION",
+        "level": 0,
+        "experience": 45,
+        "successes": 0,
+        "failures": 4,
+        "last_practiced": "2026-01-01T22:21:53.921122"
+      },
+      "log_poisoning": {
+        "name": "log_poisoning",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 0,
+        "experience": 45,
+        "successes": 0,
+        "failures": 4,
+        "last_practiced": "2026-01-01T22:21:53.921133"
+      },
+      "rfi_rce": {
+        "name": "rfi_rce",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 0,
+        "experience": 30,
+        "successes": 0,
+        "failures": 3,
+        "last_practiced": "2026-01-01T22:15:41.619385"
+      },
+      "cmdi_detection": {
+        "name": "cmdi_detection",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 4.0,
+        "experience": 30,
+        "successes": 1,
+        "failures": 2,
+        "last_practiced": "2026-01-01T22:18:00.768655"
+      },
+      "commix": {
+        "name": "commix",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 4.0,
+        "experience": 30,
+        "successes": 1,
+        "failures": 2,
+        "last_practiced": "2026-01-01T22:18:00.768658"
+      },
+      "filter_bypass": {
+        "name": "filter_bypass",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 4.0,
+        "experience": 30,
+        "successes": 1,
+        "failures": 2,
+        "last_practiced": "2026-01-01T22:18:00.768660"
+      },
+      "ssrf_exploitation": {
+        "name": "ssrf_exploitation",
+        "category": "SkillCategory.EXPLOITATION",
+        "level": 0,
+        "experience": 30,
+        "successes": 0,
+        "failures": 3,
+        "last_practiced": "2026-01-01T22:18:03.093352"
+      },
+      "xxe_exploitation": {
+        "name": "xxe_exploitation",
+        "category": "SkillCategory.EXPLOITATION",
+        "level": 0,
+        "experience": 30,
+        "successes": 0,
+        "failures": 3,
+        "last_practiced": "2026-01-01T22:18:03.093355"
+      },
+      "internal_recon": {
+        "name": "internal_recon",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 0,
+        "experience": 30,
+        "successes": 0,
+        "failures": 3,
+        "last_practiced": "2026-01-01T22:18:03.093358"
+      },
+      "linux_privesc": {
+        "name": "linux_privesc",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 3.0,
+        "experience": 46,
+        "successes": 1,
+        "failures": 3,
+        "last_practiced": "2026-01-01T22:22:16.288753"
+      },
+      "linpeas": {
+        "name": "linpeas",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 4.0,
+        "experience": 30,
+        "successes": 1,
+        "failures": 2,
+        "last_practiced": "2026-01-01T22:18:08.100734"
+      },
+      "kernel_exploits": {
+        "name": "kernel_exploits",
+        "category": "SkillCategory.RECONNAISSANCE",
+        "level": 3.0,
+        "experience": 46,
+        "successes": 1,
+        "failures": 3,
+        "last_practiced": "2026-01-01T22:22:16.288765"
+      }
+    },
+    "achievements": [],
+    "weaknesses": [
+      "nmap_basic",
+      "port_scanning",
+      "service_detection",
+      "whatweb",
+      "wafw00f",
+      "tech_detection",
+      "gobuster",
+      "ffuf",
+      "dirbusting",
+      "nikto",
+      "nuclei_basic",
+      "vuln_prioritization",
+      "api_enum",
+      "param_fuzzing",
+      "deep_enum",
+      "sqli_detection",
+      "sqlmap",
+      "db_extraction",
+      "xss_detection",
+      "dalfox",
+      "payload_crafting",
+      "auth_testing",
+      "hydra",
+      "brute_force",
+      "sqli_chain",
+      "webshell_upload",
+      "reverse_shell",
+      "lfi_exploitation",
+      "log_poisoning",
+      "rfi_rce",
+      "cmdi_detection",
+      "commix",
+      "filter_bypass",
+      "ssrf_exploitation",
+      "xxe_exploitation",
+      "internal_recon",
+      "linux_privesc",
+      "linpeas",
+      "kernel_exploits"
+    ],
+    "strengths": [],
+    "total_episodes": 0,
+    "total_findings": 0,
+    "total_shells": 0,
+    "total_chains_completed": 0,
+    "performance_history": []
+  },
+  "metrics": {
+    "lessons_completed": 0,
+    "challenges_completed": 0,
+    "skills_learned": 0,
+    "total_findings": 0,
+    "total_shells": 0,
+    "total_chains": 0,
+    "rl_updates": 0
+  },
+  "total_reward": 332.65446785166665,
+  "completed_lessons": [],
+  "completed_challenges": []
+}

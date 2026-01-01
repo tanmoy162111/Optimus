@@ -1,0 +1,14 @@
+2026-01-01 21:38:18,149 [INFO] [ToolManager] Using EnhancedOutputParser
+2026-01-01 21:38:27,727 [WARNING] [IntelligentSelector] RL Agent not available: cannot import name 'StateEncoder' from 'training.enhanced_state_encoder' (D:\Work\Ai Engineering\Git\Optimus\backend\training\enhanced_state_encoder.py)
+2026-01-01 21:38:27,773 [INFO] [ParserPatternDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\data\parser_patterns.db
+2026-01-01 21:38:27,774 [INFO] [OllamaClient] Initialized with model: codellama:7b-instruct
+2026-01-01 21:38:27,781 [INFO] [EvolutionDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\data\parser_evolution.db
+2026-01-01 21:38:27,785 [INFO] [EvolvingParser] Initialized (LLM: True, Evolution: True)
+2026-01-01 21:38:27,801 [INFO] [CommandEvolutionDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\data\command_evolution.db
+2026-01-01 21:38:27,802 [INFO] [EvolvingCommandGenerator] Initialized
+2026-01-01 21:38:27,857 [INFO] [ExploitExecutor] Initialized
+2026-01-01 21:38:27,858 [INFO] [OllamaClient] Initialized with model: codellama:7b-instruct
+2026-01-01 21:38:27,858 [INFO] [LLMExploitGenerator] Initialized
+2026-01-01 21:38:27,858 [INFO] [ExploitChainer] Initialized
+2026-01-01 21:38:28,167 [WARNING] [DarkWebIntel] aiohttp_socks not installed - dark web features disabled
+2026-01-01 21:38:28,196 [ERROR] Tool Manager is required!
