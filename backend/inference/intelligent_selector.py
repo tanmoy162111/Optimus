@@ -52,6 +52,37 @@ class IntelligentToolSelector:
         # Tool database with metadata
         self.tool_db = self._init_tool_database()
         
+        # Current phase and phase sequence
+        self.current_phase = "reconnaissance"  # Changed from "training" to proper pentest phase
+        self.phase_sequence = [
+            "reconnaissance",
+            "enumeration", 
+            "vulnerability_analysis",
+            "exploitation",
+            "post_exploitation"
+        ]
+        
+        # Initialize tool availability cache
+        self.tool_availability = {}
+        
+        # Tool-to-phase mapping for validation
+        self.tool_phases = {
+            "nmap": ["reconnaissance", "enumeration"],
+            "whatweb": ["reconnaissance", "enumeration"],
+            "wafw00f": ["reconnaissance", "enumeration"],
+            "gobuster": ["enumeration"],
+            "ffuf": ["enumeration"],
+            "nikto": ["enumeration", "vulnerability_analysis"],
+            "nuclei": ["vulnerability_analysis", "enumeration"],
+            "sqlmap": ["vulnerability_analysis", "exploitation"],
+            "dalfox": ["vulnerability_analysis", "exploitation"],
+            "commix": ["vulnerability_analysis", "exploitation"],
+            "hydra": ["exploitation"],
+            "metasploit": ["exploitation"],
+            "linpeas": ["post_exploitation"],
+            "curl": ["reconnaissance", "enumeration", "post_exploitation"],
+        }
+        
         # Phase-specific tool pools (not order - just available tools)
         self.phase_pools = self._init_phase_pools()
     
@@ -59,18 +90,18 @@ class IntelligentToolSelector:
         """Initialize Deep RL agent if model exists"""
         try:
             from training.deep_rl_agent import DeepRLAgent
-            from training.enhanced_state_encoder import StateEncoder
+            from training.enhanced_state_encoder import EnhancedStateEncoder
             
             self.rl_agent = DeepRLAgent(
                 state_dim=128,
-                action_dim=50,
+                num_actions=50,
                 hidden_dim=256,
                 device='cpu'
             )
             
             # Try to load trained model
             self.rl_agent.load()
-            self.state_encoder = StateEncoder()
+            self.state_encoder = EnhancedStateEncoder()
             
             logger.info("[IntelligentSelector] ✓ Deep RL Agent loaded successfully")
         except Exception as e:
@@ -82,7 +113,7 @@ class IntelligentToolSelector:
         return {
             # Reconnaissance tools
             'nmap': {
-                'phases': ['reconnaissance', 'scanning'],
+                'phases': ['reconnaissance', 'enumeration'],
                 'target_types': ['all'],
                 'finds': ['ports', 'services', 'os'],
                 'weight': 0.9,
@@ -130,7 +161,7 @@ class IntelligentToolSelector:
                 }
             },
             'nikto': {
-                'phases': ['enumeration', 'vulnerability_scan'],
+                'phases': ['enumeration', 'vulnerability_analysis'],
                 'target_types': ['web'],
                 'finds': ['vulnerabilities', 'misconfigurations'],
                 'weight': 0.8,
@@ -153,7 +184,7 @@ class IntelligentToolSelector:
             
             # Vulnerability scanning tools
             'nuclei': {
-                'phases': ['vulnerability_scan'],
+                'phases': ['vulnerability_analysis'],
                 'target_types': ['web', 'api'],
                 'finds': ['cves', 'vulnerabilities', 'exposures'],
                 'weight': 0.95,
@@ -254,7 +285,7 @@ class IntelligentToolSelector:
         pools = {
             'reconnaissance': [],
             'enumeration': [],
-            'vulnerability_scan': [],
+            'vulnerability_analysis': [],
             'exploitation': [],
             'post_exploitation': [],
         }
@@ -317,6 +348,13 @@ class IntelligentToolSelector:
         # Strategy 4: Rule-based for phase
         rule_tools = self._get_rule_based_tools(phase, target_type, executed)
         recommendations.extend(rule_tools)
+        
+        # Filter out unavailable tools
+        available_recommendations = []
+        for rec in recommendations:
+            if self.is_tool_available(rec.tool):
+                available_recommendations.append(rec)
+        recommendations = available_recommendations
         
         # Deduplicate and sort by priority
         seen = set()
@@ -599,6 +637,30 @@ class IntelligentToolSelector:
         
         logger.debug(f"[IntelligentSelector] Recorded: {tool} "
                     f"success={success} findings={findings_count}")
+    
+    def is_tool_available(self, tool_name: str) -> bool:
+        """Check if tool is available in the system"""
+        if tool_name in self.tool_availability:
+            return self.tool_availability[tool_name]
+        
+        # Check if tool exists by attempting to find it in system
+        from .tool_availability import is_tool_available
+        # Get SSH client from scan_state if available
+        ssh_client = getattr(self, 'ssh_client', None)  # Try to get SSH client from selector instance
+        if not ssh_client and hasattr(self, 'tool_manager'):
+            ssh_client = getattr(self.tool_manager, 'ssh_client', None)
+        available = is_tool_available(tool_name, ssh_client=ssh_client)
+        self.tool_availability[tool_name] = available
+        
+        if not available:
+            logger.warning(f"[IntelligentSelector] Tool '{tool_name}' is not available in system")
+        
+        return available
+    
+    def is_tool_valid_for_phase(self, tool_name: str, phase: str) -> bool:
+        """Check if tool is appropriate for current phase"""
+        valid_phases = self.tool_phases.get(tool_name, [])
+        return phase in valid_phases
     
     def reset_session(self):
         """Reset session-specific tracking"""

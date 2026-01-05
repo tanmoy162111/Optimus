@@ -32,8 +32,8 @@ class EnhancedStateEncoder:
     def __init__(self):
         # Phase definitions
         self.phases = [
-            'reconnaissance', 'scanning', 'exploitation', 
-            'post_exploitation', 'covering_tracks'
+            'reconnaissance', 'enumeration', 'vulnerability_analysis', 
+            'exploitation', 'post_exploitation'
         ]
         
         # Vulnerability types to track (12 types)

@@ -78,6 +78,16 @@ from enum import Enum
 from collections import defaultdict
 import statistics
 
+# Import standardized state schema
+try:
+    from inference.state_schema import ensure_scan_state
+except ImportError:
+    # Fallback when running from backend directory directly
+    import sys
+    import os
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+    from inference.state_schema import ensure_scan_state
+
 # Add backend to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -824,7 +834,7 @@ class ComponentManager:
         # Core components
         components_to_init = [
             ('tool_manager', 'inference.tool_manager', 'ToolManager', {}),
-            ('intelligent_selector', 'inference.intelligent_selector', 'get_intelligent_selector', {}),
+            ('intelligent_selector', 'training_environment.selector_adapter', 'get_phase_aware_selector_adapter', {}),
             ('evolving_parser', 'inference.evolving_parser', 'get_evolving_parser', {}),
             ('evolving_commands', 'inference.evolving_commands', 'get_evolving_command_generator', {}),
             ('exploit_chainer', 'exploitation.exploit_chainer', 'ExploitChainer', {'needs_executor': True}),
@@ -849,7 +859,22 @@ class ComponentManager:
                     # Special handling for ToolManager - pass None for socketio
                     self.components[name] = cls(socketio=None)
                 elif options.get('args'):
-                    self.components[name] = cls(**options['args'])
+                    try:
+                        self.components[name] = cls(**options['args'])
+                    except TypeError as e:
+                        if 'StateEncoder' in str(e):
+                            # Fallback for StateEncoder import issue
+                            try:
+                                from training.enhanced_state_encoder import StateEncoder
+                            except ImportError:
+                                logger.warning("StateEncoder not found, using fallback")
+                                import numpy as np
+                                class StateEncoder:
+                                    def encode(self, scan_state):
+                                        return np.zeros(128)
+                            self.components[name] = StateEncoder()
+                        else:
+                            raise
                 elif callable(cls) and not isinstance(cls, type):
                     # It's a factory function
                     self.components[name] = cls()
@@ -864,10 +889,10 @@ class ComponentManager:
                         pass
                 
                 status[name] = True
-                logger.info(f"  ✓ {name}")
+                logger.info(f"  OK {name}")
             except Exception as e:
                 status[name] = False
-                logger.warning(f"  ✗ {name}: {e}")
+                logger.warning(f"  FAILED {name}: {e}")
         
         self.initialized = True
         return status
@@ -893,6 +918,12 @@ class NewbieToProTrainer:
         # Initialize components
         self.components = ComponentManager()
         
+        # Initialize authorized targets
+        self.authorized_targets = self._load_authorized_targets()
+        
+        # Validate that all configured targets are authorized
+        self._validate_targets()
+        
         # Initialize curriculum
         self.curriculum = Curriculum.get_all_lessons()
         self.challenges = ChallengeLibrary.get_challenges()
@@ -909,6 +940,24 @@ class NewbieToProTrainer:
         self.completed_challenges = []
         self.training_start = None
         self.total_reward = 0.0
+        
+        # Phase tracking
+        self.current_phase_idx = 0
+        self.pentest_phases = [
+            'reconnaissance',
+            'enumeration',
+            'vulnerability_analysis',
+            'exploitation',
+            'post_exploitation'
+        ]
+        
+        # Initialize target normalizer
+        try:
+            from inference.target_normalizer import get_target_normalizer
+            self.target_normalizer = get_target_normalizer()
+        except ImportError:
+            self.target_normalizer = None
+            logger.warning("TargetNormalizer not available")
         
         # Metrics
         self.metrics = {
@@ -942,25 +991,34 @@ class NewbieToProTrainer:
     def _print_banner(self):
         """Print training banner"""
         banner = """
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║                                                                               ║
-║     ██████╗ ██████╗ ████████╗██╗███╗   ███╗██╗   ██╗███████╗                 ║
-║    ██╔═══██╗██╔══██╗╚══██╔══╝██║████╗ ████║██║   ██║██╔════╝                 ║
-║    ██║   ██║██████╔╝   ██║   ██║██╔████╔██║██║   ██║███████╗                 ║
-║    ██║   ██║██╔═══╝    ██║   ██║██║╚██╔╝██║██║   ██║╚════██║                 ║
-║    ╚██████╔╝██║        ██║   ██║██║ ╚═╝ ██║╚██████╔╝███████║                 ║
-║     ╚═════╝ ╚═╝        ╚═╝   ╚═╝╚═╝     ╚═╝ ╚═════╝ ╚══════╝                 ║
-║                                                                               ║
-║                    🎓 NEWBIE TO PRO TRAINING SYSTEM 🎓                        ║
-║                                                                               ║
-║                     Duration: """ + f"{self.total_hours} hours".ljust(15) + """                          ║
-║                     Targets: """ + f"{len(self.targets)}".ljust(15) + """                           ║
-║                     Lessons: """ + f"{len(self.curriculum)}".ljust(15) + """                           ║
-║                     Challenges: """ + f"{len(self.challenges)}".ljust(15) + """                        ║
-║                                                                               ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
++=================================================================================+
+|                                                                               |
+|     ██████╗ ██████╗ ████████╗██╗███╗   ███╗██╗   ██╗███████╗                 |
+|    ██╔═══██╗██╔══██╗╚══██╔══╝██║████╗ ████║██║   ██║██╔════╝                 |
+|    ██║   ██║██████╔╝   ██║   ██║██╔████╔██║██║   ██║███████╗                 |
+|    ██║   ██║██╔═══╝    ██║   ██║██║╚██╔╝██║██║   ██║╚════██║                 |
+|    ╚██████╔╝██║        ██║   ██║██║ ╚═╝ ██║╚██████╔╝███████║                 |
+|     ╚═════╝ ╚═╝        ╚═╝   ╚═╝╚═╝     ╚═╝ ╚═════╝ ╚══════╝                 |
+|                                                                               |
+|                    NEWBIE TO PRO TRAINING SYSTEM                              |
+|                                                                               |
+|                     Duration: """ + f"{self.total_hours} hours".ljust(15) + """                          |
+|                     Targets: """ + f"{len(self.targets)}".ljust(15) + """                           |
+|                     Lessons: """ + f"{len(self.curriculum)}".ljust(15) + """                           |
+|                     Challenges: """ + f"{len(self.challenges)}".ljust(15) + """                        |
+|                                                                               |
++=================================================================================+
         """
-        print(banner)
+        try:
+            print(banner)
+        except UnicodeEncodeError:
+            # Fallback to ASCII-only banner if Unicode fails
+            print(f"NEWBIE TO PRO TRAINING SYSTEM")
+            print(f"Duration: {self.total_hours} hours")
+            print(f"Targets: {len(self.targets)}")
+            print(f"Lessons: {len(self.curriculum)}")
+            print(f"Challenges: {len(self.challenges)}")
+            print("=" * 50)
     
     def run_training(self) -> Dict[str, Any]:
         """Run the complete training program"""
@@ -1003,10 +1061,10 @@ class NewbieToProTrainer:
         phase_start = datetime.now()
         phase_end = phase_start + timedelta(hours=hours)
         
-        print(f"\n{'═'*70}")
+        print(f"\n{'='*70}")
         print(f"PHASE: {phase.value.upper()}")
         print(f"Duration: {hours} hours")
-        print(f"{'═'*70}\n")
+        print(f"{'='*70}\n")
         
         # Get lessons for this phase
         phase_lessons = [l for l in self.curriculum if l.phase == phase]
@@ -1056,7 +1114,7 @@ class NewbieToProTrainer:
     
     def _run_lesson(self, lesson: LessonPlan):
         """Run a single lesson"""
-        print(f"\n📚 LESSON: {lesson.title}")
+        print(f"\n[LESSON] {lesson.title}")
         print(f"   Objectives: {', '.join(lesson.objectives[:2])}...")
         print(f"   Skills: {', '.join(lesson.skills_trained)}")
         print(f"   Duration: {lesson.duration_minutes} minutes\n")
@@ -1064,17 +1122,55 @@ class NewbieToProTrainer:
         lesson_start = datetime.now()
         lesson_end = lesson_start + timedelta(minutes=lesson.duration_minutes)
         
+        # Determine appropriate phase based on lesson
+        lesson_phase = 'reconnaissance'  # Default
+        if lesson.phase == TrainingPhase.FUNDAMENTALS:
+            lesson_phase = 'reconnaissance'
+        elif lesson.phase == TrainingPhase.INTERMEDIATE:
+            lesson_phase = 'enumeration'
+        elif lesson.phase == TrainingPhase.ADVANCED:
+            lesson_phase = 'vulnerability_analysis'
+        elif lesson.phase == TrainingPhase.EXPERT:
+            lesson_phase = 'exploitation'
+        elif lesson.phase == TrainingPhase.MASTERY:
+            lesson_phase = 'post_exploitation'
+        
+        # Initialize scan state for the lesson
+        target = random.choice(self.targets) if self.targets else {'url': 'http://localhost'}
+        target_url = target.get('url') or target.get('ip')
+        
+        initial_scan_state = {
+            'scan_id': f"lesson_{lesson.lesson_id}_{datetime.now().strftime('%H%M%S')}",
+            'target': target_url,
+            'phase': lesson_phase,
+            'findings': [],
+            'tools_executed': [],
+            'target_type': 'web',  # Default
+            'discovered_technologies': [],
+        }
+        
+        # Apply standardized schema
+        scan_state = ensure_scan_state(initial_scan_state)
+        
         # Run exercises
         for exercise in lesson.exercises:
             if datetime.now() >= lesson_end:
                 break
             
-            result = self._run_exercise(exercise, lesson)
+            result = self._run_exercise_with_state(exercise, lesson, scan_state)
             
             # Update skills
             for skill_name in lesson.skills_trained:
                 skill = self.agent.get_skill(skill_name)
                 skill.practice(result.get('success', False), difficulty=1.0)
+            
+            # Check phase advancement after each exercise
+            intelligent_selector = self.components.get('intelligent_selector')
+            if intelligent_selector and self.should_advance_phase(scan_state):
+                new_phase = self.advance_phase()
+                if new_phase:
+                    scan_state['phase'] = new_phase
+                    logger.info(f"[Lesson Phase Advancement] Updated scan_state phase to: {new_phase}")
         
         # Run assessment
         assessment_result = self._run_assessment(lesson)
@@ -1084,7 +1180,7 @@ class NewbieToProTrainer:
             self.completed_lessons.append(lesson.lesson_id)
             self.metrics['lessons_completed'] += 1
         else:
-            print(f"   ✗ Lesson needs more practice")
+            print(f"   X Lesson needs more practice")
     
     def _run_exercise(self, exercise: Dict, lesson: LessonPlan) -> Dict:
         """Run a single exercise"""
@@ -1101,13 +1197,34 @@ class NewbieToProTrainer:
         if not tool_manager:
             return result
         
-        scan_state = {
+        # Track attempted command signatures to prevent retry spam
+        attempted_signatures = set()
+        
+        # Determine appropriate phase based on lesson
+        lesson_phase = 'reconnaissance'  # Default
+        if lesson.phase == TrainingPhase.FUNDAMENTALS:
+            lesson_phase = 'reconnaissance'
+        elif lesson.phase == TrainingPhase.INTERMEDIATE:
+            lesson_phase = 'enumeration'
+        elif lesson.phase == TrainingPhase.ADVANCED:
+            lesson_phase = 'vulnerability_analysis'
+        elif lesson.phase == TrainingPhase.EXPERT:
+            lesson_phase = 'exploitation'
+        elif lesson.phase == TrainingPhase.MASTERY:
+            lesson_phase = 'post_exploitation'
+        
+        initial_scan_state = {
             'scan_id': f"exercise_{datetime.now().strftime('%H%M%S')}",
             'target': target_url,
-            'phase': 'training',
+            'phase': lesson_phase,
             'findings': [],
             'tools_executed': [],
+            'target_type': 'web',  # Default
+            'discovered_technologies': [],
         }
+        
+        # Apply standardized schema
+        scan_state = ensure_scan_state(initial_scan_state)
         
         try:
             if exercise_type == 'tool_mastery':
@@ -1119,7 +1236,7 @@ class NewbieToProTrainer:
                     # Get command from intelligent selector or evolving commands
                     if intelligent_selector:
                         recs = intelligent_selector.select_tools(
-                            phase='training', scan_state=scan_state, count=1
+                            phase=scan_state['phase'], scan_state=scan_state, count=1
                         )
                         if recs and recs[0].tool == tool:
                             args = recs[0].args
@@ -1128,13 +1245,30 @@ class NewbieToProTrainer:
                     else:
                         args = '{target}'
                     
+                    # Normalize target based on tool type
+                    if self.target_normalizer and intelligent_selector:
+                        normalized_target = self.target_normalizer.get_tool_target(target_url, tool)
+                    else:
+                        normalized_target = target_url
+                    
+                    # Create signature for this attempt to prevent retry spam
+                    command_signature = (tool, normalized_target, args.replace('{target}', normalized_target))
+                    
+                    # Skip if this exact command was already attempted
+                    if command_signature in attempted_signatures:
+                        print(f"[RetryProtection] Skipping duplicate command: {tool} {normalized_target} with args {args}")
+                        continue
+                    
+                    # Track this attempt
+                    attempted_signatures.add(command_signature)
+                    
                     # Execute
                     exec_result = tool_manager.execute_tool(
                         tool_name=tool,
-                        target=target_url,
-                        parameters={'args': args.replace('{target}', target_url)},
+                        target=normalized_target,
+                        parameters={'args': args.replace('{target}', normalized_target)},
                         scan_id=scan_state['scan_id'],
-                        phase='training'
+                        phase=scan_state['phase']
                     )
                     
                     if exec_result:
@@ -1147,6 +1281,17 @@ class NewbieToProTrainer:
                             evolving_parser.learn_from_output(
                                 tool, exec_result['stdout'], exec_result.get('stderr', '')
                             )
+                        
+                        # Record execution for intelligent selector learning
+                        if intelligent_selector:
+                            execution_time = exec_result.get('execution_time', 10.0)  # Default to 10 seconds if not provided
+                            success = exec_result.get('success', False)
+                            findings_count = len(exec_result.get('findings', []))
+                            intelligent_selector.record_execution(tool, success, findings_count, execution_time)
+                        
+                        # Update skills learned metric when significant findings are made
+                        if exec_result.get('findings') and len(exec_result.get('findings', [])) > 0:
+                            self.metrics['skills_learned'] += 1
                     
                     time.sleep(1)
             
@@ -1157,12 +1302,18 @@ class NewbieToProTrainer:
                 
                 # Execute tool and practice parsing
                 for _ in range(min(samples, 3)):
+                    # Normalize target based on tool type
+                    if self.target_normalizer and intelligent_selector:
+                        normalized_target = self.target_normalizer.get_tool_target(target_url, tool)
+                    else:
+                        normalized_target = target_url
+                    
                     exec_result = tool_manager.execute_tool(
                         tool_name=tool,
-                        target=target_url,
+                        target=normalized_target,
                         parameters={},
                         scan_id=scan_state['scan_id'],
-                        phase='training'
+                        phase=scan_state['phase']
                     )
                     
                     if exec_result and evolving_parser:
@@ -1211,12 +1362,18 @@ class NewbieToProTrainer:
                 tools = vuln_tools.get(vuln_type, ['nuclei'])
                 
                 for tool in tools:
+                    # Normalize target based on tool type
+                    if self.target_normalizer and intelligent_selector:
+                        normalized_target = self.target_normalizer.get_tool_target(target_url, tool)
+                    else:
+                        normalized_target = target_url
+                    
                     exec_result = tool_manager.execute_tool(
                         tool_name=tool,
-                        target=target_url,
+                        target=normalized_target,
                         parameters={},
                         scan_id=scan_state['scan_id'],
-                        phase='vulnerability_scan'
+                        phase=scan_state['phase']
                     )
                     
                     if exec_result:
@@ -1233,10 +1390,275 @@ class NewbieToProTrainer:
             self.total_reward += result['reward']
             self.metrics['total_findings'] += result['findings']
             
+            # Update skills learned based on findings
+            if result['findings'] > 0:
+                self.metrics['skills_learned'] += result['findings']
+            
+            # Check if we should advance phase based on findings and progress
+            if intelligent_selector and self.should_advance_phase(scan_state):
+                new_phase = self.advance_phase()
+                if new_phase:
+                    scan_state['phase'] = new_phase
+                    logger.info(f"[Phase Advancement] Updated scan_state phase to: {new_phase}")
+        
         except Exception as e:
             logger.debug(f"Exercise error: {e}")
         
         return result
+    
+    def _run_exercise_with_state(self, exercise: Dict, lesson: LessonPlan, scan_state: Dict) -> Dict:
+        """Run a single exercise with shared scan state"""
+        exercise_type = exercise.get('type')
+        result = {'success': False, 'findings': 0, 'reward': 0}
+        
+        target_url = scan_state.get('target')
+        
+        tool_manager = self.components.get('tool_manager')
+        intelligent_selector = self.components.get('intelligent_selector')
+        evolving_parser = self.components.get('evolving_parser')
+        
+        if not tool_manager:
+            return result
+        
+        # Track attempted command signatures to prevent retry spam
+        attempted_signatures = set()
+        
+        try:
+            if exercise_type == 'tool_mastery':
+                # Practice using a specific tool
+                tool = exercise.get('tool', 'nmap')
+                variations = exercise.get('variations', 3)
+                
+                for i in range(variations):
+                    # Get command from intelligent selector or evolving commands
+                    if intelligent_selector:
+                        recs = intelligent_selector.select_tools(
+                            phase=scan_state['phase'], scan_state=scan_state, count=1
+                        )
+                        if recs and recs[0].tool == tool:
+                            args = recs[0].args
+                        else:
+                            args = '{target}'
+                    else:
+                        args = '{target}'
+                    
+                    # Normalize target based on tool type
+                    if self.target_normalizer and intelligent_selector:
+                        normalized_target = self.target_normalizer.get_tool_target(target_url, tool)
+                    else:
+                        normalized_target = target_url
+                    
+                    # Create signature for this attempt to prevent retry spam
+                    command_signature = (tool, normalized_target, args.replace('{target}', normalized_target))
+                    
+                    # Skip if this exact command was already attempted
+                    if command_signature in attempted_signatures:
+                        print(f"[RetryProtection] Skipping duplicate command: {tool} {normalized_target} with args {args}")
+                        continue
+                    
+                    # Track this attempt
+                    attempted_signatures.add(command_signature)
+                    
+                    # Execute
+                    exec_result = tool_manager.execute_tool(
+                        tool_name=tool,
+                        target=normalized_target,
+                        parameters={'args': args.replace('{target}', normalized_target)},
+                        scan_id=scan_state['scan_id'],
+                        phase=scan_state['phase']
+                    )
+                    
+                    if exec_result:
+                        result['success'] = True
+                        findings = exec_result.get('findings', [])
+                        result['findings'] += len(findings)
+                        
+                        # Add findings to scan state
+                        scan_state['findings'].extend(findings)
+                        scan_state['tools_executed'].append(tool)
+                        
+                        # Learn from output
+                        if evolving_parser and exec_result.get('stdout'):
+                            evolving_parser.learn_from_output(
+                                tool, exec_result['stdout'], exec_result.get('stderr', '')
+                            )
+                        
+                        # Record execution for intelligent selector learning
+                        if intelligent_selector:
+                            execution_time = exec_result.get('execution_time', 10.0)  # Default to 10 seconds if not provided
+                            success = exec_result.get('success', False)
+                            findings_count = len(exec_result.get('findings', []))
+                            intelligent_selector.record_execution(tool, success, findings_count, execution_time)
+                        
+                        # Update skills learned metric when significant findings are made
+                        if exec_result.get('findings') and len(exec_result.get('findings', [])) > 0:
+                            self.metrics['skills_learned'] += 1
+                    
+                    time.sleep(1)
+            
+            elif exercise_type == 'output_parsing':
+                # Practice parsing outputs
+                tool = exercise.get('tool', 'nmap')
+                samples = exercise.get('samples', 5)
+                
+                # Execute tool and practice parsing
+                for _ in range(min(samples, 3)):
+                    # Normalize target based on tool type
+                    if self.target_normalizer and intelligent_selector:
+                        normalized_target = self.target_normalizer.get_tool_target(target_url, tool)
+                    else:
+                        normalized_target = target_url
+                    
+                    exec_result = tool_manager.execute_tool(
+                        tool_name=tool,
+                        target=normalized_target,
+                        parameters={},
+                        scan_id=scan_state['scan_id'],
+                        phase=scan_state['phase']
+                    )
+                    
+                    if exec_result and evolving_parser:
+                        parsed = evolving_parser.parse(
+                            tool, 
+                            exec_result.get('stdout', ''),
+                            exec_result.get('stderr', '')
+                        )
+                        if parsed:
+                            result['success'] = True
+                            parsed_findings = parsed.get('findings', [])
+                            result['findings'] += len(parsed_findings)
+                            
+                            # Add findings to scan state
+                            scan_state['findings'].extend(parsed_findings)
+                            scan_state['tools_executed'].append(tool)
+                    
+                    time.sleep(0.5)
+            
+            elif exercise_type == 'chain_attack':
+                # Practice chain attacks
+                chain_name = exercise.get('chain', 'sqli_to_shell')
+                attempts = exercise.get('attempts', 3)
+                
+                exploit_chainer = self.components.get('exploit_chainer')
+                if exploit_chainer:
+                    for _ in range(attempts):
+                        # Execute chain
+                        chain_result = self._execute_chain_with_state(chain_name, target_url, scan_state)
+                        if chain_result.get('success'):
+                            result['success'] = True
+                            result['reward'] += 50
+                            self.metrics['total_chains'] += 1
+                            break
+            
+            elif exercise_type == 'vuln_detection':
+                # Practice detecting specific vulnerability type
+                vuln_type = exercise.get('vuln_type', 'xss')
+                samples = exercise.get('samples', 5)
+                
+                # Map vuln type to tools
+                vuln_tools = {
+                    'sqli': ['sqlmap'],
+                    'xss': ['dalfox', 'xsstrike'],
+                    'cmdi': ['commix'],
+                    'ssrf': ['nuclei'],
+                    'xxe': ['nuclei'],
+                    'lfi': ['ffuf'],
+                }
+                
+                tools = vuln_tools.get(vuln_type, ['nuclei'])
+                
+                for tool in tools:
+                    # Normalize target based on tool type
+                    if self.target_normalizer and intelligent_selector:
+                        normalized_target = self.target_normalizer.get_tool_target(target_url, tool)
+                    else:
+                        normalized_target = target_url
+                    
+                    exec_result = tool_manager.execute_tool(
+                        tool_name=tool,
+                        target=normalized_target,
+                        parameters={},
+                        scan_id=scan_state['scan_id'],
+                        phase=scan_state['phase']  # Use scan_state phase instead of hardcoded
+                    )
+                    
+                    if exec_result:
+                        findings = exec_result.get('findings', [])
+                        relevant = [f for f in findings if vuln_type in f.get('type', '').lower()]
+                        if relevant:
+                            result['success'] = True
+                            result['findings'] += len(relevant)
+                            
+                            # Add findings to scan state
+                            scan_state['findings'].extend(findings)
+                            scan_state['tools_executed'].append(tool)
+                    
+                    time.sleep(1)
+            
+            # Check if we should advance phase based on findings and progress
+            if intelligent_selector and self.should_advance_phase(scan_state):
+                new_phase = self.advance_phase()
+                if new_phase:
+                    scan_state['phase'] = new_phase
+                    logger.info(f"[Phase Advancement] Updated scan_state phase to: {new_phase}")
+            
+            # Calculate reward
+            result['reward'] = result['findings'] * 10 + (50 if result['success'] else 0)
+            self.total_reward += result['reward']
+            self.metrics['total_findings'] += result['findings']
+            
+            # Update skills learned based on findings
+            if result['findings'] > 0:
+                self.metrics['skills_learned'] += result['findings']
+            
+        except Exception as e:
+            logger.debug(f"Exercise error: {e}")
+        
+        return result
+    
+    def should_advance_phase(self, scan_state: Dict) -> bool:
+        """Check if we should advance to the next phase based on findings and progress"""
+        findings_count = len(scan_state.get('findings', []))
+        tools_executed = len(scan_state.get('tools_executed', []))
+        
+        # Advance phase if we have sufficient findings or have tried enough tools
+        if findings_count >= 5 or tools_executed >= 10:
+            return True
+        
+        # Check for specific phase completion indicators
+        current_phase = scan_state.get('phase', 'reconnaissance')
+        
+        if current_phase == 'reconnaissance':
+            # Move to enumeration if we have discovered technologies or services
+            technologies = scan_state.get('discovered_technologies', [])
+            return len(technologies) >= 2
+        elif current_phase == 'enumeration':
+            # Move to vulnerability analysis if we have found interesting endpoints
+            endpoints_found = any('directory' in str(f).lower() or 'endpoint' in str(f).lower() 
+                                for f in scan_state.get('findings', []))
+            return endpoints_found
+        elif current_phase == 'vulnerability_analysis':
+            # Move to exploitation if we have found exploitable vulnerabilities
+            vulns_found = any('vulnerability' in str(f).lower() or 'cve' in str(f).lower() 
+                            for f in scan_state.get('findings', []))
+            return vulns_found
+        
+        return False
+    
+    def advance_phase(self):
+        """Advance to the next pentest phase"""
+        if self.current_phase_idx < len(self.pentest_phases) - 1:
+            self.current_phase_idx += 1
+            current_phase = self.pentest_phases[self.current_phase_idx]
+            logger.info(f"[Phase Advancement] Moving to phase: {current_phase}")
+            return current_phase
+        return None
+    
+    def get_current_phase(self) -> str:
+        """Get the current pentest phase"""
+        if 0 <= self.current_phase_idx < len(self.pentest_phases):
+            return self.pentest_phases[self.current_phase_idx]
+        return 'reconnaissance'  # fallback
     
     def _run_assessment(self, lesson: LessonPlan) -> Dict:
         """Run lesson assessment"""
@@ -1269,13 +1691,16 @@ class NewbieToProTrainer:
         target = random.choice(self.targets) if self.targets else {'url': 'http://localhost'}
         target_url = target.get('url') or target.get('ip')
         
-        scan_state = {
+        initial_scan_state = {
             'scan_id': f"challenge_{challenge.challenge_id}",
             'target': target_url,
-            'phase': 'challenge',
+            'phase': 'exploitation',  # Use appropriate phase for challenge
             'findings': [],
             'tools_executed': [],
         }
+        
+        # Apply standardized schema
+        scan_state = ensure_scan_state(initial_scan_state)
         
         success = False
         score = 0
@@ -1293,7 +1718,7 @@ class NewbieToProTrainer:
                 # Get tool recommendation
                 if intelligent_selector:
                     recs = intelligent_selector.select_tools(
-                        phase='exploitation',
+                        phase=scan_state['phase'],
                         scan_state=scan_state,
                         count=3
                     )
@@ -1303,19 +1728,36 @@ class NewbieToProTrainer:
                     
                     rec = recs[0]
                     
+                    # Normalize target based on tool type
+                    if self.target_normalizer:
+                        normalized_target = self.target_normalizer.get_tool_target(target_url, rec.tool)
+                    else:
+                        normalized_target = target_url
+                    
                     # Execute
                     exec_result = tool_manager.execute_tool(
                         tool_name=rec.tool,
-                        target=target_url,
-                        parameters={'args': rec.args.replace('{target}', target_url)},
+                        target=normalized_target,
+                        parameters={'args': rec.args.replace('{target}', normalized_target)},
                         scan_id=scan_state['scan_id'],
-                        phase='exploitation'
+                        phase=scan_state['phase']
                     )
                     
                     if exec_result:
                         scan_state['tools_executed'].append(rec.tool)
                         findings = exec_result.get('findings', [])
                         scan_state['findings'].extend(findings)
+                        
+                        # Record execution for intelligent selector learning
+                        if intelligent_selector:
+                            execution_time = exec_result.get('execution_time', 10.0)  # Default to 10 seconds if not provided
+                            success = exec_result.get('success', False)
+                            findings_count = len(exec_result.get('findings', []))
+                            intelligent_selector.record_execution(rec.tool, success, findings_count, execution_time)
+                        
+                        # Update skills learned metric when significant findings are made
+                        if exec_result.get('findings') and len(exec_result.get('findings', [])) > 0:
+                            self.metrics['skills_learned'] += 1
                         
                         # Check success criteria
                         criteria = challenge.success_criteria
@@ -1382,12 +1824,18 @@ class NewbieToProTrainer:
         
         for tool in tools:
             try:
+                # Normalize target based on tool type
+                if self.target_normalizer:
+                    normalized_target = self.target_normalizer.get_tool_target(target, tool)
+                else:
+                    normalized_target = target
+                            
                 exec_result = tool_manager.execute_tool(
                     tool_name=tool,
-                    target=target,
+                    target=normalized_target,
                     parameters={},
                     scan_id=scan_state['scan_id'],
-                    phase='exploitation'
+                    phase=scan_state['phase']
                 )
                 
                 if exec_result and exec_result.get('success'):
@@ -1445,12 +1893,18 @@ class NewbieToProTrainer:
             
             if tool:
                 try:
+                    # Normalize target based on tool type
+                    if self.target_normalizer:
+                        normalized_target = self.target_normalizer.get_tool_target(target_url, tool)
+                    else:
+                        normalized_target = target_url
+                    
                     exec_result = tool_manager.execute_tool(
                         tool_name=tool,
-                        target=target_url,
+                        target=normalized_target,
                         parameters={},
                         scan_id='practice',
-                        phase='training'
+                        phase='reconnaissance'  # Default phase for practice
                     )
                     
                     success = exec_result and exec_result.get('success', False)
@@ -1555,27 +2009,90 @@ class NewbieToProTrainer:
     def _print_final_summary(self, report: Dict):
         """Print final training summary"""
         print(f"""
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║                         TRAINING COMPLETE                                     ║
-╠═══════════════════════════════════════════════════════════════════════════════╣
-║                                                                               ║
-║  Duration: {report['training_summary']['total_hours']:.1f} hours                                                     ║
-║  Final Level: {report['agent_profile']['final_level'].ljust(20)}                                   ║
-║                                                                               ║
-║  METRICS:                                                                     ║
-║    • Lessons Completed: {str(report['curriculum_completion']['lessons_completed']).ljust(5)} / {len(self.curriculum)}                                    ║
-║    • Challenges Completed: {str(report['challenges_completion']['challenges_completed']).ljust(5)} / {len(self.challenges)}                                 ║
-║    • Total Findings: {str(report['metrics']['total_findings']).ljust(10)}                                        ║
-║    • Total Shells: {str(report['metrics']['total_shells']).ljust(10)}                                          ║
-║    • Chain Attacks: {str(report['metrics']['total_chains']).ljust(10)}                                         ║
-║    • Total Reward: {str(int(report['total_reward'])).ljust(10)}                                          ║
-║                                                                               ║
-║  SKILL ASSESSMENT:                                                            ║
-║    Strengths: {', '.join(report['agent_profile']['strengths'][:3]) if report['agent_profile']['strengths'] else 'None yet'.ljust(50)}║
-║    Weaknesses: {', '.join(report['agent_profile']['weaknesses'][:3]) if report['agent_profile']['weaknesses'] else 'None'.ljust(49)}║
-║                                                                               ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
++=================================================================================+
+|                         TRAINING COMPLETE                                     |
++=================================================================================+
+|                                                                               |
+|  Duration: {report['training_summary']['total_hours']:.1f} hours                                                     |
+|  Final Level: {report['agent_profile']['final_level'].ljust(20)}                                   |
+|                                                                               |
+|  METRICS:                                                                     |
+|    • Lessons Completed: {str(report['curriculum_completion']['lessons_completed']).ljust(5)} / {len(self.curriculum)}                                    |
+|    • Challenges Completed: {str(report['challenges_completion']['challenges_completed']).ljust(5)} / {len(self.challenges)}                                 |
+|    • Total Findings: {str(report['metrics']['total_findings']).ljust(10)}                                        |
+|    • Skills Learned: {str(report['metrics']['skills_learned']).ljust(10)}                                         |
+|    • Total Shells: {str(report['metrics']['total_shells']).ljust(10)}                                          |
+|    • Chain Attacks: {str(report['metrics']['total_chains']).ljust(10)}                                         |
+|    • Total Reward: {str(int(report['total_reward'])).ljust(10)}                                          |
+|                                                                               |
+|  SKILL ASSESSMENT:                                                            |
+|    Strengths: {', '.join(report['agent_profile']['strengths'][:3]) if report['agent_profile']['strengths'] else 'None yet'.ljust(50)}|
+|    Weaknesses: {', '.join(report['agent_profile']['weaknesses'][:3]) if report['agent_profile']['weaknesses'] else 'None'.ljust(49)}|
+|                                                                               |
++=================================================================================+
         """)
+    
+    def _load_authorized_targets(self) -> List[str]:
+        """Load authorized vulnerable targets for training"""
+        # Default authorized targets (local/vulnerable lab environments)
+        default_targets = [
+            'localhost',
+            '127.0.0.1',
+            '192.168.56.',  # VirtualBox/Vagrant networks
+            '192.168.1.',   # Common local networks
+            '10.0.2.',      # VirtualBox default
+            'juice-shop',   # OWASP Juice Shop container name
+            'dvwa',         # DVWA container name
+            'metasploitable', # Metasploitable container name
+        ]
+        
+        # Load from config if available
+        config_targets = self.config.get('authorized_targets', [])
+        if config_targets:
+            default_targets.extend(config_targets)
+        
+        return default_targets
+    
+    def _is_target_authorized(self, target: str) -> bool:
+        """Check if target is in authorized list"""
+        target_lower = target.lower().strip()
+        
+        # Check if target matches any authorized patterns
+        for auth_target in self.authorized_targets:
+            if auth_target in target_lower or target_lower.startswith(auth_target.replace('.', '')):
+                return True
+        
+        # Check if it's a localhost or private IP
+        if target_lower in ['localhost', '127.0.0.1']:
+            return True
+        
+        # Check for private IP ranges
+        if any(target_lower.startswith(private_prefix) for private_prefix in 
+               ['192.168.', '10.', '172.16.', '172.17.', '172.18.', '172.19.', 
+                '172.20.', '172.21.', '172.22.', '172.23.', '172.24.', 
+                '172.25.', '172.26.', '172.27.', '172.28.', '172.29.', 
+                '172.30.', '172.31.']):
+            return True
+        
+        return False
+    
+    def _validate_targets(self):
+        """Validate that all configured targets are authorized"""
+        invalid_targets = []
+        valid_targets = []
+        
+        for target in self.targets:
+            target_url = target.get('url') or target.get('ip') or str(target)
+            if self._is_target_authorized(target_url):
+                valid_targets.append(target)
+            else:
+                invalid_targets.append(target_url)
+        
+        if invalid_targets:
+            logger.warning(f"Unauthorized targets filtered out: {invalid_targets}")
+            
+        self.targets = valid_targets
+        logger.info(f"Validated targets: {len(self.targets)} authorized targets")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
