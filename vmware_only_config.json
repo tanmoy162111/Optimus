@@ -1,0 +1,11 @@
+{
+  "targets": [
+    {
+      "url": "http://192.168.131.128",
+      "name": "VMware_Kali_Target"
+    }
+  ],
+  "total_hours": 12,
+  "output_dir": "training_output/12hour_vmware_training",
+  "authorized_targets": ["192.168.131."]
+}

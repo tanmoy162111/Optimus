@@ -21,7 +21,7 @@ scan_bp = Blueprint('scan', __name__)
 
 def get_active_scans():
     """Lazy load active_scans to avoid circular import"""
-    from app import active_scans
+    from app import active_scans, active_scans_lock
     print(f"[scan_routes] get_active_scans() called")
     print(f"  active_scans id: {id(active_scans)}")
     print(f"  active_scans keys: {list(active_scans.keys())}")
@@ -40,10 +40,14 @@ def get_scan_history():
 @scan_bp.route('/start', methods=['POST'])
 def start_scan():
     """Start a new scan."""
+    # Generate correlation ID for this request
+    correlation_id = str(uuid.uuid4())
+    
     try:
         data = request.get_json()
         
         if not data or 'target' not in data:
+            logger.info(f"Target is required", extra={'correlation_id': correlation_id})
             return jsonify({'error': 'Target is required'}), 400
         
         target = data['target']
@@ -83,18 +87,21 @@ def start_scan():
             'discovered_endpoints': [],
             'discovered_technologies': [],
             'open_ports': [],
-            'stop_requested': False
+            'stop_requested': False,
+            'correlation_id': correlation_id  # Add correlation ID to scan
         }
         
         # Add to active scans
+        from app import active_scans_lock
         active_scans = get_active_scans()
-        print(f"[scan_routes] Before adding scan - active_scans keys: {list(active_scans.keys())}")
-        active_scans[scan_id] = scan
-        logger.info(f"Added scan {scan_id} to active_scans. Active scans count: {len(active_scans)}")
-        print(f"[scan_routes] Added scan {scan_id} to active_scans")
-        print(f"  active_scans keys: {list(active_scans.keys())}")
+        with active_scans_lock:
+            print(f"[scan_routes] Before adding scan - active_scans keys: {list(active_scans.keys())}")
+            active_scans[scan_id] = scan
+            logger.info(f"Added scan {scan_id} to active_scans. Active scans count: {len(active_scans)}", extra={'correlation_id': correlation_id})
+            print(f"[scan_routes] Added scan {scan_id} to active_scans")
+            print(f"  active_scans keys: {list(active_scans.keys())}")
         
-        logger.info(f"Created scan {scan_id} for target {target}")
+        logger.info(f"Created scan {scan_id} for target {target}", extra={'correlation_id': correlation_id})
         
         # Start scan in background
         try:
@@ -112,12 +119,12 @@ def start_scan():
             result = manager.start_scan(scan_id, target, options)
             
             if result:
-                logger.info(f"Scan {scan_id} started successfully")
+                logger.info(f"Scan {scan_id} started successfully", extra={'correlation_id': correlation_id})
             else:
-                logger.warning(f"Scan {scan_id} start returned False")
+                logger.warning(f"Scan {scan_id} start returned False", extra={'correlation_id': correlation_id})
                 
         except Exception as e:
-            logger.error(f"Failed to start scan: {e}")
+            logger.error(f"Failed to start scan: {e}", extra={'correlation_id': correlation_id})
             import traceback
             traceback.print_exc()
             scan['status'] = 'error'
@@ -127,7 +134,7 @@ def start_scan():
         return jsonify(scan), 201
         
     except Exception as e:
-        logger.error(f"Error in start_scan route: {e}")
+        logger.error(f"Error in start_scan route: {e}", extra={'correlation_id': correlation_id})
         import traceback
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
@@ -146,7 +153,11 @@ def get_scan_status(scan_id):
                 return jsonify(s)
         return jsonify({'error': 'Scan not found'}), 404
     
-    return jsonify(scan)
+    # Add timestamp to indicate when this data was retrieved
+    scan_with_timestamp = scan.copy()
+    scan_with_timestamp['last_updated'] = datetime.utcnow().isoformat()
+    
+    return jsonify(scan_with_timestamp)
 
 
 @scan_bp.route('/stop/<scan_id>', methods=['POST'])
@@ -237,7 +248,11 @@ def get_scan_results(scan_id):
                 return jsonify(s)
         return jsonify({'error': 'Scan not found'}), 404
     
-    return jsonify(scan)
+    # Add timestamp to indicate when this data was retrieved
+    scan_with_timestamp = scan.copy()
+    scan_with_timestamp['last_updated'] = datetime.utcnow().isoformat()
+    
+    return jsonify(scan_with_timestamp)
 
 
 @scan_bp.route('/list')
@@ -316,7 +331,7 @@ def get_scan_findings(scan_id):
                 return jsonify({'findings': s.get('findings', [])})
         return jsonify({'error': 'Scan not found'}), 404
     
-    return jsonify({'findings': scan.get('findings', [])})
+    return jsonify({'findings': scan.get('findings', []), 'last_updated': datetime.utcnow().isoformat()})
 
 
 # ============================================
@@ -325,29 +340,35 @@ def get_scan_findings(scan_id):
 
 def update_scan(scan_id: str, updates: dict):
     """Update scan data."""
+    from app import active_scans_lock
     active_scans = get_active_scans()
-    if scan_id in active_scans:
-        active_scans[scan_id].update(updates)
-        return True
+    with active_scans_lock:
+        if scan_id in active_scans:
+            active_scans[scan_id].update(updates)
+            return True
     return False
 
 def add_finding(scan_id: str, finding: dict):
     """Add a finding to a scan."""
+    from app import active_scans_lock
     active_scans = get_active_scans()
-    if scan_id in active_scans:
-        active_scans[scan_id]['findings'].append(finding)
-        return True
+    with active_scans_lock:
+        if scan_id in active_scans:
+            active_scans[scan_id]['findings'].append(finding)
+            return True
     return False
 
 def complete_scan(scan_id: str):
     """Mark scan as complete and move to history."""
+    from app import active_scans_lock
     active_scans = get_active_scans()
     scan_history = get_scan_history()
     
-    if scan_id in active_scans:
-        scan = active_scans[scan_id]
-        scan['status'] = 'completed'
-        scan['end_time'] = datetime.utcnow().isoformat()
-        scan_history.insert(0, active_scans.pop(scan_id))
-        return True
+    with active_scans_lock:
+        if scan_id in active_scans:
+            scan = active_scans[scan_id]
+            scan['status'] = 'completed'
+            scan['end_time'] = datetime.utcnow().isoformat()
+            scan_history.insert(0, active_scans.pop(scan_id))
+            return True
     return False

@@ -221,7 +221,7 @@ class PrioritizedReplayBuffer:
         
         logger.info(
             f"[PER] Initialized: capacity={capacity}, alpha={alpha}, "
-            f"beta={beta_start}→{beta_end}"
+            f"beta={beta_start}->{beta_end}"
         )
     
     @property
@@ -259,6 +259,9 @@ class PrioritizedReplayBuffer:
             next_state=np.array(next_state, dtype=np.float32),
             done=bool(done)
         )
+        
+        # Verify experience tuple order
+        logger.debug(f"[PER] Adding experience: (state_shape={exp.state.shape}, action={exp.action}, reward={exp.reward:.3f}, next_state_shape={exp.next_state.shape}, done={exp.done})")
         
         # New experiences get max priority
         priority = self._max_priority ** self.alpha
@@ -408,6 +411,9 @@ class StandardReplayBuffer:
             next_state=np.array(next_state, dtype=np.float32),
             done=bool(done)
         )
+        
+        # Verify experience tuple order for standard buffer
+        logger.debug(f"[ReplayBuffer] Adding experience: (state_shape={exp.state.shape}, action={exp.action}, reward={exp.reward:.3f}, next_state_shape={exp.next_state.shape}, done={exp.done})")
         
         if len(self.buffer) < self.capacity:
             self.buffer.append(exp)

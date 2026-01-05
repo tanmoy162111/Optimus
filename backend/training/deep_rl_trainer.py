@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 from .rl_training_config import RLTrainingConfig, TrainingTarget, load_training_config
 from .experience_collector import ExperienceCollector, get_experience_collector
-from .reward_calculator import RewardCalculator, get_reward_calculator
+from .reward_calculator import GlobalRewardCalculator, get_reward_calculator
 from .enhanced_state_encoder import get_state_encoder
 from .deep_rl_agent import get_deep_rl_agent
 
@@ -254,12 +254,14 @@ class DeepRLTrainer:
             self._update_scan_state(scan_state, result)
             findings_after = len(scan_state["findings"])
             
-            # Calculate reward
-            reward = self.reward_calculator.calculate_reward(
+            # Calculate global reward
+            reward = self.reward_calculator.calculate_global_reward(
                 tool_name=tool_name,
                 result=result,
                 scan_state=scan_state,
-                execution_time=exec_time
+                execution_time=exec_time,
+                episode_reward=episode_reward,
+                lesson_reward=0.0  # No lesson reward for individual tool execution
             )
             episode_reward += reward
             

@@ -4,7 +4,7 @@ LLM Command Generator
 import logging
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ class SafetyLevel(Enum):
 
 @dataclass
 class GeneratedCommand:
-    """Result of command generation"""
+    """Result of command generation - now includes structured intent"""
     command: str
     explanation: str
     safety_level: SafetyLevel
@@ -25,6 +25,29 @@ class GeneratedCommand:
     requires_root: bool
     warnings: List[str]
     alternatives: List[str]
+    # New structured intent fields
+    tool: str = ""
+    arguments: List[str] = None
+    target: str = ""
+    
+    def __post_init__(self):
+        if self.arguments is None:
+            self.arguments = []
+        if not self.tool and self.command:
+            # Parse command to extract tool and arguments
+            import shlex
+            try:
+                parts = shlex.split(self.command)
+                if parts:
+                    self.tool = parts[0]
+                    self.arguments = parts[1:] if len(parts) > 1 else []
+                    # For now, we'll use the target from the context
+            except:
+                # Fallback to basic parsing
+                cmd_parts = self.command.split()
+                if cmd_parts:
+                    self.tool = cmd_parts[0]
+                    self.arguments = cmd_parts[1:] if len(cmd_parts) > 1 else []
 
 class LLMCommandGenerator:
     """Generate tool commands using LLM"""

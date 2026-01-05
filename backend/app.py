@@ -10,6 +10,7 @@ import os
 import sys
 import io
 import logging
+import uuid
 from pathlib import Path
 from datetime import datetime
 
@@ -47,7 +48,7 @@ LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
 # Safe formatter that handles Unicode on Windows
 class SafeLogFormatter(logging.Formatter):
-    """Formatter that replaces Unicode characters with ASCII on Windows"""
+    """Formatter that replaces Unicode characters with ASCII on Windows and adds correlation IDs"""
     
     UNICODE_REPLACEMENTS = {
         '✅': '[OK]',
@@ -70,6 +71,11 @@ class SafeLogFormatter(logging.Formatter):
     }
     
     def format(self, record):
+        # Add correlation ID if available in the record
+        correlation_id = getattr(record, 'correlation_id', None)
+        if correlation_id:
+            record.msg = f'[CID:{correlation_id}] {record.msg}'
+        
         message = super().format(record)
         if sys.platform == 'win32':
             for unicode_char, ascii_char in self.UNICODE_REPLACEMENTS.items():
@@ -159,8 +165,10 @@ socketio = SocketIO(
 # ========================================
 # GLOBAL STATE (Shared across modules)
 # ========================================
+import threading
 active_scans = {}
 scan_history = []
+active_scans_lock = threading.Lock()  # Lock to protect active_scans from race conditions
 
 print(f"[app.py] Initialized active_scans: {active_scans}")
 print(f"[app.py] active_scans id: {id(active_scans)}")

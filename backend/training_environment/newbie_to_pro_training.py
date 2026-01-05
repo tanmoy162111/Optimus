@@ -152,16 +152,28 @@ class Skill:
     failures: int = 0
     last_practiced: Optional[str] = None
     
-    def practice(self, success: bool, difficulty: float = 1.0):
-        """Record practice session"""
-        self.experience += int(10 * difficulty)
-        if success:
+    def practice(self, success: bool, difficulty: float = 1.0, global_reward: float = 0.0, policy_success: bool = False):
+        """Record practice session with global reward and policy success dependencies"""
+        # Calculate experience based on global reward and policy success
+        base_experience = 10 * difficulty
+        reward_multiplier = max(1.0, abs(global_reward) / 10.0) if global_reward != 0 else 1.0
+        policy_multiplier = 1.5 if policy_success else 0.8
+        
+        self.experience += int(base_experience * reward_multiplier * policy_multiplier)
+        
+        if success or policy_success or global_reward > 0:
             self.successes += 1
-            self.level = min(100, self.level + (5 * difficulty * (1 - self.level/100)))
+            # Use global reward to influence skill growth
+            reward_factor = max(0.5, min(2.0, 1.0 + (global_reward / 5.0))) if global_reward != 0 else 1.0
+            self.level = min(100, self.level + (5 * difficulty * reward_factor * (1 - self.level/100)))
         else:
             self.failures += 1
             self.level = max(0, self.level - 1)
+        
         self.last_practiced = datetime.now().isoformat()
+        
+        # Add debug logging
+        logger.debug(f"[Skill Practice] {self.name}: success={success}, global_reward={global_reward:.2f}, policy_success={policy_success}, new_level={self.level}")
     
     @property
     def success_rate(self) -> float:
@@ -969,6 +981,9 @@ class NewbieToProTrainer:
             'total_chains': 0,
             'rl_updates': 0,
         }
+        
+        # Track recent global rewards for adaptive threshold calculation
+        self.recent_global_rewards = []
     
     def initialize(self) -> bool:
         """Initialize the trainer"""
@@ -1162,7 +1177,21 @@ class NewbieToProTrainer:
             # Update skills
             for skill_name in lesson.skills_trained:
                 skill = self.agent.get_skill(skill_name)
-                skill.practice(result.get('success', False), difficulty=1.0)
+                # Calculate global reward based on result
+                global_reward = result.get('reward', 0.0) if isinstance(result, dict) else 0.0
+                policy_success = result.get('success', False) if isinstance(result, dict) else False
+                success = result.get('success', False)
+                
+                skill.practice(result.get('success', False), difficulty=1.0, global_reward=global_reward, policy_success=policy_success)
+                
+                # Track global reward for adaptive threshold calculation
+                if global_reward != 0:
+                    self.recent_global_rewards.append(global_reward)
+                    # Keep only the last 20 rewards to maintain recency
+                    self.recent_global_rewards = self.recent_global_rewards[-20:]
+                
+                # Log skill update with cause
+                logger.debug(f"[Lesson Skill Update] Skill: {skill_name}, Success: {success}, Global Reward: {global_reward}, Policy Success: {policy_success}, Phase: {scan_state['phase']}")
             
             # Check phase advancement after each exercise
             intelligent_selector = self.components.get('intelligent_selector')
@@ -1175,12 +1204,27 @@ class NewbieToProTrainer:
         # Run assessment
         assessment_result = self._run_assessment(lesson)
         
-        if assessment_result.get('passed', False):
+        # Log detailed assessment results with pass/fail reasons
+        passed = assessment_result.get('passed', False)
+        actual_avg_skill = assessment_result.get('actual_avg_skill', 0)
+        required_avg_skill = assessment_result.get('required_avg_skill', 0)
+        
+        if passed:
             print(f"   ✓ Lesson PASSED")
+            print(f"     Skills: avg={actual_avg_skill:.2f}, required={required_avg_skill:.2f}")
             self.completed_lessons.append(lesson.lesson_id)
             self.metrics['lessons_completed'] += 1
+            
+            # Log pass reason
+            logger.info(f"[Lesson Pass] {lesson.title}: avg_skill={actual_avg_skill:.2f}, required={required_avg_skill:.2f}, skills_trained={lesson.skills_trained}")
         else:
-            print(f"   X Lesson needs more practice")
+            print(f"   X Lesson FAILED")
+            print(f"     Skills: avg={actual_avg_skill:.2f}, required={required_avg_skill:.2f}")
+            
+            # Log fail reason with detailed analysis
+            skill_levels = [self.agent.get_skill(s).level for s in lesson.skills_trained]
+            skill_details = {s: self.agent.get_skill(s).level for s in lesson.skills_trained}
+            logger.warning(f"[Lesson Fail] {lesson.title}: avg_skill={actual_avg_skill:.2f}, required={required_avg_skill:.2f}, skill_details={skill_details}, phase={lesson.phase}")
     
     def _run_exercise(self, exercise: Dict, lesson: LessonPlan) -> Dict:
         """Run a single exercise"""
@@ -1382,6 +1426,27 @@ class NewbieToProTrainer:
                         if relevant:
                             result['success'] = True
                             result['findings'] += len(relevant)
+                        
+                        # Update the specific tool skill immediately based on execution success and findings
+                        skill = self.agent.get_skill(tool)
+                        success = exec_result.get('success', False)
+                        findings_count = len(findings)
+                        execution_time = exec_result.get('execution_time', 10.0)
+                        
+                        # Calculate global reward based on findings and success
+                        global_reward = findings_count * 2.0 if findings_count > 0 else (1.0 if success else -0.5)
+                        policy_success = success
+                        
+                        # Practice the skill with the execution results
+                        skill.practice(
+                            success=success,
+                            difficulty=1.0,
+                            global_reward=global_reward,
+                            policy_success=policy_success
+                        )
+                        
+                        # Log skill update with cause
+                        logger.debug(f"[Skill Update] Tool: {tool}, Success: {success}, Findings: {findings_count}, Global Reward: {global_reward}, Phase: {scan_state['phase']}")
                     
                     time.sleep(1)
             
@@ -1493,6 +1558,24 @@ class NewbieToProTrainer:
                         # Update skills learned metric when significant findings are made
                         if exec_result.get('findings') and len(exec_result.get('findings', [])) > 0:
                             self.metrics['skills_learned'] += 1
+                            
+                        # Update the specific tool skill immediately based on execution success and findings
+                        skill = self.agent.get_skill(tool)
+                        
+                        # Calculate global reward based on findings and success
+                        global_reward = findings_count * 2.0 if findings_count > 0 else (1.0 if success else -0.5)
+                        policy_success = success
+                        
+                        # Practice the skill with the execution results
+                        skill.practice(
+                            success=success,
+                            difficulty=1.0,
+                            global_reward=global_reward,
+                            policy_success=policy_success
+                        )
+                        
+                        # Log skill update with cause
+                        logger.debug(f"[Skill Update] Tool: {tool}, Success: {success}, Findings: {findings_count}, Global Reward: {global_reward}, Phase: {scan_state['phase']}")
                     
                     time.sleep(1)
             
@@ -1592,6 +1675,27 @@ class NewbieToProTrainer:
                             # Add findings to scan state
                             scan_state['findings'].extend(findings)
                             scan_state['tools_executed'].append(tool)
+                        
+                        # Update the specific tool skill immediately based on execution success and findings
+                        skill = self.agent.get_skill(tool)
+                        success = exec_result.get('success', False)
+                        findings_count = len(findings)
+                        execution_time = exec_result.get('execution_time', 10.0)
+                        
+                        # Calculate global reward based on findings and success
+                        global_reward = findings_count * 2.0 if findings_count > 0 else (1.0 if success else -0.5)
+                        policy_success = success
+                        
+                        # Practice the skill with the execution results
+                        skill.practice(
+                            success=success,
+                            difficulty=1.0,
+                            global_reward=global_reward,
+                            policy_success=policy_success
+                        )
+                        
+                        # Log skill update with cause
+                        logger.debug(f"[Skill Update] Tool: {tool}, Success: {success}, Findings: {findings_count}, Global Reward: {global_reward}, Phase: {scan_state['phase']}")
                     
                     time.sleep(1)
             
@@ -1661,19 +1765,62 @@ class NewbieToProTrainer:
         return 'reconnaissance'  # fallback
     
     def _run_assessment(self, lesson: LessonPlan) -> Dict:
-        """Run lesson assessment"""
+        """Run lesson assessment with proper lesson gate logic"""
         assessment = lesson.assessment
         result = {'passed': False, 'score': 0}
         
-        # Simple assessment based on skill levels
+        # Calculate skill levels
         skill_levels = [
             self.agent.get_skill(s).level 
             for s in lesson.skills_trained
         ]
         
         avg_level = statistics.mean(skill_levels) if skill_levels else 0
+        
+        # Calculate adaptive threshold using formula: required_skill = base + difficulty * scale
+        # Use base threshold that adapts based on agent's overall progress and skill level
+        phase_difficulty = {
+            TrainingPhase.FUNDAMENTALS: 1.0,
+            TrainingPhase.INTERMEDIATE: 1.5,
+            TrainingPhase.ADVANCED: 2.0,
+            TrainingPhase.EXPERT: 2.5,
+            TrainingPhase.MASTERY: 3.0
+        }
+        
+        # Calculate base threshold based on agent's current average skill level to make it adaptive
+        all_skill_levels = [skill.level for skill in self.agent.skills.values()]
+        current_avg_skill = statistics.mean(all_skill_levels) if all_skill_levels else 0
+        
+        # Use a dynamic base that scales with current progress but has minimum requirements
+        base_threshold = max(15, current_avg_skill * 0.3)  # Base scales with current skill but minimum 15
+        difficulty_factor = phase_difficulty.get(lesson.phase, 2.0)
+        
+        # Calculate scale factor based on global reward trends to make it adaptive
+        recent_rewards = getattr(self, 'recent_global_rewards', [])
+        avg_recent_reward = statistics.mean(recent_rewards[-5:]) if recent_rewards else 0
+        
+        # Scale factor adapts based on recent global reward performance
+        reward_adaptation = max(0.5, min(2.0, 1.0 + (avg_recent_reward / 10.0))) if avg_recent_reward != 0 else 1.0
+        scale_factor = 5.0 * reward_adaptation  # Base scale factor with reward adaptation
+        
+        required_avg_skill = base_threshold + (difficulty_factor * scale_factor)
+        
         result['score'] = avg_level / 100
-        result['passed'] = avg_level >= 30  # 30% proficiency to pass
+        result['passed'] = avg_level >= required_avg_skill
+        result['required_avg_skill'] = required_avg_skill
+        result['actual_avg_skill'] = avg_level
+        
+        # Add comprehensive logging with detailed assessment information
+        logger.info(f"[Lesson Assessment] {lesson.title}: "
+                  f"actual_avg_skill={avg_level:.2f}, "
+                  f"required_avg_skill={required_avg_skill:.2f}, "
+                  f"passed={avg_level >= required_avg_skill}, "
+                  f"current_agent_avg_skill={current_avg_skill:.2f}, "
+                  f"base_threshold={base_threshold:.2f}, "
+                  f"difficulty_factor={difficulty_factor:.2f}, "
+                  f"scale_factor={scale_factor:.2f}, "
+                  f"phase={lesson.phase}, "
+                  f"skills_trained={lesson.skills_trained}")
         
         return result
     
@@ -1801,7 +1948,14 @@ class NewbieToProTrainer:
         # Update skills
         for skill_name in challenge.required_skills:
             skill = self.agent.get_skill(skill_name)
-            skill.practice(success, difficulty=challenge.difficulty / 5)
+            # Calculate global reward based on challenge difficulty
+            global_reward = score if success else -1.0
+            policy_success = success
+            
+            skill.practice(success, difficulty=challenge.difficulty / 5, global_reward=global_reward, policy_success=policy_success)
+            
+            # Log skill update with cause
+            logger.debug(f"[Challenge Skill Update] Skill: {skill_name}, Success: {success}, Global Reward: {global_reward}, Policy Success: {policy_success}, Challenge: {challenge.name}")
         
         self.total_reward += score
     
@@ -1909,7 +2063,14 @@ class NewbieToProTrainer:
                     
                     success = exec_result and exec_result.get('success', False)
                     skill = self.agent.get_skill(weakness)
-                    skill.practice(success, difficulty=0.5)
+                    # Calculate global reward based on execution result
+                    global_reward = 1.0 if success else -0.5
+                    policy_success = success
+                    
+                    skill.practice(success, difficulty=0.5, global_reward=global_reward, policy_success=policy_success)
+                    
+                    # Log skill update with cause
+                    logger.debug(f"[Weak Skill Practice] Skill: {weakness}, Success: {success}, Global Reward: {global_reward}, Policy Success: {policy_success}, Tool: {tool}")
                     
                 except Exception as e:
                     logger.debug(f"Practice error: {e}")

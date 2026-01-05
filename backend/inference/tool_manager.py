@@ -10,6 +10,7 @@ import socket
 from datetime import datetime
 from typing import Dict, Any, List, Optional
 import subprocess
+from utils.observability import trace_context, generate_trace_id, log_target, log_tool, log_command, log_output, log_finding, log_reward, log_skill, log_lesson_decision, info, debug, warning, error, critical
 
 # Set up logger first
 logger = logging.getLogger(__name__)
@@ -227,51 +228,66 @@ class ToolManager:
         """
         Execute pentesting tool with real-time output streaming
         """
-        start_time = datetime.now()
+        # Generate trace ID for this execution
+        trace_id = generate_trace_id()
         
-        # CRITICAL SAFETY: linpeas/winpeas are LOCAL privilege escalation tools
-        # They should ONLY run on COMPROMISED REMOTE targets, NEVER on the scanning system
-        post_exploitation_tools = ['linpeas', 'linpeas.sh', 'winpeas', 'winpeas.exe', 'mimikatz', 'lazagne']
-        
-        if tool_name in post_exploitation_tools:
-            # Block execution unless we have verified remote access
-            has_active_session = parameters.get('session_id') or parameters.get('active_session')
-            shells_obtained = parameters.get('shells_obtained', 0)
+        with trace_context(trace_id):
+            start_time = datetime.now()
             
-            if phase != 'post_exploitation':
-                logger.error(f"[ToolManager] BLOCKED: {tool_name} requires post_exploitation phase, not {phase}")
-                return {
-                    'tool_name': tool_name,
-                    'target': target,
-                    'phase': phase,
-                    'error': f'{tool_name} blocked - requires post_exploitation phase with active shell',
-                    'success': False
-                }
+            # Log the target and tool execution with trace ID
+            log_target(target, scan_id=scan_id, phase=phase, tool=tool_name)
+            log_tool(tool_name, scan_id=scan_id, phase=phase, target=target)
             
-            if not has_active_session and shells_obtained == 0:
-                logger.error(f"[ToolManager] BLOCKED: {tool_name} requires active session on remote target")
-                logger.error(f"[ToolManager] These tools run on COMPROMISED systems, not the scanner!")
-                return {
-                    'tool_name': tool_name,
-                    'target': target,
-                    'phase': phase,
-                    'error': f'{tool_name} blocked - requires confirmed shell access to remote target',
-                    'success': False
-                }
+            # CRITICAL SAFETY: linpeas/winpeas are LOCAL privilege escalation tools
+            # They should ONLY run on COMPROMISED REMOTE targets, NEVER on the scanning system
+            post_exploitation_tools = ['linpeas', 'linpeas.sh', 'winpeas', 'winpeas.exe', 'mimikatz', 'lazagne']
             
-            # Also check target is not local
-            local_indicators = ['127.0.0.1', 'localhost', '0.0.0.0', '::1']
-            if any(ind in target.lower() for ind in local_indicators):
-                logger.error(f"[ToolManager] BLOCKED: Cannot run {tool_name} on local system!")
-                return {
-                    'tool_name': tool_name,
-                    'target': target,
-                    'phase': phase,
-                    'error': f'{tool_name} blocked - cannot run on local/scanning system',
-                    'success': False
-                }
-            
-            logger.info(f"[ToolManager] {tool_name} authorized for remote target with active session")
+            if tool_name in post_exploitation_tools:
+                # Block execution unless we have verified remote access
+                has_active_session = parameters.get('session_id') or parameters.get('active_session')
+                shells_obtained = parameters.get('shells_obtained', 0)
+                
+                if phase != 'post_exploitation':
+                    error_msg = f"BLOCKED: {tool_name} requires post_exploitation phase, not {phase}"
+                    logger.error(f"[ToolManager] {error_msg}")
+                    error("Tool execution blocked", tool=tool_name, phase=phase, reason=error_msg, scan_id=scan_id)
+                    return {
+                        'tool_name': tool_name,
+                        'target': target,
+                        'phase': phase,
+                        'error': f'{tool_name} blocked - requires post_exploitation phase with active shell',
+                        'success': False
+                    }
+                
+                if not has_active_session and shells_obtained == 0:
+                    error_msg = f"BLOCKED: {tool_name} requires active session on remote target"
+                    logger.error(f"[ToolManager] {error_msg}")
+                    logger.error(f"[ToolManager] These tools run on COMPROMISED systems, not the scanner!")
+                    error("Tool execution blocked", tool=tool_name, phase=phase, reason=error_msg, scan_id=scan_id)
+                    return {
+                        'tool_name': tool_name,
+                        'target': target,
+                        'phase': phase,
+                        'error': f'{tool_name} blocked - requires confirmed shell access to remote target',
+                        'success': False
+                    }
+                
+                # Also check target is not local
+                local_indicators = ['127.0.0.1', 'localhost', '0.0.0.0', '::1']
+                if any(ind in target.lower() for ind in local_indicators):
+                    error_msg = f"BLOCKED: Cannot run {tool_name} on local system!"
+                    logger.error(f"[ToolManager] {error_msg}")
+                    error("Tool execution blocked", tool=tool_name, target=target, reason=error_msg, scan_id=scan_id)
+                    return {
+                        'tool_name': tool_name,
+                        'target': target,
+                        'phase': phase,
+                        'error': f'{tool_name} blocked - cannot run on local/scanning system',
+                        'success': False
+                    }
+                
+                logger.info(f"[ToolManager] {tool_name} authorized for remote target with active session")
+                info(f"Tool authorized for remote execution", tool=tool_name, target=target, phase=phase, scan_id=scan_id)
         
         # Try to resolve tool using hybrid system first
         resolved_command = None
@@ -299,6 +315,7 @@ class ToolManager:
                 if status_resolved:
                     resolved_command = resolution.command
                     logger.info(f"Using hybrid system resolved command for {tool_name}: {resolved_command}")
+                    info(f"Hybrid system command resolved", tool=tool_name, command=resolved_command, resolution_source=str(resolution.source), confidence=resolution.confidence)
                     
                     # Stream resolution info to frontend
                     if self.socketio:
@@ -312,37 +329,67 @@ class ToolManager:
                         })
                 else:
                     logger.warning(f"Hybrid system failed to resolve {tool_name}, falling back to original")
+                    warning(f"Hybrid system resolution failed", tool=tool_name, status=resolution.status if resolution else None)
             except Exception as e:
                 logger.error(f"Hybrid system resolution failed: {e}")
+                error("Hybrid system resolution error", tool=tool_name, error=str(e))
         
         # Check API requirements
         has_requirements, missing_keys = self.check_tool_requirements(tool_name)
         if not has_requirements:
             logger.warning(f"[ToolManager] {tool_name} missing required API keys: {missing_keys}")
+            warning(f"Missing API keys", tool=tool_name, missing_keys=missing_keys)
             # Try fallback tool if available
             fallback_tool = self.get_fallback_tool(tool_name)
             if fallback_tool:
                 logger.info(f"[ToolManager] Using fallback tool: {fallback_tool}")
+                info(f"Using fallback tool", original_tool=tool_name, fallback_tool=fallback_tool)
                 tool_name = fallback_tool
             else:
+                error_msg = f'Missing required API keys: {missing_keys}'
+                error("API requirements not met", tool=tool_name, missing_keys=missing_keys)
                 return {
                     'tool_name': tool_name,
                     'target': target,
                     'phase': phase,
-                    'error': f'Missing required API keys: {missing_keys}',
+                    'error': error_msg,
                     'success': False
                 }
         
-        # Normalize target based on tool type
+        # Apply target integrity gate
         try:
-            from .target_normalizer import get_target_normalizer
-            normalizer = get_target_normalizer()
-            normalized_target = normalizer.get_tool_target(target, tool_name)
-            logger.info(f"[ToolManager] Normalized target for {tool_name}: {target} -> {normalized_target}")
+            from .target_integrity_gate import get_target_integrity_gate
+            integrity_gate = get_target_integrity_gate()
+            validated_target = integrity_gate.validate_and_prepare_for_execution(target, tool_name)
+            logger.info(f"[ToolManager] Target integrity validated for {tool_name}: {target} -> {validated_target}")
+            info(f"Target integrity validated", original_target=target, validated_target=validated_target, tool=tool_name)
             parameters['original_target'] = target
-            target = normalized_target
+            target = validated_target
         except ImportError:
-            logger.warning("[ToolManager] Target normalizer not available")
+            logger.warning("[ToolManager] Target integrity gate not available, falling back to normalizer")
+            warning("Target integrity gate not available", tool=tool_name)
+            # Fallback to original normalization
+            try:
+                from .target_normalizer import get_target_normalizer
+                normalizer = get_target_normalizer()
+                normalized_target = normalizer.get_tool_target(target, tool_name)
+                logger.info(f"[ToolManager] Normalized target for {tool_name}: {target} -> {normalized_target}")
+                info(f"Target normalized", original_target=target, normalized_target=normalized_target, tool=tool_name)
+                parameters['original_target'] = target
+                target = normalized_target
+            except ImportError:
+                logger.warning("[ToolManager] Target normalizer not available")
+                warning("Target normalizer not available", tool=tool_name)
+        except Exception as e:
+            logger.error(f"[ToolManager] Target integrity validation failed for {tool_name}: {e}")
+            error("Target integrity validation failed", tool=tool_name, target=target, error=str(e))
+            return {
+                'tool_name': tool_name,
+                'target': target,
+                'phase': phase,
+                'error': f'Target integrity validation failed: {str(e)}',
+                'success': False
+            }
         
         try:
             # Ensure SSH connection with retry logic
@@ -381,6 +428,9 @@ class ToolManager:
             else:
                 command = self.build_command(tool_name, target, parameters)
             
+            # Log the command with trace ID
+            log_command(command, tool=tool_name, target=target, scan_id=scan_id, phase=phase)
+            
             # Notify frontend
             if self.socketio:
                 self.socketio.emit('tool_execution_start', {
@@ -391,13 +441,45 @@ class ToolManager:
                     'timestamp': start_time.isoformat()
                 }, room=f'scan_{scan_id}')
             
-            # Execute with streaming
-            exit_code, stdout, stderr = self.execute_with_streaming(
-                command, 
-                scan_id, 
-                tool_name,
-                timeout=parameters.get('timeout', 300)
-            )
+                # Execute with command safety validation
+            from .command_safety import SafeCommandExecutor
+            
+            # Create a safe executor with the SSH client
+            safe_executor = SafeCommandExecutor(ssh_client=self.ssh_client)
+            
+            # Parse the command into structured format
+            import shlex
+            try:
+                cmd_parts = shlex.split(command)
+                tool = cmd_parts[0]
+                args = cmd_parts[1:] if len(cmd_parts) > 1 else []
+                
+                # Execute with safety validation
+                result = safe_executor.execute_command_safe(tool, args, target)
+                
+                if result is None:
+                    # Command was rejected by safety engine
+                    return {
+                        'tool_name': tool_name,
+                        'target': target,
+                        'phase': phase,
+                        'error': 'Command rejected by safety engine',
+                        'success': False
+                    }
+                
+                # Get the results from the safe execution
+                exit_code = result.returncode
+                stdout = result.stdout
+                stderr = result.stderr
+            except Exception as e:
+                logger.error(f"Command parsing or execution failed: {e}")
+                # Fallback to original execution method
+                exit_code, stdout, stderr = self.execute_with_streaming(
+                    command, 
+                    scan_id, 
+                    tool_name,
+                    timeout=parameters.get('timeout', 300)
+                )
             
             end_time = datetime.now()
             execution_time = (end_time - start_time).total_seconds()
@@ -410,6 +492,9 @@ class ToolManager:
             # Parse output
             # Always use the direct method since EnhancedOutputParser has parse()
             parsed_results = self.output_parser.parse(tool_name, stdout, stderr, command, target)
+            
+            # Log the command output with trace ID
+            log_output(stdout, tool=tool_name, scan_id=scan_id, phase=phase, exit_code=exit_code)
             
             # DEBUG: Log raw output for analysis
             print(f"\n{'='*60}")
@@ -435,6 +520,13 @@ class ToolManager:
             
             # Count findings
             findings_count = len(parsed_results.get('vulnerabilities', []))
+            
+            # Log findings if any were found
+            if findings_count > 0:
+                vulnerabilities = parsed_results.get('vulnerabilities', [])
+                for vulnerability in vulnerabilities:
+                    log_finding(vulnerability, tool=tool_name, scan_id=scan_id, phase=phase, target=target)
+                    info(f"Finding discovered", finding_type=vulnerability.get('type', 'unknown'), severity=vulnerability.get('severity', 0), scan_id=scan_id, tool=tool_name)
             
             # Record execution result for learning (evolving commands)
             if self.evolving_commands:
@@ -477,6 +569,10 @@ class ToolManager:
                     'success': (exit_code == 0 or findings_count > 0)  # FIX #1: Success if found findings
                 }, room=f'scan_{scan_id}')
             
+            # Log the execution results
+            success = (exit_code == 0 or findings_count > 0)
+            info(f"Tool execution completed", tool=tool_name, scan_id=scan_id, phase=phase, success=success, findings_count=findings_count, execution_time=execution_time)
+            
             return {
                 'tool_name': tool_name,
                 'target': target,
@@ -488,13 +584,16 @@ class ToolManager:
                 'parsed_results': parsed_results,
                 'findings_count': findings_count,
                 'execution_time': execution_time,
-                'success': (exit_code == 0 or findings_count > 0)  # FIX #1: Success if found findings
+                'success': success  # FIX #1: Success if found findings
             }
             
         except Exception as e:
             logger.error(f"Tool execution failed: {e}")
             import traceback
             traceback.print_exc()
+            
+            # Log the error with trace ID
+            error("Tool execution failed", tool=tool_name, scan_id=scan_id, phase=phase, error=str(e))
             
             # Notify error
             if self.socketio:
@@ -698,12 +797,14 @@ class ToolManager:
             
         except socket.timeout as e:
             print(f" Socket timeout during command execution: {e}")
+            error(f"Socket timeout during command execution", tool=tool_name, scan_id=scan_id, error=str(e))
             return -1, '', f'Socket timeout: {e}'
             
         except Exception as e:
             print(f" Error during command execution: {e}")
             import traceback
             traceback.print_exc()
+            error(f"Error during command execution", tool=tool_name, scan_id=scan_id, error=str(e))
             return -1, '', f'Execution error: {e}'
     
     def build_command(self, tool_name: str, target: str,
@@ -843,6 +944,7 @@ class ToolManager:
                     logger.info(f"[ToolManager] Evolved resolution: {resolution_source}")
             except Exception as e:
                 logger.debug(f"[ToolManager] Evolving command failed: {e}")
+                error(f"Evolving command generation failed", tool=tool_name, target=target, error=str(e))
         
         # TIER 1: Try HybridToolSystem
         if not command and self.hybrid_system:
@@ -854,6 +956,7 @@ class ToolManager:
                     logger.info(f"[ToolManager] Hybrid resolution: {resolution_source}")
             except Exception as e:
                 logger.warning(f"Hybrid tool resolution failed: {e}")
+                error(f"Hybrid tool resolution failed", tool=tool_name, target=target, error=str(e))
         
         # TIER 2: Try ToolKnowledgeBase
         if not command:
@@ -865,6 +968,7 @@ class ToolManager:
                     logger.info(f"[ToolManager] KB resolution for {tool_name}")
             except Exception as e:
                 logger.warning(f"KB command generation failed: {e}")
+                error(f"KB command generation failed", tool=tool_name, target=target, error=str(e))
         
         # TIER 3: Default fallback
         if not command:
@@ -881,6 +985,13 @@ class ToolManager:
         # At the end, before returning, substitute all parameters
         if command:
             command = self._substitute_parameters(command, target, parameters)
+            
+            # Validate that the command uses only registered tools
+            from .tool_registry import validate_command_tool
+            if not validate_command_tool(command):
+                logger.error(f"[ToolManager] Generated command uses unregistered tools: {command}")
+                error(f"Generated command uses unregistered tools", command=command, tool=tool_name, target=target)
+                return None  # Return None to indicate invalid command
         
         print(f"[ToolManager] Command ({resolution_source}): {command[:100]}...")
         return command
@@ -909,7 +1020,23 @@ class ToolManager:
         # Extract hostname/port from target
         hostname_match = re.search(r'(?:https?://)?([^:/]+)(?::(\d+))?', target)
         hostname = hostname_match.group(1) if hostname_match else target
-        port = hostname_match.group(2) if hostname_match and hostname_match.group(2) else '80'
+        
+        # Also get port from target normalizer for more accurate port extraction
+        try:
+            from .target_normalizer import get_target_normalizer
+            normalizer = get_target_normalizer()
+            normalized = normalizer.normalize(target)
+            extracted_port = normalized.get('port', None)
+        except ImportError:
+            extracted_port = None
+        
+        # Use the port from normalizer if available, otherwise use regex match
+        if extracted_port and extracted_port not in ['80', '443']:
+            port = extracted_port
+        elif hostname_match and hostname_match.group(2):
+            port = hostname_match.group(2)
+        else:
+            port = '80' if 'http://' in target else '443' if 'https://' in target else '80'
         
         # Check if Juice Shop
         is_juice_shop = 'juice' in target.lower()
@@ -1133,6 +1260,17 @@ class ToolManager:
 
     def _build_nmap_command(self, target: str, params: Dict) -> str:
         """Build nmap command with parameters"""
+        
+        # Extract port from target if it's a URL with port
+        extracted_port = None
+        try:
+            from .target_normalizer import get_target_normalizer
+            normalizer = get_target_normalizer()
+            normalized = normalizer.normalize(target)
+            extracted_port = normalized.get('port', None)
+        except ImportError:
+            pass
+        
         base = f"nmap {target}"
         
         if params.get('aggressive'):
@@ -1143,6 +1281,9 @@ class ToolManager:
             base += " -O"
         if params.get('port_range'):
             base += f" -p {params['port_range']}"
+        elif extracted_port and extracted_port not in ['80', '443']:
+            # If target has a specific port (not standard web ports), scan that port
+            base += f" -p {extracted_port}"
         else:
             base += " -p-"  # All ports
         

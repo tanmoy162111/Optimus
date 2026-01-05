@@ -139,7 +139,7 @@ class ComponentManager:
             logger.info("✓ Intelligent Tool Selector initialized")
         except Exception as e:
             status['intelligent_selector'] = False
-            logger.warning(f"✗ Intelligent Tool Selector failed: {e}")
+            logger.warning(f"X Intelligent Tool Selector failed: {e}")
         
         # 2. Evolving Parser
         try:
@@ -149,7 +149,7 @@ class ComponentManager:
             logger.info("✓ Evolving Parser initialized")
         except Exception as e:
             status['evolving_parser'] = False
-            logger.warning(f"✗ Evolving Parser failed: {e}")
+            logger.warning(f"X Evolving Parser failed: {e}")
         
         # 3. Evolving Commands
         try:
@@ -159,7 +159,7 @@ class ComponentManager:
             logger.info("✓ Evolving Commands initialized")
         except Exception as e:
             status['evolving_commands'] = False
-            logger.warning(f"✗ Evolving Commands failed: {e}")
+            logger.warning(f"X Evolving Commands failed: {e}")
         
         # 4. Exploit Chainer
         try:
@@ -171,7 +171,7 @@ class ComponentManager:
             logger.info("✓ Exploit Chainer initialized")
         except Exception as e:
             status['exploit_chainer'] = False
-            logger.warning(f"✗ Exploit Chainer failed: {e}")
+            logger.warning(f"X Exploit Chainer failed: {e}")
         
         # 5. Web Intelligence
         try:
@@ -181,7 +181,7 @@ class ComponentManager:
             logger.info("✓ Web Intelligence initialized")
         except Exception as e:
             status['web_intel'] = False
-            logger.warning(f"✗ Web Intelligence failed: {e}")
+            logger.warning(f"X Web Intelligence failed: {e}")
         
         # 6. Tool Manager
         try:
@@ -191,17 +191,25 @@ class ComponentManager:
             logger.info("✓ Tool Manager initialized")
         except Exception as e:
             status['tool_manager'] = False
-            logger.warning(f"✗ Tool Manager failed: {e}")
+            logger.warning(f"X Tool Manager failed: {e}")
         
         # 7. Deep RL Agent
         try:
             from training.deep_rl_agent import DeepRLAgent
-            from training.enhanced_state_encoder import StateEncoder
+            from training.enhanced_state_encoder import EnhancedStateEncoder as StateEncoder
             self.components['rl_agent'] = DeepRLAgent(
                 state_dim=128,
-                action_dim=50,
-                hidden_dim=256,
-                device='cpu'
+                num_actions=50,
+                learning_rate=1e-4,
+                gamma=0.99,
+                tau=0.005,
+                buffer_size=100000,
+                batch_size=64,
+                use_per=True,
+                use_noisy=True,
+                per_alpha=0.6,
+                per_beta_start=0.4,
+                model_dir=None
             )
             self.components['rl_agent'].load()
             self.components['state_encoder'] = StateEncoder()
@@ -209,7 +217,7 @@ class ComponentManager:
             logger.info("✓ Deep RL Agent initialized")
         except Exception as e:
             status['rl_agent'] = False
-            logger.warning(f"✗ Deep RL Agent failed: {e}")
+            logger.warning(f"X Deep RL Agent failed: {e}")
         
         # 8. Reward Calculator
         try:
@@ -219,7 +227,7 @@ class ComponentManager:
             logger.info("✓ Reward Calculator initialized")
         except Exception as e:
             status['reward_calculator'] = False
-            logger.warning(f"✗ Reward Calculator failed: {e}")
+            logger.warning(f"X Reward Calculator failed: {e}")
         
         # 9. Professional Report Generator
         try:
@@ -229,7 +237,7 @@ class ComponentManager:
             logger.info("✓ Report Generator initialized")
         except Exception as e:
             status['report_generator'] = False
-            logger.warning(f"✗ Report Generator failed: {e}")
+            logger.warning(f"X Report Generator failed: {e}")
         
         self.initialized = True
         return status

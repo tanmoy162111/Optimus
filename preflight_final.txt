@@ -1,0 +1,29 @@
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\paramiko\pkey.py:100: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "cipher": algorithms.TripleDES,
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\paramiko\transport.py:259: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "class": algorithms.TripleDES,
+[DarkWebIntel] aiohttp_socks not installed - dark web features disabled
+[MSF-RPC] msgpack or requests not installed
+05:01:28 [INFO] [ToolManager] Using EnhancedOutputParser
+2026-01-03 05:01:28.857653: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-03 05:01:31.430636: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+Running preflight checks...
+==================================================
+ Hybrid tool system available
+OK  - Tool Manager (backend.inference.tool_manager)
+ Hybrid tool system available
+OK  - Autonomous Agent (backend.inference.autonomous_agent)
+OK  - Tool Selector (backend.inference.tool_selector)
+OK  - Intelligent Selector (backend.inference.intelligent_selector)
+OK  - Newbie to Pro Training (backend.training_environment.newbie_to_pro_training)
+OK  - Deep RL Agent (backend.training.deep_rl_agent)
+OK  - RL Trainer (backend.training.rl_trainer)
+OK  - SSH Client (backend.execution.ssh_client)
+------------------------------
+Optional dependencies:
+OK  - TensorFlow (tensorflow) [optional]
+OK  - Flask-SocketIO (flask_socketio) [optional]
+WARN - MessagePack (msgpack) [optional]: No module named 'msgpack'
+OK  - Requests (for MSF RPC) (requests) [optional]
+==================================================
+RESULT: All required modules imported successfully

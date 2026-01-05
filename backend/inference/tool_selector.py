@@ -26,9 +26,12 @@ logger = logging.getLogger(__name__)
 class PhaseAwareToolSelector:
     """Intelligent tool selection using ML/RL and phase-specific models"""
     
-    def __init__(self):
+    def __init__(self, ssh_client=None):
         self.phase_configs = self._load_phase_configs()
         self.all_tools = self._get_all_tools()
+        
+        # Store SSH client for remote tool availability checks
+        self.ssh_client = ssh_client
         
         # Placeholders for ML/RL components (loaded separately)
         self.tool_recommender_ml = None
@@ -43,10 +46,16 @@ class PhaseAwareToolSelector:
         # Initialize phase-specific models (if available)
         self.phase_specific_selector = None
         self.use_phase_specific = True
-        if PHASE_SPECIFIC_MODELS_AVAILABLE:
+        
+        # Check if phase models should be disabled
+        import os
+        if os.environ.get('OPTIMUS_DISABLE_PHASE_MODELS', '').lower() in ('1', 'true', 'yes'):
+            logger.info("Phase-specific models disabled via OPTIMUS_DISABLE_PHASE_MODELS")
+            self.use_phase_specific = False
+        elif PHASE_SPECIFIC_MODELS_AVAILABLE:
             try:
                 self.phase_specific_selector = PSToolSelector()
-                logger.info("✅ Phase-specific models loaded successfully")
+                logger.info("Phase-specific models loaded successfully")
             except Exception as e:
                 logger.warning(f"Failed to load phase-specific models: {e}")
                 self.use_phase_specific = False
@@ -101,6 +110,20 @@ class PhaseAwareToolSelector:
                     recent_tools = tools_executed[-3:] if len(tools_executed) > 3 else tools_executed
                     final_tools = [t for t in final_tools if t not in recent_tools]
                     
+                    # Filter out unavailable tools
+                    from .tool_availability import is_tool_available
+                    # Get SSH client from instance if available, fallback to scan_state
+                    ssh_client = self.ssh_client  # Use the instance SSH client
+                    if ssh_client is None:
+                        ssh_client = scan_state.get('ssh_client')
+                    available_tools = []
+                    for tool in final_tools:
+                        if is_tool_available(tool, ssh_client=ssh_client):
+                            available_tools.append(tool)
+                        else:
+                            logger.warning(f'[PhaseAwareToolSelector] Tool \'{tool}\' is not available in system')
+                    final_tools = available_tools
+                    
                     if not final_tools:
                         next_phase = self._get_next_phase(phase)
                         print(f"[ToolSelector] No effective tools left in {phase}, suggesting transition to {next_phase}")
@@ -118,7 +141,7 @@ class PhaseAwareToolSelector:
                         'phase': phase,
                         'method': 'phase_specific_ml',
                         'ml_confidence': ps_result.get('confidence', 0.0),
-                        'reasoning': f"Phase-specific {phase} model with rule enhancements"
+                        'reasoning': f"Phase-specific {phase} model with rule enhancements and availability filtering"
                     }
             except Exception as e:
                 logger.warning(f"Phase-specific model failed: {e}")
@@ -149,12 +172,22 @@ class PhaseAwareToolSelector:
                     'suggested_next_phase': next_phase  # NEW: Explicit next phase
                 }
             
+            # Filter out unavailable tools
+            import shutil
+            available_tools = []
+            for tool in filtered_tools:
+                tool_path = shutil.which(tool)
+                if tool_path is not None:
+                    available_tools.append(tool)
+                else:
+                    logger.warning(f'[PhaseAwareToolSelector] Tool \'{tool}\' is not available in system')
+                    
             return {
-                'tools': filtered_tools[:5],
+                'tools': available_tools[:5],
                 'phase': phase,
                 'method': 'rule_based',
                 'ml_confidence': 0.8,  # High confidence in rules
-                'reasoning': f'Recommended tools excluding {len(blacklisted)} blacklisted and {len(tools_executed)} recently executed tools'
+                'reasoning': f'Recommended tools excluding {len(blacklisted)} blacklisted, {len(tools_executed)} recently executed, and {len(filtered_tools) - len(available_tools)} unavailable tools'
             }
 
     def _prepare_context_for_model(self, scan_state: Dict[str, Any]) -> Dict[str, Any]:

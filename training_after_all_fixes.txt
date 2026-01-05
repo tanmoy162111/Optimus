@@ -1,0 +1,376 @@
+2026-01-03 05:01:40,646 [INFO] Validated targets: 3 authorized targets
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\paramiko\pkey.py:100: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "cipher": algorithms.TripleDES,
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\paramiko\transport.py:259: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "class": algorithms.TripleDES,
+2026-01-03 05:01:40,817 [INFO] [ToolManager] Using EnhancedOutputParser
+2026-01-03 05:01:41,013 [INFO] [ParserPatternDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\training_environment\..\data\parser_patterns.db
+2026-01-03 05:01:41,013 [INFO] [OllamaClient] Initialized with model: codellama:7b-instruct
+2026-01-03 05:01:41,019 [INFO] [EvolutionDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\training_environment\..\data\parser_evolution.db
+2026-01-03 05:01:41,030 [INFO] [EvolvingParser] Initialized (LLM: True, Evolution: True)
+2026-01-03 05:01:41,030 [INFO] [ToolManager] Using EvolvingParser (LLM: True, Evolution: True)
+2026-01-03 05:01:41,032 [INFO] [ToolManager] Hybrid tool system initialized
+2026-01-03 05:01:41,041 [INFO] [CommandEvolutionDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\training_environment\..\data\command_evolution.db
+2026-01-03 05:01:41,042 [INFO] [EvolvingCommandGenerator] Initialized
+2026-01-03 05:01:41,042 [INFO] [ToolManager] Evolving command generator initialized
+2026-01-03 05:01:41,042 [INFO] [ToolManager] Initialized with dynamic command generation
+2026-01-03 05:01:41,042 [INFO]   OK tool_manager
+2026-01-03 05:01:43,042 [INFO] Model file not found: models\tool_recommender_reconnaissance.pkl
+2026-01-03 05:01:43,042 [INFO] Model file not found: ../models\tool_recommender_reconnaissance.pkl
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:463: InconsistentVersionWarning: Trying to unpickle estimator DummyClassifier from version 1.7.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:463: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeRegressor from version 1.7.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:463: InconsistentVersionWarning: Trying to unpickle estimator GradientBoostingClassifier from version 1.7.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.7.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+2026-01-03 05:01:43,060 [INFO] Loaded reconnaissance model from D:\Work\Ai Engineering\Git\Optimus\backend\training_environment\..\models\tool_recommender_reconnaissance.pkl
+2026-01-03 05:01:43,060 [INFO] Model file not found: models\tool_recommender_scanning.pkl
+2026-01-03 05:01:43,060 [INFO] Model file not found: ../models\tool_recommender_scanning.pkl
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:463: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.7.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:463: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.7.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.7.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+2026-01-03 05:01:43,082 [INFO] Loaded scanning model from D:\Work\Ai Engineering\Git\Optimus\backend\training_environment\..\models\tool_recommender_scanning.pkl
+2026-01-03 05:01:43,082 [INFO] Model file not found: models\tool_recommender_exploitation.pkl
+2026-01-03 05:01:43,082 [INFO] Model file not found: ../models\tool_recommender_exploitation.pkl
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:463: InconsistentVersionWarning: Trying to unpickle estimator DummyClassifier from version 1.7.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:463: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeRegressor from version 1.7.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:463: InconsistentVersionWarning: Trying to unpickle estimator GradientBoostingClassifier from version 1.7.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.7.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+2026-01-03 05:01:43,094 [INFO] Loaded exploitation model from D:\Work\Ai Engineering\Git\Optimus\backend\training_environment\..\models\tool_recommender_exploitation.pkl
+2026-01-03 05:01:43,094 [INFO] Model file not found: models\tool_recommender_post_exploitation.pkl
+2026-01-03 05:01:43,095 [INFO] Model file not found: ../models\tool_recommender_post_exploitation.pkl
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:463: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.7.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:463: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.7.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.7.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+2026-01-03 05:01:43,117 [INFO] Loaded post_exploitation model from D:\Work\Ai Engineering\Git\Optimus\backend\training_environment\..\models\tool_recommender_post_exploitation.pkl
+2026-01-03 05:01:43,117 [INFO] Model file not found: models\tool_recommender_covering_tracks.pkl
+2026-01-03 05:01:43,117 [INFO] Model file not found: ../models\tool_recommender_covering_tracks.pkl
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:463: InconsistentVersionWarning: Trying to unpickle estimator DummyClassifier from version 1.7.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:463: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeRegressor from version 1.7.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:463: InconsistentVersionWarning: Trying to unpickle estimator GradientBoostingClassifier from version 1.7.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.7.2 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+2026-01-03 05:01:43,175 [INFO] Loaded covering_tracks model from D:\Work\Ai Engineering\Git\Optimus\backend\training_environment\..\models\tool_recommender_covering_tracks.pkl
+2026-01-03 05:01:43,175 [INFO] Phase-specific models loaded successfully
+2026-01-03 05:01:43,176 [INFO]   OK intelligent_selector
+2026-01-03 05:01:43,176 [INFO]   OK evolving_parser
+2026-01-03 05:01:43,176 [INFO]   OK evolving_commands
+2026-01-03 05:01:43,198 [WARNING] [MSF-RPC] msgpack or requests not installed
+2026-01-03 05:01:43,201 [INFO] [ExploitExecutor] Initialized
+2026-01-03 05:01:43,202 [INFO] [OllamaClient] Initialized with model: codellama:7b-instruct
+2026-01-03 05:01:43,202 [INFO] [LLMExploitGenerator] Initialized
+2026-01-03 05:01:43,202 [INFO] [ExploitChainer] Initialized
+2026-01-03 05:01:43,202 [INFO]   OK exploit_chainer
+2026-01-03 05:01:43,425 [WARNING] [DarkWebIntel] aiohttp_socks not installed - dark web features disabled
+2026-01-03 05:01:43,430 [INFO]   OK web_intel
+2026-01-03 05:01:43.520951: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-03 05:01:46.145058: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-01-03 05:01:47,281 [INFO] [EnhancedStateEncoder] Initialized with 128 dimensions
+2026-01-03 05:01:47,281 [INFO] [DeepRL] Creating networks: state_dim=128, actions=50
+2026-01-03 05:01:47.286396: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-01-03 05:01:48,069 [WARNING] From C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\site-packages\keras\src\backend\tensorflow\core.py:232: The name tf.placeholder is deprecated. Please use tf.compat.v1.placeholder instead.
+
+2026-01-03 05:01:48,230 [INFO] [PER] Initialized: capacity=100000, alpha=0.6, beta=0.4->1.0
+2026-01-03 05:01:48,230 [INFO] [DeepRL] Agent initialized (PER: True, Noisy: True)
+2026-01-03 05:01:48,306 [INFO] [DeepRL] Loaded checkpoint from D:\Work\Ai Engineering\Git\Optimus\backend\training_environment\..\models\deep_rl\checkpoint_20260103_044143
+2026-01-03 05:01:48,307 [INFO]   OK rl_agent
+2026-01-03 05:01:48,307 [INFO]   OK state_encoder
+2026-01-03 05:01:48,311 [INFO]   OK reward_calculator
+2026-01-03 05:01:48,314 [INFO]   OK report_generator
+2026-01-03 05:01:48,316 [INFO] Using phase-specific model: [np.str_('sublist3r'), np.str_('shodan'), np.str_('fierce')]
+2026-01-03 05:01:48,319 [WARNING] [PhaseAwareToolSelector] Tool 'amass' is not available in system
+2026-01-03 05:01:48,320 [WARNING] [PhaseAwareToolSelector] Tool 'sublist3r' is not available in system
+2026-01-03 05:01:48,321 [WARNING] [PhaseAwareToolSelector] Tool 'shodan' is not available in system
+2026-01-03 05:01:48,322 [WARNING] [PhaseAwareToolSelector] Tool 'fierce' is not available in system
+2026-01-03 05:01:48,323 [INFO] [TargetNormalizer] Normalized: 192.168.56.102 -> http://192.168.56.102
+2026-01-03 05:01:48,323 [INFO] Using hybrid system resolved command for nmap: nmap -sV -sC 192.168.56.102
+2026-01-03 05:01:48,323 [INFO] [TargetNormalizer] Normalized: 192.168.56.102 -> http://192.168.56.102
+2026-01-03 05:01:48,323 [INFO] [ToolManager] Normalized target for nmap: 192.168.56.102 -> 192.168.56.102
+2026-01-03 05:01:48,430 [INFO] Connected (version 2.0, client OpenSSH_10.2p1)
+2026-01-03 05:01:48,950 [INFO] Authentication (password) successful!
+2026-01-03 05:01:48,951 [INFO] Updated SSH client for hybrid tool system
+NEWBIE TO PRO TRAINING SYSTEM
+Duration: 12 hours
+Targets: 3
+Lessons: 19
+Challenges: 10
+==================================================
+
+[Initializing Components]
+ Hybrid tool system available
+
+Components: 10/10 available
+
+======================================================================
+TRAINING STARTED: 2026-01-03 05:01:48
+EXPECTED END: 2026-01-03 17:01:48
+======================================================================
+
+
+======================================================================
+PHASE: FUNDAMENTALS
+Duration: 2 hours
+======================================================================
+
+
+[LESSON] Network Reconnaissance Basics
+   Objectives: Understand network scanning fundamentals, Learn to use nmap effectively...
+   Skills: nmap_basic, port_scanning, service_detection
+   Duration: 30 minutes
+
+[selector_adapter] training_phase=reconnaissance mapped_phase=reconnaissance
+[ToolSelector] No effective tools left in reconnaissance, suggesting transition to scanning
+[DEBUG] Establishing SSH connection (attempt 1/3)
+
+============================================================
+[SSH] Connecting to Kali VM: 127.0.0.1:2222
+[SSH] User: kali, Timeout: 60s, Retries: 5
+============================================================
+[SSH] Connection attempt 1/5...
+[SSH]  Connection established successfully!
+[SSH] Updated hybrid tool system with new SSH client
+
+[DEBUG] === Tool Execution Start ===
+[DEBUG] Tool: nmap
+[DEBUG] Scan ID: lesson_F1_050148
+[DEBUG] Command: nmap -sV -sC 192.168.56.102...
+[DEBUG] Timeout: 300s
+[DEBUG] Executing command...
+Starting Nmap 7.95 ( https://nmap.org ) at 2026-01-02 18:01 EST
+Nmap scan report for 192.168.56.102
+Host is up (0.0011s latency).
+All 1000 scanned ports on 192.168.56.102 are in ignored states.
+Not shown: 1000 filtered tcp ports (no-response)
+
+Service detecti2026-01-03 05:02:03,913 [INFO] [TargetNormalizer] Normalized: 192.168.56.102 -> http://192.168.56.102
+2026-01-03 05:02:03,913 [INFO] Using hybrid system resolved command for nmap: nmap -sV -sC 192.168.56.102
+2026-01-03 05:02:03,913 [INFO] [TargetNormalizer] Normalized: 192.168.56.102 -> http://192.168.56.102
+2026-01-03 05:02:03,913 [INFO] [ToolManager] Normalized target for nmap: 192.168.56.102 -> 192.168.56.102
+[DEBUG] Command completed
+
+[DEBUG] Exit code: 0
+[DEBUG] Stdout length: 408 chars
+[DEBUG] Stderr length: 0 chars
+[DEBUG] === Tool Execution End ===
+
+
+============================================================
+[DEBUG] TOOL OUTPUT ANALYSIS FOR: nmap
+============================================================
+[DEBUG] Exit Code: 0
+[DEBUG] STDOUT Length: 408 chars
+[DEBUG] STDERR Length: 0 chars
+[DEBUG] STDOUT (first 2000 chars):
+Starting Nmap 7.95 ( https://nmap.org ) at 2026-01-02 18:01 EST
+Nmap scan report for 192.168.56.102
+Host is up (0.0011s latency).
+All 1000 scanned ports on 192.168.56.102 are in ignored states.
+Not shown: 1000 filtered tcp ports (no-response)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 11.99 seconds
+
+[DEBUG] Parsed Results: {'vulnerabilities': [], 'services': [], 'hosts': ['192.168.56.102'], 'raw_output': 'Starting Nmap 7.95 ( https://nmap.org ) at 2026-01-02 18:01 EST\nNmap scan report for 192.168.56.102\nHost is up (0.0011s latency).\nAll 1000 scanned ports on 192.168.56.102 are in ignored states.\nNot shown: 1000 filtered tcp ports (no-response)\n\nService detection performed. Please report any incorrect results at https://nmap.org/submit/ .\nNmap done: 1 IP address (1 host up) scanned in 11.99 seconds\n', 'parse_method': 'tool_specific', 'parse_confidence': 'medium'}
+[DEBUG] Vulnerabilities Found: 0
+============================================================
+
+
+[DEBUG] === Tool Execution Start ===
+[DEBUG] Tool: nmap
+[DEBUG] Scan ID: lesson_F1_050148
+[DEBUG] Command: nmap -sV -sC 192.168.56.102...
+[DEBUG] Timeout: 300s
+[DEBUG] Executing command...
+Starting Nmap 7.95 ( https://nmap.org ) at 2026-01-02 18:02 EST
+2026-01-03 05:02:16,515 [INFO] [TargetNormalizer] Normalized: 192.168.56.102 -> http://192.168.56.102
+2026-01-03 05:02:16,515 [INFO] Using hybrid system resolved command for nmap: nmap -sV -sC 192.168.56.102
+2026-01-03 05:02:16,515 [INFO] [TargetNormalizer] Normalized: 192.168.56.102 -> http://192.168.56.102
+2026-01-03 05:02:16,515 [INFO] [ToolManager] Normalized target for nmap: 192.168.56.102 -> 192.168.56.102
+[DEBUG] Command completed
+
+[DEBUG] Exit code: 0
+[DEBUG] Stdout length: 408 chars
+[DEBUG] Stderr length: 0 chars
+[DEBUG] === Tool Execution End ===
+
+
+============================================================
+[DEBUG] TOOL OUTPUT ANALYSIS FOR: nmap
+============================================================
+[DEBUG] Exit Code: 0
+[DEBUG] STDOUT Length: 408 chars
+[DEBUG] STDERR Length: 0 chars
+[DEBUG] STDOUT (first 2000 chars):
+Starting Nmap 7.95 ( https://nmap.org ) at 2026-01-02 18:02 EST
+Nmap scan report for 192.168.56.102
+Host is up (0.0017s latency).
+All 1000 scanned ports on 192.168.56.102 are in ignored states.
+Not shown: 1000 filtered tcp ports (no-response)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 11.94 seconds
+
+[DEBUG] Parsed Results: {'vulnerabilities': [], 'services': [], 'hosts': ['192.168.56.102'], 'raw_output': 'Starting Nmap 7.95 ( https://nmap.org ) at 2026-01-02 18:02 EST\nNmap scan report for 192.168.56.102\nHost is up (0.0017s latency).\nAll 1000 scanned ports on 192.168.56.102 are in ignored states.\nNot shown: 1000 filtered tcp ports (no-response)\n\nService detection performed. Please report any incorrect results at https://nmap.org/submit/ .\nNmap done: 1 IP address (1 host up) scanned in 11.94 seconds\n', 'parse_method': 'tool_specific', 'parse_confidence': 'medium'}
+[DEBUG] Vulnerabilities Found: 0
+============================================================
+
+
+[DEBUG] === Tool Execution Start ===
+[DEBUG] Tool: nmap
+[DEBUG] Scan ID: lesson_F1_050148
+[DEBUG] Command: nmap -sV -sC 192.168.56.102...
+[DEBUG] Timeout: 300s
+[DEBUG] Executing command...
+Starting Nmap 7.95 ( https://nmap.org ) at 2026-01-02 18:02 EST
+Nmap scan report for 192.168.56.102
+Host is up (0.0051s latency).
+All 1000 scanned ports on 192.168.56.102 are in ignored states.
+Not shown: 1000 filtered tcp ports (no-response)
+
+Service detecti2026-01-03 05:02:32,959 [INFO] [TargetNormalizer] Normalized: 192.168.56.102 -> http://192.168.56.102
+2026-01-03 05:02:32,960 [INFO] Using hybrid system resolved command for nmap: nmap -sV -sC 192.168.56.102
+2026-01-03 05:02:32,960 [INFO] [TargetNormalizer] Normalized: 192.168.56.102 -> http://192.168.56.102
+2026-01-03 05:02:32,960 [INFO] [ToolManager] Normalized target for nmap: 192.168.56.102 -> 192.168.56.102
+[DEBUG] Command completed
+
+[DEBUG] Exit code: 0
+[DEBUG] Stdout length: 408 chars
+[DEBUG] Stderr length: 0 chars
+[DEBUG] === Tool Execution End ===
+
+
+============================================================
+[DEBUG] TOOL OUTPUT ANALYSIS FOR: nmap
+============================================================
+[DEBUG] Exit Code: 0
+[DEBUG] STDOUT Length: 408 chars
+[DEBUG] STDERR Length: 0 chars
+[DEBUG] STDOUT (first 2000 chars):
+Starting Nmap 7.95 ( https://nmap.org ) at 2026-01-02 18:02 EST
+Nmap scan report for 192.168.56.102
+Host is up (0.0051s latency).
+All 1000 scanned ports on 192.168.56.102 are in ignored states.
+Not shown: 1000 filtered tcp ports (no-response)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 15.73 seconds
+
+[DEBUG] Parsed Results: {'vulnerabilities': [], 'services': [], 'hosts': ['192.168.56.102'], 'raw_output': 'Starting Nmap 7.95 ( https://nmap.org ) at 2026-01-02 18:02 EST\nNmap scan report for 192.168.56.102\nHost is up (0.0051s latency).\nAll 1000 scanned ports on 192.168.56.102 are in ignored states.\nNot shown: 1000 filtered tcp ports (no-response)\n\nService detection performed. Please report any incorrect results at https://nmap.org/submit/ .\nNmap done: 1 IP address (1 host up) scanned in 15.73 seconds\n', 'parse_method': 'tool_specific', 'parse_confidence': 'medium'}
+[DEBUG] Vulnerabilities Found: 0
+============================================================
+
+
+[DEBUG] === Tool Execution Start ===
+[DEBUG] Tool: nmap
+[DEBUG] Scan ID: lesson_F1_050148
+[DEBUG] Command: nmap -sV -sC 192.168.56.102...
+[DEBUG] Timeout: 300s
+[DEBUG] Executing command...
+Starting Nmap 7.95 ( https://nmap.org ) at 2026-01-02 18:02 EST
+Nmap scan report for 192.168.56.102
+Host is up (0.0026s latency).
+All 1000 scanned ports on 192.168.56.102 are in ignored states.
+Not shown: 1000 filtered tcp ports (no-response)
+
+Service detecti2026-01-03 05:02:46,369 [ERROR] Training error: 'charmap' codec can't encode character '\u2717' in position 3: character maps to <undefined>
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\training_environment\newbie_to_pro_training.py", line 1035, in run_training
+    self._run_training_phase(TrainingPhase.FUNDAMENTALS, hours=2)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\training_environment\newbie_to_pro_training.py", line 1078, in _run_training_phase
+    self._run_lesson(lesson)
+    ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\training_environment\newbie_to_pro_training.py", line 1183, in _run_lesson
+    print(f"   \u2717 Lesson needs more practice")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2717' in position 3: character maps to <undefined>
+Traceback (most recent call last):
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\training_environment\newbie_to_pro_training.py", line 2143, in main
+    report = trainer.run_training()
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\training_environment\newbie_to_pro_training.py", line 1057, in run_training
+    return self._generate_final_report()
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\training_environment\newbie_to_pro_training.py", line 2005, in _generate_final_report
+    self._print_final_summary(report)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "D:\Work\Ai Engineering\Git\Optimus\backend\training_environment\newbie_to_pro_training.py", line 2011, in _print_final_summary
+            print(f"""
+            ~~~~~^^^^^
+    \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<19 lines>...
+    \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            """)
+            ^^^^
+  File "C:\Users\Tanmoy Saha\AppData\Local\Programs\Python\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 2-82: character maps to <undefined>
+[DEBUG] Command completed
+
+[DEBUG] Exit code: 0
+[DEBUG] Stdout length: 408 chars
+[DEBUG] Stderr length: 0 chars
+[DEBUG] === Tool Execution End ===
+
+
+============================================================
+[DEBUG] TOOL OUTPUT ANALYSIS FOR: nmap
+============================================================
+[DEBUG] Exit Code: 0
+[DEBUG] STDOUT Length: 408 chars
+[DEBUG] STDERR Length: 0 chars
+[DEBUG] STDOUT (first 2000 chars):
+Starting Nmap 7.95 ( https://nmap.org ) at 2026-01-02 18:02 EST
+Nmap scan report for 192.168.56.102
+Host is up (0.0026s latency).
+All 1000 scanned ports on 192.168.56.102 are in ignored states.
+Not shown: 1000 filtered tcp ports (no-response)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 12.72 seconds
+
+[DEBUG] Parsed Results: {'vulnerabilities': [], 'services': [], 'hosts': ['192.168.56.102'], 'raw_output': 'Starting Nmap 7.95 ( https://nmap.org ) at 2026-01-02 18:02 EST\nNmap scan report for 192.168.56.102\nHost is up (0.0026s latency).\nAll 1000 scanned ports on 192.168.56.102 are in ignored states.\nNot shown: 1000 filtered tcp ports (no-response)\n\nService detection performed. Please report any incorrect results at https://nmap.org/submit/ .\nNmap done: 1 IP address (1 host up) scanned in 12.72 seconds\n', 'parse_method': 'tool_specific', 'parse_confidence': 'medium'}
+[DEBUG] Vulnerabilities Found: 0
+============================================================
+
+
+Training error: 'charmap' codec can't encode characters in position 2-82: character maps to <undefined>

@@ -1,0 +1,27 @@
+{
+  "tool_weights": {
+    "sublist3r": {
+      "target_web": 0.0,
+      "phase_reconnaissance": 0.0
+    },
+    "masscan": {
+      "target_web": 0.0,
+      "phase_reconnaissance": 0.0
+    },
+    "wfuzz": {
+      "target_web": 0.0,
+      "phase_reconnaissance": 0.0
+    },
+    "hydra": {
+      "target_web": 1.0,
+      "phase_reconnaissance": 1.0
+    },
+    "gobuster": {
+      "target_web": 0.0,
+      "phase_reconnaissance": 0.0
+    }
+  },
+  "pattern_weights": {},
+  "update_count": 50,
+  "last_updated": "2026-01-06T04:34:38.162627"
+}

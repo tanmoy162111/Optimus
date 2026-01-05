@@ -1,0 +1,333 @@
+{
+    "training_name": "Optimus Newbie to Pro - Custom Targets",
+    "version": "2.0",
+    "description": "Complete training curriculum from beginner to expert level with custom targets",
+    
+    "targets": [
+        {
+            "name": "OWASP_Juice_Shop_Demo",
+            "url": "https://demo.owasp-juice.shop",
+            "type": "web_application",
+            "difficulty": "beginner_to_intermediate",
+            "vulnerabilities": [
+                "sql_injection",
+                "xss_reflected", 
+                "xss_stored",
+                "broken_authentication",
+                "sensitive_data_exposure",
+                "broken_access_control",
+                "security_misconfiguration",
+                "insecure_deserialization"
+            ],
+            "training_focus": ["web_attacks", "chain_attacks", "authentication"]
+        },
+        {
+            "name": "VMware_Target",
+            "url": "http://192.168.131.128",
+            "type": "web_application",
+            "difficulty": "intermediate",
+            "vulnerabilities": [
+                "web_vulnerability",
+                "service_misconfiguration",
+                "information_disclosure"
+            ],
+            "training_focus": ["network_attacks", "web_exploitation"]
+        }
+    ],
+    
+    "total_hours": 12,
+    
+    "curriculum_schedule": {
+        "phase_1_fundamentals": {
+            "hours": "1-2",
+            "duration_minutes": 120,
+            "lessons": [
+                "Network Reconnaissance Basics",
+                "Web Application Fingerprinting", 
+                "Directory and File Discovery",
+                "Basic Vulnerability Scanning"
+            ],
+            "skills": [
+                "nmap", "whatweb", "wafw00f", "gobuster", 
+                "ffuf", "nikto", "nuclei"
+            ],
+            "target_focus": "OWASP_Juice_Shop_Demo",
+            "expected_outcomes": {
+                "tools_mastered": 7,
+                "findings_expected": 10,
+                "skill_level_target": "BEGINNER"
+            }
+        },
+        "phase_2_intermediate": {
+            "hours": "3-4",
+            "duration_minutes": 120,
+            "lessons": [
+                "Advanced Enumeration Techniques",
+                "SQL Injection Detection & Exploitation",
+                "XSS Detection & Exploitation",
+                "Authentication Testing"
+            ],
+            "skills": [
+                "sqlmap", "dalfox", "xsstrike", "hydra",
+                "api_enumeration", "parameter_fuzzing"
+            ],
+            "target_focus": "OWASP_Juice_Shop_Demo",
+            "expected_outcomes": {
+                "sqli_exploits": 3,
+                "xss_exploits": 5,
+                "auth_bypasses": 2,
+                "skill_level_target": "INTERMEDIATE"
+            }
+        },
+        "phase_3_advanced": {
+            "hours": "5-7",
+            "duration_minutes": 180,
+            "lessons": [
+                "Chain Attack: SQLi to Shell",
+                "Chain Attack: LFI/RFI to RCE",
+                "Command Injection Mastery",
+                "SSRF and XXE Exploitation",
+                "Privilege Escalation Fundamentals"
+            ],
+            "skills": [
+                "chain_attacks", "webshell_upload", "reverse_shell",
+                "lfi_exploitation", "log_poisoning", "commix",
+                "ssrf_exploitation", "xxe_exploitation", "linpeas"
+            ],
+            "target_focus": ["OWASP_Juice_Shop_Demo", "VMware_Target"],
+            "expected_outcomes": {
+                "shells_obtained": 3,
+                "chains_completed": 5,
+                "privesc_success": 2,
+                "skill_level_target": "ADVANCED"
+            }
+        },
+        "phase_4_expert": {
+            "hours": "8-10",
+            "duration_minutes": 180,
+            "lessons": [
+                "Multi-Stage Attack Orchestration",
+                "Custom Exploit Development",
+                "Evasion and Anti-Detection",
+                "Credential Harvesting & Lateral Movement"
+            ],
+            "skills": [
+                "multi_stage_attacks", "pivoting", "persistence",
+                "exploit_modification", "waf_bypass", "ids_evasion",
+                "credential_extraction", "lateral_movement"
+            ],
+            "target_focus": ["VMware_Target"],
+            "expected_outcomes": {
+                "multi_stage_attacks": 3,
+                "evasion_success_rate": 0.7,
+                "systems_compromised": 3,
+                "skill_level_target": "EXPERT"
+            }
+        },
+        "phase_5_mastery": {
+            "hours": "11-12",
+            "duration_minutes": 120,
+            "lessons": [
+                "Full Autonomous Operation",
+                "Final Evaluation & Certification"
+            ],
+            "skills": [
+                "autonomous_operation", "strategic_planning",
+                "time_management", "professional_reporting"
+            ],
+            "target_focus": "all",
+            "expected_outcomes": {
+                "autonomous_success_rate": 0.8,
+                "ctf_challenges_solved": 3,
+                "skill_level_target": "MASTER"
+            }
+        }
+    },
+    
+    "challenge_schedule": {
+        "beginner_challenges": {
+            "count": 4,
+            "difficulty_range": [1, 3],
+            "time_per_challenge": 10
+        },
+        "intermediate_challenges": {
+            "count": 4,
+            "difficulty_range": [4, 6],
+            "time_per_challenge": 20
+        },
+        "advanced_challenges": {
+            "count": 4,
+            "difficulty_range": [7, 8],
+            "time_per_challenge": 30
+        },
+        "expert_challenges": {
+            "count": 3,
+            "difficulty_range": [8.5, 9.5],
+            "time_per_challenge": 45
+        },
+        "master_challenges": {
+            "count": 2,
+            "difficulty_range": [9.5, 10],
+            "time_per_challenge": 60
+        }
+    },
+    
+    "learning_parameters": {
+        "exploration_rate_initial": 0.5,
+        "exploration_rate_final": 0.1,
+        "exploration_decay_hours": 8,
+        "skill_retention_factor": 0.95,
+        "spaced_repetition_interval_minutes": 60,
+        "weakness_practice_ratio": 0.3,
+        "challenge_failure_retry_limit": 3
+    },
+    
+    "reward_structure": {
+        "finding_discovered": 10,
+        "critical_finding": 25,
+        "shell_obtained": 100,
+        "root_obtained": 150,
+        "chain_step_completed": 15,
+        "chain_fully_completed": 75,
+        "challenge_completed": 50,
+        "lesson_completed": 30,
+        "skill_milestone": 40,
+        "new_tool_mastered": 20,
+        "evasion_success": 35,
+        "time_bonus_multiplier": 1.5
+    },
+    
+    "skill_categories": {
+        "reconnaissance": {
+            "tools": ["nmap", "whatweb", "wafw00f", "dig", "whois", "amass"],
+            "weight": 0.15
+        },
+        "enumeration": {
+            "tools": ["gobuster", "ffuf", "nikto", "dirsearch", "wpscan", "feroxbuster"],
+            "weight": 0.15
+        },
+        "vulnerability_detection": {
+            "tools": ["nuclei", "sqlmap", "xsstrike", "dalfox", "commix"],
+            "weight": 0.20
+        },
+        "exploitation": {
+            "tools": ["metasploit", "sqlmap", "commix", "hydra"],
+            "weight": 0.25
+        },
+        "post_exploitation": {
+            "tools": ["linpeas", "winpeas", "pspy", "mimikatz"],
+            "weight": 0.15
+        },
+        "chain_attacks": {
+            "chains": ["sqli_to_shell", "lfi_to_rce", "xss_to_session", "auth_to_admin"],
+            "weight": 0.10
+        }
+    },
+    
+    "chain_attacks_curriculum": [
+        {
+            "name": "SQLi to Database Dump",
+            "difficulty": 4,
+            "phase": "intermediate",
+            "steps": ["detect_sqli", "enumerate_dbs", "dump_tables", "extract_creds"],
+            "tools": ["sqlmap"],
+            "expected_time_minutes": 15
+        },
+        {
+            "name": "SQLi to Shell",
+            "difficulty": 7,
+            "phase": "advanced",
+            "steps": ["detect_sqli", "file_write", "upload_webshell", "reverse_shell"],
+            "tools": ["sqlmap", "curl", "nc"],
+            "expected_time_minutes": 30
+        },
+        {
+            "name": "XSS to Session Hijack",
+            "difficulty": 5,
+            "phase": "intermediate",
+            "steps": ["detect_xss", "craft_payload", "steal_cookie", "hijack_session"],
+            "tools": ["dalfox", "curl"],
+            "expected_time_minutes": 20
+        },
+        {
+            "name": "LFI to RCE via Log Poisoning",
+            "difficulty": 7,
+            "phase": "advanced",
+            "steps": ["detect_lfi", "identify_logs", "poison_log", "trigger_rce"],
+            "tools": ["ffuf", "curl", "nc"],
+            "expected_time_minutes": 25
+        },
+        {
+            "name": "SSRF to Cloud Metadata",
+            "difficulty": 6,
+            "phase": "advanced",
+            "steps": ["detect_ssrf", "bypass_filters", "access_metadata", "extract_creds"],
+            "tools": ["curl", "nuclei"],
+            "expected_time_minutes": 20
+        },
+        {
+            "name": "Auth Bypass to Admin",
+            "difficulty": 5,
+            "phase": "intermediate",
+            "steps": ["identify_auth", "test_bypass", "escalate_privs", "admin_access"],
+            "tools": ["burp", "curl", "hydra"],
+            "expected_time_minutes": 25
+        },
+        {
+            "name": "User to Root (Linux)",
+            "difficulty": 8,
+            "phase": "expert",
+            "steps": ["enum_privesc", "identify_vector", "exploit_vector", "root_shell"],
+            "tools": ["linpeas", "searchsploit"],
+            "expected_time_minutes": 30
+        },
+        {
+            "name": "Multi-Stage: Web to Domain Admin",
+            "difficulty": 9.5,
+            "phase": "mastery",
+            "steps": ["initial_foothold", "local_privesc", "cred_harvest", "lateral_move", "domain_escalate"],
+            "tools": ["multiple"],
+            "expected_time_minutes": 60
+        }
+    ],
+    
+    "output_dir": "training_output/custom_newbie_to_pro",
+    "checkpoint_interval_minutes": 30,
+    "auto_save": true,
+    
+    "evaluation_criteria": {
+        "beginner_certification": {
+            "min_skill_level": 20,
+            "required_tools": 5,
+            "min_findings": 5
+        },
+        "intermediate_certification": {
+            "min_skill_level": 40,
+            "required_exploits": 3,
+            "min_findings": 15
+        },
+        "advanced_certification": {
+            "min_skill_level": 60,
+            "required_shells": 2,
+            "required_chains": 3
+        },
+        "expert_certification": {
+            "min_skill_level": 80,
+            "required_evasions": 3,
+            "required_pivots": 1
+        },
+        "master_certification": {
+            "min_skill_level": 90,
+            "autonomous_success_rate": 0.8,
+            "all_challenges_attempted": true
+        }
+    },
+    
+    "notes": [
+        "Training takes approximately 10-12 hours",
+        "Checkpoints saved every 30 minutes",
+        "Can be interrupted and resumed",
+        "Custom targets: OWASP Juice Shop Demo and VMware target",
+        "Ensure Kali VM is accessible for tool execution"
+    ]
+}

@@ -59,7 +59,7 @@ class KaliSSHClient:
                         transport.set_keepalive(keepalive)
 
                     self.connected = True
-                    logger.info(f"✅ Successfully connected to Kali VM")
+                    logger.info(f"Successfully connected to Kali VM")
                     return True
                     
                 except Exception as e:
@@ -68,12 +68,12 @@ class KaliSSHClient:
                     if attempt < retries:
                         time.sleep(2 * attempt)
 
-            logger.error(f"❌ Failed to connect after {retries} attempts: {last_err}")
+            logger.error(f"Failed to connect after {retries} attempts: {last_err}")
             self.connected = False
             return False
             
         except Exception as e:
-            logger.error(f"❌ Failed to initialize SSH client: {e}")
+            logger.error(f"Failed to initialize SSH client: {e}")
             self.connected = False
             return False
     
@@ -183,7 +183,7 @@ class KaliSSHClient:
             stdout_str = ''.join(stdout_lines)
             stderr_str = ''.join(stderr_lines)
             
-            logger.info(f"✅ Command completed: exit={exit_code}, time={execution_time:.1f}s, "
+            logger.info(f"Command completed: exit={exit_code}, time={execution_time:.1f}s, "
                        f"stdout={len(stdout_str)} chars")
             
             return {
@@ -196,7 +196,7 @@ class KaliSSHClient:
             }
             
         except Exception as e:
-            logger.error(f"❌ Command execution error: {e}")
+            logger.error(f"Command execution error: {e}")
             return {
                 'success': False,
                 'error': str(e),

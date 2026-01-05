@@ -15,7 +15,7 @@ connected_clients = {}
 # Lazy load global scan storage from app.py
 def get_active_scans():
     """Lazy load active_scans to avoid circular import"""
-    from app import active_scans
+    from app import active_scans, active_scans_lock
     return active_scans
 
 def get_scan_history():
@@ -59,9 +59,11 @@ def register_socket_handlers(socketio):
                 connected_clients[request.sid]['rooms'].append(room)
             logger.info(f'Client {request.sid} joined room {room}')
             # Update scan status to show client joined
+            from app import active_scans_lock
             active_scans = get_active_scans()
-            if scan_id in active_scans:
-                active_scans[scan_id]['clients'] = active_scans[scan_id].get('clients', 0) + 1
+            with active_scans_lock:
+                if scan_id in active_scans:
+                    active_scans[scan_id]['clients'] = active_scans[scan_id].get('clients', 0) + 1
             emit('system_status', {'status': 'joined', 'message': f'Joined scan {scan_id}'})
     
     @socketio.on('leave_scan')
@@ -120,83 +122,193 @@ def register_socket_handlers(socketio):
 # Event emitter functions for use by other modules
 def emit_scan_started(socketio, scan_id: str, target: str, config: dict = None):
     """Emit scan started event."""
-    socketio.emit('scan_started', {
+    # Get current scan state to send with the event
+    from app import active_scans
+    scan_state = active_scans.get(scan_id)
+    
+    event_data = {
         'scan_id': scan_id,
         'target': target,
-        'config': config or {}
-    }, room=f'scan_{scan_id}')
+        'config': config or {},
+        'timestamp': datetime.utcnow().isoformat()
+    }
+    
+    # Include scan state if available
+    if scan_state:
+        event_data['scan_state'] = scan_state
+    
+    socketio.emit('scan_started', event_data, room=f'scan_{scan_id}')
 
 def emit_scan_update(socketio, scan_id: str, phase: str, status: str, coverage: float, time_elapsed: float):
     """Emit scan update event."""
-    socketio.emit('scan_update', {
+    # Get current scan state to send with the event
+    from app import active_scans
+    scan_state = active_scans.get(scan_id)
+    
+    event_data = {
         'phase': phase,
         'status': status,
         'coverage': coverage,
-        'time_elapsed': time_elapsed
-    }, room=f'scan_{scan_id}')
+        'time_elapsed': time_elapsed,
+        'timestamp': datetime.utcnow().isoformat()
+    }
+    
+    # Include full scan state if available
+    if scan_state:
+        event_data['scan_state'] = scan_state
+    
+    socketio.emit('scan_update', event_data, room=f'scan_{scan_id}')
 
 def emit_phase_transition(socketio, scan_id: str, from_phase: str, to_phase: str, reason: str = None):
     """Emit phase transition event."""
-    socketio.emit('phase_transition', {
+    # Get current scan state to send with the event
+    from app import active_scans
+    scan_state = active_scans.get(scan_id)
+    
+    event_data = {
         'from': from_phase,
         'to': to_phase,
-        'reason': reason
-    }, room=f'scan_{scan_id}')
+        'reason': reason,
+        'timestamp': datetime.utcnow().isoformat()
+    }
+    
+    # Include full scan state if available
+    if scan_state:
+        event_data['scan_state'] = scan_state
+    
+    socketio.emit('phase_transition', event_data, room=f'scan_{scan_id}')
 
 def emit_tool_execution_start(socketio, scan_id: str, tool: str, target: str = None):
     """Emit tool execution start event."""
-    socketio.emit('tool_execution_start', {
+    # Get current scan state to send with the event
+    from app import active_scans
+    scan_state = active_scans.get(scan_id)
+    
+    event_data = {
         'tool': tool,
         'target': target,
-        'status': 'start'
-    }, room=f'scan_{scan_id}')
+        'status': 'start',
+        'timestamp': datetime.utcnow().isoformat()
+    }
+    
+    # Include full scan state if available
+    if scan_state:
+        event_data['scan_state'] = scan_state
+    
+    socketio.emit('tool_execution_start', event_data, room=f'scan_{scan_id}')
 
 def emit_tool_output(socketio, scan_id: str, tool: str, output: str, stream: str = 'stdout'):
     """Emit tool output event."""
-    socketio.emit('tool_output', {
+    # Get current scan state to send with the event
+    from app import active_scans
+    scan_state = active_scans.get(scan_id)
+    
+    event_data = {
         'tool': tool,
         'output': output,
-        'stream': stream
-    }, room=f'scan_{scan_id}')
+        'stream': stream,
+        'timestamp': datetime.utcnow().isoformat()
+    }
+    
+    # Include full scan state if available
+    if scan_state:
+        event_data['scan_state'] = scan_state
+    
+    socketio.emit('tool_output', event_data, room=f'scan_{scan_id}')
 
 def emit_tool_execution_complete(socketio, scan_id: str, tool: str, success: bool, findings_count: int = 0, execution_time: float = 0):
     """Emit tool execution complete event."""
-    socketio.emit('tool_execution_complete', {
+    # Get current scan state to send with the event
+    from app import active_scans
+    scan_state = active_scans.get(scan_id)
+    
+    event_data = {
         'tool': tool,
         'status': 'complete',
         'success': success,
         'findings_count': findings_count,
-        'execution_time': execution_time
-    }, room=f'scan_{scan_id}')
+        'execution_time': execution_time,
+        'timestamp': datetime.utcnow().isoformat()
+    }
+    
+    # Include full scan state if available
+    if scan_state:
+        event_data['scan_state'] = scan_state
+    
+    socketio.emit('tool_execution_complete', event_data, room=f'scan_{scan_id}')
 
 def emit_finding_discovered(socketio, scan_id: str, finding: dict, total_count: int):
     """Emit finding discovered event."""
-    socketio.emit('finding_discovered', {
+    # Get current scan state to send with the event
+    from app import active_scans
+    scan_state = active_scans.get(scan_id)
+    
+    event_data = {
         'finding': finding,
-        'total_count': total_count
-    }, room=f'scan_{scan_id}')
+        'total_count': total_count,
+        'timestamp': datetime.utcnow().isoformat()
+    }
+    
+    # Include full scan state if available
+    if scan_state:
+        event_data['scan_state'] = scan_state
+    
+    socketio.emit('finding_discovered', event_data, room=f'scan_{scan_id}')
 
 def emit_scan_complete(socketio, scan_id: str, findings_count: int, time_elapsed: float):
     """Emit scan complete event."""
-    socketio.emit('scan_complete', {
+    # Get current scan state to send with the event
+    from app import active_scans
+    scan_state = active_scans.get(scan_id)
+    
+    event_data = {
         'scan_id': scan_id,
         'findings_count': findings_count,
-        'time_elapsed': time_elapsed
-    }, room=f'scan_{scan_id}')
+        'time_elapsed': time_elapsed,
+        'timestamp': datetime.utcnow().isoformat()
+    }
+    
+    # Include full scan state if available
+    if scan_state:
+        event_data['scan_state'] = scan_state
+    
+    socketio.emit('scan_complete', event_data, room=f'scan_{scan_id}')
 
 def emit_scan_error(socketio, scan_id: str, error: str):
     """Emit scan error event."""
-    socketio.emit('scan_error', {
+    # Get current scan state to send with the event
+    from app import active_scans
+    scan_state = active_scans.get(scan_id)
+    
+    event_data = {
         'scan_id': scan_id,
-        'error': error
-    }, room=f'scan_{scan_id}')
+        'error': error,
+        'timestamp': datetime.utcnow().isoformat()
+    }
+    
+    # Include full scan state if available
+    if scan_state:
+        event_data['scan_state'] = scan_state
+    
+    socketio.emit('scan_error', event_data, room=f'scan_{scan_id}')
 
 def emit_tool_resolution(socketio, scan_id: str, tool: str, source: str, confidence: float, status: str, explanation: str):
     """Emit tool resolution event (hybrid system)."""
-    socketio.emit('tool_resolution', {
+    # Get current scan state to send with the event
+    from app import active_scans
+    scan_state = active_scans.get(scan_id)
+    
+    event_data = {
         'tool': tool,
         'source': source,
         'confidence': confidence,
         'status': status,
-        'explanation': explanation
-    }, room=f'scan_{scan_id}')
+        'explanation': explanation,
+        'timestamp': datetime.utcnow().isoformat()
+    }
+    
+    # Include full scan state if available
+    if scan_state:
+        event_data['scan_state'] = scan_state
+    
+    socketio.emit('tool_resolution', event_data, room=f'scan_{scan_id}')

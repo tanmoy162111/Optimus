@@ -412,16 +412,27 @@ class RobustScanOrchestrator:
     
     def _init_scan_state(self, target: str, config: Dict) -> Dict[str, Any]:
         """Initialize scan state"""
-        # Normalize target
-        normalized_target = target
-        if hasattr(self, 'target_normalizer') and self.target_normalizer:
-            normalized_result = self.target_normalizer.normalize(target)
-            normalized_target = normalized_result['url']
-        else:
+        # Apply target integrity validation
+        try:
+            from .target_integrity_gate import get_target_integrity_gate
+            integrity_gate = get_target_integrity_gate()
+            validation_result = integrity_gate.apply_target_integrity_gate(target)
+            normalized_target = validation_result['normalized_target']
+        except ImportError:
+            logger.warning("[RobustOrchestrator] Target integrity gate not available, using fallback")
             # Fallback normalization
-            if not target.startswith(('http://', 'https://')):
-                target = f"http://{target}"
             normalized_target = target
+            if hasattr(self, 'target_normalizer') and self.target_normalizer:
+                normalized_result = self.target_normalizer.normalize(target)
+                normalized_target = normalized_result['url']
+            else:
+                # Fallback normalization
+                if not target.startswith(('http://', 'https://')):
+                    target = f"http://{target}"
+                normalized_target = target
+        except Exception as e:
+            logger.error(f"[RobustOrchestrator] Target integrity validation failed: {e}")
+            raise ValueError(f"Target integrity validation failed: {e}")
         
         # Extract domain for DNS tools
         from urllib.parse import urlparse

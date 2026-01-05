@@ -77,7 +77,7 @@ class WorkflowEngine:
             scan_state['status'] = 'completed'
             scan_state['end_time'] = datetime.now().isoformat()
             
-            logger.info(f"✅ Scan complete: {len(scan_state['findings'])} findings, "
+            logger.info(f"Scan complete: {len(scan_state['findings'])} findings, "
                        f"{len(scan_state['tools_executed'])} tools used")
             
             # Generate report

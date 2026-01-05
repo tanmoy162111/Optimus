@@ -45,6 +45,8 @@ export type SeverityLevel = 'critical' | 'high' | 'medium' | 'low' | 'info';
 export interface Scan {
   scan_id: string;
   target: string;
+  domain?: string;
+  host?: string;
   phase: ScanPhase;
   status: ScanStatus;
   start_time: string;
@@ -56,6 +58,24 @@ export interface Scan {
   risk_score: number;
   ml_confidence?: number;
   phase_data?: Record<string, PhaseData>;
+  options?: Record<string, any>;
+  exploits_attempted?: any[];
+  sessions_obtained?: any[];
+  credentials_found?: any[];
+  discovered_endpoints?: any[];
+  discovered_technologies?: any[];
+  open_ports?: any[];
+  stop_requested?: boolean;
+  clients?: number;
+  error?: string;
+  config?: Record<string, any>;
+  technologies_detected?: string[];
+  blacklisted_tools?: string[];
+  recently_used_tools?: string[];
+  strategy?: string;
+  strategy_changes?: number;
+  last_finding_iteration?: number;
+  phase_start_time?: string;
 }
 
 export type ScanPhase = 

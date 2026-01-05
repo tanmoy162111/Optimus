@@ -10,10 +10,10 @@ from .rl_training_config import RLTrainingConfig, DEFAULT_TRAINING_CONFIG
 logger = logging.getLogger(__name__)
 
 
-class RewardCalculator:
+class GlobalRewardCalculator:
     """
-    Calculates rewards for RL agent based on tool execution results.
-    Uses reward shaping to guide learning.
+    Calculates unified global reward for RL agent based on tool execution results.
+    Uses reward shaping to guide learning with unified environment, episode, and lesson rewards.
     """
     
     def __init__(self, config: RLTrainingConfig = None):
@@ -35,26 +35,31 @@ class RewardCalculator:
         self.tools_executed_this_episode = []
         self.phase_stall_counter = {}
     
-    def calculate_reward(
+    def calculate_global_reward(
         self,
         tool_name: str,
         result: Dict[str, Any],
         scan_state: Dict[str, Any],
-        execution_time: float
+        execution_time: float,
+        episode_reward: float = 0.0,
+        lesson_reward: float = 0.0
     ) -> float:
         """
-        Calculate reward for a tool execution.
+        Calculate unified global reward combining environment, episode, and lesson rewards.
         
         Args:
             tool_name: Name of tool executed
             result: Tool execution result
             scan_state: Current scan state
             execution_time: Time taken for execution
+            episode_reward: Current episode reward (optional)
+            lesson_reward: Current lesson reward (optional)
             
         Returns:
-            Calculated reward value
+            Unified global reward value
         """
-        reward = 0.0
+        # Calculate environment reward (tool-level)
+        env_reward = 0.0
         reward_breakdown = {}
         
         # 1. Check tool success/failure
@@ -62,15 +67,15 @@ class RewardCalculator:
         if not success:
             error = result.get("error", "")
             if "timeout" in error.lower():
-                reward += self.rewards["tool_timeout"]
+                env_reward += self.rewards["tool_timeout"]
                 reward_breakdown["timeout"] = self.rewards["tool_timeout"]
             else:
-                reward += self.rewards["tool_failed"]
+                env_reward += self.rewards["tool_failed"]
                 reward_breakdown["failed"] = self.rewards["tool_failed"]
         
         # 2. Check for repeated tool usage
         if tool_name in self.tools_executed_this_episode:
-            reward += self.rewards["repeated_tool"]
+            env_reward += self.rewards["repeated_tool"]
             reward_breakdown["repeated"] = self.rewards["repeated_tool"]
         self.tools_executed_this_episode.append(tool_name)
         
@@ -84,28 +89,28 @@ class RewardCalculator:
                 vuln_type = vuln.get("type", "").lower()
                 
                 if severity >= 9.0:
-                    reward += self.rewards["critical_vuln_found"]
+                    env_reward += self.rewards["critical_vuln_found"]
                     reward_breakdown["critical"] = reward_breakdown.get("critical", 0) + self.rewards["critical_vuln_found"]
                 elif severity >= 7.0:
-                    reward += self.rewards["high_vuln_found"]
+                    env_reward += self.rewards["high_vuln_found"]
                     reward_breakdown["high"] = reward_breakdown.get("high", 0) + self.rewards["high_vuln_found"]
                 elif severity >= 4.0:
-                    reward += self.rewards["medium_vuln_found"]
+                    env_reward += self.rewards["medium_vuln_found"]
                     reward_breakdown["medium"] = reward_breakdown.get("medium", 0) + self.rewards["medium_vuln_found"]
                 else:
-                    reward += self.rewards["low_vuln_found"]
+                    env_reward += self.rewards["low_vuln_found"]
                     reward_breakdown["low"] = reward_breakdown.get("low", 0) + self.rewards["low_vuln_found"]
                 
                 # Bonus for specific exploit types
                 if "shell" in vuln_type or "rce" in vuln_type:
-                    reward += self.rewards["shell_obtained"]
+                    env_reward += self.rewards["shell_obtained"]
                     reward_breakdown["shell"] = self.rewards["shell_obtained"]
                 elif "credential" in vuln_type or "password" in vuln_type:
-                    reward += self.rewards["credentials_found"]
+                    env_reward += self.rewards["credentials_found"]
                     reward_breakdown["credentials"] = self.rewards["credentials_found"]
         else:
             # No findings penalty (small)
-            reward += self.rewards["no_findings"]
+            env_reward += self.rewards["no_findings"]
             reward_breakdown["no_findings"] = self.rewards["no_findings"]
         
         # 4. Check for new discoveries
@@ -113,7 +118,7 @@ class RewardCalculator:
         new_services = services - self.previous_services
         if new_services:
             service_reward = len(new_services) * self.rewards["new_service_discovered"]
-            reward += service_reward
+            env_reward += service_reward
             reward_breakdown["new_services"] = service_reward
             self.previous_services.update(new_services)
         
@@ -121,7 +126,7 @@ class RewardCalculator:
         new_techs = technologies - self.previous_technologies
         if new_techs:
             tech_reward = len(new_techs) * self.rewards["new_technology_detected"]
-            reward += tech_reward
+            env_reward += tech_reward
             reward_breakdown["new_technologies"] = tech_reward
             self.previous_technologies.update(new_techs)
         
@@ -132,7 +137,7 @@ class RewardCalculator:
         if current_findings == self.previous_findings_count:
             self.phase_stall_counter[phase] = self.phase_stall_counter.get(phase, 0) + 1
             if self.phase_stall_counter[phase] > 5:
-                reward += self.rewards["phase_stall"]
+                env_reward += self.rewards["phase_stall"]
                 reward_breakdown["stall"] = self.rewards["phase_stall"]
         else:
             self.phase_stall_counter[phase] = 0
@@ -142,12 +147,47 @@ class RewardCalculator:
         # 6. Efficiency bonus (faster execution with findings)
         if new_vulns and execution_time < 60:
             efficiency_bonus = 0.5 * (1 - execution_time / 60)
-            reward += efficiency_bonus
+            env_reward += efficiency_bonus
             reward_breakdown["efficiency"] = efficiency_bonus
         
-        logger.debug(f"[RewardCalculator] {tool_name}: total={reward:.2f}, breakdown={reward_breakdown}")
+        # Calculate global reward by combining environment, episode, and lesson rewards
+        global_reward = env_reward
         
-        return reward
+        # Add episode reward if provided
+        if episode_reward != 0.0:
+            global_reward += episode_reward
+            reward_breakdown["episode"] = episode_reward
+        
+        # Add lesson reward if provided
+        if lesson_reward != 0.0:
+            global_reward += lesson_reward
+            reward_breakdown["lesson"] = lesson_reward
+        
+        # Add comprehensive debug logging
+        logger.debug(f"[GlobalRewardCalculator] {tool_name}: global={global_reward:.2f}, env={env_reward:.2f}, episode={episode_reward:.2f}, lesson={lesson_reward:.2f}, breakdown={reward_breakdown}")
+        
+        return global_reward
+    
+    def calculate_reward(
+        self,
+        tool_name: str,
+        result: Dict[str, Any],
+        scan_state: Dict[str, Any],
+        execution_time: float
+    ) -> float:
+        """
+        Calculate reward for a tool execution (backward compatibility).
+        
+        Args:
+            tool_name: Name of tool executed
+            result: Tool execution result
+            scan_state: Current scan state
+            execution_time: Time taken for execution
+            
+        Returns:
+            Calculated reward value
+        """
+        return self.calculate_global_reward(tool_name, result, scan_state, execution_time)
     
     def calculate_episode_end_reward(
         self,
@@ -185,9 +225,9 @@ class RewardCalculator:
 # Singleton
 _calculator = None
 
-def get_reward_calculator(config: RLTrainingConfig = None) -> RewardCalculator:
+def get_reward_calculator(config: RLTrainingConfig = None) -> GlobalRewardCalculator:
     """Get singleton reward calculator"""
     global _calculator
     if _calculator is None:
-        _calculator = RewardCalculator(config)
+        _calculator = GlobalRewardCalculator(config)
     return _calculator

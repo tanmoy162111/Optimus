@@ -117,7 +117,7 @@ def create_dueling_network(
     Create Dueling DQN network.
     
     Architecture:
-        Input → Shared layers → Split into Value and Advantage streams
+        Input -> Shared layers -> Split into Value and Advantage streams
         Q(s,a) = V(s) + (A(s,a) - mean(A(s,a')))
     
     Args:
@@ -328,6 +328,10 @@ class DeepRLAgent:
         """
         # Encode state
         state_vector = self.state_encoder.encode(scan_state)
+        
+        # Add debug logging for state vector shape
+        logger.debug(f"[DeepRLAgent] State vector shape: {state_vector.shape}, min: {state_vector.min():.3f}, max: {state_vector.max():.3f}")
+        
         state_tensor = tf.expand_dims(state_vector, 0)
         
         # Get Q-values
@@ -385,6 +389,9 @@ class DeepRLAgent:
         state_vec = self.state_encoder.encode(state)
         next_state_vec = self.state_encoder.encode(next_state)
         
+        # Add debug logging for experience storage
+        logger.debug(f"[DeepRLAgent] Storing experience: state_shape={state_vec.shape}, action={action}, reward={reward:.3f}, next_state_shape={next_state_vec.shape}, done={done}")
+        
         self.replay_buffer.add(state_vec, action, reward, next_state_vec, done)
     
     def train_step(self) -> Optional[Dict[str, float]]:
@@ -411,6 +418,9 @@ class DeepRLAgent:
         next_states = tf.convert_to_tensor(np.array(next_states), dtype=tf.float32)
         dones = tf.convert_to_tensor(dones, dtype=tf.float32)
         weights = tf.convert_to_tensor(weights, dtype=tf.float32)
+        
+        # Add debug logging for training step
+        logger.debug(f"[DeepRLAgent] Training step: batch_size={len(states)}, buffer_size={len(self.replay_buffer)}")
         
         # Training step with gradient computation
         with tf.GradientTape() as tape:
@@ -482,14 +492,16 @@ class DeepRLAgent:
         """Hard update: Copy online network weights to target"""
         self.target_network.set_weights(self.online_network.get_weights())
     
-    def calculate_reward(
+    def calculate_global_reward(
         self,
         action: int,
         result: Dict[str, Any],
-        scan_state: Dict[str, Any]
+        scan_state: Dict[str, Any],
+        episode_reward: float = 0.0,
+        lesson_reward: float = 0.0
     ) -> float:
         """
-        Calculate reward for action based on result.
+        Calculate unified global reward for action based on result.
         
         Reward structure:
         - High reward for critical/high severity findings
@@ -498,16 +510,20 @@ class DeepRLAgent:
         - Penalty for failed execution
         - Penalty for repeated tools without findings
         - Bonus for progressing phases
+        - Combines environment, episode, and lesson rewards
         
         Args:
             action: Action (tool index) that was taken
             result: Execution result from tool
             scan_state: Current scan state
+            episode_reward: Current episode reward (optional)
+            lesson_reward: Current lesson reward (optional)
             
         Returns:
-            Calculated reward value
+            Unified global reward value
         """
-        reward = 0.0
+        # Calculate environment reward (tool-level)
+        env_reward = 0.0
         
         # Check execution success
         if not result.get('success', False):
@@ -530,21 +546,21 @@ class DeepRLAgent:
             
             # Severity-based reward
             if severity >= 9:
-                reward += 5.0
+                env_reward += 5.0
             elif severity >= 7:
-                reward += 3.0
+                env_reward += 3.0
             elif severity >= 4:
-                reward += 1.5
+                env_reward += 1.5
             else:
-                reward += 0.5
+                env_reward += 0.5
             
             # Bonus for exploitable
             if vuln.get('exploitable', False):
-                reward += 2.0
+                env_reward += 2.0
             
             # Bonus for CVE
             if vuln.get('cve'):
-                reward += 0.5
+                env_reward += 0.5
         
         # Penalty for no findings after execution
         if not vulnerabilities and result.get('success', False):
@@ -556,17 +572,47 @@ class DeepRLAgent:
             tool_name = self.tool_list[action] if action < len(self.tool_list) else ''
             
             if tools_executed.count(tool_name) > 1:
-                reward -= 0.3
+                env_reward -= 0.3
             else:
-                reward += 0.1
+                env_reward += 0.1
         
         # Services/host discovery reward
         services = result.get('parsed_results', {}).get('services', [])
         hosts = result.get('parsed_results', {}).get('hosts', [])
-        reward += len(services) * 0.1
-        reward += len(hosts) * 0.05
+        env_reward += len(services) * 0.1
+        env_reward += len(hosts) * 0.05
         
-        return reward
+        # Calculate global reward by combining environment, episode, and lesson rewards
+        global_reward = env_reward
+        
+        # Add episode reward if provided
+        if episode_reward != 0.0:
+            global_reward += episode_reward
+        
+        # Add lesson reward if provided
+        if lesson_reward != 0.0:
+            global_reward += lesson_reward
+        
+        return global_reward
+    
+    def calculate_reward(
+        self,
+        action: int,
+        result: Dict[str, Any],
+        scan_state: Dict[str, Any]
+    ) -> float:
+        """
+        Calculate reward for action based on result (backward compatibility).
+        
+        Args:
+            action: Action (tool index) that was taken
+            result: Execution result from tool
+            scan_state: Current scan state
+            
+        Returns:
+            Calculated reward value
+        """
+        return self.calculate_global_reward(action, result, scan_state)
     
     def save(self, path: str = None):
         """

@@ -12,6 +12,23 @@ venv/
 datasets/
 data/scan_results/
 
+# Database files
+*.db
+
+# Logs
+logs/
+*.log
+
+# Training outputs
+training_output/
+backend/training_output/
+backend/models/deep_rl/checkpoint_*
+
+# Runtime files
+*.tmp
+.DS_Store
+Thumbs.db
+
 # Node
 node_modules/
 dist/

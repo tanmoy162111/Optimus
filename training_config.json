@@ -1,0 +1,19 @@
+{
+  "targets": [
+    {
+      "url": "http://192.168.131.128",
+      "name": "Kali_VM"
+    },
+    {
+      "url": "http://www.canonical.landscape.com",
+      "name": "Canonical_Landscape"
+    },
+    {
+      "url": "http://demo.owasp.juice.shop",
+      "name": "OWASP_Juice_Shop"
+    }
+  ],
+  "total_hours": 12,
+  "output_dir": "training_output/updated_targets_training",
+  "authorized_targets": ["192.168.131.", "canonical.landscape.com", "owasp.juice.shop"]
+}

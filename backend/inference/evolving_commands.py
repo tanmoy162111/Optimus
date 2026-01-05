@@ -872,15 +872,30 @@ class EvolvingCommandGenerator:
             self.db.add_template(sudo_template)
     
     def _discover_tool_path(self, tool: str) -> Optional[str]:
-        """Discover tool path on the system via SSH"""
+        """Discover tool path on the system via SSH and register it in the ground-truth registry"""
         if not self.ssh_client:
             return None
         
         try:
-            # Try which command
-            exit_code, stdout, stderr = self.ssh_client.execute_command(f"which {tool}")
-            if exit_code == 0 and stdout.strip():
-                return stdout.strip()
+            # First, check if tool is already registered in our ground-truth registry
+            from .tool_registry import get_tool_registry
+            registry = get_tool_registry()
+            registered_path = registry.get_tool_path(tool)
+            if registered_path:
+                return registered_path
+            
+            # Try command which or whereis
+            result = self.ssh_client.execute_command(f"command -v {tool} || which {tool}")
+            if result['success'] and result.get('stdout', '').strip():
+                path = result.get('stdout', '').strip()
+                # Register this discovered tool in the registry
+                registry.register_tool(
+                    name=tool,
+                    path=path,
+                    version=self._get_remote_tool_version(tool),
+                    category=self._categorize_tool(tool)
+                )
+                return path
             
             # Try common locations
             common_paths = [
@@ -892,19 +907,83 @@ class EvolvingCommandGenerator:
             ]
             
             for path in common_paths:
-                exit_code, stdout, stderr = self.ssh_client.execute_command(f"test -x {path} && echo 'exists'")
-                if 'exists' in stdout:
+                result = self.ssh_client.execute_command(f"test -x {path} && echo 'exists'")
+                if 'exists' in result.get('stdout', ''):
+                    # Register this discovered tool in the registry
+                    registry.register_tool(
+                        name=tool,
+                        path=path,
+                        version=self._get_remote_tool_version(tool),
+                        category=self._categorize_tool(tool)
+                    )
                     return path
             
             # Try locate
-            exit_code, stdout, stderr = self.ssh_client.execute_command(f"locate -l 1 'bin/{tool}'")
-            if exit_code == 0 and stdout.strip():
-                return stdout.strip().split('\n')[0]
+            result = self.ssh_client.execute_command(f"locate -l 1 'bin/{tool}' 2>/dev/null")
+            if result['success'] and result.get('stdout', '').strip():
+                path = result.get('stdout', '').strip().split('\n')[0]
+                # Register this discovered tool in the registry
+                registry.register_tool(
+                    name=tool,
+                    path=path,
+                    version=self._get_remote_tool_version(tool),
+                    category=self._categorize_tool(tool)
+                )
+                return path
                 
         except Exception as e:
             logger.debug(f"[EvolvingCommandGenerator] Discovery failed: {e}")
         
         return None
+    
+    def _get_remote_tool_version(self, tool: str) -> str:
+        """Get version of a remote tool"""
+        try:
+            result = self.ssh_client.execute_command(f"{tool} --version")
+            if result['success']:
+                output = result.get('stdout', '').split('\n')[0]
+                import re
+                version_match = re.search(r'(\d+\.\d+(\.\d+)?(\.\d+)?)|([\w\d\.\-]+)', output)
+                if version_match:
+                    return version_match.group(0)
+                return output.strip()[:100]
+        except:
+            pass
+        return "Unknown"
+    
+    def _categorize_tool(self, tool: str) -> str:
+        """Categorize a tool based on its name"""
+        tool_lower = tool.lower()
+        
+        # Scanner category
+        if any(scanner in tool_lower for scanner in ["nmap", "nikto", "nuclei", "wpscan", "gobuster", "ffuf", "dirb", "scan"]):
+            return "scanner"
+        
+        # Password category
+        if any(password in tool_lower for password in ["john", "hashcat", "hydra", "password"]):
+            return "password"
+        
+        # Exploitation category
+        if any(exploit in tool_lower for exploit in ["metasploit", "msf", "exploit", "sqlmap"]):
+            return "exploitation"
+        
+        # Network category
+        if any(network in tool_lower for network in ["netcat", "nc", "tcpdump", "wireshark", "network"]):
+            return "network"
+        
+        # Wireless category
+        if any(wireless in tool_lower for wireless in ["aircrack", "kismet", "wireless"]):
+            return "wireless"
+        
+        # Forensics category
+        if any(forensics in tool_lower for forensics in ["volatility", "autopsy", "forensic"]):
+            return "forensics"
+        
+        # Web category
+        if any(web in tool_lower for web in ["curl", "wget", "burp", "zap", "web"]):
+            return "web"
+        
+        return "misc"
     
     def _reinforce_success(self, tool: str, command: str, 
                           findings_count: int, execution_time: float):

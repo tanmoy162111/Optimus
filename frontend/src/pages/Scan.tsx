@@ -16,7 +16,7 @@ import {
   ChevronUp,
   AlertCircle,
 } from 'lucide-react';
-import { cn, extractHost } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { useSocket, useScanSocket } from '@/hooks';
 import { useScanStore } from '@/stores';
 import { api } from '@/services';
@@ -61,22 +61,13 @@ export const ScanPage: React.FC = () => {
 
 
 
-  // Validate target
+  // Validate target - only basic UI validation, backend handles security validation
   const validateTarget = (value: string) => {
     if (!value.trim()) {
       setTargetError('Target is required');
       return false;
     }
-
-    // Check if it's a valid URL or IP
-    const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/;
-    const ipPattern = /^(\d{1,3}\.){3}\d{1,3}(\/\d{1,2})?$/;
-
-    if (!urlPattern.test(value) && !ipPattern.test(value)) {
-      setTargetError('Please enter a valid URL or IP address');
-      return false;
-    }
-
+  
     setTargetError('');
     return true;
   };
@@ -214,7 +205,7 @@ export const ScanPage: React.FC = () => {
                 {target && !targetError && (
                   <div className="flex items-center gap-2 text-sm text-gray-400">
                     <Shield className="w-4 h-4 text-neon-green" />
-                    Target validated: {extractHost(target)}
+                    Target ready for backend validation
                   </div>
                 )}
               </div>

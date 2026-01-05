@@ -91,7 +91,7 @@ class OptimusBrain:
                     self.memory_system = get_memory_system()
                     logger.info("✓ Memory System initialized")
                 except Exception as e:
-                    logger.error(f"✗ Memory System failed: {e}")
+                    logger.error(f"X Memory System failed: {e}")
             
             # Initialize Web Intelligence
             if self.config.enable_web_intel:
@@ -100,7 +100,7 @@ class OptimusBrain:
                     self.web_intel = get_web_intelligence()
                     logger.info("✓ Web Intelligence initialized")
                 except Exception as e:
-                    logger.error(f"✗ Web Intelligence failed: {e}")
+                    logger.error(f"X Web Intelligence failed: {e}")
             
             # Initialize Delegation System
             if self.config.enable_delegation:
@@ -109,7 +109,7 @@ class OptimusBrain:
                     self.delegation_system = get_agent_coordinator(self.config.llm_client)
                     logger.info("✓ Delegation System initialized")
                 except Exception as e:
-                    logger.error(f"✗ Delegation System failed: {e}")
+                    logger.error(f"X Delegation System failed: {e}")
             
             # Initialize Adaptive Exploitation Engine
             if self.config.enable_adaptive:
@@ -118,7 +118,7 @@ class OptimusBrain:
                     self.adaptive_engine = get_adaptive_engine(self.memory_system)
                     logger.info("✓ Adaptive Exploitation Engine initialized")
                 except Exception as e:
-                    logger.error(f"✗ Adaptive Exploitation failed: {e}")
+                    logger.error(f"X Adaptive Exploitation failed: {e}")
             
             # Initialize Vulnerability Chain Engine
             if self.config.enable_chaining:
@@ -127,7 +127,7 @@ class OptimusBrain:
                     self.chain_engine = get_chain_engine(self.memory_system)
                     logger.info("✓ Vulnerability Chain Engine initialized")
                 except Exception as e:
-                    logger.error(f"✗ Vulnerability Chaining failed: {e}")
+                    logger.error(f"X Vulnerability Chaining failed: {e}")
             
             # Initialize Explainable AI Engine
             if self.config.enable_explainable:
@@ -136,7 +136,7 @@ class OptimusBrain:
                     self.explainable_engine = get_explainable_engine()
                     logger.info("✓ Explainable AI Engine initialized")
                 except Exception as e:
-                    logger.error(f"✗ Explainable AI failed: {e}")
+                    logger.error(f"X Explainable AI failed: {e}")
             
             # Initialize Continuous Learning Engine
             if self.config.enable_learning:
@@ -145,7 +145,7 @@ class OptimusBrain:
                     self.learning_engine = get_learning_engine(self.memory_system)
                     logger.info("✓ Continuous Learning Engine initialized")
                 except Exception as e:
-                    logger.error(f"✗ Continuous Learning failed: {e}")
+                    logger.error(f"X Continuous Learning failed: {e}")
             
             # Initialize Zero-Day Discovery Engine
             if self.config.enable_zeroday:

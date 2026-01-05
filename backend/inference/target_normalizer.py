@@ -126,7 +126,13 @@ class TargetNormalizer:
             return normalized['hostname']
         elif tool_lower in injection_tools:
             # For injection tools, try to find or create a testable URL
-            return self._get_injectable_target(normalized['base_url'])
+            # Only add parameters for known applications like Juice Shop
+            if 'juice' in target.lower():
+                return self._get_injectable_target(normalized['base_url'])
+            else:
+                # For unknown targets, just return the clean URL
+                # The tool should discover parameters during execution
+                return normalized['clean_url']
         elif tool_lower in url_tools:
             return normalized['clean_url']
         else:

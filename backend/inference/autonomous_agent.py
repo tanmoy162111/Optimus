@@ -4,6 +4,7 @@ import logging
 import time
 from datetime import datetime
 from typing import Dict, List, Any
+from utils.observability import trace_context, generate_trace_id, log_target, log_tool, log_command, log_output, log_finding, log_reward, log_skill, log_lesson_decision, info, debug, warning, error, critical
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +35,7 @@ from inference.dynamic_tool_database import DynamicToolDatabase
 from inference.target_analyzer import TargetAnalyzer
 from inference.strategy_selector import StrategySelector
 from inference.learning_module import RealTimeLearningModule
+from inference.state_schema import ensure_scan_state
 
 logger = logging.getLogger(__name__)
 
@@ -43,14 +45,15 @@ class AutonomousPentestAgent:
     def __init__(self, socketio=None):
         print(f"\n[AutonomousPentestAgent] Initializing...")
         
+        print("[AutonomousPentestAgent] Creating ToolManager...")
+        self.tool_manager = ToolManager(socketio)  # Pass socketio to ToolManager
+        
         print("[AutonomousPentestAgent] Creating PhaseAwareToolSelector...")
-        self.tool_selector = PhaseAwareToolSelector()
+        # Pass the SSH client from tool_manager to the tool selector
+        self.tool_selector = PhaseAwareToolSelector(ssh_client=self.tool_manager.ssh_client)
         
         print("[AutonomousPentestAgent] Creating PhaseController...")
         self.phase_controller = PhaseController()
-        
-        print("[AutonomousPentestAgent] Creating ToolManager...")
-        self.tool_manager = ToolManager(socketio)  # Pass socketio to ToolManager
         
         print("[AutonomousPentestAgent] Creating VulnerabilityKnowledgeBase...")
         self.knowledge_base = VulnerabilityKnowledgeBase()
@@ -107,22 +110,33 @@ class AutonomousPentestAgent:
     
     def run_autonomous_scan(self, target: str, scan_config: Dict = None) -> Dict[str, Any]:
         """Main autonomous scanning loop - FULLY INTELLIGENT"""
-        print(f"\n{'='*60}")
-        print(f"[AutonomousPentestAgent] run_autonomous_scan starting!")
-        print(f"  target: {target}")
-        print(f"  config: {scan_config}")
-        print(f"{'='*60}")
+        # Generate trace ID for this scan
+        trace_id = generate_trace_id()
         
-        if scan_config is None:
-            scan_config = {}
+        with trace_context(trace_id):
+            print(f"\n{'='*60}")
+            print(f"[AutonomousPentestAgent] run_autonomous_scan starting!")
+            print(f"  target: {target}")
+            print(f"  config: {scan_config}")
+            print(f"{'='*60}")
             
-        # Check if this is fully autonomous mode
-        if scan_config.get('self_directed', False):
-            return self._run_fully_autonomous_scan(target, scan_config)
-        
-        print("[AutonomousPentestAgent] Initializing scan state...")
-        scan_state = self._initialize_scan_state(target, scan_config)
-        print(f"[AutonomousPentestAgent] Scan state initialized: {scan_state.get('scan_id')}")
+            # Log the scan initiation
+            log_target(target, scan_config=scan_config)
+            info(f"Autonomous scan initiated", target=target, config=scan_config, trace_id=trace_id)
+            
+            if scan_config is None:
+                scan_config = {}
+                
+            # Check if this is fully autonomous mode
+            if scan_config.get('self_directed', False):
+                return self._run_fully_autonomous_scan(target, scan_config)
+            
+            print("[AutonomousPentestAgent] Initializing scan state...")
+            scan_state = self._initialize_scan_state(target, scan_config)
+            print(f"[AutonomousPentestAgent] Scan state initialized: {scan_state.get('scan_id')}")
+            
+            # Log the scan state initialization
+            info(f"Scan state initialized", scan_id=scan_state.get('scan_id'), target=target)
         
         max_iterations = 100
         iteration = 0
@@ -145,6 +159,9 @@ class AutonomousPentestAgent:
             iteration += 1
             logger.info(f"=== Iteration {iteration} | Phase: {scan_state['phase']} ===")
             
+            # Log the iteration with trace ID
+            info(f"Scan iteration started", iteration=iteration, phase=scan_state['phase'], scan_id=scan_state.get('scan_id'))
+            
             elapsed_time = (datetime.now() - datetime.fromisoformat(scan_state['start_time'])).total_seconds()
             if elapsed_time < 60:
                 stalled_iterations = 0
@@ -156,6 +173,7 @@ class AutonomousPentestAgent:
                 
                 if new_strategy != old_strategy:
                     logger.info("Strategy change: %s -> %s", old_strategy, new_strategy)
+                    info(f"Strategy changed", old_strategy=old_strategy, new_strategy=new_strategy, scan_id=scan_state.get('scan_id'))
                     scan_state['strategy'] = new_strategy
                     scan_state['strategy_changes'] += 1
                     
@@ -169,6 +187,7 @@ class AutonomousPentestAgent:
                 # New finding! Update tracking
                 scan_state['last_finding_iteration'] = len(scan_state['tools_executed'])
                 stalled_iterations = 0
+                info(f"New finding discovered", findings_count=current_findings_count, scan_id=scan_state.get('scan_id'))
             else:
                 stalled_iterations += 1
                 
@@ -177,6 +196,7 @@ class AutonomousPentestAgent:
             # Force phase change if stalled too long
             if stalled_iterations >= MAX_STALLED_ITERATIONS:
                 logger.warning("Scan stalled for %d iterations, forcing phase transition", stalled_iterations)
+                warning(f"Scan stalled, forcing phase transition", stalled_iterations=stalled_iterations, scan_id=scan_state.get('scan_id'))
                 next_phase = self.phase_controller.get_next_phase(scan_state['phase'], scan_state)
                 scan_state['phase'] = next_phase
                 scan_state['phase_start_time'] = datetime.now().isoformat()
@@ -187,6 +207,12 @@ class AutonomousPentestAgent:
             # Get tool recommendation
             tool_recommendation = self._get_tool_recommendation(scan_state)
             recommended_tools = tool_recommendation.get('tools', [])
+            
+            # Log the tool recommendation
+            if recommended_tools:
+                info(f"Tool recommendation received", tools=recommended_tools, phase=scan_state['phase'], scan_id=scan_state.get('scan_id'))
+            else:
+                info(f"No tools recommended", phase=scan_state['phase'], scan_id=scan_state.get('scan_id'))
             
             # Limit iterations based on phase - increase tool execution
             phase_limits = {
@@ -240,6 +266,7 @@ class AutonomousPentestAgent:
             
             if tool_count >= 3:
                 logger.warning(f"Tool {tool_to_execute} executed {tool_count} times, blacklisting")
+                warning(f"Tool blacklisted due to repetition", tool=tool_to_execute, execution_count=tool_count, scan_id=scan_state.get('scan_id'))
                 if 'blacklisted_tools' not in scan_state:
                     scan_state['blacklisted_tools'] = []
                 if tool_to_execute not in scan_state['blacklisted_tools']:
@@ -250,7 +277,13 @@ class AutonomousPentestAgent:
             parameters = self._generate_tool_parameters(tool_to_execute, scan_state, {})
             
             logger.info(f"Executing tool: {tool_to_execute}")
+            info(f"Executing tool", tool=tool_to_execute, target=target, phase=scan_state['phase'], scan_id=scan_state.get('scan_id'))
             result = self._execute_tool_real(tool_to_execute, target, scan_state, parameters)
+            
+            # Log the result
+            success = result.get('success', False)
+            findings_count = result.get('findings_count', 0)
+            info(f"Tool execution completed", tool=tool_to_execute, success=success, findings_count=findings_count, scan_id=scan_state.get('scan_id'))
             
             # Update state
             self._update_scan_state_real(scan_state, result)
@@ -259,6 +292,7 @@ class AutonomousPentestAgent:
             next_phase = self.phase_controller.should_transition(scan_state)
             if next_phase != scan_state['phase']:
                 logger.info(f"📍 Phase transition: {scan_state['phase']} → {next_phase}")
+                info(f"Phase transition", from_phase=scan_state['phase'], to_phase=next_phase, scan_id=scan_state.get('scan_id'))
                 scan_state['phase'] = next_phase
                 scan_state['phase_start_time'] = datetime.now().isoformat()
                 scan_state['strategy'] = self.strategy_selector.select_strategy(scan_state)
@@ -751,7 +785,8 @@ class AutonomousPentestAgent:
         analyzer = TargetAnalyzer()
         target_profile = analyzer.analyze_target(target)
         
-        scan_state = {
+        # Create initial scan state
+        initial_state = {
             'scan_id': str(uuid.uuid4()),
             'target': target,
             'target_profile': target_profile,  # NEW: Store target profile
@@ -770,6 +805,10 @@ class AutonomousPentestAgent:
             'last_finding_iteration': 0,  # NEW: Track when we last found something
             'phase_start_time': datetime.now().isoformat(),
         }
+        
+        from .state_schema import ensure_scan_state
+        # Apply standardized schema
+        scan_state = ensure_scan_state(initial_state)
         
         return scan_state
 
@@ -980,6 +1019,9 @@ class AutonomousPentestAgent:
             if parameters:
                 tool_params.update(parameters)
             
+            # Log the tool execution attempt
+            info(f"Tool execution initiated", tool=tool_name, target=target, scan_id=scan_state.get('scan_id'), phase=scan_state.get('phase'))
+            
             result = self.tool_manager.execute_tool(
                 tool_name=tool_name,
                 target=target,
@@ -996,15 +1038,64 @@ class AutonomousPentestAgent:
                 'exit_code': result.get('exit_code', -1)
             })
             
+            # Log the tool execution result
+            success = result.get('success', False)
+            findings_count = result.get('findings_count', 0)
+            info(f"Tool execution completed", tool=tool_name, success=success, findings_count=findings_count, scan_id=scan_state.get('scan_id'))
+            
             return result
                 
         except Exception as e:
             logger.error(f"Tool execution failed: {e}")
+            error(f"Tool execution failed", tool=tool_name, target=target, scan_id=scan_state.get('scan_id'), error=str(e))
             return {
                 'success': False,
                 'error': str(e),
                 'findings': []
             }
+
+    def _execute_tool_with_timeout(self, tool_name: str, target: str, parameters: Dict = None) -> Dict[str, Any]:
+        """Execute tool with timeout wrapper - for backward compatibility"""
+        # Create a minimal scan_state for the real execution method
+        scan_state = {
+            'scan_id': f"autonomous_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+            'start_time': datetime.now().isoformat(),
+            'config': {'max_time': 3600},
+            'phase': 'reconnaissance',
+            'findings': [],
+            'tools_executed': [],
+            'target_type': 'web',
+            'waf_detected': False,
+            'technologies_detected': [],
+            'coverage': 0.0,
+            'aggressive': False,
+            'stealth_required': False
+        }
+        
+        return self._execute_tool_real(tool_name, target, scan_state, parameters)
+
+    def _process_tool_results(self, scan_state: Dict, result: Dict):
+        """Process tool results and update scan state"""
+        # Update scan state with tool results
+        self._update_scan_state_real(scan_state, result)
+
+    def _learn_from_execution(self, tool_name: str, result: Dict, scan_state: Dict):
+        """Learn from tool execution results"""
+        # Basic learning implementation - update tool effectiveness tracking
+        success = result.get('success', False)
+        findings_count = len(result.get('findings', []))
+        
+        # Update tool effectiveness in scan state
+        if 'tool_effectiveness' not in scan_state:
+            scan_state['tool_effectiveness'] = {}
+        
+        if tool_name not in scan_state['tool_effectiveness']:
+            scan_state['tool_effectiveness'][tool_name] = {'success_count': 0, 'total_count': 0, 'findings_count': 0}
+        
+        scan_state['tool_effectiveness'][tool_name]['total_count'] += 1
+        if success:
+            scan_state['tool_effectiveness'][tool_name]['success_count'] += 1
+        scan_state['tool_effectiveness'][tool_name]['findings_count'] += findings_count
 
     def _update_scan_state_real(self, scan_state: Dict, result: Dict):
         """Update scan state with REAL tool results - FIXED to always process findings"""
@@ -1036,6 +1127,12 @@ class AutonomousPentestAgent:
                 print(f"[DEBUG] Vulnerability {i+1}: {vuln.get('type')} - {vuln.get('name', '')[:50]}")
             
             logger.info(f"✓ Found {len(new_vulns)} new vulnerabilities")
+            
+            # Log the findings with trace ID
+            for vuln in new_vulns:
+                # Log the finding
+                log_finding(vuln, scan_id=scan_state.get('scan_id'), tool=result.get('tool_name'))
+                info(f"Finding discovered", finding_type=vuln.get('type'), severity=vuln.get('severity', 0), scan_id=scan_state.get('scan_id'))
             
             # Add to scan findings
             for vuln in new_vulns:
@@ -1185,8 +1282,27 @@ class AutonomousPentestAgent:
         findings = result.get('parsed_results', {}).get('vulnerabilities', [])
         execution_time = result.get('execution_time', 0)
         
+        # Calculate reward based on findings
+        reward = len(findings) * 10.0  # Base reward for each finding
+        if success and len(findings) > 0:
+            reward += 5.0  # Additional reward for successful execution with findings
+        
+        # Log the reward
+        log_reward(reward, tool=tool_name, findings_count=len(findings), scan_id=scan_state.get('scan_id'))
+        info(f"Reward calculated", tool=tool_name, reward=reward, findings_count=len(findings), scan_id=scan_state.get('scan_id'))
+        
         # 1. Update local learning module
         insights = self.learning_module.learn_from_execution(tool_name, result, scan_state)
+        
+        # Log skill acquisition or updates
+        if insights.get('new_patterns') or insights.get('improved_strategies'):
+            for pattern in insights.get('new_patterns', []):
+                log_skill(f"Pattern learned: {pattern}", tool=tool_name, scan_id=scan_state.get('scan_id'))
+                info(f"Skill acquired", skill_type="pattern", skill=pattern, tool=tool_name, scan_id=scan_state.get('scan_id'))
+            
+            for strategy in insights.get('improved_strategies', []):
+                log_skill(f"Strategy improved: {strategy}", tool=tool_name, scan_id=scan_state.get('scan_id'))
+                info(f"Skill acquired", skill_type="strategy", skill=strategy, tool=tool_name, scan_id=scan_state.get('scan_id'))
         
         # 2. Update rule-based selector's effectiveness tracking
         if hasattr(self.tool_selector, 'rule_selector'):
@@ -1222,6 +1338,7 @@ class AutonomousPentestAgent:
         # 6. Log learning insights
         if insights.get('recommendations'):
             logger.info(f"Learning insights: {insights['recommendations']}")
+            info(f"Learning insights", recommendations=insights['recommendations'], scan_id=scan_state.get('scan_id'))
 
     def _should_blacklist_tool(self, tool: str, scan_state: Dict) -> bool:
         """

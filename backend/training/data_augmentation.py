@@ -260,7 +260,7 @@ class AttackDataAugmenter:
         print("\n" + "="*80)
         print("AFTER AUGMENTATION:")
         print("="*80)
-        print(f"Total samples: {len(training_data)} → {len(augmented_data)}")
+        print(f"Total samples: {len(training_data)} -> {len(augmented_data)}")
         print("\nNew Attack Type Distribution:")
         for attack_type, count in final_counts.most_common():
             original = attack_counts.get(attack_type, 0)

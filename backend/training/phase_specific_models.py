@@ -416,6 +416,15 @@ class PhaseSpecificToolSelector:
     def load_all_models(self):
         """Load all trained phase-specific models"""
         import os
+        import warnings
+        from sklearn.exceptions import SkipTestWarning
+        
+        # Check if phase models should be disabled
+        import os
+        if os.environ.get('OPTIMUS_DISABLE_PHASE_MODELS', '').lower() in ('1', 'true', 'yes'):
+            logger.info("Phase-specific models disabled via OPTIMUS_DISABLE_PHASE_MODELS")
+            return
+        
         # Try multiple possible locations
         possible_base_paths = [
             'models',  # From training directory
@@ -429,15 +438,32 @@ class PhaseSpecificToolSelector:
             for base_path in possible_base_paths:
                 try:
                     model_path = os.path.join(base_path, f'tool_recommender_{phase}.pkl')
-                    self.models[phase] = joblib.load(model_path)
-                    logger.info(f"✅ Loaded {phase} model from {model_path}")
-                    loaded = True
-                    break
-                except (FileNotFoundError, OSError):
+                    if os.path.exists(model_path):
+                        # Load with error handling for sklearn version mismatches
+                        try:
+                            with warnings.catch_warnings():
+                                warnings.filterwarnings('ignore', category=DeprecationWarning)
+                                warnings.filterwarnings('ignore', category=FutureWarning)
+                                self.models[phase] = joblib.load(model_path)
+                            logger.info(f"Loaded {phase} model from {model_path}")
+                            loaded = True
+                            # Check if loaded model has required attributes
+                            model_data = self.models[phase]
+                            if 'model' not in model_data or 'scaler' not in model_data:
+                                logger.warning(f"Model {phase} missing required attributes, skipping")
+                                loaded = False
+                                continue
+                        except Exception as e:
+                            logger.warning(f"Failed to load {phase} model due to sklearn version mismatch: {e}")
+                            continue
+                    else:
+                        logger.info(f"Model file not found: {model_path}")
+                except (FileNotFoundError, OSError) as e:
+                    logger.info(f"Model path not found for {phase}: {base_path}")
                     continue
             
             if not loaded:
-                logger.warning(f"⚠️  Model not found for {phase}")
+                logger.info(f"No model available for {phase}, will use fallback methods")
     
     def recommend_tools(self, context: Dict[str, Any]) -> Dict[str, Any]:
         """

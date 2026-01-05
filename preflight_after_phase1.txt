@@ -1,0 +1,21 @@
+Running preflight checks...
+==================================================
+Testing core modules:
+ Hybrid tool system available
+[SUCCESS] backend.inference.tool_manager
+ Hybrid tool system available
+[SUCCESS] backend.inference.autonomous_agent
+[SUCCESS] backend.inference.tool_selector
+[SUCCESS] backend.inference.intelligent_selector
+[SUCCESS] backend.training_environment.newbie_to_pro_training
+[SUCCESS] backend.training.deep_rl_agent
+[SUCCESS] backend.training.rl_trainer
+[SUCCESS] backend.execution.ssh_client
+
+Testing optional dependencies:
+[SUCCESS] tensorflow (optional)
+[SUCCESS] flask_socketio (optional)
+
+==================================================
+Results: 10/10 modules imported successfully
+[SUCCESS] All modules imported successfully!
