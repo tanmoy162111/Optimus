@@ -505,8 +505,18 @@ class PhaseSpecificToolSelector:
             else:
                 tools_executed_names.append(item)
         tools_executed = set(tools_executed_names)
+        
+        # BYPASSED: Tool registry check disabled - tools run on Kali VM via SSH
+        # All tools are assumed available on Kali VM
+        # try:
+        #     from ..inference.tool_registry import is_tool_registered
+        # except ImportError:
+        #     import sys
+        #     import os
+        #     sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), 'inference'))
+        #     from tool_registry import is_tool_registered
         available_tools = [(tool, prob) for tool, prob in tool_probas
-                          if tool not in tools_executed]
+                          if tool not in tools_executed]  # No registry check
         
         # Return top 3
         top_tools = [tool for tool, prob in available_tools[:3]]

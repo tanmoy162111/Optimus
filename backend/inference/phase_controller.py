@@ -29,7 +29,7 @@ class PhaseController:
         """
         Determine if phase should transition based on progress metrics
         IMPROVED: More lenient criteria to allow tools time to find vulnerabilities
-        
+            
         Args:
             current_state: Current scan state
             
@@ -40,22 +40,26 @@ class PhaseController:
         findings = current_state.get('findings', [])
         tools_executed = current_state.get('tools_executed', [])
         coverage = current_state.get('coverage', 0.0)
-        
+            
         # Convert tools_executed to list of tool names if it contains dicts
         if tools_executed and len(tools_executed) > 0 and isinstance(tools_executed[0], dict):
             tool_names = [t['tool'] for t in tools_executed]
         else:
             tool_names = tools_executed
-        
+            
         # Count UNIQUE tools executed (not total executions)
         unique_tools = list(set(tool_names))
-        
+            
         print(f"[PhaseController] Checking transition for {phase}")
         print(f"  Total executions: {len(tool_names)}")
         print(f"  Unique tools: {len(unique_tools)}")
         print(f"  Findings: {len(findings)}")
         print(f"  Coverage: {coverage:.2f}")
-        
+            
+        # Ensure training_phase == execution_phase - No reinterpretation
+        # The phase controller now maintains literal and authoritative phase transitions
+        phase = current_state['phase']
+            
         # Don't force transitions in first 2 minutes of phase
         phase_start_time = current_state.get('phase_start_time')
         if phase_start_time:

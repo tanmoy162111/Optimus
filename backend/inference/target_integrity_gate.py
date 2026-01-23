@@ -33,8 +33,13 @@ class TargetIntegrityGate:
             '0.0.0.0',
             '::1',
             'juice-shop',  # OWASP Juice Shop container name
+            'demo.owasp-juice.shop',  # OWASP Juice Shop public demo
+            'owasp-juice.shop',  # OWASP Juice Shop domain
             'dvwa',        # DVWA container name
             'metasploitable',  # Metasploitable container name
+            'hackthebox',  # HackTheBox labs
+            'tryhackme',   # TryHackMe labs
+            'vulnhub',     # VulnHub VMs
         ]
         
         # Blacklisted targets (to prevent accidental execution on unauthorized systems)
@@ -306,18 +311,20 @@ class TargetIntegrityGate:
             elif tool_name.lower() in ['nikto', 'sqlmap', 'nuclei'] and port not in self.web_scanning_ports:
                 logger.warning(f"[TargetIntegrityGate] Non-standard port {port} for web scanner {tool_name}")
         
-        # Final result with all target information
-        result = {
-            'raw_target': raw_target,
-            'normalized_target': normalized_target,
-            'hostname': hostname,
-            'port': port,
-            'resolved_ip': resolved_ip,
-            'is_ip': is_ip,
-            'is_authorized': True,
-            'is_valid': True,
-            'tool_name': tool_name
-        }
+        # Final result as a unified ValidatedTarget object
+        from .target_schema import ValidatedTarget
+        result = ValidatedTarget(
+            raw=raw_target,
+            normalized=normalized_target,
+            hostname=hostname,
+            scheme=format_validation.get('scheme', 'http'),
+            port=port,
+            resolved_ip=resolved_ip,
+            is_authorized=True,
+            is_valid=True,
+            is_ip=is_ip,
+            tool_name=tool_name
+        )
         
         logger.info(f"[TargetIntegrityGate] Target integrity validation PASSED: {result}")
         logger.info(f"[TargetIntegrityGate] Debug - Raw: {raw_target}, Normalized: {normalized_target}, Resolved IP: {resolved_ip}")
@@ -326,7 +333,7 @@ class TargetIntegrityGate:
     def validate_and_prepare_for_execution(self, target: str, tool_name: str) -> str:
         """
         Validate target and return the appropriate format for tool execution.
-        
+            
         Args:
             target: Target to validate and format
             tool_name: Name of tool that will execute
@@ -334,47 +341,16 @@ class TargetIntegrityGate:
         Returns:
             Formatted target string appropriate for the tool
         """
-        # Apply integrity gate
+        # Apply integrity gate - returns a ValidatedTarget object
         validation_result = self.apply_target_integrity_gate(target, tool_name)
-        
-        # Format target based on tool type
-        tool_lower = tool_name.lower()
-        
-        # Tools that need hostname only (network tools)
-        hostname_tools = [
-            'nmap', 'masscan', 'fierce', 'dnsenum', 'dnsrecon',
-            'amass', 'sublist3r', 'subfinder', 'sslscan', 'enum4linux'
-        ]
-        
-        # Tools that need URL (web tools)
-        url_tools = [
-            'nikto', 'nuclei', 'whatweb', 'gobuster', 'ffuf', 'dirb',
-            'wpscan', 'dalfox', 'commix', 'xsser'
-        ]
-        
-        # Tools that need URL with parameters (for injection testing)
-        injection_tools = ['sqlmap', 'commix', 'dalfox', 'xsser', 'nosqlmap']
-        
-        if tool_lower in hostname_tools:
-            # For network tools, use resolved IP or hostname
-            formatted_target = validation_result['resolved_ip'] if validation_result['is_ip'] else validation_result['hostname']
-        elif tool_lower in injection_tools:
-            # For injection tools, use full URL with port
-            if validation_result['port'] not in [80, 443]:
-                formatted_target = f"{validation_result['normalized_target']}"
-            else:
-                formatted_target = f"{validation_result['scheme']}://{validation_result['hostname']}"
-        elif tool_lower in url_tools:
-            # For web tools, use full URL with port
-            formatted_target = validation_result['normalized_target']
-        else:
-            # Default to normalized target
-            formatted_target = validation_result['normalized_target']
-        
+            
+        # Use the unified target schema's method to format for specific tool
+        formatted_target = validation_result.get_formatted_for_tool(tool_name)
+            
         # Log the final rendered target for debugging
         logger.info(f"[TargetIntegrityGate] Final rendered target for {tool_name}: {formatted_target}")
-        logger.info(f"[TargetIntegrityGate] Debug - Raw: {validation_result['raw_target']}, Normalized: {validation_result['normalized_target']}, Final: {formatted_target}, Resolved IP: {validation_result['resolved_ip']}")
-        
+        logger.info(f"[TargetIntegrityGate] Debug - Raw: {validation_result.raw}, Normalized: {validation_result.normalized}, Final: {formatted_target}, Resolved IP: {validation_result.resolved_ip}")
+            
         return formatted_target
 
 

@@ -9,11 +9,11 @@
       "name": "Canonical_Landscape"
     },
     {
-      "url": "http://demo.owasp.juice.shop",
+      "url": "https://demo.owasp-juice.shop",
       "name": "OWASP_Juice_Shop"
     }
   ],
   "total_hours": 12,
   "output_dir": "training_output/updated_targets_training",
-  "authorized_targets": ["192.168.131.", "canonical.landscape.com", "owasp.juice.shop"]
+  "authorized_targets": ["192.168.131.", "canonical.landscape.com", "owasp.juice.shop", "demo.owasp-juice.shop"]
 }

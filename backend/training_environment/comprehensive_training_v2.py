@@ -221,8 +221,8 @@ class ComponentManager:
         
         # 8. Reward Calculator
         try:
-            from training.reward_calculator import RewardCalculator
-            self.components['reward_calculator'] = RewardCalculator()
+            from training.reward_calculator import get_reward_calculator
+            self.components['reward_calculator'] = get_reward_calculator()
             status['reward_calculator'] = True
             logger.info("✓ Reward Calculator initialized")
         except Exception as e:
@@ -523,10 +523,16 @@ class ToolDiscoveryTrainer:
             )
             
             if result and result.get('stdout'):
-                # Learn output patterns
+                # Learn output patterns - pass parsed results dict, not stderr
                 if evolving_parser:
+                    # Get parsed results or create from findings
+                    parsed_results = result.get('parsed_results', {
+                        'vulnerabilities': result.get('findings', []),
+                        'hosts': [],
+                        'services': []
+                    })
                     patterns = evolving_parser.learn_from_output(
-                        tool_name, result['stdout'], result.get('stderr', '')
+                        tool_name, result['stdout'], parsed_results
                     )
                     discovery['output_patterns'] = patterns
                 

@@ -34,9 +34,58 @@ class Command:
     timeout: int = 300  # 5 minutes default timeout
     
     def to_command_line(self) -> str:
-        """Convert structured command to command line string"""
+        """Convert structured command to command line string
+        
+        Detects whether the target already exists in the command to prevent double injection.
+        Also ensures proper timeout parameters for network tools.
+        """
         args_str = " ".join(self.arguments)
-        return f"{self.tool} {args_str} {self.target}"
+        base_command = f"{self.tool} {args_str}"
+        
+        # Add timeout parameters for nmap if not already present (critical for external targets)
+        if self.tool == 'nmap':
+            base_command = self._add_nmap_timeout_params(base_command)
+        
+        # Check if target is already present in the base command to avoid double injection
+        # Use more robust detection by checking if target appears as a separate argument
+        # Split the command into tokens and check if target is one of them
+        tokens = re.split(r'\s+', base_command.strip())
+        if self.target in tokens:
+            # Target is already in the command, don't add it again
+            return base_command
+        else:
+            # Target is not in the command, append it
+            return f"{base_command} {self.target}"
+    
+    def _add_nmap_timeout_params(self, command: str) -> str:
+        """Add timeout parameters to nmap command to prevent retransmission issues"""
+        # Check if target is external (not local network)
+        is_external = not any(x in self.target for x in ['192.168.', '10.', '172.', '127.', 'localhost'])
+        
+        # For external targets, use more conservative settings
+        if is_external:
+            if '--max-retries' not in command:
+                command += ' --max-retries 3'
+            if '--host-timeout' not in command:
+                command += ' --host-timeout 15m'
+            if '--initial-rtt-timeout' not in command:
+                command += ' --initial-rtt-timeout 500ms'
+            if '--max-rtt-timeout' not in command:
+                command += ' --max-rtt-timeout 3s'
+        else:
+            # For internal targets, use faster settings
+            if '--max-retries' not in command:
+                command += ' --max-retries 5'
+            if '--host-timeout' not in command:
+                command += ' --host-timeout 30m'
+        
+        # Common parameters for stability
+        if '--min-rate' not in command:
+            command += ' --min-rate 100'
+        if '--defeat-rst-ratelimit' not in command:
+            command += ' --defeat-rst-ratelimit'
+        
+        return command
 
 
 class CommandValidator:
@@ -79,7 +128,18 @@ class CommandValidator:
     def _is_tool_available(self, tool: str) -> bool:
         """Check if a tool is available on the system (local or remote via SSH)"""
         # Use the proper tool availability checking with SSH support
-        from .tool_availability import is_tool_available
+        try:
+            from .tool_availability import is_tool_available
+        except (ImportError, ValueError):
+            try:
+                from tool_availability import is_tool_available
+            except ImportError:
+                import sys
+                from pathlib import Path
+                backend_path = str(Path(__file__).parent.parent)
+                if backend_path not in sys.path:
+                    sys.path.insert(0, backend_path)
+                from inference.tool_availability import is_tool_available
         return is_tool_available(tool, ssh_client=self.ssh_client)
     
     def validate_command(self, command: Command) -> tuple[bool, str]:
@@ -170,23 +230,27 @@ class CommandValidator:
         return validators.url(target)
     
     def _has_dangerous_pattern(self, arg: str) -> bool:
-        """Check if argument contains dangerous patterns"""
+        """Check if argument contains dangerous patterns
+        
+        NOTE: Patterns must use word boundaries (\b) where appropriate to avoid
+        false positives with URLs (e.g., 'sh' matching '.shop' domains).
+        """
         dangerous_patterns = [
             r';',           # Command chaining
             r'&&',          # Command chaining
             r'\|\|',        # Command chaining
-            r'\|',          # Pipe
+            r'(?<!https?:)(?<!http:)\|(?!\w)',  # Pipe (but not in URLs)
             r'\$\(.*\)',    # Command substitution
             r'`.*`',        # Backtick command substitution
-            r'>',           # Output redirection
-            r'<',           # Input redirection
+            r'(?<![a-zA-Z0-9])>(?![a-zA-Z])',   # Output redirection (not in HTML/XML-like content)
+            r'(?<![a-zA-Z0-9])<(?![a-zA-Z])',   # Input redirection (not in HTML/XML-like content)
             r'>>',          # Append redirection
             r'2>',          # Error redirection
-            r'\$\(',        # Environment variable expansion
-            r'eval',        # Eval function
-            r'exec',        # Exec function
-            r'bash',        # Bash execution
-            r'sh',          # Shell execution
+            r'\$\{',        # Environment variable expansion (use \$\{ instead of \$\()
+            r'\beval\b',    # Eval function (word boundary)
+            r'\bexec\b',    # Exec function (word boundary)
+            r'(?<![a-zA-Z0-9/.-])bash(?![a-zA-Z0-9])',  # Bash execution (word boundary, not in paths)
+            r'(?<![a-zA-Z0-9/.-])sh(?![a-zA-Z0-9])',    # Shell execution (word boundary, not in .shop, etc.)
         ]
         
         for pattern in dangerous_patterns:
@@ -202,10 +266,10 @@ class CommandLogger:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
     
-    def log_rejected_command(self, command: Command, reason: str):
-        """Log rejected commands"""
+    def log_rejected_command(self, command: Command, reason: str, phase: str = 'unknown', scan_id: str = 'unknown'):
+        """Log rejected commands with detailed information"""
         self.logger.warning(
-            f"Command rejected: {command.to_command_line()} | Reason: {reason}"
+            f"Command rejected: tool='{command.tool}', target='{command.target}', phase='{phase}', scan_id='{scan_id}' | Reason: {reason}"
         )
     
     def log_validated_command(self, command: Command):
@@ -227,7 +291,7 @@ class SafeCommandExecutor:
         self.validator = CommandValidator(ssh_client=ssh_client)
         self.logger = CommandLogger()
     
-    def execute_command(self, command: Command) -> Optional[subprocess.CompletedProcess]:
+    def execute_command(self, command: Command, phase: str = 'unknown', scan_id: str = 'unknown') -> Optional[subprocess.CompletedProcess]:
         """
         Execute a command after validation
         Returns the subprocess result or None if validation fails
@@ -235,7 +299,7 @@ class SafeCommandExecutor:
         is_valid, reason = self.validator.validate_command(command)
         
         if not is_valid:
-            self.logger.log_rejected_command(command, reason)
+            self.logger.log_rejected_command(command, reason, phase, scan_id)
             return None
         
         self.logger.log_validated_command(command)
@@ -246,12 +310,16 @@ class SafeCommandExecutor:
             # Execute via SSH if client is available, otherwise locally
             if self.validator.ssh_client:
                 # Execute command via SSH
-                stdin, stdout, stderr = self.validator.ssh_client.exec_command(cmd_line, timeout=command.timeout)
-                
-                # Get the output
-                stdout_content = stdout.read().decode('utf-8')
-                stderr_content = stderr.read().decode('utf-8')
-                exit_status = stdout.channel.recv_exit_status()
+                try:
+                    stdin, stdout, stderr = self.validator.ssh_client.exec_command(cmd_line, timeout=command.timeout)
+                    
+                    # Get the output
+                    stdout_content = stdout.read().decode('utf-8', errors='replace')
+                    stderr_content = stderr.read().decode('utf-8', errors='replace')
+                    exit_status = stdout.channel.recv_exit_status()
+                except Exception as e:
+                    self.logger.logger.error(f"SSH command execution failed: {str(e)} | Tool: {command.tool}, Target: {command.target}, Phase: {phase}, Scan ID: {scan_id}")
+                    return None
                 
                 # Create a mock subprocess.CompletedProcess-like object
                 class SSHCompletedProcess:
@@ -264,26 +332,33 @@ class SafeCommandExecutor:
                 result = SSHCompletedProcess(cmd_line, exit_status, stdout_content, stderr_content)
             else:
                 # Execute locally if no SSH client
-                result = subprocess.run(
-                    cmd_line,
-                    shell=True,
-                    capture_output=True,
-                    text=True,
-                    timeout=command.timeout
-                )
+                try:
+                    result = subprocess.run(
+                        cmd_line,
+                        shell=True,
+                        capture_output=True,
+                        text=True,
+                        timeout=command.timeout
+                    )
+                except subprocess.TimeoutExpired:
+                    self.logger.logger.error(f"Local command execution timed out: {cmd_line} | Tool: {command.tool}, Target: {command.target}, Phase: {phase}, Scan ID: {scan_id}")
+                    return None
+                except Exception as e:
+                    self.logger.logger.error(f"Local command execution failed: {str(e)} | Tool: {command.tool}, Target: {command.target}, Phase: {phase}, Scan ID: {scan_id}")
+                    return None
             
             self.logger.log_executed_command(command, result)
             return result
         except Exception as e:
-            self.logger.logger.error(f"Command execution error: {str(e)}")
+            self.logger.logger.error(f"Command execution error: {str(e)} | Tool: {command.tool}, Target: {command.target}, Phase: {phase}, Scan ID: {scan_id}")
             return None
     
-    def execute_command_safe(self, tool: str, arguments: List[str], target: str) -> Optional[subprocess.CompletedProcess]:
+    def execute_command_safe(self, tool: str, arguments: List[str], target: str, phase: str = 'unknown', scan_id: str = 'unknown') -> Optional[subprocess.CompletedProcess]:
         """
         Convenience method to create and execute a command safely
         """
         command = Command(tool=tool, arguments=arguments, target=target)
-        return self.execute_command(command)
+        return self.execute_command(command, phase, scan_id)
 
 
 # Global instance for use throughout the application

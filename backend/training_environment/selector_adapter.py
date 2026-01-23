@@ -49,11 +49,12 @@ class SelectorAdapter:
         Returns:
             List of tool recommendations in the same format training expects
         """
-        # Map training phase to real phase
-        mapped_phase = self.phase_mapping.get(phase, "reconnaissance")
+        # Use training phase directly without remapping
+        mapped_phase = phase
+        assert mapped_phase == phase, f"Phase remapping detected: {phase} -> {mapped_phase}"
         print(f"[selector_adapter] training_phase={phase} mapped_phase={mapped_phase}")
         
-        # Update scan_state with mapped phase for consistency
+        # Update scan_state with phase for consistency
         scan_state['phase'] = mapped_phase
         
         # Call the same selector method used by autonomous agent
@@ -122,11 +123,12 @@ class PhaseAwareSelectorAdapter:
         Wrapper method that provides the same interface as IntelligentToolSelector.select_tools
         but uses PhaseAwareToolSelector internally.
         """
-        # Map training phase to real phase
-        mapped_phase = self.phase_mapping.get(phase, "reconnaissance")
+        # Use training phase directly without remapping
+        mapped_phase = phase
+        assert mapped_phase == phase, f"Phase remapping detected: {phase} -> {mapped_phase}"
         print(f"[selector_adapter] training_phase={phase} mapped_phase={mapped_phase}")
         
-        # Update scan_state with mapped phase for consistency
+        # Update scan_state with phase for consistency
         scan_state['phase'] = mapped_phase
         
         # Call the PhaseAwareToolSelector.recommend_tools method
@@ -159,6 +161,27 @@ class PhaseAwareSelectorAdapter:
             tool_recommendations.append(tool_rec)
         
         return tool_recommendations
+
+
+    def record_execution(self, tool: str, success: bool, findings_count: int, execution_time: float):
+        """
+        Record tool execution results for learning.
+        Delegates to internal IntelligentToolSelector if available.
+        
+        Args:
+            tool: Tool name
+            success: Whether execution was successful
+            findings_count: Number of findings discovered
+            execution_time: Time taken to execute
+        """
+        # Try to use intelligent selector's record_execution
+        try:
+            from inference.intelligent_selector import get_intelligent_selector
+            selector = get_intelligent_selector()
+            selector.record_execution(tool, success, findings_count, execution_time)
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).debug(f"record_execution delegation failed: {e}")
 
 
 def get_phase_aware_selector_adapter(ssh_client=None):

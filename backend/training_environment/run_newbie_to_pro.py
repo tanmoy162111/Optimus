@@ -96,7 +96,7 @@ def check_targets(targets):
             from urllib.parse import urlparse
             parsed = urlparse(url)
             host = parsed.hostname
-            port = parsed.port or 80
+            port = parsed.port or (443 if parsed.scheme == 'https' else 80)
         else:
             host = url.split(':')[0]
             port = int(url.split(':')[1]) if ':' in url else 22
@@ -120,9 +120,8 @@ def check_targets(targets):
 
 def get_default_targets():
     return [
-        {'name': 'OWASP_Juice_Shop', 'url': 'http://192.168.56.101:3000', 'type': 'web'},
-        {'name': 'Vulnerable_VM_1', 'ip': '192.168.56.102', 'type': 'linux'},
-        {'name': 'Vulnerable_VM_2', 'ip': '192.168.56.103', 'type': 'linux'}
+        {'name': 'OWASP_Juice_Shop_Demo', 'url': 'https://demo.owasp-juice.shop', 'type': 'web'},
+        {'name': 'Local_VM_Target', 'ip': '192.168.131.128', 'type': 'linux'}
     ]
 
 

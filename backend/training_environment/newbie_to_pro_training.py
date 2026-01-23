@@ -91,6 +91,14 @@ except ImportError:
 # Add backend to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+# Import curriculum configuration
+try:
+    from training.curriculum_config import PHASE_TARGET_POLICY
+except ImportError:
+    # Fallback for when running from backend directory directly
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'training'))
+    from curriculum_config import PHASE_TARGET_POLICY
+
 # Setup logging
 log_dir = Path('training_output/newbie_to_pro')
 log_dir.mkdir(parents=True, exist_ok=True)
@@ -853,7 +861,7 @@ class ComponentManager:
             ('web_intel', 'intelligence.web_intelligence', 'get_web_intelligence', {}),
             ('rl_agent', 'training.deep_rl_agent', 'DeepRLAgent', {'args': {'state_dim': 128, 'num_actions': 50}}),
             ('state_encoder', 'training.enhanced_state_encoder', 'get_state_encoder', {}),
-            ('reward_calculator', 'training.reward_calculator', 'RewardCalculator', {}),
+            ('reward_calculator', 'training.reward_calculator', 'get_reward_calculator', {}),
             ('report_generator', 'reporting.professional_report', 'get_professional_report_generator', {}),
         ]
         
@@ -1084,13 +1092,23 @@ class NewbieToProTrainer:
         # Get lessons for this phase
         phase_lessons = [l for l in self.curriculum if l.phase == phase]
         
-        # Run lessons
+        # Run lessons with crash tolerance
         for lesson in phase_lessons:
             if datetime.now() >= phase_end:
                 logger.info(f"Phase time limit reached")
                 break
             
-            self._run_lesson(lesson)
+            try:
+                self._run_lesson(lesson)
+                # Incremental save after each lesson to preserve progress
+                self._save_incremental_progress()
+            except Exception as e:
+                logger.error(f"[Lesson Crash] Lesson {lesson.lesson_id} failed: {e}")
+                logger.error(f"[Lesson Crash] Continuing to next lesson - partial progress preserved")
+                traceback.print_exc()
+                # Save state even after crash to preserve any progress made
+                self._save_incremental_progress()
+                continue  # Don't crash - continue to next lesson
         
         # Run challenges appropriate for this level
         difficulty_range = {
@@ -1107,12 +1125,18 @@ class NewbieToProTrainer:
             if min_diff <= c.difficulty <= max_diff
         ]
         
-        # Run some challenges
+        # Run some challenges with crash tolerance
         for challenge in phase_challenges[:3]:  # Max 3 challenges per phase
             if datetime.now() >= phase_end:
                 break
             
-            self._run_challenge(challenge)
+            try:
+                self._run_challenge(challenge)
+            except Exception as e:
+                logger.error(f"[Challenge Crash] Challenge {challenge.challenge_id} failed: {e}")
+                logger.error(f"[Challenge Crash] Continuing to next challenge")
+                traceback.print_exc()
+                continue  # Don't crash - continue to next challenge
         
         # Practice weak skills
         self._practice_weak_skills(phase_end)
@@ -1150,9 +1174,21 @@ class NewbieToProTrainer:
         elif lesson.phase == TrainingPhase.MASTERY:
             lesson_phase = 'post_exploitation'
         
-        # Initialize scan state for the lesson
-        target = random.choice(self.targets) if self.targets else {'url': 'http://localhost'}
-        target_url = target.get('url') or target.get('ip')
+        # Determine target based on phase policy
+        policy = PHASE_TARGET_POLICY.get(lesson.phase.value, "localhost")
+        
+        if policy == "training_targets":
+            if not self.targets:
+                raise RuntimeError(f"No training targets available for {lesson.phase.value} phase - cannot use training targets")
+            target = random.choice(self.targets)
+            target_url = target.get('url') or target.get('ip')
+        else:
+            target = {'url': 'http://localhost'}
+            target_url = 'http://localhost'
+        
+        # Advanced phases cannot use localhost
+        if lesson.phase != TrainingPhase.FUNDAMENTALS and target_url == 'http://localhost':
+            raise RuntimeError(f"Advanced phases cannot use localhost. Current phase: {lesson.phase.value}")
         
         initial_scan_state = {
             'scan_id': f"lesson_{lesson.lesson_id}_{datetime.now().strftime('%H%M%S')}",
@@ -1167,11 +1203,108 @@ class NewbieToProTrainer:
         # Apply standardized schema
         scan_state = ensure_scan_state(initial_scan_state)
         
+        # Initialize counter to track if any tools were executed
+        initial_tools_executed_count = len(scan_state.get('tools_executed', []))
+        
+        # Create a mapping from skill names to actual tools
+        skill_to_tool_map = {
+            'whatweb': 'whatweb',
+            'wafw00f': 'wafw00f',
+            'gobuster': 'gobuster',
+            'ffuf': 'ffuf',
+            'nikto': 'nikto',
+            'nuclei_basic': 'nuclei',
+            'nmap_basic': 'nmap',
+            'port_scanning': 'nmap',
+            'service_detection': 'nmap',
+            'tech_detection': 'whatweb',
+            'dirbusting': 'gobuster',
+            'vuln_prioritization': 'nikto',
+            'sqli_detection': 'sqlmap',
+            'sqlmap': 'sqlmap',
+            'xss_detection': 'dalfox',
+            'dalfox': 'dalfox',
+            'auth_testing': 'hydra',
+            'hydra': 'hydra',
+            'cmdi_detection': 'commix',
+            'commix': 'commix',
+            'db_extraction': 'sqlmap',
+            'payload_crafting': 'dalfox',
+            'brute_force': 'hydra',
+            'filter_bypass': 'commix',
+            'sqli_chain': 'sqlmap',
+            'webshell_upload': 'sqlmap',
+            'reverse_shell': 'sqlmap',
+            'lfi_exploitation': 'sqlmap',
+            'log_poisoning': 'sqlmap',
+            'rfi_rce': 'sqlmap',
+            'linpeas': 'linpeas',
+            'kernel_exploits': 'linpeas',
+            'linux_privesc': 'linpeas',
+        }
+        
         # Run exercises
         for exercise in lesson.exercises:
             if datetime.now() >= lesson_end:
                 break
             
+            # Before running the exercise, ensure required tools for lesson skills are executed
+            required_tools_for_skills = []
+            for skill_name in lesson.skills_trained:
+                if skill_name in skill_to_tool_map:
+                    required_tool = skill_to_tool_map[skill_name]
+                    # Check if this tool was already executed
+                    tools_executed_names = [t['tool'] if isinstance(t, dict) else t for t in scan_state.get('tools_executed', [])]
+                    if required_tool not in tools_executed_names:
+                        required_tools_for_skills.append(required_tool)
+            
+            # Execute required tools for skills if they haven't been executed yet
+            for required_tool in required_tools_for_skills:
+                if required_tool not in [t['tool'] if isinstance(t, dict) else t for t in scan_state.get('tools_executed', [])]:
+                    print(f"[Force Tool Execution] Executing required tool {required_tool} for skill {lesson.skills_trained}")
+                    
+                    # Execute the required tool
+                    tool_manager = self.components.get('tool_manager')
+                    if tool_manager:
+                        target_url = scan_state.get('target')
+                        
+                        # Normalize target based on tool type
+                        if self.target_normalizer:
+                            normalized_target = self.target_normalizer.get_tool_target(target_url, required_tool)
+                        else:
+                            normalized_target = target_url
+                        
+                        exec_result = tool_manager.execute_tool(
+                            tool_name=required_tool,
+                            target=normalized_target,
+                            parameters={'args': normalized_target},
+                            scan_id=scan_state['scan_id'],
+                            phase=scan_state['phase']
+                        )
+                        
+                        if exec_result:
+                            findings = exec_result.get('findings', [])
+                            
+                            # Add findings to scan state
+                            scan_state['findings'].extend(findings)
+                            scan_state['tools_executed'].append({'tool': required_tool, 'timestamp': time.time()})
+                            
+                            # Learn from output - pass parsed results dict, not stderr
+                            evolving_parser = self.components.get('evolving_parser')
+                            if evolving_parser and exec_result.get('stdout'):
+                                parsed_results = exec_result.get('parsed_results', {'vulnerabilities': findings, 'hosts': [], 'services': []})
+                                evolving_parser.learn_from_output(
+                                    required_tool, exec_result['stdout'], parsed_results
+                                )
+                            
+                            # Record execution for intelligent selector learning
+                            intelligent_selector = self.components.get('intelligent_selector')
+                            if intelligent_selector:
+                                execution_time = exec_result.get('execution_time', 10.0)
+                                success = exec_result.get('success', False)
+                                findings_count = len(findings)
+                                intelligent_selector.record_execution(required_tool, success, findings_count, execution_time)
+                            
             result = self._run_exercise_with_state(exercise, lesson, scan_state)
             
             # Update skills
@@ -1200,6 +1333,18 @@ class NewbieToProTrainer:
                 if new_phase:
                     scan_state['phase'] = new_phase
                     logger.info(f"[Lesson Phase Advancement] Updated scan_state phase to: {new_phase}")
+        
+        # Check if no tools were executed during the lesson and force basic scan if needed
+        final_tools_executed_count = len(scan_state.get('tools_executed', []))
+        no_tool_executed = (final_tools_executed_count == initial_tools_executed_count)
+        
+        if no_tool_executed:
+            # Don't allow localhost in intermediate and advanced phases
+            if lesson.phase != TrainingPhase.FUNDAMENTALS and target_url == 'http://localhost':
+                logger.warning(f"[Force Basic Scan] Cannot force basic scan on localhost for {lesson.phase.value} phase - no training targets available")
+                print(f"[Force Basic Scan] Cannot force basic scan on localhost for {lesson.phase.value} phase")
+            else:
+                self._force_basic_scan(target_url, scan_state)
         
         # Run assessment
         assessment_result = self._run_assessment(lesson)
@@ -1320,10 +1465,11 @@ class NewbieToProTrainer:
                         findings = exec_result.get('findings', [])
                         result['findings'] += len(findings)
                         
-                        # Learn from output
+                        # Learn from output - pass parsed results dict, not stderr
                         if evolving_parser and exec_result.get('stdout'):
+                            parsed_results = exec_result.get('parsed_results', {'vulnerabilities': findings, 'hosts': [], 'services': []})
                             evolving_parser.learn_from_output(
-                                tool, exec_result['stdout'], exec_result.get('stderr', '')
+                                tool, exec_result['stdout'], parsed_results
                             )
                         
                         # Record execution for intelligent selector learning
@@ -1542,10 +1688,11 @@ class NewbieToProTrainer:
                         scan_state['findings'].extend(findings)
                         scan_state['tools_executed'].append(tool)
                         
-                        # Learn from output
+                        # Learn from output - pass parsed results dict, not stderr
                         if evolving_parser and exec_result.get('stdout'):
+                            parsed_results = exec_result.get('parsed_results', {'vulnerabilities': findings, 'hosts': [], 'services': []})
                             evolving_parser.learn_from_output(
-                                tool, exec_result['stdout'], exec_result.get('stderr', '')
+                                tool, exec_result['stdout'], parsed_results
                             )
                         
                         # Record execution for intelligent selector learning
@@ -1625,8 +1772,8 @@ class NewbieToProTrainer:
                 exploit_chainer = self.components.get('exploit_chainer')
                 if exploit_chainer:
                     for _ in range(attempts):
-                        # Execute chain
-                        chain_result = self._execute_chain_with_state(chain_name, target_url, scan_state)
+                        # Execute chain - use _execute_chain since _execute_chain_with_state doesn't exist
+                        chain_result = self._execute_chain(chain_name, target_url, scan_state)
                         if chain_result.get('success'):
                             result['success'] = True
                             result['reward'] += 50
@@ -1749,6 +1896,70 @@ class NewbieToProTrainer:
         
         return False
     
+    def _force_basic_scan(self, target_url: str, scan_state: Dict):
+        """Force execution of a basic scan when no tools were executed in the lesson"""
+        print(f"[Force Basic Scan] No tools executed in lesson, forcing basic scan on {target_url}")
+        logger.info(f"[Force Basic Scan] No tools executed in lesson, forcing basic scan on {target_url}")
+        
+        tool_manager = self.components.get('tool_manager')
+        if not tool_manager:
+            logger.warning("[Force Basic Scan] No tool manager available")
+            return
+        
+        # Execute a basic nmap scan to ensure at least one tool runs
+        try:
+            # Determine appropriate tool based on phase
+            current_phase = scan_state.get('phase', 'reconnaissance')
+            if current_phase in ['reconnaissance', 'enumeration']:
+                tool_name = 'nmap'
+                parameters = {'args': f'{target_url} -sV -sC --open -T4'}
+            elif current_phase in ['vulnerability_analysis']:
+                tool_name = 'nuclei'
+                parameters = {'args': f'-target {target_url} -t cves/ -timeout 30s'}
+            else:
+                # For exploitation and post-exploitation, try a basic vulnerability scan
+                tool_name = 'nmap'
+                parameters = {'args': f'{target_url} -sV --script=vuln'}
+            
+            exec_result = tool_manager.execute_tool(
+                tool_name=tool_name,
+                target=target_url,
+                parameters=parameters,
+                scan_id=scan_state['scan_id'],
+                phase=scan_state['phase']
+            )
+            
+            if exec_result:
+                findings = exec_result.get('findings', [])
+                
+                # Add findings to scan state
+                scan_state['findings'].extend(findings)
+                scan_state['tools_executed'].append(tool_name)
+                
+                # Update skills based on the tool execution
+                skill = self.agent.get_skill(tool_name)
+                success = exec_result.get('success', False)
+                findings_count = len(findings)
+                
+                # Calculate global reward based on findings and success
+                global_reward = findings_count * 2.0 if findings_count > 0 else (1.0 if success else -0.5)
+                policy_success = success
+                
+                # Practice the skill with the execution results
+                skill.practice(
+                    success=success,
+                    difficulty=1.0,
+                    global_reward=global_reward,
+                    policy_success=policy_success
+                )
+                
+                print(f"[Force Basic Scan] Executed {tool_name}, found {findings_count} findings")
+                logger.debug(f"[Force Basic Scan] Tool: {tool_name}, Success: {success}, Findings: {findings_count}, Global Reward: {global_reward}, Phase: {scan_state['phase']}")
+            
+        except Exception as e:
+            logger.error(f"[Force Basic Scan] Error executing basic scan: {e}")
+            print(f"[Force Basic Scan] Error: {e}")
+    
     def advance_phase(self):
         """Advance to the next pentest phase"""
         if self.current_phase_idx < len(self.pentest_phases) - 1:
@@ -1791,8 +2002,16 @@ class NewbieToProTrainer:
         all_skill_levels = [skill.level for skill in self.agent.skills.values()]
         current_avg_skill = statistics.mean(all_skill_levels) if all_skill_levels else 0
         
-        # Use a dynamic base that scales with current progress but has minimum requirements
-        base_threshold = max(15, current_avg_skill * 0.3)  # Base scales with current skill but minimum 15
+        # Calculate base threshold based on phase to allow early learning
+        if lesson.phase == TrainingPhase.FUNDAMENTALS:
+            base_threshold = 0
+        elif lesson.phase == TrainingPhase.INTERMEDIATE:
+            base_threshold = 5
+        elif lesson.phase == TrainingPhase.ADVANCED:
+            base_threshold = 15
+        else:  # EXPERT and MASTERY
+            base_threshold = 25
+        
         difficulty_factor = phase_difficulty.get(lesson.phase, 2.0)
         
         # Calculate scale factor based on global reward trends to make it adaptive
@@ -2123,6 +2342,47 @@ class NewbieToProTrainer:
             except:
                 pass
     
+    def _save_incremental_progress(self):
+        """
+        Save incremental progress during training (lightweight checkpoint).
+        
+        This method provides crash-tolerance by saving partial progress
+        after each lesson without the overhead of a full checkpoint.
+        State is committed incrementally to prevent total loss on failure.
+        """
+        try:
+            # Save to a single rotating progress file (not timestamped)
+            progress_path = self.output_dir / "current_progress.json"
+            
+            progress = {
+                'timestamp': datetime.now().isoformat(),
+                'total_reward': self.total_reward,
+                'metrics': self.metrics,
+                'completed_lessons': self.completed_lessons,
+                'completed_challenges': self.completed_challenges,
+                'agent_level': self.agent.current_level.name,
+                'skills_summary': {
+                    k: {'level': v.level, 'experience': v.experience, 'successes': v.successes, 'failures': v.failures}
+                    for k, v in self.agent.skills.items()
+                },
+            }
+            
+            # Atomic write: write to temp file first, then rename
+            temp_path = self.output_dir / "current_progress.json.tmp"
+            with open(temp_path, 'w') as f:
+                json.dump(progress, f, indent=2, default=str)
+            
+            # Rename to final path (atomic on most systems)
+            import os
+            if os.path.exists(progress_path):
+                os.remove(progress_path)
+            os.rename(temp_path, progress_path)
+            
+            logger.debug(f"[Incremental Progress] Saved to {progress_path}")
+            
+        except Exception as e:
+            logger.warning(f"[Incremental Progress] Failed to save: {e}")
+    
     def _generate_final_report(self) -> Dict[str, Any]:
         """Generate final training report"""
         training_end = datetime.now()
@@ -2200,11 +2460,17 @@ class NewbieToProTrainer:
             'localhost',
             '127.0.0.1',
             '192.168.56.',  # VirtualBox/Vagrant networks
+            '192.168.131.', # Additional private network
             '192.168.1.',   # Common local networks
             '10.0.2.',      # VirtualBox default
             'juice-shop',   # OWASP Juice Shop container name
+            'demo.owasp-juice.shop',  # OWASP Juice Shop public demo
+            'owasp-juice.shop',  # OWASP Juice Shop domain
             'dvwa',         # DVWA container name
             'metasploitable', # Metasploitable container name
+            'hackthebox',   # HackTheBox labs
+            'tryhackme',    # TryHackMe labs
+            'vulnhub',      # VulnHub VMs
         ]
         
         # Load from config if available
@@ -2218,9 +2484,22 @@ class NewbieToProTrainer:
         """Check if target is in authorized list"""
         target_lower = target.lower().strip()
         
+        # Remove protocol (http://, https://, ftp://, etc.) for comparison
+        clean_target = target_lower
+        if '://' in clean_target:
+            clean_target = clean_target.split('://', 1)[1]
+        
+        # Further strip port numbers if present
+        if ':' in clean_target:
+            clean_target = clean_target.split(':', 1)[0]
+        
+        # Remove any trailing paths
+        if '/' in clean_target:
+            clean_target = clean_target.split('/', 1)[0]
+        
         # Check if target matches any authorized patterns
         for auth_target in self.authorized_targets:
-            if auth_target in target_lower or target_lower.startswith(auth_target.replace('.', '')):
+            if auth_target in clean_target or clean_target.startswith(auth_target):
                 return True
         
         # Check if it's a localhost or private IP

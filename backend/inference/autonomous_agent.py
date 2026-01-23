@@ -37,6 +37,14 @@ from inference.strategy_selector import StrategySelector
 from inference.learning_module import RealTimeLearningModule
 from inference.state_schema import ensure_scan_state
 
+# Import skill-related classes from training environment
+try:
+    from training_environment.newbie_to_pro_training import Skill, SkillCategory, AgentProfile
+    SKILL_SYSTEM_AVAILABLE = True
+except ImportError:
+    SKILL_SYSTEM_AVAILABLE = False
+    logger.warning("Skill system not available from training environment")
+
 logger = logging.getLogger(__name__)
 
 class AutonomousPentestAgent:
@@ -102,7 +110,21 @@ class AutonomousPentestAgent:
                 self.optimus_brain = get_optimus_brain()
                 print("[AutonomousPentestAgent] OptimusBrain initialized")
             except Exception as e:
-                logger.warning(f"Could not initialize OptimusBrain: {e}")
+                logger.warning(f"[AutonomousPentestAgent] OptimusBrain not available: {e}")
+        
+        # Initialize agent profile with skills tracking
+        self.agent_profile = None
+        if SKILL_SYSTEM_AVAILABLE:
+            try:
+                self.agent_profile = AgentProfile(
+                    agent_id=f"agent_{int(time.time())}",
+                    created_at=datetime.now().isoformat()
+                )
+                logger.info("Agent profile initialized with skills tracking")
+            except Exception as e:
+                logger.error(f"Failed to initialize agent profile: {e}")
+        else:
+            logger.warning("Agent profile not initialized - skill system unavailable")
         
         self.socketio = socketio  # Store socketio reference
         print("[AutonomousPentestAgent]  Initialization complete!")
@@ -1290,6 +1312,89 @@ class AutonomousPentestAgent:
         # Log the reward
         log_reward(reward, tool=tool_name, findings_count=len(findings), scan_id=scan_state.get('scan_id'))
         info(f"Reward calculated", tool=tool_name, reward=reward, findings_count=len(findings), scan_id=scan_state.get('scan_id'))
+        
+        # Process findings to skills and lessons
+        if findings:
+            try:
+                try:
+                    from .findings_to_skills import process_findings_to_skills
+                except ImportError:
+                    from findings_to_skills import process_findings_to_skills
+                
+                findings_result = process_findings_to_skills(
+                    findings=findings,
+                    tool_name=tool_name,
+                    phase=scan_state.get('phase', 'unknown'),
+                    scan_id=scan_state.get('scan_id', 'unknown')
+                )
+                info(f"Findings processed for skills", findings_result=findings_result)
+                
+                # Update agent profile skills if available
+                if self.agent_profile and SKILL_SYSTEM_AVAILABLE:
+                    try:
+                        # Update skills based on findings
+                        for finding in findings:
+                            finding_type = finding.get('type', 'unknown')
+                            severity = finding.get('severity', 0.0)
+                            
+                            # Get or create skill for this finding type
+                            skill_name = f"{tool_name}_{finding_type}".replace(' ', '_').replace('-', '_').lower()
+                            if skill_name not in self.agent_profile.skills:
+                                # Determine category based on finding type
+                                category = SkillCategory.RECONNAISSANCE  # Default
+                                if 'vulnerability' in finding_type or 'exploit' in finding_type:
+                                    category = SkillCategory.VULNERABILITY_DETECTION
+                                elif 'port' in finding_type or 'service' in finding_type:
+                                    category = SkillCategory.ENUMERATION
+                                elif 'web' in finding_type or 'tech' in finding_type:
+                                    category = SkillCategory.WEB_SECURITY
+                                
+                                self.agent_profile.skills[skill_name] = Skill(
+                                    name=skill_name,
+                                    category=category,
+                                    level=0.0
+                                )
+                            
+                            # Practice the skill with the finding
+                            skill = self.agent_profile.skills[skill_name]
+                            skill.practice(
+                                success=True,
+                                difficulty=1.0,
+                                global_reward=reward,
+                                policy_success=True
+                            )
+                            
+                            # Also update the tool-specific skill
+                            if tool_name not in self.agent_profile.skills:
+                                tool_category = SkillCategory.RECONNAISSANCE  # Default
+                                if tool_name in ['nmap', 'masscan']:
+                                    tool_category = SkillCategory.ENUMERATION
+                                elif tool_name in ['nikto', 'nuclei', 'whatweb']:
+                                    tool_category = SkillCategory.WEB_SECURITY
+                                elif tool_name in ['sqlmap', 'dalfox']:
+                                    tool_category = SkillCategory.VULNERABILITY_DETECTION
+                                
+                                self.agent_profile.skills[tool_name] = Skill(
+                                    name=tool_name,
+                                    category=tool_category,
+                                    level=0.0
+                                )
+                            
+                            tool_skill = self.agent_profile.skills[tool_name]
+                            tool_skill.practice(
+                                success=True,
+                                difficulty=1.0,
+                                global_reward=reward,
+                                policy_success=True
+                            )
+                            
+                        logger.info(f"Updated agent profile with {len(findings)} findings")
+                        
+                    except Exception as skill_e:
+                        logger.error(f"Error updating agent profile skills: {skill_e}")
+                        
+            except Exception as e:
+                logger.error(f"Error processing findings to skills: {e}")
         
         # 1. Update local learning module
         insights = self.learning_module.learn_from_execution(tool_name, result, scan_state)

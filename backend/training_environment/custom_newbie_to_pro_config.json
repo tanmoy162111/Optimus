@@ -323,6 +323,19 @@
         }
     },
     
+    "authorized_targets": [
+        "demo.owasp-juice.shop",
+        "192.168.131.128",
+        "localhost",
+        "127.0.0.1",
+        "192.168.56.",
+        "192.168.1.",
+        "10.0.2.",
+        "juice-shop",
+        "dvwa",
+        "metasploitable"
+    ],
+    
     "notes": [
         "Training takes approximately 10-12 hours",
         "Checkpoints saved every 30 minutes",

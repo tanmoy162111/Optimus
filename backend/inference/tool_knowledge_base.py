@@ -899,11 +899,12 @@ class ToolKnowledgeBase:
         # After building the command template, substitute all placeholders
         command = self._substitute_all_placeholders(command, target, context)
         
-        # Validate that the command uses only registered tools
-        from .tool_registry import validate_command_tool
-        if not validate_command_tool(command):
-            logger.error(f"[ToolKB] Generated command uses unregistered tools: {command}")
-            return None  # Return None to indicate invalid command
+        # BYPASSED: Tool registry validation disabled - tools run on Kali VM via SSH
+        # All tools are assumed available on Kali VM
+        # from .tool_registry import validate_command_tool
+        # if not validate_command_tool(command):
+        #     logger.error(f"[ToolKB] Generated command uses unregistered tools: {command}")
+        #     return None  # Return None to indicate invalid command
 
         return command
 

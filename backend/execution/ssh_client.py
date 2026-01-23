@@ -106,12 +106,18 @@ class KaliSSHClient:
                 }
         
         try:
+            # CRITICAL FIX: Set PATH for Go-based tools (nuclei, dalfox, etc.)
+            # Works with both bash and zsh - export syntax is compatible
+            # Non-interactive shells don't load profiles, so we must set PATH explicitly
+            path_export = 'export PATH="$PATH:/home/kali/go/bin:/home/kali/.local/bin:/root/go/bin:/opt/bin:/usr/local/go/bin"; '
+            full_command = path_export + command
+            
             logger.info(f"Executing: {command[:100]}...")
             start_time = time.time()
             
             # Execute command with PTY
             stdin, stdout, stderr = self.client.exec_command(
-                command,
+                full_command,
                 timeout=timeout,
                 get_pty=True
             )

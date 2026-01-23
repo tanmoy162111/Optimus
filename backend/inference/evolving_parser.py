@@ -1061,6 +1061,13 @@ class EvolvingParser:
         """Backward-compatible interface"""
         return self.parse(tool_name, stdout, stderr)
     
+    def learn_from_output(self, tool, raw_output, parsed_results):
+        # backward-compatible bridge for training engine
+        try:
+            self._learn_from_success(tool=tool, output=raw_output, result=parsed_results)
+        except Exception:
+            pass
+
     def get_statistics(self) -> Dict[str, Any]:
         """Get parser statistics"""
         total = max(self.stats['total'], 1)

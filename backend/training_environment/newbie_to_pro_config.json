@@ -6,7 +6,7 @@
     "targets": [
         {
             "name": "OWASP_Juice_Shop",
-            "url": "http://192.168.56.101:3000",
+            "url": "https://demo.owasp-juice.shop",
             "type": "web_application",
             "difficulty": "beginner_to_intermediate",
             "vulnerabilities": [
@@ -22,27 +22,27 @@
             "training_focus": ["web_attacks", "chain_attacks", "authentication"]
         },
         {
-            "name": "Vulnerable_VM_1",
-            "ip": "192.168.56.102",
+            "name": "Kali_VM",
+            "ip": "192.168.131.128",
             "type": "linux_server",
             "difficulty": "intermediate",
             "vulnerabilities": [
                 "weak_credentials",
-                "privilege_escalation",
                 "misconfiguration",
-                "outdated_services"
+                "service_exploitation",
+                "network_attacks"
             ],
-            "training_focus": ["network_attacks", "privesc", "post_exploitation"]
+            "training_focus": ["network_attacks", "service_exploitation", "post_exploitation"]
         },
         {
-            "name": "Vulnerable_VM_2",
-            "ip": "192.168.56.103", 
+            "name": "Vulnerable_VM_1",
+            "ip": "192.168.131.128", 
             "type": "linux_server",
             "difficulty": "advanced",
             "vulnerabilities": [
                 "web_vulnerability",
-                "kernel_exploit",
-                "container_escape",
+                "service_exploitation",
+                "privilege_escalation",
                 "lateral_movement"
             ],
             "training_focus": ["advanced_exploitation", "evasion", "persistence"]

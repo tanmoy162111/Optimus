@@ -28,6 +28,9 @@ class ToolRegistry:
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._init_db()
         logger.info(f"[ToolRegistry] Initialized at {self.db_path}")
+        
+        # Initialize tool discovery for live OS scanning (lazy import)
+
     
     @contextmanager
     def _get_connection(self):
@@ -336,6 +339,136 @@ class ToolRegistry:
         }
         
         logger.info(f"[ToolRegistry] Refresh completed: {result}")
+        return result
+    
+    def _discover_system_tools(self, ssh_client=None):
+        """
+        Discover tools available on the system using live OS scanning.
+        This method implements live discovery from $PATH, /usr/bin, /usr/local/bin, /opt, 
+        python entrypoints, and metasploit modules.
+        """
+        logger.info("[ToolRegistry] Starting live OS discovery...")
+        
+        # Import ToolDiscovery to scan for available tools
+        try:
+            from ..tools.tool_discovery import ToolDiscovery
+        except (ImportError, ValueError):
+            # Fallback for when module is run from different package context
+            import sys
+            from pathlib import Path
+            backend_path = str(Path(__file__).parent.parent)
+            if backend_path not in sys.path:
+                sys.path.insert(0, backend_path)
+            from tools.tool_discovery import ToolDiscovery
+        
+        # Create tool discovery instance
+        tool_discoverer = ToolDiscovery(ssh_client=ssh_client)
+        
+        # Scan for tools
+        discovered_tools = tool_discoverer.scan_for_tools()
+        
+        # Also scan for metasploit modules
+        try:
+            msf_modules = tool_discoverer.scan_for_metasploit_modules()
+            discovered_tools.extend(msf_modules)
+        except Exception as e:
+            logger.warning(f"[ToolRegistry] Failed to scan for Metasploit modules: {e}")
+        
+        # Also scan for all executables in security directories
+        try:
+            executables = tool_discoverer.scan_for_executables()
+            discovered_tools.extend(executables)
+        except Exception as e:
+            logger.warning(f"[ToolRegistry] Failed to scan for executables: {e}")
+        
+        logger.info(f"[ToolRegistry] Discovered {len(discovered_tools)} tools")
+        return discovered_tools
+    
+    def refresh_registry_with_discovery(self, ssh_client=None):
+        """
+        Refresh the registry by performing live OS discovery.
+        This is the main method that discovers tools from the actual system
+        and updates the registry to reflect what is actually installed.
+        """
+        logger.info("[ToolRegistry] Starting registry refresh with live discovery...")
+        
+        # Discover tools from the system
+        discovered_tools = self._discover_system_tools(ssh_client=ssh_client)
+        
+        # Update registry with discovered tools
+        result = self.refresh_registry_with_tools(discovered_tools)
+        
+        logger.info(f"[ToolRegistry] Registry refresh completed: {result}")
+        return result
+    
+    def refresh_registry_with_tools(self, discovered_tools: List[Dict[str, Any]]):
+        """
+        Refresh the registry with a list of discovered tools.
+        This method updates the registry to match the discovered tools.
+        """
+        logger.info(f"[ToolRegistry] Refreshing registry with {len(discovered_tools)} discovered tools...")
+        
+        registered_count = 0
+        updated_count = 0
+        
+        for tool_info in discovered_tools:
+            name = tool_info.get('name', '')
+            path = tool_info.get('path', '')
+            
+            if name and path:
+                # Get existing tool info to preserve some data
+                existing_info = self.get_tool_info(name)
+                
+                # Use existing description/version if available, otherwise use new
+                description = tool_info.get('description', '')
+                if existing_info and existing_info.get('description'):
+                    description = existing_info['description']
+                
+                version = tool_info.get('version', '')
+                if existing_info and existing_info.get('version'):
+                    version = existing_info['version']
+                
+                category = tool_info.get('category', 'misc')
+                if existing_info and existing_info.get('category'):
+                    category = existing_info['category']
+                
+                metadata = tool_info.get('metadata', {})
+                if existing_info and existing_info.get('metadata'):
+                    # Merge metadata, giving preference to new discovery info
+                    existing_metadata = existing_info['metadata'] or {}
+                    metadata = {**existing_metadata, **metadata}
+                
+                # Register or update the tool
+                if self.register_tool(
+                    name=name,
+                    path=path,
+                    version=version,
+                    category=category,
+                    description=description,
+                    metadata=metadata
+                ):
+                    registered_count += 1
+                else:
+                    logger.warning(f"[ToolRegistry] Failed to register/update tool: {name}")
+        
+        # Get all registered tools to compare with discovered tools
+        registered_tools = {tool['name'] for tool in self.get_all_registered_tools()}
+        discovered_tool_names = {tool.get('name', '') for tool in discovered_tools if tool.get('name')}
+        
+        # Remove tools that are no longer available
+        removed_tools = registered_tools - discovered_tool_names
+        for tool_name in removed_tools:
+            if self.remove_tool(tool_name):
+                logger.info(f"[ToolRegistry] Removed unavailable tool: {tool_name}")
+        
+        result = {
+            'registered_count': registered_count,
+            'updated_count': updated_count,
+            'removed_count': len(removed_tools),
+            'total_registered': len(self.get_all_registered_tools())
+        }
+        
+        logger.info(f"[ToolRegistry] Registry refresh with tools completed: {result}")
         return result
     
     def validate_command_for_tool(self, tool_name: str, command: str) -> bool:

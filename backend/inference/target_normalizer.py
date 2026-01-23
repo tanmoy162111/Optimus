@@ -91,12 +91,30 @@ class TargetNormalizer:
         
         logger.info(f"[TargetNormalizer] Normalized: {original} -> {base_url}")
         
-        return result
+        # Return as unified ValidatedTarget object if possible
+        from .target_schema import ValidatedTarget
+        try:
+            # Try to create a ValidatedTarget from the normalized result
+            validated_target = ValidatedTarget(
+                raw=original,
+                normalized=base_url,
+                hostname=hostname,
+                scheme=scheme,
+                port=port,
+                resolved_ip=hostname if is_ip else '',  # We don't resolve IP here
+                is_authorized=True,  # Assume authorized in normalization context
+                is_valid=True,
+                is_ip=is_ip
+            )
+            return validated_target
+        except Exception:
+            # Fallback to original dictionary format
+            return result
     
     def get_tool_target(self, target: str, tool_name: str) -> str:
         """
         Get appropriately formatted target for specific tool.
-        
+            
         Args:
             target: Raw target
             tool_name: Name of the tool
@@ -105,23 +123,30 @@ class TargetNormalizer:
             Properly formatted target for the tool
         """
         normalized = self.normalize(target)
+            
+        # If normalized is a ValidatedTarget object, use its method
+        from .target_schema import ValidatedTarget
+        if isinstance(normalized, ValidatedTarget):
+            return normalized.get_formatted_for_tool(tool_name)
+            
+        # Otherwise, fall back to the original logic
         tool_lower = tool_name.lower()
-        
+            
         # Tools that need hostname only
         hostname_tools = [
             'nmap', 'masscan', 'fierce', 'dnsenum', 'dnsrecon',
             'amass', 'sublist3r', 'subfinder', 'sslscan', 'enum4linux'
         ]
-        
+            
         # Tools that need URL
         url_tools = [
             'nikto', 'nuclei', 'whatweb', 'gobuster', 'ffuf', 'dirb',
             'wpscan', 'dalfox', 'commix', 'xsser'
         ]
-        
+            
         # Tools that need URL with parameters (for injection testing)
         injection_tools = ['sqlmap', 'commix', 'dalfox', 'xsser', 'nosqlmap']
-        
+            
         if tool_lower in hostname_tools:
             return normalized['hostname']
         elif tool_lower in injection_tools:

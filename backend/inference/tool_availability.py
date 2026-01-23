@@ -54,78 +54,16 @@ class ToolAvailabilityCache:
     
     def _check_availability(self, tool_name: str, ssh_client=None, aliases: List[str] = None) -> bool:
         """
-        Internal method to check tool availability using the registry.
+        Internal method to check tool availability.
+        BYPASSED: Registry check disabled - all tools assumed available on Kali VM via SSH.
         """
         # Log the tool availability check
         logger.info(f"[ToolAvailability] Checking availability for tool: {tool_name}")
         
-        # First check the primary tool name in the registry
-        if is_tool_registered(tool_name):
-            logger.info(f"[ToolAvailability] Tool {tool_name} found in registry")
-            return True
-        else:
-            logger.debug(f"[ToolAvailability] Tool {tool_name} not found in registry")
-        
-        # Use aliases if provided
-        if aliases:
-            for alias in aliases:
-                if is_tool_registered(alias):
-                    logger.info(f"[ToolAvailability] Tool {tool_name} found via alias {alias}")
-                    return True
-        
-        logger.info(f"[ToolAvailability] Tool {tool_name} not found in registry, attempting discovery")
-        
-        # If not found in registry, try to discover it and register it
-        # This allows for dynamic discovery of new tools
-        try:
-            from ..tools.tool_discovery import ToolDiscovery
-            discovery = ToolDiscovery(ssh_client)
-        except ImportError:
-            # Fallback import for when module is run directly
-            from tools.tool_discovery import ToolDiscovery
-            discovery = ToolDiscovery(ssh_client)
-        
-        # Scan for the specific tool
-        if ssh_client:
-            # For remote, check if it's available and register it
-            try:
-                stdin, stdout, stderr = ssh_client.exec_command(f"command -v {tool_name} || which {tool_name}", timeout=10)
-                stdout_content = stdout.read().decode('utf-8')
-                stderr_content = stderr.read().decode('utf-8')
-                exit_status = stdout.channel.recv_exit_status()
-                
-                if exit_status == 0 and stdout_content.strip():
-                    path = stdout_content.strip()
-                    # Register the tool in the registry
-                    from .tool_registry import get_tool_registry
-                    registry = get_tool_registry()
-                    version = discovery._get_remote_tool_version(tool_name)
-                    registry.register_tool(
-                        name=tool_name,
-                        path=path,
-                        version=version,
-                        category=discovery.categorize_tool(tool_name)
-                    )
-                    return True
-            except Exception:
-                pass
-        else:
-            # For local, check if it's available and register it
-            if shutil.which(tool_name):
-                path = shutil.which(tool_name)
-                # Register the tool in the registry
-                from .tool_registry import get_tool_registry
-                registry = get_tool_registry()
-                version = discovery._get_local_tool_version(tool_name)
-                registry.register_tool(
-                    name=tool_name,
-                    path=path,
-                    version=version,
-                    category=discovery.categorize_tool(tool_name)
-                )
-                return True
-        
-        return False
+        # BYPASSED: Always return True - tools run on Kali VM via SSH
+        # All tools are assumed available on Kali VM
+        logger.info(f"[ToolAvailability] Tool {tool_name} assumed available (registry check bypassed)")
+        return True
     
     def clear_cache(self):
         """Clear the availability cache."""

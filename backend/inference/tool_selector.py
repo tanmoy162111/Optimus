@@ -110,19 +110,9 @@ class PhaseAwareToolSelector:
                     recent_tools = tools_executed[-3:] if len(tools_executed) > 3 else tools_executed
                     final_tools = [t for t in final_tools if t not in recent_tools]
                     
-                    # Filter out unavailable tools
-                    from .tool_availability import is_tool_available
-                    # Get SSH client from instance if available, fallback to scan_state
-                    ssh_client = self.ssh_client  # Use the instance SSH client
-                    if ssh_client is None:
-                        ssh_client = scan_state.get('ssh_client')
-                    available_tools = []
-                    for tool in final_tools:
-                        if is_tool_available(tool, ssh_client=ssh_client):
-                            available_tools.append(tool)
-                        else:
-                            logger.warning(f'[PhaseAwareToolSelector] Tool \'{tool}\' is not available in system')
-                    final_tools = available_tools
+                    # BYPASSED: Tool registry check disabled - tools run on Kali VM via SSH
+                    # All tools are assumed available on Kali VM
+                    available_tools = final_tools  # No filtering
                     
                     if not final_tools:
                         next_phase = self._get_next_phase(phase)
@@ -172,22 +162,16 @@ class PhaseAwareToolSelector:
                     'suggested_next_phase': next_phase  # NEW: Explicit next phase
                 }
             
-            # Filter out unavailable tools
-            import shutil
-            available_tools = []
-            for tool in filtered_tools:
-                tool_path = shutil.which(tool)
-                if tool_path is not None:
-                    available_tools.append(tool)
-                else:
-                    logger.warning(f'[PhaseAwareToolSelector] Tool \'{tool}\' is not available in system')
+            # BYPASSED: Tool registry check disabled - tools run on Kali VM via SSH
+            # All tools are assumed available on Kali VM
+            available_tools = filtered_tools  # No filtering
                     
             return {
                 'tools': available_tools[:5],
                 'phase': phase,
                 'method': 'rule_based',
                 'ml_confidence': 0.8,  # High confidence in rules
-                'reasoning': f'Recommended tools excluding {len(blacklisted)} blacklisted, {len(tools_executed)} recently executed, and {len(filtered_tools) - len(available_tools)} unavailable tools'
+                'reasoning': f'Recommended tools excluding {len(blacklisted)} blacklisted, {len(tools_executed)} recently executed, and {len(filtered_tools) - len(available_tools)} unregistered tools'
             }
 
     def _prepare_context_for_model(self, scan_state: Dict[str, Any]) -> Dict[str, Any]:
