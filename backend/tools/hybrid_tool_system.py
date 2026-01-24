@@ -452,6 +452,9 @@ class KnowledgeBase:
                     "stealth": "nmap -sS -T2 {target}",
                     "comprehensive": "nmap -sV -sC -A -p- --host-timeout 30m {target}",
                     "quick": "nmap -sV --top-ports 100 {target}",
+                    # External target templates with lenient timing
+                    "external": "nmap -sV -sC -T3 --max-retries 2 --host-timeout 15m --initial-rtt-timeout 500ms --max-rtt-timeout 3s {target}",
+                    "external_quick": "nmap -sV --top-ports 100 -T3 --max-retries 2 --initial-rtt-timeout 500ms {target}",
                 },
                 "examples": [
                     "nmap 192.168.1.1",
@@ -610,6 +613,37 @@ class KnowledgeBase:
         command = template.replace('{target}', target)
         command = command.replace('{host}', hostname)
         command = command.replace('{domain}', hostname)
+        
+        # For nmap, detect external targets and add appropriate parameters
+        if tool_name == 'nmap':
+            command = self._add_nmap_external_params(command, hostname)
+        
+        return command
+    
+    def _add_nmap_external_params(self, command: str, hostname: str) -> str:
+        """Add appropriate nmap parameters for external targets to prevent retransmission issues"""
+        # Check if target is external (not local network)
+        is_external = not any(
+            hostname.startswith(x) or x in hostname 
+            for x in ['192.168.', '10.', '172.16.', '172.17.', '172.18.', '172.19.',
+                      '172.20.', '172.21.', '172.22.', '172.23.', '172.24.', '172.25.',
+                      '172.26.', '172.27.', '172.28.', '172.29.', '172.30.', '172.31.',
+                      '127.', 'localhost']
+        )
+        
+        if is_external:
+            # Add lenient timing parameters for external targets
+            if '--max-retries' not in command:
+                command += ' --max-retries 2'
+            if '--initial-rtt-timeout' not in command:
+                command += ' --initial-rtt-timeout 500ms'
+            if '--max-rtt-timeout' not in command:
+                command += ' --max-rtt-timeout 3s'
+            if '--host-timeout' not in command:
+                command += ' --host-timeout 15m'
+            # Use slower timing template for external targets
+            if '-T' not in command:
+                command += ' -T3'
         
         return command
 

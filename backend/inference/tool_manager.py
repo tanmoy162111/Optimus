@@ -1068,9 +1068,20 @@ class ToolManager:
         tool_path = tool_paths.get(actual_tool, actual_tool)
         
         # IMPROVED commands optimized for web application testing
+        # Detect if target is external for nmap timing
+        is_external = not any(
+            x in hostname for x in ['192.168.', '10.', '172.16.', '172.17.', '172.18.', '172.19.',
+                                    '172.20.', '172.21.', '172.22.', '172.23.', '172.24.', '172.25.',
+                                    '172.26.', '172.27.', '172.28.', '172.29.', '172.30.', '172.31.',
+                                    '127.', 'localhost']
+        )
+        
+        # Use T3 for external, T4 for internal
+        nmap_timing = '-T3 --max-retries 2 --initial-rtt-timeout 500ms' if is_external else '-T4'
+        
         fallback_commands = {
-            # Nmap: Scan HOSTNAME not URL
-            'nmap': f"{tool_path} -sV -sC -T4 -p 80,443,3000,8080,8443 --script=http-enum,http-headers,http-methods,http-title {hostname}",
+            # Nmap: Scan HOSTNAME not URL, with appropriate timing
+            'nmap': f"{tool_path} -sV -sC {nmap_timing} -p 80,443,3000,8080,8443 --script=http-enum,http-headers,http-methods,http-title {hostname}",
             
             # Nikto: Scan base URL
             'nikto': f"{tool_path} -h {target} -C all -Tuning 123bde -timeout 10",
@@ -1193,8 +1204,14 @@ class ToolManager:
         # Get the appropriate path for the tool
         tool_path = tool_paths.get(actual_tool, actual_tool)
         
+        # Detect external target for nmap timing
+        is_external_target = not any(
+            x in target for x in ['192.168.', '10.', '172.', '127.', 'localhost']
+        )
+        nmap_timing = '-T3 --max-retries 2' if is_external_target else '-T4'
+        
         fallback_commands = {
-            'nmap': f"{tool_path} -sV -T4 {target}",
+            'nmap': f"{tool_path} -sV {nmap_timing} {target}",
             'nikto': f"{tool_path} -h {target}",
             'sqlmap': f"{tool_path} -u '{target}' --batch",
             'amass': f"{tool_path} enum -d {target}",
@@ -1266,6 +1283,7 @@ class ToolManager:
 
     def _build_nmap_command(self, target: str, params: Dict) -> str:
         """Build nmap command with parameters"""
+        import re
         
         # Extract port from target if it's a URL with port
         extracted_port = None
@@ -1293,15 +1311,33 @@ class ToolManager:
         else:
             base += " -p-"  # All ports
         
-        # Add timeout parameters to prevent hanging and handle retransmissions
-        base += " --host-timeout 45m"     # Increased host timeout
-        base += " --max-retries 5"        # Increased retries to handle retransmissions
-        base += " --min-rate 150"         # Reduced minimum packet rate for stability
-        base += " --max-rate 3000"        # Reduced maximum packet rate to avoid overwhelming
-        base += " --scan-delay 100ms"     # Increased scan delay to avoid network congestion
-        base += " --max-scan-delay 1s"    # Maximum scan delay
-        base += " --defeat-rst-ratelimit" # Defeat reset rate limiting
-        base += " --disable-arp-ping"     # Disable ARP ping for remote targets
+        # Detect if target is external (not local network)
+        is_external = not any(
+            x in target for x in ['192.168.', '10.', '172.16.', '172.17.', '172.18.', '172.19.',
+                                  '172.20.', '172.21.', '172.22.', '172.23.', '172.24.', '172.25.',
+                                  '172.26.', '172.27.', '172.28.', '172.29.', '172.30.', '172.31.',
+                                  '127.', 'localhost']
+        )
+        
+        if is_external:
+            # Conservative settings for external targets to prevent retransmission cap issues
+            base += " -T3"                       # Slower timing for external
+            base += " --host-timeout 15m"        # Shorter timeout
+            base += " --max-retries 2"           # Very low retries to prevent cap hit
+            base += " --initial-rtt-timeout 500ms"  # Higher initial RTT
+            base += " --max-rtt-timeout 3s"      # Higher max RTT
+            base += " --min-rate 50"             # Lower minimum rate
+            base += " --max-rate 500"            # Lower maximum rate
+        else:
+            # More aggressive settings for internal targets
+            base += " --host-timeout 45m"        # Longer timeout
+            base += " --max-retries 5"           # More retries allowed
+            base += " --min-rate 150"            # Higher minimum rate
+            base += " --max-rate 3000"           # Higher maximum rate
+            base += " --scan-delay 100ms"        # Some delay
+            base += " --max-scan-delay 1s"       # Max delay
+            base += " --defeat-rst-ratelimit"    # Defeat rate limiting
+            base += " --disable-arp-ping"        # Disable ARP ping
         
         base += " -oX /tmp/nmap_output.xml"
         return base

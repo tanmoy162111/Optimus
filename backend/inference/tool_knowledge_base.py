@@ -1096,31 +1096,51 @@ class ToolKnowledgeBase:
         # Increase aggression on repeated use
         if tool_uses > 1:
             if tool == 'nmap':
-                # More aggressive port scanning
-                if '-T' in command:
-                    command = re.sub(r'-T\d', '-T5', command)
+                # Check if target is external
+                is_external = self._is_external_target(command)
+                
+                if is_external:
+                    # For external targets, use conservative timing to avoid retransmission issues
+                    if '-T' in command:
+                        command = re.sub(r'-T\d', '-T3', command)  # Use T3 for external
+                    else:
+                        command += ' -T3'
+                    
+                    # Add parameters to handle retransmission issues
+                    if '--max-retries' not in command:
+                        command += ' --max-retries 2'  # Lower retries for external
+                    if '--initial-rtt-timeout' not in command:
+                        command += ' --initial-rtt-timeout 500ms'  # Higher initial RTT
+                    if '--max-rtt-timeout' not in command:
+                        command += ' --max-rtt-timeout 3s'  # Higher max RTT
+                    if '--host-timeout' not in command:
+                        command += ' --host-timeout 15m'
                 else:
-                    command += ' -T5'
+                    # For internal targets, can be more aggressive
+                    if '-T' in command:
+                        command = re.sub(r'-T\d', '-T5', command)
+                    else:
+                        command += ' -T5'
+                    
+                    # Add host timeout to prevent hanging
+                    if '--host-timeout' not in command:
+                        command += ' --host-timeout 30m'
+                    
+                    # Add additional timeout parameters
+                    if '--max-retries' not in command:
+                        command += ' --max-retries 5'
+                    if '--min-rate' not in command:
+                        command += ' --min-rate 100'
+                    if '--max-rate' not in command:
+                        command += ' --max-rate 2000'
+                    if '--scan-delay' not in command:
+                        command += ' --scan-delay 50ms'
+                    if '--defeat-rst-ratelimit' not in command:
+                        command += ' --defeat-rst-ratelimit'
 
-                # Expand port range
+                # Expand port range (applies to both internal and external)
                 if '-p' in command and not '-p-' in command:
                     command = re.sub(r'-p \S+', '-p-', command)
-                
-                # Add host timeout to prevent hanging
-                if '--host-timeout' not in command:
-                    command += ' --host-timeout 30m'
-                
-                # Add additional timeout parameters to handle retransmissions
-                if '--max-retries' not in command:
-                    command += ' --max-retries 5'  # Increased retries to handle retransmissions
-                if '--min-rate' not in command:
-                    command += ' --min-rate 100'   # Lower minimum rate for stability
-                if '--max-rate' not in command:
-                    command += ' --max-rate 2000'  # Maximum packet rate
-                if '--scan-delay' not in command:
-                    command += ' --scan-delay 50ms'  # Scan delay
-                if '--defeat-rst-ratelimit' not in command:
-                    command += ' --defeat-rst-ratelimit'  # Defeat reset rate limiting
 
             elif tool == 'nikto':
                 # Enable all tests
@@ -1196,6 +1216,47 @@ class ToolKnowledgeBase:
 
         # Return everything after tool name and target
         return ' '.join(parts[2:])
+
+    def _is_external_target(self, command: str) -> bool:
+        """Check if target in command is external (not local network)"""
+        # Extract target from command
+        import re
+        
+        # Common private network prefixes
+        private_prefixes = [
+            '192.168.', '10.', '127.',
+            '172.16.', '172.17.', '172.18.', '172.19.',
+            '172.20.', '172.21.', '172.22.', '172.23.',
+            '172.24.', '172.25.', '172.26.', '172.27.',
+            '172.28.', '172.29.', '172.30.', '172.31.',
+            'localhost'
+        ]
+        
+        # Try to find IP addresses or hostnames in the command
+        # Look for IP pattern
+        ip_match = re.search(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})', command)
+        if ip_match:
+            ip = ip_match.group(1)
+            for prefix in private_prefixes:
+                if ip.startswith(prefix):
+                    return False
+            return True
+        
+        # Check for localhost
+        if 'localhost' in command.lower():
+            return False
+        
+        # Check for domain names (if present, likely external)
+        domain_match = re.search(r'[a-zA-Z0-9][-a-zA-Z0-9]*\.[a-zA-Z]{2,}', command)
+        if domain_match:
+            domain = domain_match.group(0)
+            # Exclude .local domains
+            if domain.endswith('.local'):
+                return False
+            return True
+        
+        # Default to external if can't determine
+        return True
 
     def _substitute_all_placeholders(self, command: str, target: str, context: Dict[str, Any]) -> str:
         """Replace all placeholders with actual values"""

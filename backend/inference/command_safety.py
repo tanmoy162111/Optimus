@@ -62,16 +62,20 @@ class Command:
         # Check if target is external (not local network)
         is_external = not any(x in self.target for x in ['192.168.', '10.', '172.', '127.', 'localhost'])
         
-        # For external targets, use more conservative settings
+        # For external targets, use conservative settings to prevent retransmission cap issues
         if is_external:
+            # Lower max-retries to avoid hitting retransmission cap (default is 10)
             if '--max-retries' not in command:
-                command += ' --max-retries 3'
+                command += ' --max-retries 2'  # Very low to prevent cap hit
             if '--host-timeout' not in command:
                 command += ' --host-timeout 15m'
             if '--initial-rtt-timeout' not in command:
-                command += ' --initial-rtt-timeout 500ms'
+                command += ' --initial-rtt-timeout 500ms'  # Higher initial RTT for external
             if '--max-rtt-timeout' not in command:
-                command += ' --max-rtt-timeout 3s'
+                command += ' --max-rtt-timeout 3s'  # Higher max RTT for external
+            # Use slower timing template
+            if '-T' not in command:
+                command += ' -T3'
         else:
             # For internal targets, use faster settings
             if '--max-retries' not in command:

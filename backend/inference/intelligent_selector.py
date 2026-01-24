@@ -87,25 +87,41 @@ class IntelligentToolSelector:
         self.phase_pools = self._init_phase_pools()
     
     def _init_rl_agent(self):
-        """Initialize Deep RL agent if model exists"""
+        """Initialize learning agent (CMAB preferred, Deep RL fallback)"""
+        # Try CMAB first (CPU-efficient, no TensorFlow needed)
+        try:
+            from training.cmab_agent import CMABAgent, get_cmab_agent
+            
+            self.rl_agent = get_cmab_agent(
+                num_actions=50,
+                strategy="thompson"  # Thompson Sampling with Beta distributions
+            )
+            
+            # Try to load trained model
+            self.rl_agent.load()
+            self.state_encoder = None  # CMAB has built-in context extraction
+            
+            logger.info("[IntelligentSelector] ✓ CMAB Agent loaded successfully (Thompson Sampling)")
+            return
+        except Exception as e:
+            logger.debug(f"[IntelligentSelector] CMAB not available: {e}")
+        
+        # Fallback to Deep RL if TensorFlow is available
         try:
             from training.deep_rl_agent import DeepRLAgent
             from training.enhanced_state_encoder import EnhancedStateEncoder
             
             self.rl_agent = DeepRLAgent(
                 state_dim=128,
-                num_actions=50,
-                hidden_dim=256,
-                device='cpu'
+                num_actions=50
             )
             
-            # Try to load trained model
             self.rl_agent.load()
             self.state_encoder = EnhancedStateEncoder()
             
             logger.info("[IntelligentSelector] ✓ Deep RL Agent loaded successfully")
         except Exception as e:
-            logger.warning(f"[IntelligentSelector] RL Agent not available: {e}")
+            logger.warning(f"[IntelligentSelector] No learning agent available: {e}")
             self.rl_agent = None
     
     def _init_tool_database(self) -> Dict[str, Dict]:

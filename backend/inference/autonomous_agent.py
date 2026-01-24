@@ -84,24 +84,37 @@ class AutonomousPentestAgent:
             except Exception as e:
                 logger.warning(f"[AutonomousPentestAgent] Failed to init ExploitationManager: {e}")
         
-        # Initialize Deep RL agent
+        # Initialize Learning Agent (CMAB preferred, Deep RL fallback)
         self.deep_rl_agent = None
         try:
-            from training.deep_rl_agent import DeepRLAgent
+            # Try CMAB first (CPU-efficient, no TensorFlow needed)
+            from training.cmab_agent import get_cmab_agent
             from config import Config
             
             if getattr(Config, 'DEEP_RL_ENABLED', True):
-                self.deep_rl_agent = DeepRLAgent(
+                self.deep_rl_agent = get_cmab_agent(
                     num_actions=getattr(Config, 'DEEP_RL_NUM_ACTIONS', 35),
-                    state_dim=getattr(Config, 'DEEP_RL_STATE_DIM', 128),
-                    use_per=getattr(Config, 'DEEP_RL_USE_PER', True),
-                    use_noisy=getattr(Config, 'DEEP_RL_USE_NOISY', True)
+                    strategy="thompson"
                 )
-                # Try to load existing weights
                 self.deep_rl_agent.load()
-                print("[AutonomousPentestAgent] Deep RL agent initialized")
-        except Exception as e:
-            logger.warning(f"[AutonomousPentestAgent] Deep RL not available: {e}")
+                print("[AutonomousPentestAgent] CMAB Agent initialized (Thompson Sampling)")
+        except Exception as cmab_err:
+            # Fallback to Deep RL if TensorFlow available
+            try:
+                from training.deep_rl_agent import DeepRLAgent
+                from config import Config
+                
+                if getattr(Config, 'DEEP_RL_ENABLED', True):
+                    self.deep_rl_agent = DeepRLAgent(
+                        num_actions=getattr(Config, 'DEEP_RL_NUM_ACTIONS', 35),
+                        state_dim=getattr(Config, 'DEEP_RL_STATE_DIM', 128),
+                        use_per=getattr(Config, 'DEEP_RL_USE_PER', True),
+                        use_noisy=getattr(Config, 'DEEP_RL_USE_NOISY', True)
+                    )
+                    self.deep_rl_agent.load()
+                    print("[AutonomousPentestAgent] Deep RL agent initialized")
+            except Exception as e:
+                logger.warning(f"[AutonomousPentestAgent] No learning agent available (CMAB: {cmab_err}, DeepRL: {e})")
         
         # Initialize intelligence layer (optional but enhances decisions)
         self.optimus_brain = None

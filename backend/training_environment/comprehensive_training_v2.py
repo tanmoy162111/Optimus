@@ -193,31 +193,44 @@ class ComponentManager:
             status['tool_manager'] = False
             logger.warning(f"X Tool Manager failed: {e}")
         
-        # 7. Deep RL Agent
+        # 7. Learning Agent (CMAB preferred, Deep RL fallback)
         try:
-            from training.deep_rl_agent import DeepRLAgent
-            from training.enhanced_state_encoder import EnhancedStateEncoder as StateEncoder
-            self.components['rl_agent'] = DeepRLAgent(
-                state_dim=128,
+            # Try CMAB first (CPU-efficient, no TensorFlow needed)
+            from training.cmab_agent import get_cmab_agent
+            self.components['rl_agent'] = get_cmab_agent(
                 num_actions=50,
-                learning_rate=1e-4,
-                gamma=0.99,
-                tau=0.005,
-                buffer_size=100000,
-                batch_size=64,
-                use_per=True,
-                use_noisy=True,
-                per_alpha=0.6,
-                per_beta_start=0.4,
-                model_dir=None
+                strategy="thompson"
             )
             self.components['rl_agent'].load()
-            self.components['state_encoder'] = StateEncoder()
+            self.components['state_encoder'] = None  # CMAB has built-in context extraction
             status['rl_agent'] = True
-            logger.info("✓ Deep RL Agent initialized")
-        except Exception as e:
-            status['rl_agent'] = False
-            logger.warning(f"X Deep RL Agent failed: {e}")
+            logger.info("✓ CMAB Agent initialized (Thompson Sampling)")
+        except Exception as cmab_error:
+            # Fallback to Deep RL if TensorFlow available
+            try:
+                from training.deep_rl_agent import DeepRLAgent
+                from training.enhanced_state_encoder import EnhancedStateEncoder as StateEncoder
+                self.components['rl_agent'] = DeepRLAgent(
+                    state_dim=128,
+                    num_actions=50,
+                    learning_rate=1e-4,
+                    gamma=0.99,
+                    tau=0.005,
+                    buffer_size=100000,
+                    batch_size=64,
+                    use_per=True,
+                    use_noisy=True,
+                    per_alpha=0.6,
+                    per_beta_start=0.4,
+                    model_dir=None
+                )
+                self.components['rl_agent'].load()
+                self.components['state_encoder'] = StateEncoder()
+                status['rl_agent'] = True
+                logger.info("✓ Deep RL Agent initialized")
+            except Exception as e:
+                status['rl_agent'] = False
+                logger.warning(f"X Learning Agent failed (CMAB: {cmab_error}, DeepRL: {e})")
         
         # 8. Reward Calculator
         try:

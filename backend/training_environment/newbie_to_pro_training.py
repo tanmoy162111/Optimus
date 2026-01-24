@@ -859,7 +859,8 @@ class ComponentManager:
             ('evolving_commands', 'inference.evolving_commands', 'get_evolving_command_generator', {}),
             ('exploit_chainer', 'exploitation.exploit_chainer', 'ExploitChainer', {'needs_executor': True}),
             ('web_intel', 'intelligence.web_intelligence', 'get_web_intelligence', {}),
-            ('rl_agent', 'training.deep_rl_agent', 'DeepRLAgent', {'args': {'state_dim': 128, 'num_actions': 50}}),
+            # CMAB Agent (CPU-efficient) with DeepRL fallback
+            ('rl_agent', 'training.cmab_agent', 'get_cmab_agent', {'args': {'num_actions': 50, 'strategy': 'thompson'}}),
             ('state_encoder', 'training.enhanced_state_encoder', 'get_state_encoder', {}),
             ('reward_calculator', 'training.reward_calculator', 'get_reward_calculator', {}),
             ('report_generator', 'reporting.professional_report', 'get_professional_report_generator', {}),
@@ -1053,21 +1054,36 @@ class NewbieToProTrainer:
         print(f"EXPECTED END: {end_time.strftime('%Y-%m-%d %H:%M:%S')}")
         print(f"{'='*70}\n")
         
+        # Scale phase durations based on total_hours (default 12 hours = 100%)
+        # Base distribution: Fundamentals=2, Intermediate=2, Advanced=3, Expert=3, Mastery=2 (total=12)
+        scale_factor = self.total_hours / 12.0
+        
+        # Minimum 15 minutes per phase to allow meaningful training
+        def scaled_hours(base_hours):
+            return max(0.25, base_hours * scale_factor)
+        
+        print(f"[Training Configuration]")
+        print(f"  Total Duration: {self.total_hours} hours")
+        print(f"  Scale Factor: {scale_factor:.2f}x")
+        print(f"  Phase Durations: FUNDAMENTALS={scaled_hours(2):.1f}h, INTERMEDIATE={scaled_hours(2):.1f}h, ")
+        print(f"                   ADVANCED={scaled_hours(3):.1f}h, EXPERT={scaled_hours(3):.1f}h, MASTERY={scaled_hours(2):.1f}h")
+        print()
+        
         try:
-            # Phase 1: Fundamentals (Hours 1-2)
-            self._run_training_phase(TrainingPhase.FUNDAMENTALS, hours=2)
+            # Phase 1: Fundamentals (scaled from 2 hours base)
+            self._run_training_phase(TrainingPhase.FUNDAMENTALS, hours=scaled_hours(2))
             
-            # Phase 2: Intermediate (Hours 3-4)
-            self._run_training_phase(TrainingPhase.INTERMEDIATE, hours=2)
+            # Phase 2: Intermediate (scaled from 2 hours base)
+            self._run_training_phase(TrainingPhase.INTERMEDIATE, hours=scaled_hours(2))
             
-            # Phase 3: Advanced (Hours 5-7)
-            self._run_training_phase(TrainingPhase.ADVANCED, hours=3)
+            # Phase 3: Advanced (scaled from 3 hours base)
+            self._run_training_phase(TrainingPhase.ADVANCED, hours=scaled_hours(3))
             
-            # Phase 4: Expert (Hours 8-10)
-            self._run_training_phase(TrainingPhase.EXPERT, hours=3)
+            # Phase 4: Expert (scaled from 3 hours base)
+            self._run_training_phase(TrainingPhase.EXPERT, hours=scaled_hours(3))
             
-            # Phase 5: Mastery (Hours 11-12)
-            self._run_training_phase(TrainingPhase.MASTERY, hours=2)
+            # Phase 5: Mastery (scaled from 2 hours base)
+            self._run_training_phase(TrainingPhase.MASTERY, hours=scaled_hours(2))
             
         except KeyboardInterrupt:
             print("\n[Training Interrupted]")
@@ -2229,13 +2245,8 @@ class NewbieToProTrainer:
         return result
     
     def _practice_weak_skills(self, end_time: datetime):
-        """Practice weak skills until phase end"""
+        """Practice weak skills until phase end - FILLS REMAINING TIME"""
         self.agent.identify_weaknesses()
-        
-        if not self.agent.weaknesses:
-            return
-        
-        print(f"\n📖 Practicing weak skills: {', '.join(self.agent.weaknesses[:3])}")
         
         target = random.choice(self.targets) if self.targets else {'url': 'http://localhost'}
         target_url = target.get('url') or target.get('ip')
@@ -2244,57 +2255,141 @@ class NewbieToProTrainer:
         if not tool_manager:
             return
         
-        # Map skills to tools
+        # Comprehensive skill to tool mapping
         skill_tools = {
             'nmap': 'nmap',
+            'nmap_basic': 'nmap',
+            'port_scanning': 'nmap',
+            'service_detection': 'nmap',
             'gobuster': 'gobuster',
+            'ffuf': 'ffuf',
+            'dirbusting': 'gobuster',
             'sqli': 'sqlmap',
+            'sqlmap': 'sqlmap',
+            'sqli_detection': 'sqlmap',
             'xss': 'dalfox',
+            'dalfox': 'dalfox',
+            'xss_detection': 'dalfox',
             'nuclei': 'nuclei',
+            'nuclei_basic': 'nuclei',
+            'vuln_scanning': 'nuclei',
+            'nikto': 'nikto',
+            'vuln_prioritization': 'nikto',
+            'whatweb': 'whatweb',
+            'tech_detection': 'whatweb',
+            'wafw00f': 'wafw00f',
+            'commix': 'commix',
+            'cmdi_detection': 'commix',
+            'hydra': 'hydra',
+            'auth_testing': 'hydra',
+            'brute_force': 'hydra',
+            'sslscan': 'sslscan',
         }
         
-        for weakness in self.agent.weaknesses[:3]:
-            if datetime.now() >= end_time:
-                break
+        # All available tools for practice rotation
+        all_tools = ['nmap', 'nikto', 'gobuster', 'whatweb', 'wafw00f', 'ffuf', 'sqlmap', 'commix']
+        
+        practice_round = 0
+        
+        # Loop continuously until phase end time
+        while datetime.now() < end_time:
+            practice_round += 1
             
-            # Find matching tool
-            tool = None
-            for skill_key, tool_name in skill_tools.items():
-                if skill_key in weakness.lower():
-                    tool = tool_name
+            # Identify current weaknesses
+            self.agent.identify_weaknesses()
+            weaknesses = self.agent.weaknesses[:5] if self.agent.weaknesses else []
+            
+            if weaknesses:
+                print(f"\n📖 Practice Round {practice_round}: Weak skills - {', '.join(weaknesses[:3])}")
+            else:
+                print(f"\n📖 Practice Round {practice_round}: General practice")
+            
+            # Practice weak skills first
+            for weakness in weaknesses:
+                if datetime.now() >= end_time:
                     break
+                
+                # Find matching tool
+                tool = None
+                for skill_key, tool_name in skill_tools.items():
+                    if skill_key in weakness.lower():
+                        tool = tool_name
+                        break
+                
+                if tool:
+                    try:
+                        # Normalize target based on tool type
+                        if self.target_normalizer:
+                            normalized_target = self.target_normalizer.get_tool_target(target_url, tool)
+                        else:
+                            normalized_target = target_url
+                        
+                        exec_result = tool_manager.execute_tool(
+                            tool_name=tool,
+                            target=normalized_target,
+                            parameters={},
+                            scan_id='practice',
+                            phase='reconnaissance'
+                        )
+                        
+                        success = exec_result and exec_result.get('success', False)
+                        skill = self.agent.get_skill(weakness)
+                        global_reward = 1.0 if success else -0.5
+                        policy_success = success
+                        
+                        skill.practice(success, difficulty=0.5, global_reward=global_reward, policy_success=policy_success)
+                        
+                        logger.debug(f"[Weak Skill Practice] Skill: {weakness}, Success: {success}, Tool: {tool}")
+                        
+                    except Exception as e:
+                        logger.debug(f"Practice error: {e}")
+                
+                time.sleep(1)
             
-            if tool:
+            # If no weaknesses or still have time, practice with random tools
+            if datetime.now() < end_time:
+                tool = random.choice(all_tools)
                 try:
-                    # Normalize target based on tool type
                     if self.target_normalizer:
                         normalized_target = self.target_normalizer.get_tool_target(target_url, tool)
                     else:
                         normalized_target = target_url
                     
+                    print(f"   Running {tool} for general practice...")
                     exec_result = tool_manager.execute_tool(
                         tool_name=tool,
                         target=normalized_target,
                         parameters={},
                         scan_id='practice',
-                        phase='reconnaissance'  # Default phase for practice
+                        phase='reconnaissance'
                     )
                     
+                    # Update relevant skills based on tool used
+                    tool_skills = {
+                        'nmap': ['port_scanning', 'service_detection', 'nmap'],
+                        'nikto': ['vuln_prioritization', 'nikto'],
+                        'gobuster': ['dirbusting', 'gobuster'],
+                        'whatweb': ['tech_detection', 'whatweb'],
+                        'sqlmap': ['sqli_detection', 'sqlmap'],
+                        'commix': ['cmdi_detection', 'commix'],
+                        'ffuf': ['dirbusting', 'ffuf'],
+                        'wafw00f': ['wafw00f'],
+                    }
+                    
                     success = exec_result and exec_result.get('success', False)
-                    skill = self.agent.get_skill(weakness)
-                    # Calculate global reward based on execution result
-                    global_reward = 1.0 if success else -0.5
-                    policy_success = success
-                    
-                    skill.practice(success, difficulty=0.5, global_reward=global_reward, policy_success=policy_success)
-                    
-                    # Log skill update with cause
-                    logger.debug(f"[Weak Skill Practice] Skill: {weakness}, Success: {success}, Global Reward: {global_reward}, Policy Success: {policy_success}, Tool: {tool}")
+                    for skill_name in tool_skills.get(tool, []):
+                        skill = self.agent.get_skill(skill_name)
+                        skill.practice(success, difficulty=0.5, global_reward=1.0 if success else -0.5, policy_success=success)
                     
                 except Exception as e:
-                    logger.debug(f"Practice error: {e}")
+                    logger.debug(f"General practice error: {e}")
+                
+                time.sleep(2)
             
-            time.sleep(1)
+            # Check remaining time and log progress
+            remaining = (end_time - datetime.now()).total_seconds() / 60
+            if remaining > 0:
+                print(f"   ⏱️ {remaining:.1f} minutes remaining in phase")
     
     def _print_phase_summary(self, phase: TrainingPhase):
         """Print phase summary"""
