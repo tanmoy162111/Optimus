@@ -1,0 +1,21 @@
+{
+  "beta_params": {},
+  "total_updates": 0,
+  "tool_selections": {},
+  "config": {
+    "strategy": "thompson",
+    "alpha_prior": 1.0,
+    "beta_prior": 1.0,
+    "ucb_exploration": 2.0,
+    "reward_min": -5.0,
+    "reward_max": 10.0,
+    "num_context_bins": 10,
+    "checkpoint_frequency": 10,
+    "model_dir": "D:\\Work\\Ai Engineering\\Git\\Optimus\\backend\\data\\models\\cmab",
+    "learning_rate": 0.1,
+    "decay_factor": 0.99,
+    "min_exploration_prob": 0.05,
+    "exploration_decay": 0.995
+  },
+  "saved_at": "2026-01-24T16:29:10.503283"
+}

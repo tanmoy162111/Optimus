@@ -222,6 +222,9 @@ class GlobalRewardCalculator:
         return reward
 
 
+# Alias for backward compatibility
+RewardCalculator = GlobalRewardCalculator
+
 # Singleton
 _calculator = None
 

@@ -351,8 +351,8 @@ class ToolRegistry:
         
         # Import ToolDiscovery to scan for available tools
         try:
-            from ..tools.tool_discovery import ToolDiscovery
-        except (ImportError, ValueError):
+            from tools.tool_discovery import ToolDiscovery
+        except ImportError:
             # Fallback for when module is run from different package context
             import sys
             from pathlib import Path
