@@ -5,8 +5,8 @@
     
     "targets": [
         {
-            "name": "OWASP_Juice_Shop_Demo",
-            "url": "https://demo.owasp-juice.shop",
+            "name": "OWASP_Juice_Shop",
+            "url": "https://juice-shop.herokuapp.com",
             "type": "web_application",
             "difficulty": "beginner_to_intermediate",
             "vulnerabilities": [
@@ -324,8 +324,9 @@
     },
     
     "authorized_targets": [
-        "demo.owasp-juice.shop",
+        "juice-shop.herokuapp.com",
         "192.168.131.128",
+        "192.168.131.",
         "localhost",
         "127.0.0.1",
         "192.168.56.",

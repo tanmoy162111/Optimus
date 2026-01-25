@@ -138,7 +138,8 @@ class TrainingPhase(Enum):
 
 
 class SkillCategory(Enum):
-    """Skill categories to train"""
+    """Skill categories to train - includes basic through master-level domains"""
+    # Basic categories (Newbie to Pro)
     RECONNAISSANCE = "reconnaissance"
     ENUMERATION = "enumeration"
     VULNERABILITY_DETECTION = "vulnerability_detection"
@@ -147,6 +148,34 @@ class SkillCategory(Enum):
     CHAIN_ATTACKS = "chain_attacks"
     EVASION = "evasion"
     REPORTING = "reporting"
+    
+    # Elite-level categories (24-hour training)
+    RED_TEAM_OPS = "red_team_operations"
+    AD_EXPLOITATION = "ad_exploitation"
+    BINARY_EXPLOITATION = "binary_exploitation"
+    NETWORK_PIVOTING = "network_pivoting"
+    C2_OPERATIONS = "c2_operations"
+    WAF_BYPASS = "waf_bypass"
+    ZERO_DAY_HUNTING = "zero_day_hunting"
+    APT_SIMULATION = "apt_simulation"
+    
+    # Master-level categories (40+ hour training)
+    KERNEL_EXPLOITATION = "kernel_exploitation"
+    BROWSER_EXPLOITATION = "browser_exploitation"
+    HYPERVISOR_ESCAPE = "hypervisor_escape"
+    MOBILE_EXPLOITATION = "mobile_exploitation"
+    CLOUD_EXPLOITATION = "cloud_exploitation"
+    SUPPLY_CHAIN_ATTACKS = "supply_chain_attacks"
+    FIRMWARE_ROOTKITS = "firmware_rootkits"
+    ICS_SCADA = "ics_scada"
+    AIR_GAP_BRIDGING = "air_gap_bridging"
+    HARDWARE_HACKING = "hardware_hacking"
+    ADVERSARIAL_ML = "adversarial_ml"
+    LLM_EXPLOITATION = "llm_exploitation"
+    COVERT_CHANNELS = "covert_channels"
+    COUNTER_INTELLIGENCE = "counter_intelligence"
+    STEALTH_OPERATIONS = "stealth_operations"
+    RESEARCH_PUBLICATION = "research_publication"
 
 
 @dataclass
@@ -212,14 +241,85 @@ class AgentProfile:
     
     def get_skill(self, skill_name: str) -> Skill:
         if skill_name not in self.skills:
-            # Determine category from skill name
-            category = SkillCategory.RECONNAISSANCE
-            for cat in SkillCategory:
-                if cat.value in skill_name.lower():
-                    category = cat
-                    break
+            # Determine category from skill name using comprehensive mapping
+            category = self._categorize_skill(skill_name)
             self.skills[skill_name] = Skill(name=skill_name, category=category)
         return self.skills[skill_name]
+    
+    def _categorize_skill(self, skill_name: str) -> SkillCategory:
+        """Categorize skill based on name patterns - supports elite and master skills"""
+        skill_lower = skill_name.lower()
+        
+        # Master-level skill patterns
+        master_patterns = {
+            SkillCategory.KERNEL_EXPLOITATION: ['kernel', 'rootkit', 'privilege_primitive'],
+            SkillCategory.BROWSER_EXPLOITATION: ['browser', 'v8', 'spidermonkey', 'renderer', 'sandbox_escape'],
+            SkillCategory.HYPERVISOR_ESCAPE: ['hypervisor', 'vm_escape', 'container_breakout', 'virtualization'],
+            SkillCategory.MOBILE_EXPLOITATION: ['ios', 'android', 'mobile', 'app_exploitation'],
+            SkillCategory.CLOUD_EXPLOITATION: ['azure', 'aws', 'gcp', 'cloud_pivot', 'cloud_takeover'],
+            SkillCategory.SUPPLY_CHAIN_ATTACKS: ['supply_chain', 'build_system', 'dependency_confusion', 'trojanized'],
+            SkillCategory.FIRMWARE_ROOTKITS: ['firmware', 'uefi', 'bios', 'hardware_implant'],
+            SkillCategory.ICS_SCADA: ['ics', 'scada', 'plc', 'modbus', 'dnp3', 'industrial'],
+            SkillCategory.AIR_GAP_BRIDGING: ['air_gap', 'emanation', 'usb_attack', 'acoustic', 'optical'],
+            SkillCategory.HARDWARE_HACKING: ['hardware_hack', 'physical_pentest', 'embedded', 'implant_design'],
+            SkillCategory.ADVERSARIAL_ML: ['adversarial_ml', 'model_extraction', 'data_poison', 'ml_evasion'],
+            SkillCategory.LLM_EXPLOITATION: ['llm', 'prompt_injection', 'jailbreak'],
+            SkillCategory.COVERT_CHANNELS: ['covert_channel', 'dns_tunnel', 'steganograph', 'timing_channel'],
+            SkillCategory.COUNTER_INTELLIGENCE: ['counter_intel', 'threat_hunter', 'surveillance_detect'],
+            SkillCategory.STEALTH_OPERATIONS: ['stealth', 'opsec', 'attribution_avoid', 'deniable'],
+            SkillCategory.RESEARCH_PUBLICATION: ['research', 'cve_coord', 'disclosure', 'paper'],
+        }
+        
+        # Elite-level skill patterns
+        elite_patterns = {
+            SkillCategory.RED_TEAM_OPS: ['red_team', 'osint', 'social_engineer'],
+            SkillCategory.AD_EXPLOITATION: ['bloodhound', 'kerberoast', 'asreproast', 'golden_ticket', 
+                                            'pass_the_hash', 'mimikatz', 'rubeus', 'domain_admin', 'ad_enum'],
+            SkillCategory.BINARY_EXPLOITATION: ['buffer_overflow', 'shellcode', 'nop_sled', 'rop', 
+                                                 'heap_exploit', 'use_after_free', 'fastbin', 'tcache'],
+            SkillCategory.NETWORK_PIVOTING: ['pivot', 'tunnel', 'chisel', 'ligolo', 'socks_proxy', 'ssh_tunnel'],
+            SkillCategory.C2_OPERATIONS: ['c2', 'covenant', 'sliver', 'beacon', 'domain_fronting', 'callback'],
+            SkillCategory.WAF_BYPASS: ['waf_bypass', 'ids_evas', 'polyglot', 'protocol_manip'],
+            SkillCategory.ZERO_DAY_HUNTING: ['fuzzing', 'afl', 'crash_analysis', 'vuln_triage', 'code_review',
+                                              'taint_analysis', 'logic_flaw', 'race_condition'],
+            SkillCategory.APT_SIMULATION: ['apt', 'enterprise_breach', 'exfiltrat', 'anti_forensic',
+                                            'long_term_persist', 'campaign'],
+        }
+        
+        # Basic skill patterns
+        basic_patterns = {
+            SkillCategory.RECONNAISSANCE: ['recon', 'osint', 'subdomain', 'dns', 'whois', 'whatweb', 'wappalyzer'],
+            SkillCategory.ENUMERATION: ['enum', 'nmap', 'port_scan', 'service_detect', 'gobuster', 'ffuf', 'dirb'],
+            SkillCategory.VULNERABILITY_DETECTION: ['vuln', 'nikto', 'nuclei', 'scan', 'detect'],
+            SkillCategory.EXPLOITATION: ['exploit', 'sqlmap', 'sqli', 'xss', 'dalfox', 'commix', 'rce', 'shell'],
+            SkillCategory.POST_EXPLOITATION: ['post_exploit', 'privesc', 'linpeas', 'lateral', 'persist'],
+            SkillCategory.CHAIN_ATTACKS: ['chain', 'multi_stage', 'pivot'],
+            SkillCategory.EVASION: ['evas', 'bypass', 'obfuscat', 'encode'],
+            SkillCategory.REPORTING: ['report', 'document', 'presentation'],
+        }
+        
+        # Check master patterns first (most specific)
+        for category, patterns in master_patterns.items():
+            if any(pattern in skill_lower for pattern in patterns):
+                return category
+        
+        # Check elite patterns
+        for category, patterns in elite_patterns.items():
+            if any(pattern in skill_lower for pattern in patterns):
+                return category
+        
+        # Check basic patterns
+        for category, patterns in basic_patterns.items():
+            if any(pattern in skill_lower for pattern in patterns):
+                return category
+        
+        # Also check if category value is directly in skill name
+        for cat in SkillCategory:
+            if cat.value in skill_lower:
+                return cat
+        
+        # Default to reconnaissance
+        return SkillCategory.RECONNAISSANCE
     
     def update_level(self):
         """Update overall skill level based on skills"""

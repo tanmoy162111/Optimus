@@ -31457,3 +31457,37 @@ AssertionError: write() before start_response
  * Running on http://127.0.0.1:5000
  * Running on http://192.168.1.104:5000
 2026-01-02 03:56:08,098 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-01-25 01:39:14,950 - optimus - INFO - Registered: api_bp
+2026-01-25 01:39:14,960 - optimus - INFO - Registered: tool_bp
+2026-01-25 01:39:14,975 - optimus - INFO - Registered: intelligence_bp
+2026-01-25 01:39:14,980 - optimus - INFO - Registered: metrics_bp
+2026-01-25 01:39:14,997 - optimus - INFO - Registered: report_bp
+2026-01-25 01:39:15,002 - optimus - INFO - Registered: training_bp
+2026-01-25 01:39:15,009 - optimus - INFO - WebSocket handlers registered
+2026-01-25 01:39:15,021 - intelligence.optimus_brain - INFO - Optimus Brain created (not yet initialized)
+2026-01-25 01:39:15,021 - optimus - INFO - Intelligence module initialized
+2026-01-25 01:39:15,028 - optimus - INFO - Hybrid tool system initialized
+2026-01-25 01:39:15,053 - core.scan_engine - INFO - Creating new ScanManager instance
+2026-01-25 01:39:30,795 - inference.tool_manager - INFO - [ToolManager] Using EnhancedOutputParser
+2026-01-25 01:39:30,845 - inference.parser_pattern_db - INFO - [ParserPatternDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\data\parser_patterns.db
+2026-01-25 01:39:30,846 - inference.ollama_client - INFO - [OllamaClient] Initialized with model: codellama:7b-instruct
+2026-01-25 01:39:30,855 - inference.evolving_parser - INFO - [EvolutionDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\data\parser_evolution.db
+2026-01-25 01:39:30,877 - inference.evolving_parser - INFO - [EvolvingParser] Initialized (LLM: True, Evolution: True)
+2026-01-25 01:39:30,878 - inference.tool_manager - INFO - [ToolManager] Using EvolvingParser (LLM: True, Evolution: True)
+2026-01-25 01:39:30,878 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2026-01-25 01:39:30,889 - inference.evolving_commands - INFO - [CommandEvolutionDB] Initialized at D:\Work\Ai Engineering\Git\Optimus\backend\data\command_evolution.db
+2026-01-25 01:39:30,890 - inference.evolving_commands - INFO - [EvolvingCommandGenerator] Initialized
+2026-01-25 01:39:30,890 - inference.tool_manager - INFO - [ToolManager] Evolving command generator initialized
+2026-01-25 01:39:30,890 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2026-01-25 01:39:30,891 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2026-01-25 01:39:30,891 - core.scan_engine - INFO - ScanManager initialized with WORKING implementation
+2026-01-25 01:39:30,922 - inference.tool_manager - INFO - [ToolManager] Using EvolvingParser (LLM: True, Evolution: True)
+2026-01-25 01:39:30,922 - inference.tool_manager - INFO - [ToolManager] Hybrid tool system initialized
+2026-01-25 01:39:30,923 - inference.tool_manager - INFO - [ToolManager] Evolving command generator initialized
+2026-01-25 01:39:30,923 - inference.tool_manager - INFO - [ToolManager] Initialized with dynamic command generation
+2026-01-25 01:39:30,923 - core.scan_engine - INFO - Loaded: AutonomousPentestAgent, ToolManager
+2026-01-25 01:39:30,996 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.107:5000
+2026-01-25 01:39:30,996 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
