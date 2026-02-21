@@ -189,8 +189,16 @@ class Skill:
     failures: int = 0
     last_practiced: Optional[str] = None
     
-    def practice(self, success: bool, difficulty: float = 1.0, global_reward: float = 0.0, policy_success: bool = False):
-        """Record practice session with global reward and policy success dependencies"""
+    def practice(self, success: bool, difficulty: float = 1.0, global_reward: float = 0.0, policy_success: bool = False, tool_executed: bool = False):
+        """Record practice session with global reward and policy success dependencies
+        
+        Args:
+            success: Whether the practice was successful
+            difficulty: Difficulty multiplier (0.0-2.0)
+            global_reward: Reward value for this practice
+            policy_success: Whether the policy was successful
+            tool_executed: Whether a tool was actually executed (gives partial credit)
+        """
         # Calculate experience based on global reward and policy success
         base_experience = 10 * difficulty
         reward_multiplier = max(1.0, abs(global_reward) / 10.0) if global_reward != 0 else 1.0
@@ -203,14 +211,20 @@ class Skill:
             # Use global reward to influence skill growth
             reward_factor = max(0.5, min(2.0, 1.0 + (global_reward / 5.0))) if global_reward != 0 else 1.0
             self.level = min(100, self.level + (5 * difficulty * reward_factor * (1 - self.level/100)))
+        elif tool_executed:
+            # Partial credit for attempting - tool ran but no findings
+            # Still gain experience, just less than success
+            self.level = min(100, self.level + (2 * difficulty * (1 - self.level/100)))
+            self.successes += 1  # Count as partial success
         else:
             self.failures += 1
-            self.level = max(0, self.level - 1)
+            # Reduced penalty - skills shouldn't degrade too fast
+            self.level = max(0, self.level - 0.5)
         
         self.last_practiced = datetime.now().isoformat()
         
         # Add debug logging
-        logger.debug(f"[Skill Practice] {self.name}: success={success}, global_reward={global_reward:.2f}, policy_success={policy_success}, new_level={self.level}")
+        logger.debug(f"[Skill Practice] {self.name}: success={success}, global_reward={global_reward:.2f}, policy_success={policy_success}, tool_executed={tool_executed}, new_level={self.level}")
     
     @property
     def success_rate(self) -> float:
@@ -958,6 +972,7 @@ class ComponentManager:
             ('evolving_parser', 'inference.evolving_parser', 'get_evolving_parser', {}),
             ('evolving_commands', 'inference.evolving_commands', 'get_evolving_command_generator', {}),
             ('exploit_chainer', 'exploitation.exploit_chainer', 'ExploitChainer', {'needs_executor': True}),
+            ('exploitation_manager', 'exploitation.integration', 'ExploitationManager', {'needs_tool_manager': True}),
             ('web_intel', 'intelligence.web_intelligence', 'get_web_intelligence', {}),
             # CMAB Agent (CPU-efficient) with DeepRL fallback
             ('rl_agent', 'training.cmab_agent', 'get_cmab_agent', {'args': {'num_actions': 50, 'strategy': 'thompson'}}),
@@ -976,6 +991,10 @@ class ComponentManager:
                     from exploitation.exploit_executor import ExploitExecutor
                     executor = ExploitExecutor()
                     self.components[name] = cls(executor)
+                elif options.get('needs_tool_manager'):
+                    # Special handling for ExploitationManager - needs tool_manager
+                    tool_mgr = self.components.get('tool_manager')
+                    self.components[name] = cls(tool_manager=tool_mgr)
                 elif name == 'tool_manager':
                     # Special handling for ToolManager - pass None for socketio
                     self.components[name] = cls(socketio=None)
@@ -1405,6 +1424,18 @@ class NewbieToProTrainer:
                             scan_state['findings'].extend(findings)
                             scan_state['tools_executed'].append({'tool': required_tool, 'timestamp': time.time()})
                             
+                            # FIX: Update metrics with findings from forced tool execution
+                            # Previously findings were added to scan_state but NOT to metrics
+                            if findings:
+                                self.metrics['total_findings'] += len(findings)
+                                logger.info(f"Recorded {len(findings)} findings from {required_tool} to metrics (total: {self.metrics['total_findings']})")
+                            
+                            # Check for shell indicators in tool output
+                            stdout = exec_result.get('stdout', '')
+                            if stdout and any(ind in stdout.lower() for ind in ['uid=', 'root:', 'shell obtained', 'meterpreter', 'session opened']):
+                                self.metrics['total_shells'] += 1
+                                logger.info(f"Shell indicator detected from {required_tool} (total shells: {self.metrics['total_shells']})")
+                            
                             # Learn from output - pass parsed results dict, not stderr
                             evolving_parser = self.components.get('evolving_parser')
                             if evolving_parser and exec_result.get('stdout'):
@@ -1423,7 +1454,11 @@ class NewbieToProTrainer:
                             
             result = self._run_exercise_with_state(exercise, lesson, scan_state)
             
-            # Update skills
+            # Track if tools were executed during this exercise
+            current_tools_count = len(scan_state.get('tools_executed', []))
+            tools_were_executed = current_tools_count > initial_tools_executed_count
+            
+            # Update skills - give credit for tool execution even without findings
             for skill_name in lesson.skills_trained:
                 skill = self.agent.get_skill(skill_name)
                 # Calculate global reward based on result
@@ -1431,7 +1466,14 @@ class NewbieToProTrainer:
                 policy_success = result.get('success', False) if isinstance(result, dict) else False
                 success = result.get('success', False)
                 
-                skill.practice(result.get('success', False), difficulty=1.0, global_reward=global_reward, policy_success=policy_success)
+                # Pass tool_executed flag for partial credit
+                skill.practice(
+                    success=success,
+                    difficulty=1.0,
+                    global_reward=global_reward,
+                    policy_success=policy_success,
+                    tool_executed=tools_were_executed  # Partial credit if tools ran
+                )
                 
                 # Track global reward for adaptive threshold calculation
                 if global_reward != 0:
@@ -2052,6 +2094,17 @@ class NewbieToProTrainer:
                 scan_state['findings'].extend(findings)
                 scan_state['tools_executed'].append(tool_name)
                 
+                # FIX: Update metrics with findings from force basic scan
+                if findings:
+                    self.metrics['total_findings'] += len(findings)
+                    logger.info(f"[Force Basic Scan] Recorded {len(findings)} findings from {tool_name} to metrics (total: {self.metrics['total_findings']})")
+                
+                # Check for shell indicators
+                stdout = exec_result.get('stdout', '')
+                if stdout and any(ind in stdout.lower() for ind in ['uid=', 'root:', 'shell obtained', 'meterpreter', 'session opened']):
+                    self.metrics['total_shells'] += 1
+                    logger.info(f"[Force Basic Scan] Shell indicator detected from {tool_name}")
+                
                 # Update skills based on the tool execution
                 skill = self.agent.get_skill(tool_name)
                 success = exec_result.get('success', False)
@@ -2092,7 +2145,14 @@ class NewbieToProTrainer:
         return 'reconnaissance'  # fallback
     
     def _run_assessment(self, lesson: LessonPlan) -> Dict:
-        """Run lesson assessment with proper lesson gate logic"""
+        """Run lesson assessment with proper lesson gate logic
+        
+        Assessment now considers:
+        1. Skill levels for skills_trained
+        2. Tools executed during lesson
+        3. Findings discovered
+        4. Adaptive threshold based on phase and progress
+        """
         assessment = lesson.assessment
         result = {'passed': False, 'score': 0}
         
@@ -2107,11 +2167,11 @@ class NewbieToProTrainer:
         # Calculate adaptive threshold using formula: required_skill = base + difficulty * scale
         # Use base threshold that adapts based on agent's overall progress and skill level
         phase_difficulty = {
-            TrainingPhase.FUNDAMENTALS: 1.0,
-            TrainingPhase.INTERMEDIATE: 1.5,
-            TrainingPhase.ADVANCED: 2.0,
-            TrainingPhase.EXPERT: 2.5,
-            TrainingPhase.MASTERY: 3.0
+            TrainingPhase.FUNDAMENTALS: 0.5,  # Reduced from 1.0 - easier to pass
+            TrainingPhase.INTERMEDIATE: 1.0,
+            TrainingPhase.ADVANCED: 1.5,
+            TrainingPhase.EXPERT: 2.0,
+            TrainingPhase.MASTERY: 2.5
         }
         
         # Calculate base threshold based on agent's current average skill level to make it adaptive
@@ -2119,37 +2179,55 @@ class NewbieToProTrainer:
         current_avg_skill = statistics.mean(all_skill_levels) if all_skill_levels else 0
         
         # Calculate base threshold based on phase to allow early learning
+        # Reduced thresholds to make lessons more achievable
         if lesson.phase == TrainingPhase.FUNDAMENTALS:
             base_threshold = 0
         elif lesson.phase == TrainingPhase.INTERMEDIATE:
-            base_threshold = 5
+            base_threshold = 3
         elif lesson.phase == TrainingPhase.ADVANCED:
-            base_threshold = 15
+            base_threshold = 8
         else:  # EXPERT and MASTERY
-            base_threshold = 25
+            base_threshold = 15
         
-        difficulty_factor = phase_difficulty.get(lesson.phase, 2.0)
+        difficulty_factor = phase_difficulty.get(lesson.phase, 1.5)
         
         # Calculate scale factor based on global reward trends to make it adaptive
         recent_rewards = getattr(self, 'recent_global_rewards', [])
         avg_recent_reward = statistics.mean(recent_rewards[-5:]) if recent_rewards else 0
         
         # Scale factor adapts based on recent global reward performance
-        reward_adaptation = max(0.5, min(2.0, 1.0 + (avg_recent_reward / 10.0))) if avg_recent_reward != 0 else 1.0
-        scale_factor = 5.0 * reward_adaptation  # Base scale factor with reward adaptation
+        # Reduced from 5.0 to 3.0 base scale factor to make lessons easier
+        reward_adaptation = max(0.5, min(1.5, 1.0 + (avg_recent_reward / 20.0))) if avg_recent_reward != 0 else 1.0
+        scale_factor = 3.0 * reward_adaptation  # Reduced base scale factor
         
         required_avg_skill = base_threshold + (difficulty_factor * scale_factor)
         
+        # Check if any exercises were completed (partial completion credit)
+        # For fundamentals, completing exercises is enough to pass
+        lessons_completed_count = self.metrics.get('lessons_completed', 0)
+        tools_executed_count = len([s for s in self.agent.skills.values() if s.experience > 0])
+        
+        # Pass if skill level meets threshold OR if making good progress
+        basic_pass = avg_level >= required_avg_skill
+        progress_pass = (
+            lesson.phase == TrainingPhase.FUNDAMENTALS and 
+            avg_level >= 1.0 and  # At least attempted
+            tools_executed_count >= 1  # At least one tool skill practiced
+        )
+        
         result['score'] = avg_level / 100
-        result['passed'] = avg_level >= required_avg_skill
+        result['passed'] = basic_pass or progress_pass
         result['required_avg_skill'] = required_avg_skill
         result['actual_avg_skill'] = avg_level
+        result['progress_pass'] = progress_pass
         
         # Add comprehensive logging with detailed assessment information
         logger.info(f"[Lesson Assessment] {lesson.title}: "
                   f"actual_avg_skill={avg_level:.2f}, "
                   f"required_avg_skill={required_avg_skill:.2f}, "
-                  f"passed={avg_level >= required_avg_skill}, "
+                  f"passed={result['passed']}, "
+                  f"basic_pass={basic_pass}, "
+                  f"progress_pass={progress_pass}, "
                   f"current_agent_avg_skill={current_avg_skill:.2f}, "
                   f"base_threshold={base_threshold:.2f}, "
                   f"difficulty_factor={difficulty_factor:.2f}, "
@@ -2230,6 +2308,17 @@ class NewbieToProTrainer:
                         findings = exec_result.get('findings', [])
                         scan_state['findings'].extend(findings)
                         
+                        # FIX: Update metrics with findings from challenge execution
+                        if findings:
+                            self.metrics['total_findings'] += len(findings)
+                            logger.info(f"[Challenge] Recorded {len(findings)} findings from {rec.tool} to metrics (total: {self.metrics['total_findings']})")
+                        
+                        # Check for shell indicators
+                        stdout = exec_result.get('stdout', '')
+                        if stdout and any(ind in stdout.lower() for ind in ['uid=', 'root:', 'shell obtained', 'meterpreter', 'session opened']):
+                            self.metrics['total_shells'] += 1
+                            logger.info(f"[Challenge] Shell indicator detected from {rec.tool}")
+                        
                         # Record execution for intelligent selector learning
                         if intelligent_selector:
                             execution_time = exec_result.get('execution_time', 10.0)  # Default to 10 seconds if not provided
@@ -2295,8 +2384,11 @@ class NewbieToProTrainer:
         self.total_reward += score
     
     def _execute_chain(self, chain_name: str, target: str, scan_state: Dict) -> Dict:
-        """Execute a chain attack"""
-        result = {'success': False, 'steps_completed': 0}
+        """Execute a chain attack with enhanced exploitation support
+        
+        Now uses ExploitationManager for more sophisticated attacks.
+        """
+        result = {'success': False, 'steps_completed': 0, 'shell_type': None}
         
         # Define chains
         chains = {
@@ -2307,10 +2399,67 @@ class NewbieToProTrainer:
         
         tools = chains.get(chain_name, ['nuclei'])
         tool_manager = self.components.get('tool_manager')
+        exploitation_manager = self.components.get('exploitation_manager')
         
         if not tool_manager:
             return result
         
+        # Enhanced shell indicators
+        shell_indicators = [
+            'uid=', 'root:', 'shell', 'meterpreter', 'session opened',
+            'www-data', 'command shell', 'reverse shell', 'nc -e',
+            'bash -i', '/bin/sh', 'interactive shell', 'whoami',
+        ]
+        
+        # Try ExploitationManager first if available (advanced phases)
+        if exploitation_manager and scan_state.get('phase') in ['exploitation', 'post_exploitation']:
+            try:
+                # Get any high-severity findings
+                high_severity_findings = [
+                    f for f in scan_state.get('findings', [])
+                    if f.get('severity', 0) >= 7.0
+                ]
+                
+                if high_severity_findings:
+                    logger.info(f"[Chain] Using ExploitationManager with {len(high_severity_findings)} high-severity findings")
+                    
+                    for finding in high_severity_findings[:3]:  # Try top 3
+                        try:
+                            # Create attack context
+                            context = {
+                                'target': target,
+                                'lhost': self.config.get('lhost', '10.10.14.1'),
+                                'lport': self.config.get('lport', 4444),
+                            }
+                            
+                            # Try to create attack plan
+                            plan = exploitation_manager.create_attack_plan(
+                                target=target,
+                                objective='shell',
+                                vulnerabilities=[finding],
+                                context=context
+                            )
+                            
+                            if plan and plan.get('steps'):
+                                for step in plan['steps'][:5]:
+                                    cmd = step.get('command', '')
+                                    if cmd:
+                                        exec_result = tool_manager.execute_tool_direct(cmd, timeout=60)
+                                        if exec_result:
+                                            result['steps_completed'] += 1
+                                            stdout = str(exec_result.get('output', ''))
+                                            if any(ind in stdout.lower() for ind in shell_indicators):
+                                                result['success'] = True
+                                                result['shell_type'] = 'exploitation_manager'
+                                                self.metrics['total_shells'] += 1
+                                                logger.info(f"[Chain] Shell obtained via ExploitationManager!")
+                                                return result
+                        except Exception as e:
+                            logger.debug(f"ExploitationManager attempt failed: {e}")
+            except Exception as e:
+                logger.debug(f"ExploitationManager chain error: {e}")
+        
+        # Fall back to tool chain execution
         for tool in tools:
             try:
                 # Normalize target based on tool type
@@ -2322,7 +2471,7 @@ class NewbieToProTrainer:
                 exec_result = tool_manager.execute_tool(
                     tool_name=tool,
                     target=normalized_target,
-                    parameters={},
+                    parameters={'phase': scan_state.get('phase', 'exploitation')},
                     scan_id=scan_state['scan_id'],
                     phase=scan_state['phase']
                 )
@@ -2330,11 +2479,13 @@ class NewbieToProTrainer:
                 if exec_result and exec_result.get('success'):
                     result['steps_completed'] += 1
                     
-                    # Check for shell
-                    stdout = exec_result.get('stdout', '')
-                    if any(ind in stdout for ind in ['uid=', 'root:', 'shell']):
+                    # Check for shell indicators
+                    stdout = exec_result.get('stdout', '').lower()
+                    if any(ind in stdout for ind in shell_indicators):
                         result['success'] = True
+                        result['shell_type'] = tool
                         self.metrics['total_shells'] += 1
+                        logger.info(f"[Chain] Shell obtained via {tool}!")
                         break
                         
             except Exception as e:

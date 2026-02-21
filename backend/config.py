@@ -10,8 +10,8 @@ class Config:
     FLASK_PORT = int(os.getenv('FLASK_PORT', 5000))
     
     # Kali VM
-    KALI_HOST = os.getenv('KALI_HOST', '127.0.0.1')
-    KALI_PORT = int(os.getenv('KALI_PORT', 2222))
+    KALI_HOST = os.getenv('KALI_HOST', '10.0.2.15')
+    KALI_PORT = int(os.getenv('KALI_PORT', 22))
     KALI_USER = os.getenv('KALI_USER', 'kali')
     KALI_PASSWORD = os.getenv('KALI_PASSWORD', 'kali')
     KALI_KEY_PATH = os.getenv('KALI_KEY_PATH', '')
@@ -65,6 +65,11 @@ class Config:
     DEEP_RL_BATCH_SIZE = int(os.getenv('DEEP_RL_BATCH_SIZE', 64))
     DEEP_RL_USE_PER = os.getenv('DEEP_RL_USE_PER', 'true').lower() == 'true'
     DEEP_RL_USE_NOISY = os.getenv('DEEP_RL_USE_NOISY', 'true').lower() == 'true'
+    
+    # Metasploit RPC Configuration
+    MSFRPC_URL = os.getenv('MSFRPC_URL', 'https://127.0.0.1:55553')
+    MSFRPC_PASSWORD = os.getenv('MSFRPC_PASSWORD', 'msf123')
+    MSFRPC_SSL = os.getenv('MSFRPC_SSL', 'true').lower() == 'true'
     
     # Intelligence Configuration
     NVD_API_KEY = os.getenv('NVD_API_KEY', '')

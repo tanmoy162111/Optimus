@@ -17,6 +17,22 @@ from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
 
+# Import centralized text sanitization utilities
+try:
+    from utils.text_sanitizer import ansi_strip, sanitize_evidence
+except ImportError:
+    # Fallback if utils module not available
+    def ansi_strip(text: str) -> str:
+        """Fallback ANSI strip - basic version"""
+        if not text:
+            return text
+        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+        return ansi_escape.sub('', text)
+    
+    def sanitize_evidence(text: str, max_length: int = 500) -> str:
+        """Fallback evidence sanitization"""
+        return ansi_strip(text)[:max_length] if text else ""
+
 logger = logging.getLogger(__name__)
 
 
@@ -419,15 +435,10 @@ class EnhancedOutputParser:
         if not output:
             return output
         
-        # Remove ANSI escape codes (terminal color codes)
-        ansi_escape = re.compile(r'\x1B\[([0-9;]*[A-Za-z])|\x9b([0-9;]*[A-Za-z])')
-        output = ansi_escape.sub('', output)
+        # Use centralized ANSI stripping utility
+        output = ansi_strip(output)
         
-        # Remove other common escape sequences
-        output = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', output)  # ESC[...format
-        output = re.sub(r'\x9b[0-9;]*[a-zA-Z]', '', output)   # Alternative CSI format
-        
-        # Remove common terminal artifacts
+        # Additional cleanup for terminal artifacts
         output = re.sub(r'\x08+', '', output)  # Remove backspaces
         output = re.sub(r'\r\n', '\n', output)  # Normalize line endings
         
@@ -589,6 +600,10 @@ class EnhancedOutputParser:
             'smbclient': self._parse_smb_tool,
             'crackmapexec': self._parse_smb_tool,
             'masscan': self._parse_masscan,
+            'linpeas': self._parse_linpeas,
+            'linpeas.sh': self._parse_linpeas,
+            'winpeas': self._parse_winpeas,
+            'winpeas.exe': self._parse_winpeas,
         }
     
     def _parse_nmap(self, stdout: str, stderr: str, context: Dict) -> Dict:
@@ -741,9 +756,16 @@ class EnhancedOutputParser:
         }
     
     def _parse_nikto(self, stdout: str, stderr: str, context: Dict) -> Dict:
-        """Parse nikto output"""
+        """Parse nikto output - supports both CSV and standard formats"""
         vulnerabilities = []
         
+        # Try CSV format first (if -Format csv was used)
+        if ',' in stdout and ('"' in stdout or 'OSVDB' in stdout):
+            csv_result = self._parse_nikto_csv(stdout, context)
+            if csv_result.get('vulnerabilities'):
+                return csv_result
+        
+        # Fall back to standard text format
         for line in stdout.split('\n'):
             line = line.strip()
             
@@ -761,15 +783,7 @@ class EnhancedOutputParser:
             osvdb = osvdb_match.group(1) if osvdb_match else None
             
             # Determine severity based on content
-            severity = 5.0
-            if any(word in line.lower() for word in ['remote code', 'rce', 'command execution']):
-                severity = 9.0
-            elif any(word in line.lower() for word in ['sql injection', 'xss', 'file inclusion']):
-                severity = 8.0
-            elif any(word in line.lower() for word in ['directory listing', 'backup', 'sensitive']):
-                severity = 6.0
-            elif any(word in line.lower() for word in ['information', 'disclosure', 'version']):
-                severity = 4.0
+            severity = self._nikto_severity_from_desc(line)
             
             # Extract path if present
             path_match = re.search(r'(/[^\s:]+)', line)
@@ -786,6 +800,110 @@ class EnhancedOutputParser:
                 'exploitable': severity >= 7.0,
                 'tool': 'nikto'
             })
+        
+        return {
+            'vulnerabilities': vulnerabilities,
+            'hosts': [],
+            'services': [],
+            'raw_output': stdout
+        }
+    
+    def _parse_nikto_csv(self, csv_content: str, context: Dict) -> Dict:
+        """Parse nikto CSV output for structured findings"""
+        import csv
+        from io import StringIO
+        
+        vulnerabilities = []
+        
+        try:
+            # Try to parse as CSV
+            reader = csv.reader(StringIO(csv_content))
+            headers = None
+            
+            for row in reader:
+                if not row:
+                    continue
+                
+                # First non-empty row should be headers or data
+                if headers is None:
+                    # Check if this looks like headers
+                    if any(h.lower() in ['host', 'ip', 'port', 'osvdb', 'uri', 'method', 'description'] 
+                           for h in row if h):
+                        headers = [h.lower().strip() for h in row]
+                        continue
+                    else:
+                        # Assume standard nikto CSV format: hostname,IP,port,OSVDB,httpMethod,URI,msg
+                        headers = ['host', 'ip', 'port', 'osvdb', 'method', 'uri', 'description']
+                
+                # Create dict from row
+                if len(row) >= len(headers):
+                    row_dict = {headers[i]: row[i] for i in range(len(headers))}
+                else:
+                    row_dict = {headers[i]: row[i] if i < len(row) else '' for i in range(len(headers))}
+                
+                osvdb = row_dict.get('osvdb', '')
+                uri = row_dict.get('uri', '/')
+                description = row_dict.get('description', row_dict.get('msg', ''))
+                method = row_dict.get('method', 'GET')
+                host = row_dict.get('host', row_dict.get('ip', context.get('target', 'Unknown')))
+                port = row_dict.get('port', '80')
+                
+                if not description:
+                    continue
+                
+                severity = self._nikto_severity_from_desc(description)
+                
+                vulnerabilities.append({
+                    'id': str(uuid.uuid4()),
+                    'type': f'osvdb_{osvdb}' if osvdb else 'nikto_finding',
+                    'name': description[:100],
+                    'severity': severity,
+                    'confidence': 0.85,
+                    'location': f'{host}:{port}{uri}',
+                    'method': method,
+                    'evidence': f"{method} {uri}: {description}",
+                    'exploitable': severity >= 7.0,
+                    'tool': 'nikto'
+                })
+        
+        except Exception as e:
+            logger.warning(f"Failed to parse nikto CSV: {e}")
+        
+        return {
+            'vulnerabilities': vulnerabilities,
+            'hosts': [],
+            'services': [],
+            'raw_output': csv_content
+        }
+    
+    def _nikto_severity_from_desc(self, description: str) -> float:
+        """Determine severity from nikto finding description"""
+        desc_lower = description.lower()
+        
+        # Critical findings
+        if any(word in desc_lower for word in ['remote code', 'rce', 'command execution', 'shell upload']):
+            return 9.0
+        
+        # High severity
+        if any(word in desc_lower for word in ['sql injection', 'xss', 'file inclusion', 'arbitrary file', 
+                                                'authentication bypass', 'path traversal']):
+            return 8.0
+        
+        # Medium-High
+        if any(word in desc_lower for word in ['directory listing', 'backup file', 'sensitive file',
+                                                'default password', 'admin', 'phpinfo']):
+            return 6.5
+        
+        # Medium
+        if any(word in desc_lower for word in ['information', 'disclosure', 'version', 'header',
+                                                'outdated', 'deprecated']):
+            return 4.5
+        
+        # Low
+        if any(word in desc_lower for word in ['cookie', 'robots.txt', 'sitemap']):
+            return 3.0
+        
+        return 5.0  # Default medium
         
         return {
             'vulnerabilities': vulnerabilities,
@@ -1382,6 +1500,262 @@ class EnhancedOutputParser:
             'hosts': hosts,
             'services': services,
             'raw_output': stdout
+        }
+    
+    def _parse_linpeas(self, stdout: str, stderr: str, context: Dict) -> Dict:
+        """
+        Parse linpeas output for privilege escalation findings.
+        
+        Extracts:
+        - CVEs from [CVE-XXXX-XXXX] patterns
+        - SUID/SGID binaries
+        - Writable files/directories
+        - Interesting processes
+        - Potential creds/secrets
+        """
+        vulnerabilities = []
+        
+        # CVE pattern: [CVE-XXXX-XXXX] or CVE-XXXX-XXXX
+        cve_pattern = r'\[?(CVE-\d{4}-\d+)\]?'
+        seen_cves = set()
+        
+        for match in re.finditer(cve_pattern, stdout, re.IGNORECASE):
+            cve_id = match.group(1).upper()
+            if cve_id not in seen_cves:
+                seen_cves.add(cve_id)
+                # Get surrounding context for evidence
+                start = max(0, match.start() - 50)
+                end = min(len(stdout), match.end() + 100)
+                context_text = stdout[start:end].strip()
+                
+                vulnerabilities.append({
+                    'id': str(uuid.uuid4()),
+                    'type': 'privilege_escalation',
+                    'name': f'Kernel/System CVE: {cve_id}',
+                    'cve_id': cve_id,
+                    'severity': 8.0,  # Will be enriched via NVD API
+                    'confidence': 0.85,
+                    'location': 'local_system',
+                    'evidence': context_text[:300],
+                    'exploitable': True,
+                    'tool': 'linpeas'
+                })
+        
+        # SUID binary pattern - look for common indicators
+        suid_patterns = [
+            r'(-rwsr[x-][r-][w-][x-][r-][w-][x-])\s+\d+\s+\w+\s+\w+\s+\d+\s+\S+\s+\d+:\d+\s+(/\S+)',  # Full ls -la pattern
+            r'(/usr/\S+|/bin/\S+|/sbin/\S+|/opt/\S+)\s+.*?SUID',  # SUID mentioned
+            r'SUID[^\n]*(/\S+)',  # Path after SUID mention
+        ]
+        
+        seen_suids = set()
+        for pattern in suid_patterns:
+            for match in re.finditer(pattern, stdout, re.IGNORECASE):
+                try:
+                    if len(match.groups()) >= 2:
+                        binary_path = match.group(2)
+                    else:
+                        binary_path = match.group(1)
+                    
+                    # Skip common safe SUID binaries
+                    safe_suids = {'/usr/bin/sudo', '/usr/bin/passwd', '/usr/bin/su', '/usr/bin/ping', '/usr/bin/mount'}
+                    if binary_path in safe_suids:
+                        continue
+                    
+                    if binary_path not in seen_suids:
+                        seen_suids.add(binary_path)
+                        vulnerabilities.append({
+                            'id': str(uuid.uuid4()),
+                            'type': 'suid_binary',
+                            'name': f'SUID Binary: {binary_path}',
+                            'severity': 7.0,
+                            'confidence': 0.9,
+                            'location': binary_path,
+                            'evidence': match.group(0)[:200],
+                            'exploitable': True,
+                            'tool': 'linpeas'
+                        })
+                except (IndexError, AttributeError):
+                    continue
+        
+        # Writable directories/files that could be exploited
+        writable_patterns = [
+            (r'Writable by \w+:\s*(/\S+)', 'writable_path', 6.0),
+            (r'World-writable\s+(/\S+)', 'world_writable', 7.0),
+            (r'You can write in:\s*(/\S+)', 'writable_path', 6.0),
+        ]
+        
+        for pattern, vuln_type, severity in writable_patterns:
+            for match in re.finditer(pattern, stdout, re.IGNORECASE):
+                path = match.group(1)
+                vulnerabilities.append({
+                    'id': str(uuid.uuid4()),
+                    'type': vuln_type,
+                    'name': f'Writable Path: {path}',
+                    'severity': severity,
+                    'confidence': 0.8,
+                    'location': path,
+                    'evidence': match.group(0)[:200],
+                    'exploitable': True,
+                    'tool': 'linpeas'
+                })
+        
+        # Interesting files (config, creds, etc.)
+        interesting_patterns = [
+            (r'(/etc/\S*shadow\S*)', 'sensitive_file', 8.0),
+            (r'(/\S+/\.ssh/\S*)', 'ssh_key', 8.0),
+            (r'password\s*[=:]\s*(\S+)', 'credential_leak', 9.0),
+            (r'(mysql://[^\s]+)', 'database_credential', 9.0),
+            (r'(postgres://[^\s]+)', 'database_credential', 9.0),
+        ]
+        
+        for pattern, vuln_type, severity in interesting_patterns:
+            for match in re.finditer(pattern, stdout, re.IGNORECASE):
+                value = match.group(1)
+                if not any(value in v.get('location', '') for v in vulnerabilities):
+                    vulnerabilities.append({
+                        'id': str(uuid.uuid4()),
+                        'type': vuln_type,
+                        'name': f'Sensitive Finding: {value[:50]}',
+                        'severity': severity,
+                        'confidence': 0.7,
+                        'location': value,
+                        'evidence': match.group(0)[:200],
+                        'exploitable': True,
+                        'tool': 'linpeas'
+                    })
+        
+        # Cron jobs that might be exploitable
+        cron_pattern = r'\*\s+\*\s+\*\s+\*\s+\*\s+\w+\s+(/\S+)'
+        for match in re.finditer(cron_pattern, stdout):
+            script = match.group(1)
+            vulnerabilities.append({
+                'id': str(uuid.uuid4()),
+                'type': 'cron_job',
+                'name': f'Cron Job: {script}',
+                'severity': 5.0,
+                'confidence': 0.6,
+                'location': script,
+                'evidence': match.group(0)[:200],
+                'exploitable': False,
+                'tool': 'linpeas'
+            })
+        
+        return {
+            'vulnerabilities': vulnerabilities,
+            'hosts': [],
+            'services': [],
+            'raw_output': stdout[:5000]
+        }
+    
+    def _parse_winpeas(self, stdout: str, stderr: str, context: Dict) -> Dict:
+        """
+        Parse winpeas output for Windows privilege escalation findings.
+        
+        Extracts:
+        - Unquoted service paths
+        - Writable service binaries
+        - AlwaysInstallElevated
+        - Stored credentials
+        - Interesting files
+        """
+        vulnerabilities = []
+        
+        # Unquoted service paths
+        unquoted_pattern = r'Unquoted\s+Service\s+Path[^\n]*\n[^\n]*ServiceName:\s*(\S+)[^\n]*\n[^\n]*PathName:\s*([^\n]+)'
+        for match in re.finditer(unquoted_pattern, stdout, re.IGNORECASE | re.MULTILINE):
+            service = match.group(1)
+            path = match.group(2).strip()
+            vulnerabilities.append({
+                'id': str(uuid.uuid4()),
+                'type': 'unquoted_service_path',
+                'name': f'Unquoted Service Path: {service}',
+                'severity': 8.0,
+                'confidence': 0.9,
+                'location': path,
+                'evidence': match.group(0)[:300],
+                'exploitable': True,
+                'tool': 'winpeas'
+            })
+        
+        # AlwaysInstallElevated
+        if re.search(r'AlwaysInstallElevated.*enabled', stdout, re.IGNORECASE):
+            vulnerabilities.append({
+                'id': str(uuid.uuid4()),
+                'type': 'always_install_elevated',
+                'name': 'AlwaysInstallElevated Enabled',
+                'severity': 9.0,
+                'confidence': 0.95,
+                'location': 'HKLM/HKCU Registry',
+                'evidence': 'AlwaysInstallElevated is enabled - MSI packages install with SYSTEM privileges',
+                'exploitable': True,
+                'tool': 'winpeas'
+            })
+        
+        # Stored credentials
+        cred_patterns = [
+            (r'Credential\s+Manager[^\n]*\n[^\n]*User:\s*(\S+)', 'stored_credential', 8.0),
+            (r'Saved\s+Credentials[^\n]*\n[^\n]*User:\s*(\S+)', 'stored_credential', 8.0),
+            (r'DefaultPassword\s*[=:]\s*(\S+)', 'autologon_credential', 9.0),
+        ]
+        
+        for pattern, vuln_type, severity in cred_patterns:
+            for match in re.finditer(pattern, stdout, re.IGNORECASE):
+                user = match.group(1)
+                vulnerabilities.append({
+                    'id': str(uuid.uuid4()),
+                    'type': vuln_type,
+                    'name': f'Stored Credential: {user}',
+                    'severity': severity,
+                    'confidence': 0.85,
+                    'location': user,
+                    'evidence': match.group(0)[:200],
+                    'exploitable': True,
+                    'tool': 'winpeas'
+                })
+        
+        # Modifiable services
+        modifiable_pattern = r'Modifiable\s+Service[^\n]*ServiceName:\s*(\S+)'
+        for match in re.finditer(modifiable_pattern, stdout, re.IGNORECASE):
+            service = match.group(1)
+            vulnerabilities.append({
+                'id': str(uuid.uuid4()),
+                'type': 'modifiable_service',
+                'name': f'Modifiable Service: {service}',
+                'severity': 8.5,
+                'confidence': 0.9,
+                'location': service,
+                'evidence': match.group(0)[:200],
+                'exploitable': True,
+                'tool': 'winpeas'
+            })
+        
+        # CVEs (same pattern as linpeas)
+        cve_pattern = r'\[?(CVE-\d{4}-\d+)\]?'
+        seen_cves = set()
+        
+        for match in re.finditer(cve_pattern, stdout, re.IGNORECASE):
+            cve_id = match.group(1).upper()
+            if cve_id not in seen_cves:
+                seen_cves.add(cve_id)
+                vulnerabilities.append({
+                    'id': str(uuid.uuid4()),
+                    'type': 'privilege_escalation',
+                    'name': f'Windows CVE: {cve_id}',
+                    'cve_id': cve_id,
+                    'severity': 8.0,
+                    'confidence': 0.85,
+                    'location': 'local_system',
+                    'evidence': match.group(0)[:200],
+                    'exploitable': True,
+                    'tool': 'winpeas'
+                })
+        
+        return {
+            'vulnerabilities': vulnerabilities,
+            'hosts': [],
+            'services': [],
+            'raw_output': stdout[:5000]
         }
     
     # =========================================================================

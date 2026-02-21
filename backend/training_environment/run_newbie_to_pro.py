@@ -120,7 +120,7 @@ def check_targets(targets):
 
 def get_default_targets():
     return [
-        {'name': 'OWASP_Juice_Shop_Demo', 'url': 'https://demo.owasp-juice.shop', 'type': 'web'},
+        {'name': 'OWASP_Juice_Shop', 'url': 'https://juice-shop.herokuapp.com/#/', 'type': 'web'},
         {'name': 'Local_VM_Target', 'ip': '192.168.131.128', 'type': 'linux'}
     ]
 
